@@ -38,35 +38,35 @@ Uncoder IO ensures 100% privacy with no cookie tracking, no data logging, or sha
 
 # Supported Language Formats
 RootA and Sigma Rules can be translated into the following formats:
-- AWS OpenSearch Query
-- AWS Athena Query (Security Lake)
-- Falcon LogScale Query
-- Falcon LogScale Rule
-- Splunk Query
-- Splunk Alert
-- Microsoft Sentinel Query
-- Microsoft Sentinel Rule
-- Microsoft Defender for Endpoint Query
-- IBM QRadar Query
-- CrowdStrike Query
-- Elasticsearch Query
-- Elasticsearch Rule
-- Sigma Rule
-- Chronicle Security Query
-- Chronicle Security Rule
+- AWS OpenSearch Query - `opensearch-lucene-query`
+- AWS Athena Query (Security Lake) - `athena-sql-query`
+- Falcon LogScale Query - `logscale-lql-query`
+- Falcon LogScale Rule - `logscale-lql-rule`
+- Splunk Query - `splunk-spl-query`
+- Splunk Alert - `splunk-spl-rule`
+- Microsoft Sentinel Query - `sentinel-kql-query`
+- Microsoft Sentinel Rule - `sentinel-kql-rule`
+- Microsoft Defender for Endpoint Query - `mde-kql-query`
+- IBM QRadar Query - `qradar-aql-query`
+- CrowdStrike Query - `crowdstrike-spl-query`
+- Elasticsearch Query - `elastic-lucene-query`
+- Elasticsearch Rule - `elastic-lucene-rule`
+- Sigma Rule - `sigma-yml-rule`
+- Chronicle Security Query - `chronicle-yaral-query`
+- Chronicle Security Rule - `chronicle-yaral-rule`
 
 
 IOC-based queries can be generated in the following formats:
-- Microsoft Sentinel Query
-- Microsoft Defender for Endpoint Query
-- Splunk Query
-- CrowdStrike Query
-- Elasticsearch Query
-- AWS OpenSearch Query
-- Falcon LogScale Query
-- IBM QRadar Query
-- AWS Athena Query (Security Lake)
-- Chronicle Security Query
+- Microsoft Sentinel Query - `sentinel-kql-query`
+- Microsoft Defender for Endpoint Query - `mde-kql-query`
+- Splunk Query - `splunk-spl-query`
+- CrowdStrike Query - `crowdstrike-spl-query`
+- Elasticsearch Query - `elastic-lucene-query`
+- AWS OpenSearch Query - `opensearch-lucene-query`
+- Falcon LogScale Query - `logscale-lql-query`
+- IBM QRadar Query - `qradar-aql-query`
+- AWS Athena Query (Security Lake) - `athena-sql-query`
+- Chronicle Security Query - `chronicle-yaral-query`
 
 The following types of IOCs are supported:  
 - Hash  
