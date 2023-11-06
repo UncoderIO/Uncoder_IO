@@ -83,12 +83,18 @@ Uncoder IO is distributed as a Docker package.
 * Host with Windows, Linux, or other operating system supported by Docker
 * These packages should be installed on the host:
     * Docker v23.0.1 or newer
-    * Docker Compose
+    * Docker Compose v2.21.0 or newer
 
 ## Launch Instructions
 1. Download the `UncoderIO-main` archive and unpack it.
-2. In the CLI, go to the folder where the unpacked files are.
-3. Run `- docker-compose up -d` to to launch a Docker container.
+2. In the CLI, go to the folder where the unpacked files are:
+```
+cd UncoderIO-main/
+```
+3. Run the following command to launch a Docker container:
+```
+docker-compose up -d
+```
 4. Open `http://localhost:4010/` in your browser and you are ready to go.
 
 # Online Version
