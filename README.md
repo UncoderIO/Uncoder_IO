@@ -158,7 +158,7 @@ To submit your pull request with your ideas or suggestions for changes, take the
 Thank you for your contribution to the Uncoder IO project!
 
 # Questions & Feedback
-Please submit your technical feedback and suggestions to support@socprime.com or the dedicated **Uncoder** channel in [SOC Prime’s Discord](https://discord.gg/socprime). Also, refer to the guidance for contributors to support the Uncoder IO project or simply report issues.
+Please submit your technical feedback and suggestions to support@socprime.com or the dedicated **Uncoder** channel in [SOC Prime’s Discord](https://discord.gg/socprime). Also, refer to the [guidance for contributors](#how-to-contribute) to support the Uncoder IO project or simply [report issues](https://github.com/UncoderIO/UncoderIO/issues).
 
 # Maintainers
 Since 2018, the SOC Prime team has been developing Uncoder from the ground up. The first steps were our support of Sigma rules and the Uncoder IO project, an online yet fully private IDE for detection engineering. Now, the SOC Prime Team shares Uncoder IO as an open-source project.
