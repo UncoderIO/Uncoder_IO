@@ -65,13 +65,13 @@ IOC-based queries can be generated in the following formats:
 - AWS Athena Query
 - Chronicle Security Query
 
-The following types of IOCs are supported:
-    - Hash  
-    - Domain  
-    - URL  
-    - IP  
-    - Email  
-    - File  
+The following types of IOCs are supported:  
+- Hash  
+- Domain  
+- URL  
+- IP  
+- Email  
+- File  
 
 # Installation
 Uncoder IO is distributed as a Docker package.
@@ -179,4 +179,4 @@ Please see [license.txt](https://github.com/UncoderIO/UncoderIO/blob/main/LICENS
 [Uncoder AI](https://tdm.socprime.com/uncoder-ai) - SaaS version of Uncoder acting as advanced IDE for detection engineering  
 [RootA.IO](https://roota.io/) - the main website page of the single language for threat detection & response  
 [SOC Prime Platform](https://tdm.socprime.com/login) - the industry-first platform for collective cyber defense  
-[About SOC Prime](https://socprime.com/) 
+[About SOC Prime](https://socprime.com/) - learn more about SOC Prime and its mission
