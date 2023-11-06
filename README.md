@@ -1,4 +1,6 @@
-[![Logo](.readme/logo.png)](https://uncoder.io/)
+<p align="center">
+  <img src="images/uncoder_io_logo.png" />
+</p>
 
 # What is Uncoder IO
 Uncoder IO is a universal open-source tool for cyber defenders acting as an Integrated Development Environment (IDE) for detection engineering. Backed by RootA public domain language and Sigma generic signature format, Uncoder IO enables automated query translation into native SIEM, EDR, XDR, and Data Lake languages and serves as a rule editor supporting MITRE ATT&CK autocompletion and syntax highlighting. Uncoder IO also provides an Indicator of Compromise (IoC) packager for automated query generation based on IoCs parsed from the text input. 
@@ -36,33 +38,34 @@ Uncoder IO ensures 100% privacy with no cookie tracking, no data logging, or sha
 
 # Supported Language Formats
 RootA and Sigma Rules can be translated into the following formats:
-- Microsoft Sentinel Query
-- Microsoft Sentinel Rule
+- AWS OpenSearch Query
+- AWS Athena Query (Security Lake)
+- Falcon LogScale Query
+- Falcon LogScale Rule
 - Splunk Query
 - Splunk Alert
+- Microsoft Sentinel Query
+- Microsoft Sentinel Rule
+- Microsoft Defender for Endpoint Query
+- IBM QRadar Query
 - CrowdStrike Query
 - Elasticsearch Query
 - Elasticsearch Rule
-- OpenSearch Query
-- Falcon LogScale (ex Humio) Query
-- Falcon LogScale (ex Humio) Rule
-- Microsoft Defender for Endpoint Query
-- IBM QRadar Query
 - Sigma Rule
-- AWS Athena Query
 - Chronicle Security Query
 - Chronicle Security Rule
 
+
 IOC-based queries can be generated in the following formats:
 - Microsoft Sentinel Query
+- Microsoft Defender for Endpoint Query
 - Splunk Query
 - CrowdStrike Query
 - Elasticsearch Query
-- OpenSearch Query
-- Falcon LogScale (ex Humio) Query
-- Microsoft Defender for Endpoint Query
+- AWS OpenSearch Query
+- Falcon LogScale Query
 - IBM QRadar Query
-- AWS Athena Query
+- AWS Athena Query (Security Lake)
 - Chronicle Security Query
 
 The following types of IOCs are supported:  
