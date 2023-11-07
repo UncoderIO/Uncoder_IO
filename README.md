@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="images/uncoder_io_logo_256.png" />
+  <img src="images/uncoder_io_logo.png" />
 </p>
 
 # What is Uncoder IO
