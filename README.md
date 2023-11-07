@@ -180,7 +180,7 @@ Uncoder IO project is maintained by SOC Prime, and while any suggestions and rep
 We are genuinely grateful to security professionals who contribute their time, expertise, and creativity to evolve the Uncoder open-source project.
 
 # Licenses
-Please see [license.txt](https://github.com/UncoderIO/UncoderIO/blob/main/LICENSE.md/) for details on the Uncoder IO licensing.
+Please see [LICENSE](https://github.com/UncoderIO/UncoderIO/blob/main/LICENSE/) for details on the Uncoder IO licensing.
 
 ## Resources & Useful Links
 [Uncoder IO](https://uncoder.io/) - free online translation engine for RootA, Sigma, and IOC-based queries  
