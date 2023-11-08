@@ -1,7 +1,5 @@
-<p align="center">
-  <img src="images/uncoder_io_logo_256.png" />
-</p>
-<h1 align="center";>What is Uncoder IO</h1>
+![Uncoder IO Logo](images/uncoder_io_logo_120.png)
+# What is Uncoder IO
 Uncoder IO is a universal open-source tool for cyber defenders acting as an Integrated Development Environment (IDE) for detection engineering. Backed by RootA public domain language and Sigma generic signature format, Uncoder IO enables automated query translation into native SIEM, EDR, XDR, and Data Lake languages and serves as a rule editor supporting MITRE ATT&CK autocompletion and syntax highlighting. Uncoder IO also provides an Indicator of Compromise (IoC) packager for automated query generation based on IoCs parsed from the text input. 
 
 ![Uncoder IO Overview](images/uncoder_io_1.png)
