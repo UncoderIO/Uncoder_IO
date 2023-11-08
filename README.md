@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="images/uncoder_io_logo.png" />
+  <img src="images/uncoder_io_logo_256.png" />
 </p>
 
 # What is Uncoder IO
@@ -20,25 +20,25 @@ Uncoder IO is a universal open-source tool for cyber defenders acting as an Inte
 - [Licenses](#licenses)
 - [Resources & Useful Links](#resources--useful-links)
 
-# Why Uncoder IO
+# :heart_eyes_cat: Why Uncoder IO
 
-## RootA & Sigma Translation Engine
+## :pretzel: RootA & Sigma Translation Engine
 
 Uncoder IO supports automated translation of RootA and Sigma rules into multiple SIEM, EDR, XDR, and Data Lake formats. Acting as a wrapper for native rules and queries, RootA lets you capture all the native SIEM functions, including aggregations, correlations, and the use of multiple log sources without the need to master the original language. This way, your complex detection logic can be rendered in other languages in an automated fashion. In case a native rule or query contains functions unsupported by RootA or target technology, those functions won’t be translated, with a corresponding note appended to the code translation.
 
-## RootA & Sigma Rule Editor
+## :pizza: RootA & Sigma Rule Editor
 
 Uncoder IO supports a built-in Sigma and MITRE ATT&CK autocompletion wizard suggesting code enhancements to streamline the rule creation process. 
 
-## IOC Query Generator
+## :popcorn: IOC Query Generator
 
 Uncoder IO acts as an open-source IOC packager enabling cyber defenders to parse IOCs directly from the chosen text file (threat reports, advisories, etc.) and convert them into performance-optimized IOC queries ready to run in a chosen security analytics platform. 
 
-## Full Privacy
+## :smile_cat: Full Privacy
 
 Uncoder IO ensures 100% privacy with no cookie tracking, no data logging, or sharing with third parties.
 
-# Supported Language Formats
+# :dna: Supported Language Formats
 RootA and Sigma Rules can be translated into the following formats:
 - AWS OpenSearch Query - `opensearch-lucene-query`
 - AWS Athena Query (Security Lake) - `athena-sql-query`
@@ -78,7 +78,7 @@ The following types of IOCs are supported:
 - Email  
 - File  
 
-# Installation
+# :computer: Installation
 Uncoder IO is distributed as a Docker package.
 
 ## Requirements
@@ -99,12 +99,12 @@ docker-compose up -d
 ```
 4. Open `http://localhost:4010/` in your browser and you are ready to go.
 
-# Online Version
+# :evergreen_tree: Online Version
 You can use the online open-source version of Uncoder IO at [https://uncoder.io/](https://uncoder.io/). It's free, doesn't require registration, and doesn't collect or store any user data whatsoever.
 
-# How to Use
+# :mortar_board: How to Use
 
-## Translation
+## :rocket: Translation
 1. Select input type:
     - RootA rule
     - Sigma rule
@@ -114,7 +114,7 @@ You can use the online open-source version of Uncoder IO at [https://uncoder.io/
 
 If the input rule cannot be translated, you'll see an error message. When translating a RootA rule, any functions that are not supported in the target language or are not yet supported by Uncoder IO will be listed in the output as a comment.
 
-## IOC-based Query Generation
+## :flashlight: IOC-based Query Generation
 1. Select IoCs as the input type.
 2. Paste or upload text with Indicators of Compromise in the left panel.
 3. Make parsing configurations:
@@ -148,10 +148,10 @@ If the input rule cannot be translated, you'll see an error message. When transl
     - Choose if you want to add source IP to your queries with OR operator
 6. Click Translate.
 
-## Writing rules
+## :coffee: Writing rules
 Write a RootA or Sigma rule in the input panel. Benefit from code templates, syntax highlighting, autocomplete suggester with MITRE ATT&CK, and other nice little features that improve coding experience.
 
-# How to Contribute
+# :bulb: How to Contribute
 Thank you for your interest in the Uncoder IO open-source project! Your contribution really matters in evolving the project and helping us make Uncoder IO even more useful for the global cyber defender community.
 
 To submit your pull request with your ideas or suggestions for changes, take the following steps:
@@ -168,21 +168,21 @@ To submit your pull request with your ideas or suggestions for changes, take the
 
 Thank you for your contribution to the Uncoder IO project!
 
-# Questions & Feedback
+# :mailbox_with_no_mail: Questions & Feedback
 Please submit your technical feedback and suggestions to support@socprime.com or the dedicated **Uncoder** channel in [SOC Prime’s Discord](https://discord.gg/socprime). Also, refer to the [guidance for contributors](#how-to-contribute) to support the Uncoder IO project or simply [report issues](https://github.com/UncoderIO/UncoderIO/issues).
 
-# Maintainers
+# :wrench: Maintainers
 Since 2018, the SOC Prime team has been developing Uncoder from the ground up. The first steps were our support of Sigma rules and the Uncoder IO project, an online yet fully private IDE for detection engineering. Now, the SOC Prime Team shares Uncoder IO as an open-source project.
 
 Uncoder IO project is maintained by SOC Prime, and while any suggestions and reported issues are welcome.
 
-# Credits
+# :kissing_heart: Credits
 We are genuinely grateful to security professionals who contribute their time, expertise, and creativity to evolve the Uncoder open-source project.
 
-# Licenses
+# :briefcase: Licenses
 Please see [LICENSE](https://github.com/UncoderIO/UncoderIO/blob/main/LICENSE/) for details on the Uncoder IO licensing.
 
-## Resources & Useful Links
+# :book: Resources & Useful Links
 [Uncoder IO](https://uncoder.io/) - free online translation engine for RootA, Sigma, and IOC-based queries  
 [Uncoder AI](https://tdm.socprime.com/uncoder-ai) - SaaS version of Uncoder acting as advanced IDE for detection engineering  
 [RootA.IO](https://roota.io/) - the main website page of the single language for threat detection & response  
