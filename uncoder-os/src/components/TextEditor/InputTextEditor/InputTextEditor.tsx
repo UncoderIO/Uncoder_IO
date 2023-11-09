@@ -6,7 +6,11 @@ import './InputTextEditor.sass';
 
 export const InputTextEditor: FC = () => {
   const {
-    inputText, mode, onChangeInputText, onFocusInputText,
+    inputText,
+    mode,
+    onChangeInputText,
+    onFocusInputText,
+    onPasteInputText,
   } = useInputEditor();
 
   return (
@@ -18,6 +22,7 @@ export const InputTextEditor: FC = () => {
         name="ua-text-editor-input"
         onChange={onChangeInputText}
         onFocus={onFocusInputText}
+        onPaste={onPasteInputText}
       />
     </div>
   );

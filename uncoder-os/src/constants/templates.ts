@@ -61,9 +61,12 @@ uuid:`,
   {
     name: TemplatesKeys.MinimalSigma,
     value: `title: sigma title
+description:
+references:
+    - 
 logsource:
     #service:
-    category:
+    category: 
     product: windows
 detection:
     selection:
