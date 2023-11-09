@@ -43,11 +43,11 @@ Uncoder IO supports a built-in Sigma and RootA rules autocompletion wizard sugge
 
 ## :popcorn: IOC Query Generator
 
-Uncoder IO acts as an open-source IOC packager enabling cyber defenders to parse IOCs directly from the chosen text file (threat reports, advisories, etc.) and convert them into performance-optimized IOC queries ready to run in a chosen security analytics platform. 
+Uncoder IO acts as an open-source IOC packager helping CTI and SOC analysts as well as Threat Hunters to quickly parse any number of IOCs directly from from any digital non-binary format(a simple copy-paste of a web page, CSV, OpenIOC, PDF, STIX etc.) and convert them into performance-optimized IOC queries ready to run in a chosen security analytics platform. As Indicators of Compromise sharing are regulated by TLP, it is not advised to share them in Sigma or RootA rules, as the latter are not part of threat intelligence and thus are shared easily without borders. Yet, we need IOC matching just as we need Threat Behavior detections, so Uncoder IO is made to help solve these both tasks in an easy to use and intuitive manner.
 
 ## :smile_cat: Full Privacy
 
-Uncoder IO ensures 100% privacy with no cookie tracking, no data logging, or sharing with third parties.
+Uncoder IO can be ran on prem without a need for internet connection, thus supporting air gapped networks operation. We do however suggest to check for updates and deploy them regurarly. Meanwhile a SaaS version still ensures 100% privacy with no cookie tracking, no data or code logging, or sharing with third parties. Even with options Uncoder AI functions, you are always in control of your code and data.
 
 # :dna: Supported Language Formats
 RootA and Sigma Rules can be translated into the following formats:
@@ -219,7 +219,7 @@ Please submit your technical feedback and suggestions to support@socprime.com or
 # :wrench: Maintainers
 Since 2018, the SOC Prime team has been developing Uncoder from the ground up. The first steps were our support of Sigma rules and the Uncoder IO project, an online yet fully private IDE for detection engineering. Now, the SOC Prime Team shares Uncoder IO as an open-source project.
 
-Uncoder IO project is maintained by SOC Prime, and while any suggestions and reported issues are welcome.
+Uncoder IO project is maintained by SOC Prime, and while any suggestions and reported issues are welcome, the ultimate decision to accept a pull request or not, will be up to SOC Prime's R&D team. 
 
 # :kissing_heart: Credits
 We are genuinely grateful to security professionals who contribute their time, expertise, and creativity to evolve the Uncoder open-source project.
