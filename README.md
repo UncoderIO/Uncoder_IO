@@ -19,7 +19,6 @@ Uncoder is developed by the team of Detection Engineers, Threat Hunters and CTI 
 - [Why Uncoder IO](#heart_eyes_cat-why-uncoder-io)
 - [Supported Language Formats](#dna-supported-language-formats)
 - [Installation](#computer-installation)
-- [Online Version](#evergreen_tree-online-version)
 - [How to Use](#mortar_board-how-to-use)
 - [How to Contribute](#bulb-how-to-contribute)
 - [Questions & Feedback](#mailbox_with_no_mail-questions--feedback)
@@ -129,15 +128,15 @@ Uncoder IO can be installed in a following manner:
   4. Ready to use as SaaS, privately with no registration or cookies at [https://uncoder.io/](https://uncoder.io/)
   5. Ready to use at SOC Prime SaaS with private AI augmentation, SOC 2 Type II certified environment and supporting ToS on data privacy, GDPR etc. at [https://tdm.socprime.com/uncoder-ai](https://tdm.socprime.com/uncoder-ai)
 
-Below are the requirements and launch instructions for the Docker container with web server.
+Below are the requirements and launch instructions for the Docker container with web server and UI.
 
-## Requirements
+## Requirements for Docker Container
 * Host with Windows, Linux, or other operating system supported by Docker
 * These packages should be installed on the host:
     * Docker v23.0.1 or newer
     * Docker Compose v2.21.0 or newer
 
-## Launch Instructions for Docker container
+## Launch Instructions for Docker Container
 1. Download the `UncoderIO-main` archive and unpack it.
 2. In the CLI, go to the folder where the unpacked files are:
 ```
@@ -148,9 +147,6 @@ cd UncoderIO-main/
 docker-compose up -d
 ```
 4. Open `http://localhost:4010/` in your browser and you are ready to go.
-
-# :evergreen_tree: Online Version
-You can use the online open-source version of Uncoder IO at [https://uncoder.io/](https://uncoder.io/). It's free, doesn't require registration, and doesn't collect or store any user data whatsoever.
 
 # :mortar_board: How to Use
 
