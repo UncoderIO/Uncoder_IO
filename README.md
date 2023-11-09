@@ -86,6 +86,40 @@ The following types of IOCs are supported:
 - Email  
 - File  
 
+TODO list of languages we will support shortly:
+- Graylog
+- Devo
+- LimaCharlie
+- Sumo Logic
+- Sumo Logic CSE
+- ArcSight
+- Databricks
+- Cribl
+- FortiSIEM
+- Exabeam
+- Palo Alto Cortex XSOAR
+- ElastAlert 
+- FireEye OpenIOC
+- SentinelOne
+- Datadog
+- FireEye Helix
+- Logpoint
+- RSA NetWitness
+- PowerShell
+- Snowflake
+- SQL
+- VMware Carbon Black
+- Apache Kafka ksqlDB
+- HawkSearch
+- Regex Grep
+- Logiq
+- Qualys
+- Securonix
+- STIX
+- StreamAlert
+- Sysmon
+- UberAgent ESA
+
 # :computer: Installation
 Uncoder IO is distributed as a Docker package.
 
