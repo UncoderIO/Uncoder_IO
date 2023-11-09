@@ -3,7 +3,15 @@
 </p>
 
 # What is Uncoder IO
-Uncoder IO is a universal open-source tool for cyber defenders acting as an Integrated Development Environment (IDE) for detection engineering. Backed by RootA public domain language and Sigma generic signature format, Uncoder IO enables automated query translation into native SIEM, EDR, XDR, and Data Lake languages and serves as a rule editor supporting MITRE ATT&CK autocompletion and syntax highlighting. Uncoder IO also provides an Indicator of Compromise (IoC) packager for automated query generation based on IoCs parsed from the text input. 
+Uncoder IO is an open source version of it's SaaS counterpart https://uncoder.io and it's AI co-pilot version Uncoder AI. 
+Since 2018, Uncoder.IO is a fast, private and easy to use online translator for Sigma Rules, maintaining 100% privacy of its users. 
+An open source Uncoder IO expands use cases into following:
+- Translation from Sigma Rules, a generic rule format for SIEM systems, to specific SIEM, EDR and Data Lake languages
+- IOC packaging from any non-binary format such as PDF, text, STIX, OpenIOC to speicifc SIEM, EDR and Data Lake languages
+- Translation from RootA Rules, the newly released language for collective cyber defense to to specific SIEM, EDR and Data Lake languages. The latter is extremely powerful as RootA supports query definition in speicific SIEM languages, vendor-agnostic correlation syntacs, log source taxonomy based on Amazon's OCSF or Sigma. This also builds the first bridge towards full cyber security languages compatibility, where one day, knowing one speicific language (say SPL or KQL) or generic language (say RootA or Sigma) would mean that you have master expertise in them all.
+
+Uncoder is developed by the team of detection engineers, threat hunters and CTI analysts from Ukraine, Europe, USA, Argentina and Australia to perform their daily job and nightly cyber defense hobbies faster, better and making their outcomes easier to share for collective good. 
+
 
 ![Uncoder IO Overview](images/uncoder_io_overview.png)
 
