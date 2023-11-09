@@ -230,7 +230,7 @@ Uncoder IO project is maintained by SOC Prime, and while any suggestions and rep
 We are genuinely grateful to security professionals who contribute their time, expertise, and creativity to evolve the Uncoder open-source project.
 
 # :briefcase: Licenses
-Uncoder IO Comunity Edition is licensed under Apache 2.0. Enterprise Edition features that are released publicly can be used non-commercially. A commercial use is complimentary with SaaS license. Please see [LICENSE](https://github.com/UncoderIO/UncoderIO/blob/main/LICENSE/) for details on the Uncoder IO licensing.
+Uncoder IO Comunity Edition is licensed under Apache 2.0. Commercial Edition features that are released as open-source can be used non-commercially if you do not have a paid SOC Prime subscription. Commercial use rights are complimentary with SOC Prime SaaS license. Please see [LICENSE](https://github.com/UncoderIO/UncoderIO/blob/main/LICENSE/) for details on the Uncoder IO licensing.
 
 # :book: Resources & Useful Links
 [Uncoder IO](https://uncoder.io/) - free online translation engine for RootA, Sigma, and IOC-based queries  
