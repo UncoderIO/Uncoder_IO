@@ -124,7 +124,12 @@ TODO list of languages we will support shortly:
 - UberAgent ESA
 
 # :computer: Installation
-Uncoder IO is distributed as a Docker package.
+Uncoder IO can be installed in a following manner:
+  1. Docker container with web server and UI (available)
+  2. Docker continer API and CLI only (work in progress)
+  3. Build from source code directly
+  4. Ready to use as SaaS, privately with no registration or cookies at https://uncoder.io
+  5. Ready to use at SOC Prime SaaS with private AI augmentation, SOC 2 Type II certified environment and supporting ToS on data privacy, GDPR etc.
 
 ## Requirements
 * Host with Windows, Linux, or other operating system supported by Docker
