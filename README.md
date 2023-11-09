@@ -8,9 +8,9 @@ Since 2018, Uncoder.IO is a fast, private and easy to use online translator for 
 An open source Uncoder IO expands use cases into following:
 - Translation from Sigma Rules, a generic rule format for SIEM systems, to specific SIEM, EDR and Data Lake languages
 - IOC packaging from any non-binary format such as PDF, text, STIX, OpenIOC to speicifc SIEM, EDR and Data Lake languages
-- Translation from RootA Rules, the newly released language for collective cyber defense to to specific SIEM, EDR and Data Lake languages. The latter is extremely powerful as RootA supports query definition in speicific SIEM languages, vendor-agnostic correlation syntacs, log source taxonomy based on Amazon's OCSF or Sigma. This also builds the first bridge towards full cyber security languages compatibility, where one day, knowing one speicific language (say SPL or KQL) or generic language (say RootA or Sigma) would mean that you have master expertise in them all.
+- Translation from RootA Rules, the newly released language for collective cyber defense, to specific SIEM, EDR and Data Lake languages.
 
-Uncoder is developed by the team of detection engineers, threat hunters and CTI analysts from Ukraine, Europe, USA, Argentina and Australia to perform their daily job and nightly cyber defense hobbies faster, better and making their outcomes easier to share for collective good. 
+Uncoder is developed by the team of Detection Engineers, Threat Hunters and CTI Analysts from Ukraine, Europe, USA, Argentina and Australia to perform their daily job and nightly cyber defense hobbies faster, better and making their outcomes easier to share for collective good. 
 
 
 ![Uncoder IO Overview](images/uncoder_io_overview.png)
@@ -32,11 +32,14 @@ Uncoder is developed by the team of detection engineers, threat hunters and CTI 
 
 ## :pretzel: RootA & Sigma Translation Engine
 
-Uncoder IO supports automated translation of RootA and Sigma rules into multiple SIEM, EDR, XDR, and Data Lake formats. Acting as a wrapper for native rules and queries, RootA lets you capture all the native SIEM functions, including aggregations, correlations, and the use of multiple log sources without the need to master the original language. This way, your complex detection logic can be rendered in other languages in an automated fashion. In case a native rule or query contains functions unsupported by RootA or target technology, those functions won’t be translated, with a corresponding note appended to the code translation.
+Uncoder IO supports automated translation of RootA and Sigma rules into multiple SIEM, EDR, XDR, and Data Lake formats. 
+**Sigma** is a generic and open signature format that allows you to describe relevant log events in a straightforward manner, which received industry adoption across 155 countries by over 8000 organizations according to SOC Prime's download and translation statistics. 
+ 
+**RootA** RootA is an open source language which supports query definition directly in specific SIEM languages, vendor-agnostic correlation syntax, MITRE ATT&CK 14.0 for code autocompletion, log source taxonomy autocomplete function based on Amazon's OCSF or Sigma. RootA+Uncoder serve as the first bridge towards full cyber security languages compatibility, where one day, knowing one speicific language (say SPL or KQL) or generic language (say RootA or Sigma) would mean that you have master expertise in them all. This way, your complex detection logic can be rendered in other languages in an automated fashion. In case a native rule or query contains functions unsupported by RootA or target technology, those functions won’t be translated, with a corresponding note appended to the code translation. This is done so that experts can either manually complete translations if they know both source and destination languages, or use Uncoder AI to manually take care of such scenarios. If sharing with Sigma was easy, sharing with RootA is natural and future proof.
 
 ## :pizza: RootA & Sigma Rule Editor
 
-Uncoder IO supports a built-in Sigma and MITRE ATT&CK autocompletion wizard suggesting code enhancements to streamline the rule creation process. 
+Uncoder IO supports a built-in Sigma and RootA rules autocompletion wizard suggesting code enhancements with latest MITRE ATT&CK and log source dictionaries to streamline the rule creation process. AI or not, Uncoder is here to make it easier to code.
 
 ## :popcorn: IOC Query Generator
 
