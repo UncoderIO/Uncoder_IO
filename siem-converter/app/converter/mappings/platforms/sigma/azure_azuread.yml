@@ -1,0 +1,25 @@
+platform: Sigma
+source: azure_azuread
+description: Text that describe current mapping
+
+log_source:
+  product: [azure]
+  service: [azuread]
+
+default_log_source:
+  product: azure
+  service: azuread
+
+field_mapping:
+  ActivityDisplayName: ActivityDisplayName
+  Category: Category
+  LoggedByService: LoggedByService
+  Result: Result
+  OperationName: OperationName
+  TargetResources: TargetResources
+  AADOperationType: AADOperationType
+  InitiatedBy: InitiatedBy
+  ResultReason: ResultReason
+  Status: Status
+  Status.errorCode: Status.errorCode
+  UserAgent: UserAgent

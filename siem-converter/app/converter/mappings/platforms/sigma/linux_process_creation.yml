@@ -1,0 +1,17 @@
+platform: Sigma
+source: linux_process_creation
+description: Text that describe current mapping
+
+log_source:
+  product: [linux]
+  category: [process_creation]
+
+default_log_source:
+  product: linux
+  category: process_creation
+
+field_mapping:
+  CommandLine: CommandLine
+  Image: Image
+  ParentCommandLine: ParentCommandLine
+  ParentImage: ParentImage

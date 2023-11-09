@@ -1,0 +1,13 @@
+platform: Microsoft Sentinel
+source: azure_AzureDiagnostics
+description: Text that describe current mapping
+
+log_source:
+  table: [AzureDiagnostics]
+
+default_log_source:
+  table: AzureDiagnostics
+
+field_mapping:
+  ResultDescription: ResultDescription
+  Category: Category

@@ -1,0 +1,8 @@
+platform: LogScale
+source: windows_raw_access_thread
+description: Text that describe current mapping
+
+
+field_mapping:
+  Image: winlog.event_data.Image
+  Device: winlog.event_data.Device

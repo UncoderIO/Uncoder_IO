@@ -1,0 +1,15 @@
+platform: OpenSearch
+source: linux_dns_query
+description: Text that describe current mapping
+
+log_source:
+  index: [logs-*]
+
+default_log_source:
+  index: logs-*
+
+field_mapping:
+  Image: process.executable
+  User: user.name
+  QueryName: dns.question.name
+  QueryResults: dns.answers

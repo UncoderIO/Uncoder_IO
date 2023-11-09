@@ -1,0 +1,18 @@
+platform: Sigma
+source: windows_image_load
+description: Text that describe current mapping
+
+log_source:
+  product: [windows]
+  category: [image_load]
+
+default_log_source:
+  product: windows
+  category: image_load
+
+field_mapping:
+  Image: Image
+  ImageLoaded: ImageLoaded
+  SignatureStatus: SignatureStatus
+  OriginalFileName: OriginalFileName
+  Signed: Signed

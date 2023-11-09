@@ -1,0 +1,15 @@
+platform: ElasticSearch
+source: windows_ldap_debug
+description: Text that describe current mapping
+
+log_source:
+  index: [winlogbeat-*, logs-*]
+
+default_log_source:
+  index: winlogbeat-*
+
+field_mapping:
+  EventID:
+    - event.code
+    - winlog.event_id
+  SearchFilter: winlog.event_data.SearchFilter

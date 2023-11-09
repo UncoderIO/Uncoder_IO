@@ -1,0 +1,16 @@
+platform: Crowdstrike
+source: windows_registry_event
+description: Text that describe current mapping
+
+log_source:
+  event_simpleName: [RegistryOperationDetectInfo]
+
+default_log_source:
+  event_simpleName: RegistryOperationDetectInfo
+
+field_mapping:
+  TargetObject: TargetObject
+  Image: Image
+  Details: Details
+  EventType: EventType
+  User: User

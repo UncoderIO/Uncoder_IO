@@ -1,0 +1,13 @@
+platform: Microsoft Defender
+source: windows_image_load
+description: Text that describe current mapping
+
+log_source:
+  table: [DeviceImageLoadEvents]
+
+default_log_source:
+  table: DeviceImageLoadEvents
+
+field_mapping:
+  Image: InitiatingProcessFolderPath
+  ImageLoaded: FolderPath

@@ -1,0 +1,42 @@
+@import ../../assets/sass/helpers/variables
+@import ../../assets/sass/helpers/mixins
+
+.ua-text-editor
+  &.ace-socprime
+    background-color: $darkHighlight
+    line-height: 1.4
+    .ace_gutter-active-line,
+    .ace_marker-layer .ace_active-line
+      background-color: $borderDefault
+    &.ace_editor
+      .ace_scroller
+        padding: 0
+        background-color: transparent
+      .ace_gutter
+        border-right: 1px solid $backgroundBlue
+        background-color: $darkHighlight
+    .ace_scrollbar
+      z-index: 0
+      &.ace_scrollbar-v
+        +scrollbars
+    .ace_folding-enabled
+      .ace_gutter-cell
+        color: rgba(255, 255, 255, 0.5)
+    &#ua-text-editor-input,
+    &#ua-text-editor-output
+      min-height: 506px
+      max-height: 506px
+      @media (min-height: 700px)
+        min-height: calc(100vh - 340px)
+        max-height: calc(100vh - 340px)
+      &.is-short-scroll
+        min-height: 546px
+        max-height: 546px
+        @media (min-height: 700px)
+          min-height: calc(100vh - 380px)
+          max-height: calc(100vh - 380px)
+
+.ace_editor
+  &.ace_autocomplete
+    width: 500px
+

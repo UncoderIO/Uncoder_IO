@@ -1,0 +1,15 @@
+platform: OpenSearch
+source: macos_process_creation
+description: Text that describe current mapping
+
+log_source:
+  index: [logs-*]
+
+default_log_source:
+  index: logs-*
+
+field_mapping:
+  CommandLine: process.command_line
+  Image: process.executable
+  ParentCommandLine: process.parent.command_line
+  ParentImage: process.parent.executable

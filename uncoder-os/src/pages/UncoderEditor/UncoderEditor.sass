@@ -1,0 +1,21 @@
+@import ../../assets/sass/helpers/variables
+@import ../../assets/sass/helpers/mixins
+
+.main-grid
+  border-radius: 4px
+  border: 1px solid rgba($borderGray, .3)
+  background-color: $backgroundBlueLight
+  box-shadow: 0 6px 12px transparentize($black, .8), 0 24px 40px transparentize($black, .8)
+  &__scroll
+    overflow-x: auto
+    max-width: 100%
+    +scrollbars
+  &__wrap
+    min-width: 1280px
+    overflow: hidden
+  &__row
+    display: flex
+  &__col
+    flex: 1 1 50%
+    &--left
+      border-right: 1px solid rgba($borderGray, .1)

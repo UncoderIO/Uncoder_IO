@@ -1,0 +1,15 @@
+platform: Crowdstrike
+source: windows_dns_query
+description: Text that describe current mapping
+
+log_source:
+  event_simpleName: [DnsRequest]
+
+default_log_source:
+  event_simpleName: DnsRequest
+
+field_mapping:
+  Image: Image
+  User: User
+  QueryName: QueryName
+  QueryResults: QueryResults

@@ -1,0 +1,39 @@
+@import ../../../assets/sass/helpers/variables
+
+.source-selector-menu
+  margin: 4px 0 0
+  padding: 16px 0
+  width: 340px
+  border: 1px solid rgba(207, 208, 211, 0.2)
+  border-radius: 4px
+  background-color: $backgroundBlue
+  box-shadow: 0 4px 32px rgba($black, 0.35)
+  &__scroll
+    padding: 0 20px 0 12px
+    max-height: 528px
+    .simplebar-track
+      &.simplebar-vertical
+        right: 4px
+  &__list
+    border-bottom: 1px solid rgba($textSubdued, .3)
+    .source-selector-menu-item
+      &__text
+        transform: translateX(0)
+  &__title
+    padding-bottom: 2px
+    border-bottom: 1px solid rgba($textSubdued, .3)
+    opacity: .5
+  &__item
+    border-radius: 4px
+    margin-bottom: 4px
+    &.is-active
+      background-color: $backgroundDarkBlue
+    &.is-hovered
+      border-color: $backgroundSuccess
+      background-color: rgba(74, 193, 142, 0.15)
+      box-shadow: 0 1px 8px rgba(74, 193, 142, 0.5)
+    &:has(.source-selector-menu-item.is-active)
+      & > .source-selector-menu-item
+        border-color: $backgroundSuccess
+        background-color: rgba(74, 193, 142, 0.15)
+        box-shadow: 0 1px 8px rgba(74, 193, 142, 0.5)

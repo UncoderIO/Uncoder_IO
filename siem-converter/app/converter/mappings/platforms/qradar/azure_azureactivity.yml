@@ -1,0 +1,22 @@
+platform: Qradar
+source: azure_azureactivity
+description: Text that describe current mapping
+
+log_source:
+  devicetype: [413]
+
+default_log_source:
+  devicetype: 413
+
+field_mapping:
+  ActivityStatus: ActivityStatus
+  ActivityStatusValue: ActivityStatusValue
+  ActivitySubstatusValue: ActivitySubstatusValue
+  Authorization: Authorization
+  Category: Category
+  CategoryValue: CategoryValue
+  OperationName: OperationName
+  OperationNameValue: OperationNameValue
+  ResourceId: ResourceId
+  ResourceProviderValue: ResourceProviderValue
+  Type: Type

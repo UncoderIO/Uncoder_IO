@@ -1,0 +1,13 @@
+platform: Splunk
+source: macos_file_change
+description: Text that describe current mapping
+
+log_source:
+  index: [macos]
+
+default_log_source:
+  index: macos
+
+field_mapping:
+  Image: Image
+  TargetFilename: TargetFilename

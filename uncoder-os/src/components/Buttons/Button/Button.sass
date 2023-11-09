@@ -1,0 +1,60 @@
+@import ../../../assets/sass/helpers/variables
+
+.button
+  padding: 0 10px
+  display: flex
+  justify-content: center
+  align-items: center
+  height: 36px
+  border-radius: 4px
+  border: 1px solid transparent
+  background-color: transparent
+  background: none
+  font-family: $inter
+  font-weight: 400
+  font-size: 14px
+  color: $textDarkBlue
+  transition: background-color .1s
+  cursor: pointer
+  &:disabled,
+  &.disabled
+    &,
+    &:hover
+      user-select: none
+      cursor: default
+  &--semi
+    font-weight: 600
+  &--upper
+    text-transform: uppercase
+  &--green
+    background-color: $backgroundSuccess
+    &:disabled,
+    &.disabled
+      &,
+      &:hover
+        border-color: $backgroundBlue
+        background-color: $backgroundBlue
+    &:hover
+      color: $textDarkBlue
+      border-color: $whiteGreen
+      background-color: $lightGreen
+      box-shadow: 0 1px 6px $whiteGreen
+  &--icon
+    padding: 0
+    &.button--default
+      color: $textSubdued
+      &:hover
+        background-color: $backgroundSilverBlue
+      &.button--bg
+        background-color: $backgroundBlue
+        &:hover
+          background-color: $backgroundSilverBlue
+  &--m
+    height: 40px
+    &.button--icon
+      min-width: 40px
+  &--xs
+    height: 30px
+    font-size: 16px
+    &.button--icon
+      min-width: 30px

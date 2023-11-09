@@ -1,0 +1,14 @@
+platform: Splunk
+source: macos_process_creation
+
+log_source:
+  index: [macos]
+
+default_log_source:
+  index: macos
+
+field_mapping:
+  CommandLine: CommandLine
+  Image: Image
+  ParentCommandLine: ParentCommandLine
+  ParentImage: ParentImage

@@ -1,0 +1,35 @@
+platform: Microsoft Sentinel
+source: aws_cloudtrail
+description: Text that describe current mapping
+
+log_source:
+  table: [AWSCloudTrail]
+
+default_log_source:
+  table: AWSCloudTrail
+
+field_mapping:
+  eventSource: EventSource
+  eventName: EventName
+  AdditionalEventData: AdditionalEventData
+  additionalEventData.MFAUsed: additionalEventData.MFAUsed
+  errorCode: ErrorCode
+  errorMessage: ErrorMessage
+  eventType: EventTypeName
+  requestParameters: RequestParameters
+  requestParameters.attribute: requestParameters.attribute
+  requestParameters.ipPermissions.items.ipRanges.items.cidrIP: requestParameters.ipPermissions.items.ipRanges.items.cidrIP
+  requestParameters.ipPermissions.items.ipRanges.items.fromPort: requestParameters.ipPermissions.items.ipRanges.items.fromPort
+  requestParameters.userData: requestParameters.userData
+  responseElements: ResponseElements
+  responseElements.ConsoleLogin: responseElements.ConsoleLogin
+  responseElements.pendingModifiedValues.masterUserPassword: responseElements.pendingModifiedValues.masterUserPassword
+  responseElements.publiclyAccessible: responseElements.publiclyAccessible
+  status: status
+  terminatingRuleId: terminatingRuleId
+  userAgent: UserAgent
+  userIdentity.arn: UserIdentityArn
+  userIdentity.principalId: UserIdentityPrincipalid
+  userIdentity.sessionContext.sessionIssuer.type: SessionIssuerType
+  userIdentity.type: UserIdentityType
+  userIdentity.userName: UserIdentityUserName

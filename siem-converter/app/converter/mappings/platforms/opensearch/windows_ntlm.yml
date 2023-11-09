@@ -1,0 +1,17 @@
+platform: OpenSearch
+source: windows_ntlm
+description: Text that describe current mapping
+
+log_source:
+  index: [winlogbeat-*, logs-*]
+
+default_log_source:
+  index: winlogbeat-*
+
+field_mapping:
+  ProcessName: ProcessName
+  WorkstationName: winlog.event_data.WorkstationName
+  EventID:
+    - event.code
+    - winlog.event_id
+  TargetName: winlog.event_data.TargetName

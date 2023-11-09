@@ -1,0 +1,14 @@
+platform: ElasticSearch
+source: windows_driver_load
+description: Text that describe current mapping
+
+log_source:
+  index: [winlogbeat-*, logs-*]
+
+default_log_source:
+  index: winlogbeat-*
+
+field_mapping:
+  ImageLoaded: file.path
+  ImagePath: file.path
+  Hashes: winlog.event_data.Hashes

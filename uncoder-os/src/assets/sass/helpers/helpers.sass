@@ -1,0 +1,96 @@
+=placeholder-color($color)
+  &::placeholder
+    color: $color
+
+=placeholder
+  &::placeholder
+    @content
+
+=scrollbar
+  &::-webkit-scrollbar
+    @content
+
+=scrollbar-track
+  &::-webkit-scrollbar-track
+    @content
+
+=scrollbar-thumb
+  &::-webkit-scrollbar-thumb
+    @content
+
+=scrollbar-track-piece
+  &::-webkit-scrollbar-track-piece
+    @content
+
+=smooth-scroll
+  -webkit-overflow-scrolling: touch
+
+// width
+=r($width)
+  @media (max-width: $width+ "px")
+    @content
+
+=rmin($width)
+  @media (min-width: $width+ "px")
+    @content
+
+// height
+=rh($height)
+  @media (max-height: $height + "px")
+    @content
+
+=rhmin($height)
+  @media (min-height: $height + "px")
+    @content
+
+=xlMin
+  +rmin(1921)
+    @content
+
+=xl
+  +r(1920)
+    @content
+
+=lgmin
+  +rmin(1441)
+    @content
+
+=lg
+  +r(1440)
+    @content
+
+=mdm
+  +r(1280)
+    @content
+
+=mds
+  +r(1151)
+    @content
+
+=mdsmin
+  +r(1152)
+    @content
+
+=mdmin
+  +rmin(1025)
+    @content
+
+=md
+  +r(1024)
+    @content
+
+=smmin
+  +rmin(769)
+    @content
+
+=sm
+  +r(768)
+    @content
+
+=xsmin
+  +rmin(601)
+    @content
+
+=xs
+  +r(600)
+    @content

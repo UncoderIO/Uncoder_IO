@@ -1,0 +1,16 @@
+platform: Athena
+source: windows_security
+description: Text that describe current mapping
+
+default_log_source:
+  table: eventlog
+
+field_mapping:
+  AccessMask: unmapped.Access Mask
+  ObjectName: unmapped.win_resource.name
+  ObjectType: unmapped.win_resource.type
+  CommandLine: process.cmd_line
+  PrivilegeList: unmapped.Service Request Information.Privileges
+  ProcessName: actor.process.file.path
+  SubjectUserName: actor.user.name
+  Service: unmapped.win_resource.name

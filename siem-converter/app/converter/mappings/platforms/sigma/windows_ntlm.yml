@@ -1,0 +1,17 @@
+platform: Sigma
+source: windows_ntlm
+description: Text that describe current mapping
+
+log_source:
+  product: [windows]
+  service: [ntlm]
+
+default_log_source:
+  product: windows
+  service: ntlm
+
+field_mapping:
+  ProcessName: ProcessName
+  TargetName: TargetName
+  WorkstationName: WorkstationName
+  EventID: EventID

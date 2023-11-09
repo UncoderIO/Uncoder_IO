@@ -1,0 +1,13 @@
+=scrollbars($size: 6px, $foreground-color: $backgroundSilverBlue, $background-color: transparent)
+  // For Chrome & Safari
+  &::-webkit-scrollbar
+    width: $size
+    height: $size
+  &::-webkit-scrollbar-thumb
+    background: $foreground-color
+    border-radius: 10px
+  &::-webkit-scrollbar-track
+    background: $background-color
+
+  // Standard version (Firefox only for now)
+  scrollbar-color: $foreground-color $background-color

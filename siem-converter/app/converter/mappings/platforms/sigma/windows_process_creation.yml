@@ -1,0 +1,23 @@
+platform: Sigma
+source: windows_process_creation
+description: Text that describe current mapping
+
+log_source:
+  product: [windows]
+  category: [process_creation]
+
+default_log_source:
+  product: windows
+  category: process_creation
+
+field_mapping:
+  CommandLine: CommandLine
+  CurrentDirectory: CurrentDirectory
+  Hashes: Hashes
+  Image: Image
+  IntegrityLevel: IntegrityLevel
+  ParentCommandLine: ParentCommandLine
+  ParentImage: ParentImage
+  ParentUser: ParentUser
+  Product: Product
+  User: User

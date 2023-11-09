@@ -1,0 +1,9 @@
+platform: Sigma
+source: default
+description: Text that describe current mapping
+
+log_source:
+  product: windows
+
+default_log_source:
+  product: windows

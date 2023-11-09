@@ -1,0 +1,18 @@
+platform: Microsoft Sentinel
+source: windows_network_connection
+description: Text that describe current mapping
+
+log_source:
+  table: [SysmonEvent, DeviceNetworkEvents]
+
+default_log_source:
+  table: SysmonEvent
+
+field_mapping:
+  Image: Image
+  DestinationHostname: DestinationHostname
+  DestinationIp: DestinationIp
+  DestinationPort: DestinationPort
+  SourceIp: SourceIp
+  SourcePort: SourcePort
+  Initiated: Initiated

@@ -1,0 +1,64 @@
+@import ../../../../assets/sass/helpers/variables
+
+.source-selector-menu-item
+    display: flex
+    align-items: center
+    padding: 6px 12px
+    min-height: 48px
+    border: 1px solid transparent
+    border-radius: 4px
+    background-color: transparent
+    cursor: pointer
+    &:hover,
+    &.is-active
+        border-color: $backgroundSuccess
+        background-color: rgba(74, 193, 142, 0.15)
+        box-shadow: 0 1px 8px rgba(74, 193, 142, 0.5)
+        .source-selector-menu-item
+            &__star
+                opacity: 1
+                transition-delay: .2s
+            &__text
+                transform: translateX(0)
+    &.is-active
+        .source-selector-menu-item
+            &__btn
+                svg
+                    transform: rotate(-180deg)
+    &__star
+        margin-left: -2px
+        padding: 0 2px 2px
+        font-size: 0
+        cursor: pointer
+        opacity: 0
+        transition: opacity .1s
+        transition-delay: .1s
+        svg
+            fill: $textSubdued
+            fill-opacity: .4
+        &:hover,
+        &.is-check
+            svg
+                stroke-opacity: 1
+                stroke: $backgroundSuccess
+        &.is-check
+            opacity: 1
+            svg
+                fill-opacity: 1
+                fill: $backgroundSuccess
+    &__text
+        flex: 1 1 auto
+        transition: transform .1s
+        transition-delay: .1s
+        &.is-transform
+            transform: translateX(-22px)
+
+    &.is-default
+        .source-selector-menu-item
+            &__text
+                transform: translateX(0)
+
+    &__btn
+        svg
+            line-height: 1
+            transition: transform .1s

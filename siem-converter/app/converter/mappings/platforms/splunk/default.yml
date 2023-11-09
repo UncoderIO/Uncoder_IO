@@ -1,0 +1,9 @@
+platform: Splunk
+source: default
+description: Text that describe current mapping
+
+log_source:
+  source: WinEventLog:*
+
+default_log_source:
+  source: WinEventLog:*

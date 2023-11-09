@@ -1,0 +1,17 @@
+platform: Qradar
+source: windows_ntlm
+description: Text that describe current mapping
+
+log_source:
+  devicetype: [12]
+  qideventcategory: [Microsoft-Windows-NTLM/Operational]
+
+default_log_source:
+  devicetype: 12
+  qideventcategory: Microsoft-Windows-NTLM/Operational
+
+field_mapping:
+  WorkstationName: WorkstationName
+  ProcessName: ProcessName
+  EventID: Event ID
+  TargetName: TargetName

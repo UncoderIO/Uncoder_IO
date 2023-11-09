@@ -1,0 +1,18 @@
+platform: Microsoft Sentinel
+source: windows_file_event
+description: Text that describe current mapping
+
+log_source:
+  table: [SysmonEvent, DeviceFileEvents]
+
+default_log_source:
+  table: SysmonEvent
+
+field_mapping:
+  CreationUtcTime: CreationUtcTime
+#  FileName
+  Image: Image
+#  OriginalFilename: PreviousCreationUtcTime
+  PreviousCreationUtcTime: PreviousCreationUtcTime
+  TargetFilename: TargetFilename
+  User: User

@@ -1,0 +1,16 @@
+platform: ElasticSearch
+source: windows_image_load
+description: Text that describe current mapping
+
+log_source:
+  index: [winlogbeat-*, logs-*]
+
+default_log_source:
+  index: winlogbeat-*
+
+field_mapping:
+  Image: process.executable
+  ImageLoaded: file.path
+  SignatureStatus: SignatureStatus
+  OriginalFileName: OriginalFileName
+  Signed: Signed

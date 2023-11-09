@@ -1,0 +1,16 @@
+platform: Microsoft Sentinel
+source: windows_image_load
+description: Text that describe current mapping
+
+log_source:
+  table: [SysmonEvent, DeviceImageLoadEvents]
+
+default_log_source:
+  table: SysmonEvent
+
+field_mapping:
+  Image: Image
+  ImageLoaded: ImageLoaded
+  SignatureStatus: SignatureStatus
+  OriginalFileName: OriginalFileName
+  Signed: Signed

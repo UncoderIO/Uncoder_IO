@@ -1,0 +1,18 @@
+platform: Athena
+source: linux_process_creation
+description: Text that describe current mapping
+
+
+default_log_source:
+  table: eventlog
+
+
+field_mapping:
+  CommandLine: process.cmd_line
+  Image: process.file.path
+  ParentCommandLine:
+    - process.parent_process.cmd_line
+    - actor.process.cmd_line
+  ParentImage:
+    - process.parent_process.file.path
+    - actor.process.file.path

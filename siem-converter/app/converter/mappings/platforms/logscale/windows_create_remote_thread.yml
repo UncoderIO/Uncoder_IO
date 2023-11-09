@@ -1,0 +1,11 @@
+platform: LogScale
+source: windows_create_remote_thread
+description: Text that describe current mapping
+
+
+field_mapping:
+  SourceImage: winlog.event_data.SourceImage
+  TargetImage: winlog.event_data.TargetImage
+  StartModule: winlog.event_data.StartModule
+  StartAddress: winlog.event_data.StartAddress
+  StartFunction: winlog.event_data.StartFunction

@@ -1,0 +1,16 @@
+platform: Microsoft Sentinel
+source: windows_registry_event
+description: Text that describe current mapping
+
+log_source:
+  table: [SysmonEvent, DeviceRegistryEvents]
+
+default_log_source:
+  table: SysmonEvent
+
+field_mapping:
+  TargetObject: TargetObject
+  Image: Image
+  Details: Details
+  EventType: EventType
+  User: User

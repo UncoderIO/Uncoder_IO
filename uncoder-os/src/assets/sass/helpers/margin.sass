@@ -1,0 +1,10 @@
+=countMargin($max, $side, $class)
+  @for $i from 1 through $max * 0.5
+    $value: $i * 2
+    .m-#{$class}-#{$value}
+      margin-#{$side}: $value + px
+
++countMargin(100, top, t)
++countMargin(100, right, r)
++countMargin(100, bottom, b)
++countMargin(100, left, l)

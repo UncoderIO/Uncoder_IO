@@ -1,0 +1,19 @@
+platform: Microsoft Sentinel
+source: windows_powershell
+description: Text that describe current mapping
+
+log_source:
+  table: [Event]
+
+default_log_source:
+  table: "Event | where EventLog in~ ('Microsoft-Windows-PowerShell/Operational', 'Windows PowerShell')"
+
+field_mapping:
+  EventID: EventID
+  CommandLine: CommandLine
+  ScriptBlockText: EventData
+  Payload: Payload
+  HostApplication: HostApplication
+  ContextInfo: ContextInfo
+  HostName: HostName
+  EngineVersion: EngineVersion

@@ -1,0 +1,23 @@
+platform: Sigma
+source: gcp_gcp.audit
+description: Text that describe current mapping
+
+log_source:
+  product: [gcp]
+  service: [gcp.audit]
+
+default_log_source:
+  product: gcp
+  service: gcp.audit
+
+field_mapping:
+  backupConfiguration.enabled: backupConfiguration.enabled
+  gcp.audit.method_name: gcp.audit.method_name
+  jsonPayload.enforcedSecurityPolicy.configuredAction: jsonPayload.enforcedSecurityPolicy.configuredAction
+  jsonPayload.enforcedSecurityPolicy.matchedFieldValue: jsonPayload.enforcedSecurityPolicy.matchedFieldValue
+  message: message
+  methodName: methodName
+  protoPayload.methodName: protoPayload.methodName
+  protoPayload.request.canIpForward: protoPayload.request.canIpForward
+  protoPayload.serviceName: protoPayload.serviceName
+  serviceName: serviceName

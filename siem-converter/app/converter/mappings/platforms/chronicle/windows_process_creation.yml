@@ -1,0 +1,12 @@
+platform: Chronicle
+source: windows_process_creation
+description: Text that describe current mapping
+
+
+field_mapping:
+  CommandLine: target.process.command_line
+  CurrentDirectory: src.file.full_path
+  Hashes: target.process.file.md5
+  Image: target.process.file.full_path
+  ParentCommandLine: principal.process.command_line
+  ParentImage: principal.process.file.full_path

@@ -1,0 +1,10 @@
+platform: Qradar
+source: default
+description: Text that describe current mapping
+
+log_source:
+  devicetype:
+    - 12
+
+default_log_source:
+  devicetype: 12

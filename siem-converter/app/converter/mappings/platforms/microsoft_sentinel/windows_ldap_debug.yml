@@ -1,0 +1,13 @@
+platform: Microsoft Sentinel
+source: windows_ldap_debug
+description: Text that describe current mapping
+
+log_source:
+  table: [Event]
+
+default_log_source:
+  table: Event | where EventLog in~ ('Microsoft-Windows-LDAP-Client/Debug')
+
+field_mapping:
+  EventID: EventID
+  SearchFilter: SearchFilter

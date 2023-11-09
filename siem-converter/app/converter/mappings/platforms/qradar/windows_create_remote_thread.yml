@@ -1,0 +1,22 @@
+platform: Qradar
+source: windows_create_remote_thread
+description: Text that describe current mapping
+
+log_source:
+  devicetype: [12]
+  qid: [5001845]
+  qideventcategory: [Microsoft-Windows-Sysmon/Operational]
+
+default_log_source:
+  devicetype: 12
+  qid: 5001845
+  qideventcategory: Microsoft-Windows-Sysmon/Operational
+
+field_mapping:
+  SourceImage: Source Process Path
+  TargetImage: Target Process Path
+  StartModule: Start Module
+  StartAddress: Start Address
+  StartFunction: Start Function
+  Image: Process Path
+  Hashes: File Hash

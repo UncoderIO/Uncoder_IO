@@ -1,0 +1,14 @@
+platform: Crowdstrike
+source: windows_driver_load
+description: Text that describe current mapping
+
+log_source:
+  event_simpleName: [DriverLoad]
+
+default_log_source:
+  event_simpleName: DriverLoad
+
+field_mapping:
+  ImageLoaded: ImageLoaded
+  ImagePath: ImagePath
+  Hashes: Hashes

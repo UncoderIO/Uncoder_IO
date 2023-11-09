@@ -1,0 +1,14 @@
+platform: Microsoft Sentinel
+source: windows_driver_load
+description: Text that describe current mapping
+
+log_source:
+  table: [SysmonEvent]
+
+default_log_source:
+  table: SysmonEvent
+
+field_mapping:
+  ImageLoaded: ImageLoaded
+  ImagePath: ImagePath
+  Hashes: Hashes

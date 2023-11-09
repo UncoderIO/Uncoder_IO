@@ -1,0 +1,10 @@
+platform: LogScale
+source: windows_ntlm
+description: Text that describe current mapping
+
+
+field_mapping:
+  WorkstationName: winlog.event_data.WorkstationName
+  ProcessName: winlog.event_data.ProcessName
+  EventID: winlog.event_id
+  TargetName: winlog.event_data.TargetName

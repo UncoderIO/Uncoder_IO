@@ -1,0 +1,29 @@
+@import ../../assets/sass/helpers/variables
+@import ../../assets/sass/helpers/helpers
+
+.banner-grid
+  padding: 16px 24px
+  display: flex
+  align-items: center
+  max-width: 560px
+  border-radius: 2px
+  border: 1px solid rgba($backgroundSuccess, .5)
+  +xs
+    flex-wrap: wrap
+    flex-direction: column
+    justify-content: center
+  &__title
+    margin-right: 20px
+    font-weight: 800
+    font-size: 32px
+    text-shadow: 0 0 24px rgba(26, 255, 157, 0.75), 0 0 4px rgba(26, 255, 157, 0.75), 0 0 4px rgba(26, 255, 157, 0.50)
+    +xs
+      margin: 0 0 12px
+  &__text
+    margin-right: 20px
+    font-weight: 500
+    +xs
+      margin: 0 0 12px
+      text-align: center
+  &__link
+    font-weight: 600

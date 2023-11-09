@@ -1,0 +1,15 @@
+platform: Splunk
+source: linux_process_creation
+
+log_source:
+  index: [linux]
+
+default_log_source:
+  index: linux
+
+field_mapping:
+  RootA: RootA
+  CommandLine: CommandLine
+  Image: Image
+  ParentCommandLine: ParentCommandLine
+  ParentImage: ParentImage

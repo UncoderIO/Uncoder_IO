@@ -1,0 +1,10 @@
+platform: LogScale
+source: windows_bits_client
+description: Text that describe current mapping
+
+
+field_mapping:
+  LocalName: winlog.event_data.LocalName
+  EventID: winlog.event_id
+  RemoteName: winlog.event_data.RemoteName
+  processPath: winlog.event_data.processPath

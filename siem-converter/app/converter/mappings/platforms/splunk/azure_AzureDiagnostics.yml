@@ -1,0 +1,13 @@
+platform: Splunk
+source: azure_AzureDiagnostics
+description: Text that describe current mapping
+
+log_source:
+  sourceType: [azure:*]
+
+default_log_source:
+  sourceType: azure:*
+
+field_mapping:
+  ResultDescription: ResultDescription
+  Category: Category

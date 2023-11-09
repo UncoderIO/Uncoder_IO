@@ -1,0 +1,23 @@
+platform: Athena
+source: aws_cloudtrail
+description: Text that describe current mapping
+
+log_source:
+  table:
+    - cloudtrail_logs_*
+
+default_log_source:
+  table: cloudtrail_logs_*
+
+field_mapping:
+  eventSource: api.service.name
+  eventName: api.operation
+  AdditionalEventData: additionalEventData
+  additionalEventData.MFAUsed: JSON_VALUE(unmapped['additionalEventData'], 'strict$.MFAUsed')
+  requestParameters.attribute: unmapped['eventType']
+  responseElements.pendingModifiedValues.masterUserPassword: unmapped['responseElements']
+  responseElements.publiclyAccessible: JSON_VALUE(unmapped['responseElements'], 'strict$.ConsoleLogin')
+  userIdentity.principalId: http_request.user_agent
+  userIdentity.sessionContext.sessionIssuer.type: unmapped['userIdentity_sessionContext_sessionIssuer_arn']
+  userIdentity.type: unmapped['userIdentity_sessionContext_sessionIssuer_principalId']
+  userIdentity.userName: unmapped['userIdentity_sessionContext_sessionIssuer_type']

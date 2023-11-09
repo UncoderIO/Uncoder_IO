@@ -1,0 +1,18 @@
+platform: Crowdstrike
+source: windows_network_connection
+description: Text that describe current mapping
+
+log_source:
+  event_simpleName: [NetworkConnectIP4]
+
+default_log_source:
+  event_simpleName: NetworkConnectIP4
+
+field_mapping:
+  Image: Image
+  DestinationHostname: DestinationHostname
+  DestinationIp: DestinationIp
+  DestinationPort: DestinationPort
+  SourceIp: SourceIp
+  SourcePort: SourcePort
+  Initiated: Initiated

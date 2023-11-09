@@ -1,0 +1,18 @@
+platform: ElasticSearch
+source: macos_dns_query
+description: Text that describe current mapping
+
+log_source:
+  index: [winlogbeat-*, logs-*]
+
+default_log_source:
+  index: winlogbeat-*
+
+field_mapping:
+  Image: process.executable
+  User:
+  - user.name
+  - winlog.user.domain
+  - winlog.user.name
+  QueryName: dns.question.name
+  QueryResults: dns.answers

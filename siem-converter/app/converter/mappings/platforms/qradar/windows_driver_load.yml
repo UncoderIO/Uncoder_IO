@@ -1,0 +1,18 @@
+platform: Qradar
+source: windows_driver_load
+description: Text that describe current mapping
+
+log_source:
+  devicetype: [12]
+  qid: [5001843]
+  qideventcategory: [Microsoft-Windows-Sysmon/Operational]
+
+default_log_source:
+  devicetype: 12
+  qid: 5001843
+  qideventcategory: Microsoft-Windows-Sysmon/Operational
+
+field_mapping:
+  ImageLoaded: Process Path
+  ImagePath: ImagePath
+  Hashes: File Hash

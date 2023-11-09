@@ -1,0 +1,18 @@
+platform: Splunk
+source: macos_network_connection
+
+log_source:
+  index: [macos]
+
+default_log_source:
+  index: macos
+
+field_mapping:
+  CommandLine: CommandLine
+  Image: Image
+  DestinationHostname: DestinationHostname
+  DestinationIp: DestinationIp
+  DestinationPort: DestinationPort
+  SourceIp: SourceIp
+  SourcePort: SourcePort
+  ParentImage: ParentImage

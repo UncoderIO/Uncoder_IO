@@ -1,0 +1,15 @@
+platform: Qradar
+source: firewall
+description: Text that describe current mapping
+
+log_source:
+  devicetype: [4, 5, 6, 41, 49, 73, 82, 104, 120, 194, 206, 278, 296, 307, 331, 340, 455, 456]
+
+default_log_source:
+  devicetype: 4
+
+field_mapping:
+  src-ip: sourceip
+  src-port: sourceport
+  dst-ip: destinationip
+  dst-port: sestinationport

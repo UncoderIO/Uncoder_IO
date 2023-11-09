@@ -1,0 +1,13 @@
+platform: Splunk
+source: windows_ldap_debug
+description: Text that describe current mapping
+
+log_source:
+  sourceType: [XmlWinEventLog:Microsoft-Windows-LDAP-Client/Debug]
+
+default_log_source:
+  sourceType: XmlWinEventLog:Microsoft-Windows-LDAP-Client/Debug
+
+field_mapping:
+  EventID: EventID
+  SearchFilter: SearchFilter

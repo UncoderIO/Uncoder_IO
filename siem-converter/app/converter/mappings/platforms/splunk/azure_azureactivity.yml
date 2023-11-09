@@ -1,0 +1,22 @@
+platform: Splunk
+source: azure_azureactivity
+description: Text that describe current mapping
+
+log_source:
+  sourceType: [mscs:azure:*, azure:*]
+
+default_log_source:
+  sourceType: mscs:azure:*
+
+field_mapping:
+  ActivityStatus: ActivityStatus
+  ActivityStatusValue: ActivityStatusValue
+  ActivitySubstatusValue: ActivitySubstatusValue
+  Authorization: Authorization
+  Category: Category
+  CategoryValue: CategoryValue
+  OperationName: OperationName
+  OperationNameValue: OperationNameValue
+  ResourceId: ResourceId
+  ResourceProviderValue: ResourceProviderValue
+  Type: Type

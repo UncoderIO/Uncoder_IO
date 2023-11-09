@@ -1,0 +1,16 @@
+platform: Splunk
+source: linux_auditd
+description: Text that describe current mapping
+
+log_source:
+  sourceType: [linux:audit]
+
+default_log_source:
+  sourceType: linux:audit
+
+field_mapping:
+  a0: a0
+  a1: a1
+  a2: a2
+  a3: a3
+  exe: exe

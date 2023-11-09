@@ -1,0 +1,1 @@
+export { InputTextEditorHeader } from './InputTextEditorHeader';

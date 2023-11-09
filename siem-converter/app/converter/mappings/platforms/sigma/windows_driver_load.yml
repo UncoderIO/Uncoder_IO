@@ -1,0 +1,16 @@
+platform: Sigma
+source: windows_driver_load
+description: Text that describe current mapping
+
+log_source:
+  product: [windows]
+  category: [driver_load]
+
+default_log_source:
+  product: macos
+  category: driver_load
+
+field_mapping:
+  ImageLoaded: ImageLoaded
+  ImagePath: ImagePath
+  Hashes: Hashes

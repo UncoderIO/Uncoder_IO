@@ -1,0 +1,162 @@
+@import ../../../assets/sass/helpers/variables
+@import ../../../assets/sass/helpers/aceEditorVariables
+
+.ace-socprime
+  background-color: $backgroundBlueLight
+  color: $textSubdued
+  font-family: $jetBrainsMono
+  font-weight: 400
+
+  & .ace_scroller
+    padding-left: 10px
+
+  & .ace_gutter
+    background: $backgroundBlueLight
+    color: rgba($textSubdued, .2)
+    border-right: 1px solid rgba($textSubdued, .1)
+    .ace_layer
+      .ace_gutter-cell
+        &.ace_error, &.ace_warning
+          background-image: none
+          &::after
+            content: ''
+            position: absolute
+            top: 7px
+            left: 8px
+            width: 4px
+            height: 4px
+            border-radius: 50%$textWarning
+        &.ace_warning::after
+          background-color: $textWarning
+        &.ace_error::after
+          background-color: $textCritical
+
+  & .ace_print-margin
+    display: none
+
+  & .ace_cursor
+    color: $textDefault
+
+  & .ace_marker-layer .ace_selection
+    background: $colorTextMarkerLayer
+    font-family: $jetBrainsMono
+    font-weight: 400
+
+  & .ace_multiselect .ace_selection.ace_start
+    box-shadow: 0 0 3px 0 $colorAceMultiselect
+    border-radius: 2px
+
+  & .ace_marker-layer .ace_step
+    background: $colorMarkerLayerAceStep
+
+  & .ace_marker-layer .ace_bracket
+    margin: -1px 0 0 -1px
+    border: 1px solid $colorMarkerLayer
+
+  & .ace_marker-layer .ace_active-line
+    background: $colorTextMarkerLayer
+
+  .ace_gutter-active-line
+    background-color: $colorTextMarkerLayer
+
+  .ace_marker-layer .ace_selected-word
+    box-shadow: 0 0 0 1px $colorMarkerLayer
+    border-radius: 3px
+
+  & .ace_meta
+    &.ace_tag
+      color: $textSuccess
+
+  .ace_fold
+    background-color: $actionPrimaryHovered
+    border-color: $colorAceFold
+
+  .ace_keyword
+    color: $textDefault
+
+  .ace_constant.ace_language
+    color: $colorAceInvalidAceDeprecatedBackground
+
+  .ace_constant.ace_numeric
+    color: $colorAceInvalidAceDeprecatedBackground
+
+  .ace_constant.ace_character
+    color: $colorAceInvalidAceDeprecatedBackground
+
+  .ace_constant.ace_character.ace_escape
+    color: $colorAceNameAceTag
+
+  .ace_constant.ace_other
+    color: $colorAceInvalidAceDeprecatedBackground
+
+
+  .ace_support.ace_function
+    color: $colorAceStorageAceType
+
+  .ace_support.ace_constant
+    color: $colorAceSupportAceConstant
+
+  .ace_support.ace_class
+    font-style: italic
+    color: $colorAceSupportAceType
+
+  .ace_support.ace_type
+    font-style: italic
+    color: $colorAceSupportAceType
+
+  .ace_storage
+    color: $colorAceNameAceTag
+
+  .ace_storage.ace_type
+    font-style: italic
+    color: $colorAceStorageAceType
+
+  .ace_invalid
+    color: $colorAceInvalid
+    background-color: $colorAceNameAceTag
+
+  .ace_invalid.ace_deprecated
+    color: $colorAceInvalid
+    background-color: $colorAceInvalidAceDeprecatedBackground
+
+  .ace_string
+    color: $colorAceString
+
+  .ace_comment
+    color: $colorAceComment
+
+  .ace_variable
+    color: $actionPrimaryHovered
+
+  .ace_variable.ace_parameter
+    font-style: italic
+    color: $colorAceVariableAceParameter
+
+  .ace_entity.ace_other.ace_attribute-name
+    color: $actionPrimaryHovered
+
+  .ace_entity.ace_name.ace_function
+    color: $actionPrimaryHovered
+
+  .ace_entity.ace_name.ace_tag
+    color: $colorAceNameAceTag
+
+  .ace_invisible
+    color: $colorAceInvisible
+
+  .ace_indent-guide
+    background: $identGuideIcon
+
+  .error-marker
+    position: absolute
+
+  .ace_tooltip
+    padding: 12px
+    border-radius: 4px
+    border-color: rgba($black, .9)
+    background-color: rgba($black, .9)
+    font-family: $inter
+    font-size: 12px
+    line-height: 1.4
+    color: $textSubdued
+    filter: drop-shadow(0px 0px 100px $black)

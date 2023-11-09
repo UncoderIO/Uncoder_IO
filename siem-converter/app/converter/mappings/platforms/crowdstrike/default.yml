@@ -1,0 +1,10 @@
+platform: Crowdstrike
+source: default
+description: Text that describe current mapping
+
+log_source:
+  event_simpleName:
+    - ProcessRollup2
+
+default_log_source:
+  event_simpleName: ProcessRollup2

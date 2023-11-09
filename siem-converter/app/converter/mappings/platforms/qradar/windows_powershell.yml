@@ -1,0 +1,22 @@
+platform: Qradar
+source: windows_powershell
+description: Text that describe current mapping
+
+log_source:
+  devicetype: [12]
+  qideventcategory: [Microsoft-Windows-PowerShell/Operational]
+
+default_log_source:
+  devicetype: 12
+  qideventcategory: Microsoft-Windows-PowerShell/Operational
+
+field_mapping:
+  EventID: Event ID
+  CommandLine: Command
+  ScriptBlockText: ScriptBlockText
+  Payload: Payload
+  HostApplication: HostApplication
+  ContextInfo: ContextInfo
+  HostName: HostName
+  EngineVersion: EngineVersion
+  HostVersion: HostVersion

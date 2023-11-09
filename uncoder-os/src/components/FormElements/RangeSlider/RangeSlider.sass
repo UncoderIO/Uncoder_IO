@@ -1,0 +1,108 @@
+@import ../../../assets/sass/helpers/variables
+
+.range-slider-grid
+  display: flex
+  align-items: center
+  &__count
+    display: flex
+    align-items: center
+    justify-content: center
+    min-width: 34px
+    min-height: 28px
+    padding: 4px
+    border-radius: 4px
+    background-color: $backgroundSilverBlue
+
+  [type=range]
+    margin: 12px 0
+    width: 100%
+    background: transparent
+    -webkit-appearance: none
+
+    &::-moz-focus-outer
+      border: 0
+
+    &:focus
+      outline: 0
+
+      &::-ms-fill-lower,
+      &::-ms-fill-upper,
+      &::-webkit-slider-runnable-track
+        background: $backgroundSilverBlue
+
+    &::-webkit-slider-runnable-track
+      width: 100%
+      height: 2px
+      border-radius: 5px
+      background: $backgroundSilverBlue
+      box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2)
+      transition: all 0.2s ease
+      cursor: default
+
+    &::-webkit-slider-thumb
+      margin-top: -6px
+      width: 14px
+      height: 14px
+      border-radius: 50%
+      background: $backgroundWhite
+      box-sizing: border-box
+      -webkit-appearance: none
+      box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2), 0 0 4px rgba(13, 13, 13, 0.2)
+      cursor: default
+
+    &::-moz-range-track
+      width: 100%
+      height: 2px
+      border-radius: 5px
+      background: $backgroundSilverBlue
+      box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2)
+      transition: all 0.2s ease
+      cursor: default
+
+    &::-moz-range-thumb
+      width: 14px
+      height: 14px
+      border-radius: 50%
+      background: $backgroundWhite
+      box-sizing: border-box
+      box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2), 0 0 4px rgba(13, 13, 13, 0.2)
+      cursor: default
+
+    &::-ms-track
+      width: 100%
+      height: 4px
+      border-color: transparent
+      border-width: 12px 0
+      background: transparent
+      color: transparent
+      transition: all 0.2s ease
+      cursor: default
+
+    &::-ms-fill-lower,
+    &::-ms-fill-upper
+      background: $backgroundSilverBlue
+
+    &::-ms-fill-lower,
+    &::-ms-fill-upper
+      border-radius: 10px
+      box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(13, 13, 13, 0.2)
+
+    &::-ms-thumb
+      margin-top: 2px
+      width: 14px
+      height: 14px
+      border-radius: 50%
+      background: $backgroundWhite
+      box-sizing: border-box
+      box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2), 0 0 4px rgba(13, 13, 13, 0.2)
+      cursor: default
+
+    &:disabled
+      &::-webkit-slider-thumb,
+      &::-moz-range-thumb,
+      &::-ms-thumb,
+      &::-webkit-slider-runnable-track,
+      &::-ms-fill-lower,
+      &::-ms-fill-upper
+        cursor: not-allowed
+

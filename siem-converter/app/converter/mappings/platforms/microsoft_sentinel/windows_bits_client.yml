@@ -1,0 +1,15 @@
+platform: Microsoft Sentinel
+source: windows_bits_client
+description: Text that describe current mapping
+
+log_source:
+  table: [Event]
+
+default_log_source:
+  table: Event
+
+field_mapping:
+  LocalName: LocalName
+  EventID: EventID
+  RemoteName: RemoteName
+  processPath: processPath

@@ -1,0 +1,15 @@
+platform: Chronicle
+source: windows_image_load
+description: Text that describe current mapping
+
+
+field_mapping:
+  Image: principal.process.file.full_path
+  ImageLoaded:
+    - target.process.file.full_path
+    - principal.process.file.full_path
+  SignatureStatus: target.resource.attribute.labels[2].value
+  Signed: target.resource.attribute.labels[0].value
+  Hashes:
+    - target.process.file.md5
+    - target.process.file.sha256;target.process.file.sha1

@@ -1,0 +1,10 @@
+platform: Athena
+source: linux_file_event
+description: Text that describe current mapping
+
+default_log_source:
+  table: eventlog
+
+field_mapping:
+  Image: actor.process.file.path
+  TargetFilename : file.name

@@ -1,0 +1,25 @@
+platform: Qradar
+source: webserver
+description: Text that describe current mapping
+
+log_source:
+  devicetype: [10, 13, 239, 439]
+
+default_log_source:
+  devicetype: 10
+
+field_mapping:
+  c-uri: URL
+  c-useragent: c-useragent
+  cs-method: cs-method
+  cs-bytes: Bytes Sent
+  cs-cookie-vars: cs-cookie-vars
+  c-uri-extension: c-uri-extension
+  c-uri-query: URL
+  cs-cookie: cs-cookie
+  cs-host: cs-host
+  cs-referrer: URL Referrer
+  cs-version: cs-version
+  r-dns: r-dns
+  sc-status: sc-status
+  post-body: post-body

@@ -1,0 +1,13 @@
+platform: OpenSearch
+source: azure_aadnoninteractiveusersigninlogs
+description: Text that describe current mapping
+
+log_source:
+  index: [logs-*]
+
+default_log_source:
+  index: logs-*
+
+field_mapping:
+  UserAgent: UserAgent
+  Type: Type

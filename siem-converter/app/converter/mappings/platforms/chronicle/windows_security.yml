@@ -1,0 +1,12 @@
+platform: Chronicle
+source: windows_security
+description: Text that describe current mapping
+
+
+field_mapping:
+  EventID: metadata.product_event_type
+  AccessMask: security_result.about.resource.name
+  AccountName: principal.user.role_name
+  AuthenticationPackageName: security_result.about.resource.name
+  ComputerName: principal.hostname
+  GrantedAccess: resource.name

@@ -1,0 +1,41 @@
+@import ../../../assets/sass/helpers/variables
+
+.additional-button
+  text-align: center
+  cursor: pointer
+  &.is-disabled
+    cursor: default
+    opacity: 0.7
+  &.roota
+    .additional-button
+      &__icon
+        margin-bottom: 2px
+        font-size: 28px
+        line-height: 1
+  &:hover
+    &:not(.is-disabled, .roota)
+      .additional-button
+        &__icon
+          color: $textSuccess
+        &__text
+          color: $textDefault
+    &.roota
+      .additional-button
+        &__icon
+          color: $textCritical
+  &__icon
+    position: relative
+    display: block
+    font-size: 24px
+    color: $textSubdued
+    transition: color .1s
+  &__text
+    user-select: none
+    color: $textSubdued
+
+.additional-link
+  color: $textSubdued
+  text-decoration: none
+  &:hover
+    color: $textDefault
+    text-decoration: none

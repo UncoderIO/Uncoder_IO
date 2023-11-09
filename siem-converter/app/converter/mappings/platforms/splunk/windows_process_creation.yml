@@ -1,0 +1,21 @@
+platform: Splunk
+source: windows_process_creation
+description: Text that describe current mapping
+
+log_source:
+  source: [WinEventLog:Microsoft-Windows-Sysmon/Operational, WinEventLog:Security]
+
+default_log_source:
+  source: WinEventLog:Security
+
+field_mapping:
+  CommandLine: CommandLine
+  CurrentDirectory: CurrentDirectory
+  Hashes: Hashes
+  Image: Image
+  IntegrityLevel: IntegrityLevel
+  ParentCommandLine: ParentCommandLine
+  ParentImage: ParentImage
+  ParentUser: ParentUser
+  Product: Product
+  User: User

@@ -1,0 +1,16 @@
+platform: LogScale
+source: windows_process_creation
+description: Text that describe current mapping
+
+
+field_mapping:
+  CommandLine: winlog.event_data.CommandLine
+  CurrentDirectory: winlog.event_data.CurrentDirectory
+  Hashes: winlog.event_data.Hashes
+  Image: winlog.event_data.Image
+  IntegrityLevel: winlog.event_data.IntegrityLevel
+  ParentCommandLine: winlog.event_data.ParentCommandLine
+  ParentImage: winlog.event_data.ParentImage
+  ParentUser: winlog.event_data.ParentUser
+  Product: winlog.event_data.Product
+  User: winlog.event_data.User

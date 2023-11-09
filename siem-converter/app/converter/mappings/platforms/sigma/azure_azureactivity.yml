@@ -1,0 +1,24 @@
+platform: Sigma
+source: azure_azureactivity
+description: Text that describe current mapping
+
+log_source:
+  product: [azure]
+  service: [azureactivity]
+
+default_log_source:
+  product: azure
+  service: azureactivity
+
+field_mapping:
+  ActivityStatus: ActivityStatus
+  ActivityStatusValue: ActivityStatusValue
+  ActivitySubstatusValue: ActivitySubstatusValue
+  Authorization: Authorization
+  Category: Category
+  CategoryValue: CategoryValue
+  OperationName: OperationName
+  OperationNameValue: OperationNameValue
+  ResourceId: ResourceId
+  ResourceProviderValue: ResourceProviderValue
+  Type: Type

@@ -1,0 +1,17 @@
+platform: Qradar
+source: windows_create_stream_hash
+description: Text that describe current mapping
+
+log_source:
+  devicetype: [12]
+  qid: [5001834]
+  qideventcategory: [Microsoft-Windows-Sysmon/Operational]
+
+default_log_source:
+  devicetype: 12
+  qid: 5001834
+  qideventcategory: Microsoft-Windows-Sysmon/Operational
+
+field_mapping:
+  Image: Process Path
+  Hashes: File Hash

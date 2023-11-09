@@ -1,0 +1,39 @@
+@import ../../../assets/sass/helpers/variables
+
+.checkbox-grid
+  position: relative
+  display: inline-flex
+  &__label
+    display: flex
+    align-items: center
+  &__icon
+    display: flex
+    align-items: center
+    justify-content: center
+    width: 18px
+    height: 18px
+    border-radius: 2px
+    border: 1px solid $borderGray
+    background-color: $backgroundBlue
+    font-size: 12px
+    color: $textDark
+    transition: background-color .1s, border-color .1s
+    cursor: pointer
+    svg
+      opacity: 0
+      transition: opacity .1s
+  &__text
+    line-height: 1.5
+    user-select: none
+  &__input
+    position: absolute
+    top: 0
+    left: 0
+    width: 0
+    height: 0
+    display: none
+    &:checked ~ .checkbox-grid__icon
+      border-color: $backgroundSuccess
+      background-color: $backgroundSuccess
+      svg
+        opacity: 1

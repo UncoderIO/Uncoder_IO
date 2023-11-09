@@ -1,0 +1,11 @@
+platform: Chronicle
+source: windows_create_remote_thread
+description: Text that describe current mapping
+
+
+field_mapping:
+  SourceImage: principal.process.file.full_path
+  TargetImage: target.process.file.full_path
+  StartModule: target.resource.name
+  StartAddress: target.resource.name
+  StartFunction: target.resource.name

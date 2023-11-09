@@ -1,0 +1,17 @@
+platform: Qradar
+source: macos_dns_query
+description: Text that describe current mapping
+
+log_source:
+  devicetype: [102]
+  category: [18081]
+
+default_log_source:
+  devicetype: 102
+  category: 18081
+
+field_mapping:
+  Image: Process Path
+  User: username
+  QueryName: URL
+  QueryResults: URL

@@ -1,0 +1,15 @@
+platform: Microsoft Defender
+source: macos_process_creation
+description: Text that describe current mapping
+
+log_source:
+  table: [DeviceProcessEvents]
+
+default_log_source:
+  table: DeviceProcessEvents
+
+field_mapping:
+  CommandLine: ProcessCommandLine
+  Image: FolderPath
+  ParentCommandLine: InitiatingProcessCommandLine
+  ParentImage: InitiatingProcessFolderPath

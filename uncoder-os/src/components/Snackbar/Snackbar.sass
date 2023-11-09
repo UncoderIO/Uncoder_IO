@@ -1,0 +1,41 @@
+@import ../../assets/sass/helpers/variables
+
+.snackbar-grid
+  position: fixed
+  top: 0
+  right: 0
+  left: 0
+  box-shadow: 0 4px 32px 0 rgba(0, 0, 0, 0.35)
+  z-index: 100
+  &__wrapper
+    min-height: 72px
+    padding: 8px 80px 8px 32px
+    position: relative
+    display: flex
+    align-items: center
+  &__icon
+    padding-top: 3px
+    font-size: 20px
+  &__text
+    font-weight: 500
+    font-family: $jetBrainsMono
+    color: $textDefault
+  &__close
+    position: absolute
+    top: 50%
+    right: 32px
+    transform: translateY(-50%)
+    .button--icon
+      font-size: 18px
+      &.button--default
+        color: $textDefault
+      &:hover
+        background-color: rgba($backgroundWhite, .2)
+  &.error
+    background-color: $snackbarError
+  &.warning
+    background-color: $backgroundWarning
+  &.info
+    background-color: $snackbarBlue
+  &.success
+    background-color: $backgroundSuccess

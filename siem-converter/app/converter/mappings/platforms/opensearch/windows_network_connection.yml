@@ -1,0 +1,17 @@
+platform: OpenSearch
+source: windows_network_connection
+description: Text that describe current mapping
+
+log_source:
+  index: [winlogbeat-*, logs-*]
+
+default_log_source:
+  index: winlogbeat-*
+
+field_mapping:
+  Image: process.executable
+  DestinationHostname: destination.domain
+  DestinationIp: destination.ip
+  DestinationPort: destination.port
+  SourceIp: source.ip
+  SourcePort: source.port

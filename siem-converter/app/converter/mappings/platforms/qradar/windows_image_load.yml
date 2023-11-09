@@ -1,0 +1,20 @@
+platform: Qradar
+source: windows_image_load
+description: Text that describe current mapping
+
+log_source:
+  devicetype: [12]
+  category: [19247]
+  qideventcategory: [Microsoft-Windows-Sysmon/Operational]
+
+default_log_source:
+  devicetype: 12
+  category: 19247
+  qideventcategory: Microsoft-Windows-Sysmon/Operational
+
+field_mapping:
+  Image: username
+  ImageLoaded: Process Path
+  SignatureStatus: Signature Status
+  OriginalFileName: OriginalFileName
+  Signed: Signed

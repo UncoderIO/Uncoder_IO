@@ -1,0 +1,16 @@
+platform: Microsoft Defender
+source: windows_registry_event
+description: Text that describe current mapping
+
+log_source:
+  table: [DeviceRegistryEvents]
+
+default_log_source:
+  table: DeviceRegistryEvents
+
+field_mapping:
+  TargetObject: RegistryKey
+  Image: InitiatingProcessFolderPath
+  Details:
+    - RegistryValueData
+    - RegistryValueType

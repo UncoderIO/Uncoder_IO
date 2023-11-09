@@ -1,0 +1,15 @@
+platform: Sigma
+source: windows_ldap_debug
+description: Text that describe current mapping
+
+log_source:
+  product: [windows]
+  service: [ldap_debug]
+
+default_log_source:
+  product: windows
+  service: ldap_debug
+
+field_mapping:
+  EventID: EventID
+  SearchFilter: SearchFilter

@@ -1,0 +1,15 @@
+platform: Crowdstrike
+source: macos_process_creation
+description: Text that describe current mapping
+
+log_source:
+  event_simpleName: [ProcessRollup2]
+
+default_log_source:
+  event_simpleName: ProcessRollup2
+
+field_mapping:
+  CommandLine: CommandLine
+  Image: Image
+  ParentCommandLine: ParentCommandLine
+  ParentImage: ParentImage

@@ -1,0 +1,15 @@
+platform: Qradar
+source: windows_pipe_created
+description: Text that describe current mapping
+
+log_source:
+  devicetype: [12]
+  qideventcategory: [Microsoft-Windows-Sysmon/Operational]
+
+default_log_source:
+  devicetype: 12
+  qideventcategory: Microsoft-Windows-Sysmon/Operational
+
+field_mapping:
+  PipeName: Pipe Name
+  Image: Process Path

@@ -1,0 +1,17 @@
+platform: Qradar
+source: linux_process_creation
+description: Text that describe current mapping
+
+log_source:
+  devicetype: [11]
+  category: [8110]
+
+default_log_source:
+  devicetype: 11
+  category: 8110
+
+field_mapping:
+  CommandLine: Command
+  Image: Process Path
+  ParentCommandLine: Parent Command
+  ParentImage: Parent Process Path

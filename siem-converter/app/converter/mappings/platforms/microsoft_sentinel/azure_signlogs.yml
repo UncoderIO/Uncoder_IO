@@ -1,0 +1,29 @@
+platform: Microsoft Sentinel
+source: azure_signinlogs
+description: Text that describe current mapping
+
+log_source:
+  table: [SigninLogs]
+
+default_log_source:
+  table: SigninLogs
+
+field_mapping:
+  AppDisplayName: AppDisplayName
+  AppId: AppId
+  AuthenticationRequirement: AuthenticationRequirement
+  Category: Category
+  ConditionalAccessStatus: ConditionalAccessStatus
+  DeviceDetail: DeviceDetail
+  IsInteractive: IsInteractive
+  NetworkLocationDetails: NetworkLocationDetails
+  ResourceDisplayName: ResourceDisplayName
+  ResourceIdentity: ResourceIdentity
+  ResultDescription: ResultDescription
+  ResultType: ResultType
+  Status.errorCode: Status['errorCode']
+  Status: Status
+  Status.failureReason: Status['failureReason']
+  TokenIssuerType: TokenIssuerType
+  UserAgent: UserAgent
+  UserPrincipalName: UserPrincipalName

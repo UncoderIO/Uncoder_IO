@@ -1,0 +1,22 @@
+platform: Sigma
+source: azure_BehaviorAnalytics
+description: Text that describe current mapping
+
+log_source:
+  product: [azure]
+  service: [BehaviorAnalytics]
+
+default_log_source:
+  product: azure
+  service: BehaviorAnalytics
+
+field_mapping:
+  ActionType: ActionType
+  ActivityInsights: ActivityInsights
+  ActivityType: ActivityType
+  EventSource: EventSource
+  DevicesInsights: DevicesInsights
+  RiskDetail: RiskDetail
+  UsersInsights: UsersInsights
+  UsersInsights.IsDormantAccount: UsersInsights.IsDormantAccount
+  UsersInsights.IsNewAccount: UsersInsights.IsNewAccount

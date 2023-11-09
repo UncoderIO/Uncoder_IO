@@ -1,0 +1,15 @@
+platform: Sigma
+source: windows_wmi_event
+description: Text that describe current mapping
+
+log_source:
+  product: [windows]
+  category: [wmi_event]
+
+default_log_source:
+  product: windows
+  category: wmi_event
+
+field_mapping:
+  Destination: Destination
+  EventID: EventID

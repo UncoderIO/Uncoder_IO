@@ -1,0 +1,13 @@
+platform: Microsoft Sentinel
+source: azure_aadnoninteractiveusersigninlogs
+description: Text that describe current mapping
+
+log_source:
+  table: [AADNonInteractiveUserSignInLogs]
+
+default_log_source:
+  table: AADNonInteractiveUserSignInLogs
+
+field_mapping:
+  UserAgent: UserAgent
+  Type: Type

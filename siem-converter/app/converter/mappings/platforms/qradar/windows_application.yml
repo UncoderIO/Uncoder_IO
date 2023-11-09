@@ -1,0 +1,28 @@
+platform: Qradar
+source: windows_application
+description: Text that describe current mapping
+
+log_source:
+  devicetype: [12]
+  qideventcategory: [Application_Information, Application_Warning, Application_Error]
+
+default_log_source:
+  devicetype: 12
+  qideventcategory: Application_Information
+
+field_mapping:
+  EventID: Event ID
+  Provider_Name: Provider_Name
+  Level: Level
+  src_ip: sourceip
+  source: source
+  additional_information: additional_information
+  EventData: EventData
+  Channel: Channel
+  statement: statement
+  Faulting application path: Faulting application path
+  object_name: Object Name
+  class_type: class_type
+  action_id: action_id
+  Data: Data
+  Message: Message

@@ -1,0 +1,15 @@
+platform: Microsoft Sentinel
+source: windows_ntlm
+description: Text that describe current mapping
+
+log_source:
+  table: [Event]
+
+default_log_source:
+  table: Event
+
+field_mapping:
+  WorkstationName: WorkstationName
+  ProcessName: ProcessName
+  EventID: EventID
+  TargetName: TargetName

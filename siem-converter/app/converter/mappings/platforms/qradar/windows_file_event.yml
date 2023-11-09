@@ -1,0 +1,20 @@
+platform: Qradar
+source: windows_file_event
+description: Text that describe current mapping
+
+log_source:
+  devicetype: [12]
+  category: [8028]
+
+default_log_source:
+  devicetype: 12
+  category: 8028
+
+field_mapping:
+  CreationUtcTime: endtime
+  FileName: Filename
+  Image: Process Path
+  OriginalFilename: OriginalFilename
+  PreviousCreationUtcTime: PreviousCreationUtcTime
+  TargetFilename: Filename
+  User: username

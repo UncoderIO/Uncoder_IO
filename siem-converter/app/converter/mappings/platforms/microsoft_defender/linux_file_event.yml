@@ -1,0 +1,13 @@
+platform: Microsoft Defender
+source: linux_file_event
+description: Text that describe current mapping
+
+log_source:
+  table: [DeviceFileEvents]
+
+default_log_source:
+  table: DeviceFileEvents
+
+field_mapping:
+  Image: InitiatingProcessFolderPath
+  TargetFilename : FolderPath

@@ -1,0 +1,13 @@
+platform: Microsoft Sentinel
+source: linux_file_event
+description: Text that describe current mapping
+
+log_source:
+  table: [SysmonEvent, DeviceFileEvents]
+
+default_log_source:
+  table: SysmonEvent
+
+field_mapping:
+  Image: Image
+  TargetFilename : TargetFilename

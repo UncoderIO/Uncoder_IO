@@ -1,0 +1,21 @@
+platform: Sigma
+source: windows_powershell
+description: Text that describe current mapping
+
+log_source:
+  product: [windows]
+  service: [powershell]
+
+default_log_source:
+  product: windows
+  service: powershell
+
+field_mapping:
+  EventID: EventID
+  CommandLine: CommandLine
+  ScriptBlockText: ScriptBlockText
+  Payload: Payload
+  HostApplication: HostApplication
+  ContextInfo: ContextInfo
+  HostName: HostName
+  EngineVersion: EngineVersion

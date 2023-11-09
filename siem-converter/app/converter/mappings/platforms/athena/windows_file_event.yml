@@ -1,0 +1,16 @@
+platform: Microsoft Sentinel
+source: windows_file_event
+description: Text that describe current mapping
+
+default_log_source:
+  table: eventlog
+
+field_mapping:
+  CreationUtcTime: file.created_time
+  FileName: file.name
+  Image: actor.process.file.path
+  OriginalFilename: file.name
+  TargetFilename: file.name
+  User:
+    - actor.user.name
+    - actor.process.user.name

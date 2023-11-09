@@ -1,0 +1,22 @@
+platform: Qradar
+source: windows_network_connection
+description: Text that describe current mapping
+
+log_source:
+  devicetype: [12]
+  category: [4012]
+  qideventcategory: [Microsoft-Windows-Sysmon/Operational]
+
+default_log_source:
+  devicetype: 12
+  category: [4012]
+  qideventcategory: Microsoft-Windows-Sysmon/Operational
+
+field_mapping:
+  Image: Process Path
+  DestinationHostname: Destination Hostname
+  DestinationIp: destinationip
+  DestinationPort: destinationport
+  SourceIp: sourceip
+  SourcePort: sourceport
+  Initiated: Initiated

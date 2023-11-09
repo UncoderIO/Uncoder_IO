@@ -1,0 +1,35 @@
+@import ../../../assets/sass/helpers/variables
+
+.text-editor-header-grid
+  position: relative
+  display: flex
+  &__col
+    flex: 1 1 50%
+    &--center
+      position: absolute
+      top: 50%
+      left: 50%
+      transform: translate(-50%, -50%)
+      font-size: 20px
+      color: $textSuccess
+
+.text-editor-header
+  display: flex
+  justify-content: space-between
+  align-items: center
+  min-height: 54px
+  border-bottom: 1px solid rgba($backgroundWhite, .1)
+  &--input
+    padding: 0 44px 0 6px
+  &--output
+    padding: 0 6px 0 44px
+  &__col
+    &--select
+      flex: 1 1 100%
+    &--buttons
+      display: flex
+      align-items: center
+
+.text-editor-header-list
+  display: flex
+  align-items: center

@@ -1,0 +1,2 @@
+export const DEFAULT_SUCCESS_TTL = 5000;
+export const DEFAULT_ERROR_TTL = 20000;

@@ -1,0 +1,20 @@
+platform: Sigma
+source: linux_network_connection
+description: Text that describe current mapping
+
+log_source:
+  product: [linux]
+  category: [network_connection]
+
+default_log_source:
+  product: linux
+  category: network_connection
+
+field_mapping:
+  Image: Image
+  DestinationHostname: DestinationHostname
+  DestinationIp: DestinationIp
+  DestinationPort: DestinationPort
+  SourceIp: SourceIp
+  SourcePort: SourcePort
+  ParentImage: ParentImage

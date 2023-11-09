@@ -1,0 +1,13 @@
+platform: Splunk
+source: linux_file_access
+description: Text that describe current mapping
+
+log_source:
+  index: [linux]
+
+default_log_source:
+  index: linux
+
+field_mapping:
+  Image: Image
+  TargetFilename: TargetFilename

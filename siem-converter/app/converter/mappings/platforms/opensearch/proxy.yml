@@ -1,0 +1,30 @@
+platform: OpenSearch
+source: proxy
+description: Text that describe current mapping
+
+log_source:
+  index: [logs-*]
+
+default_log_source:
+  index: logs-*
+
+field_mapping:
+  c-uri: url.original
+  c-useragent: user_agent.original
+  cs-method: http.request.method
+  cs-bytes: http.request.body.bytes
+  cs-cookie-vars: http.cookie_vars
+  c-uri-extension: url.extension
+  c-uri-query: url.query
+  cs-cookie: http.cookie_vars
+  cs-host:
+    - url.domain
+    - destination.domain
+
+  cs-referrer: http.request.referrer
+  cs-version: http.version
+  r-dns:
+    - destination.domain
+    - url.domain
+  sc-status: http.response.status_code
+  post-body: http.post_body

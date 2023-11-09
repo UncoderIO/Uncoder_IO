@@ -1,0 +1,10 @@
+platform: LogScale
+source: windows_process_access
+description: Text that describe current mapping
+
+
+field_mapping:
+  TargetImage: winlog.event_data.TargetImage
+  SourceImage: winlog.event_data.SourceImage
+  CallTrace: winlog.event_data.CallTrace
+  GrantedAccess: winlog.event_data.GrantedAccess

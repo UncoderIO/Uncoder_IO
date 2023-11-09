@@ -1,0 +1,14 @@
+platform: Microsoft Defender
+source: macos_network_connection
+description: Text that describe current mapping
+
+log_source:
+  table: [DeviceNetworkEvents]
+
+default_log_source:
+  table: DeviceNetworkEvents
+
+field_mapping:
+  CommandLine: ProcessCommandLine
+  Image: FolderPath
+  ParentImage: InitiatingProcessFolderPath

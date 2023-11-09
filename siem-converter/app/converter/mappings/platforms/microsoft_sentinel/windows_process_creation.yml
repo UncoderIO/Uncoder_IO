@@ -1,0 +1,21 @@
+platform: Microsoft Sentinel
+source: windows_process_creation
+description: Text that describe current mapping
+
+log_source:
+  table: [SysmonEvent, SecurityEvent, WindowsEvent, DeviceProcessEvents]
+
+default_log_source:
+  table: SecurityEvent
+
+field_mapping:
+  CommandLine: CommandLine
+  CurrentDirectory: CurrentDirectory
+  Hashes: Hashes
+  Image: NewProcessName
+  IntegrityLevel: IntegrityLevel
+  ParentCommandLine: ParentCommandLine
+  ParentImage: ParentProcessName
+  ParentUser: ParentUser
+  Product: Product
+  User: Account

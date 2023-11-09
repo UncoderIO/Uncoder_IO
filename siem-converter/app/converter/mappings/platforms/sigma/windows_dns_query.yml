@@ -1,0 +1,17 @@
+platform: Sigma
+source: windows_dns_query
+description: Text that describe current mapping
+
+log_source:
+  product: [windows]
+  category: [dns_query]
+
+default_log_source:
+  product: windows
+  category: dns_query
+
+field_mapping:
+  Image: Image
+  User: User
+  QueryName: QueryName
+  QueryResults: QueryResults

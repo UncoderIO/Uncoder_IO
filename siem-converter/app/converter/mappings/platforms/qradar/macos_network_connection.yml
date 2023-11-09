@@ -1,0 +1,21 @@
+platform: Qradar
+source: macos_network_connection
+description: Text that describe current mapping
+
+log_source:
+  devicetype: [102]
+  category: [4012]
+
+default_log_source:
+  devicetype: 102
+  category: [4012]
+
+field_mapping:
+  CommandLine: Command
+  Image: Process Path
+  DestinationHostname: Destination Hostname
+  DestinationIp: destinationip
+  DestinationPort: destinationport
+  SourceIp: sourceip
+  SourcePort: sourceport
+  ParentImage: Parent Process Path

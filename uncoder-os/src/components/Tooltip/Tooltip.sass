@@ -1,0 +1,36 @@
+@import ../../assets/sass/helpers/variables
+
+.tooltip-element
+  position: relative
+  cursor: default
+
+.tooltip
+  display: none
+  padding: 8px 10px
+  position: absolute
+  width: max-content
+  border-radius: 5px
+  background-color: rgba($backgroundDark, .95)
+  transition: opacity .2s
+  opacity: 0
+  &.tooltip
+    &-top
+      bottom: 110%
+      left: 50%
+      transform: translateX(-50%)
+    &-right
+      top: -5px
+      left: 105%
+    &-bottom
+      top: 105%
+      left: 0
+    &-left
+      top: -5px
+      right: 105%
+
+.tooltip-element
+  &:hover
+    .tooltip
+      display: block
+      opacity: 1
+

@@ -1,0 +1,18 @@
+platform: Splunk
+source: linux_network_connection
+
+log_source:
+  index: [linux]
+
+default_log_source:
+  index: linux
+
+field_mapping:
+  CommandLine: CommandLine
+  Image: Image
+  DestinationHostname: DestinationHostname
+  DestinationIp: DestinationIp
+  DestinationPort: DestinationPort
+  SourceIp: SourceIp
+  SourcePort: SourcePort
+  ParentImage: ParentImage

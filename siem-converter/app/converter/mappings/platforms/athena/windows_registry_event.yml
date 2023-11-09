@@ -1,0 +1,14 @@
+platform: Athena
+source: windows_registry_event
+description: Text that describe current mapping
+
+default_log_source:
+  table: eventlog
+
+field_mapping:
+  TargetObject:
+    - reg_key.path
+    - reg_value.name
+    - reg_value.path
+  Image: actor.process.file.path
+  User: actor.process.user.name

@@ -1,0 +1,19 @@
+platform: Qradar
+source: windows_dns_query
+description: Text that describe current mapping
+
+log_source:
+  devicetype: [12]
+  category: [18081]
+  qideventcategory: [Microsoft-Windows-Sysmon/Operational]
+
+default_log_source:
+  devicetype: 12
+  category: 18081
+  qideventcategory: Microsoft-Windows-Sysmon/Operational
+
+field_mapping:
+  Image: Process Path
+  User: username
+  QueryName: URL
+  QueryResults: URL

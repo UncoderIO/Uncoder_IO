@@ -1,0 +1,26 @@
+@import ../../assets/sass/helpers/variables
+
+.popper-window-grid
+  position: relative
+  &__menu
+    position: absolute
+    margin-top: 4px
+    border-radius: 4px
+    background-color: $darkBlue
+    box-shadow: 0 4px 32px 0 rgba(0, 0, 0, 0.35)
+    overflow: hidden
+    opacity: 0
+    transition: opacity .2s
+    z-index: 6
+    &.is-open
+      opacity: 1
+    &.bottom-start
+      top: 100%
+      left: -6000px
+      &.is-open
+        left: 0
+    &.bottom-end
+      top: 100%
+      right: -6000px
+      &.is-open
+        right: 0

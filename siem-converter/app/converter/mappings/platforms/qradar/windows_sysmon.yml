@@ -1,0 +1,63 @@
+platform: Qradar
+source: windows_sysmon
+description: Text that describe current mapping
+
+log_source:
+  devicetype: [12]
+  qideventcategory: [Microsoft-Windows-Sysmon/Operational]
+
+default_log_source:
+  devicetype: 12
+  qideventcategory: Microsoft-Windows-Sysmon/Operational
+
+field_mapping:
+  CommandLine: Command
+  Image: Process Path
+  ParentImage: Parent Process Path
+  EventID: Event ID
+  DestinationHostname: Destination Host Name
+  DestinationIp: destinationip
+  DestinationPort: destinationport
+  Hashes: File Hash
+  ParentCommandLine: Parent Command
+  RuleName: Rule Name
+  SourceHostname: Source Hostname
+  SourceIp: sourceip
+  SourcePort: sourceport
+  TargetFilename: Filename
+  User: username
+  SignatureStatus: Signature Status
+  TargetObject: Target Object
+  Details: Target Details
+  QueryName: URL
+  PipeName: Pipe Name
+  ImageLoaded: Process Path
+  Imphash: IMP Hash
+  SourceImage: Source Process Path
+  StartModule: Start Module
+  TargetImage: Target Process Path
+  Device: Device Name
+  ProcessID: Process ID
+  StartAddress: Start Address
+  StartFunction: Start Function
+  CallTrace: CallTrace
+  Company: Company
+  CurrentDirectory: CurrentDirectory
+  Description: Description
+  DestinationIsIpv6: DestinationIsIpv6
+  DestinationPortName: DestinationPortName
+  Initiated: Initiated
+  IntegrityLevel: IntegrityLevel
+  Product: Product
+  Protocol: Protocol
+  SourceIsIpv6: SourceIsIpv6
+  SourcePortName: SourcePortName
+  OriginalFileName: OriginalFileName
+  Signed: Signed
+  Signature: Signature
+  QueryResults: QueryResults
+  QueryStatus: QueryStatus
+  IsExecutable: IsExecutable
+  ImagePath: ImagePath
+  FileVersion: FileVersion
+  EventType: EventType

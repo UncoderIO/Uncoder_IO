@@ -1,0 +1,15 @@
+platform: Microsoft Sentinel
+source: linux_process_creation
+description: Text that describe current mapping
+
+log_source:
+  table: [SysmonEvent]
+
+default_log_source:
+  table: SysmonEvent
+
+field_mapping:
+  CommandLine: CommandLine
+  Image: Image
+  ParentCommandLine: ParentCommandLine
+  ParentImage: ParentImage

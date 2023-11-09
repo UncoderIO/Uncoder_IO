@@ -1,0 +1,20 @@
+platform: Splunk
+source: azure_BehaviorAnalytics
+description: Text that describe current mapping
+
+log_source:
+  sourceType: [azure:*]
+
+default_log_source:
+  sourceType: azure:*
+
+field_mapping:
+  ActionType: ActionType
+  ActivityInsights: ActivityInsights
+  ActivityType: ActivityType
+  EventSource: EventSource
+  DevicesInsights: DevicesInsights
+  RiskDetail: RiskDetail
+  UsersInsights: UsersInsights
+  UsersInsights.IsDormantAccount: UsersInsights.IsDormantAccount
+  UsersInsights.IsNewAccount: UsersInsights.IsNewAccount

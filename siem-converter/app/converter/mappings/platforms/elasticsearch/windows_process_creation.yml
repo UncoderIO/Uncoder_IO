@@ -1,0 +1,21 @@
+platform: ElasticSearch
+source: windows_process_creation
+description: Text that describe current mapping
+
+log_source:
+  index: [winlogbeat-*, logs-*]
+
+default_log_source:
+  index: winlogbeat-*
+
+field_mapping:
+  CommandLine: process.command_line
+  CurrentDirectory: CurrentDirectory
+  Hashes: Hashes
+  Image: process.executable
+  IntegrityLevel: IntegrityLevel
+  ParentCommandLine: process.parent.command_line
+  ParentImage: process.parent.executable
+  ParentUser: ParentUser
+  Product: Product
+  User: User

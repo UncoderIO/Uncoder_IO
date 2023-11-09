@@ -1,0 +1,104 @@
+html,
+body
+  background-color: $backgroundDarkBlue
+
+body
+  min-width: 375px
+  font-family: $inter
+  font-size: 14px
+  font-weight: 400
+  color: $textDefault
+  +scrollbars
+
+.inner
+  margin: 0 auto
+  padding: 0 32px
+  width: 100%
+  max-width: 1920px
+  +md
+    padding: 0 12px
+  &--xl
+    max-width: 1650px
+    +xlMin
+      max-width: 1920px
+  &--md
+    max-width: 1110px
+  &--sm
+    max-width: 800px
+  &--s
+    max-width: 550px
+
+.simplebar-track
+  .simplebar-scrollbar
+    &::before
+      background-color: $backgroundSilverBlue
+
+.three-dots
+  max-width: 100%
+  word-break: break-word
+  overflow: hidden
+  display: -moz-box
+  display: -webkit-box
+  -webkit-box-orient: vertical
+  -o-text-overflow: ellipsis
+  text-overflow: ellipsis
+  &.one-line
+    -webkit-line-clamp: 1
+    max-height: 17px
+  &.two-line
+    -webkit-line-clamp: 2
+    max-height: 34px
+
+.link
+  position: relative
+  min-height: auto
+  padding: 0
+  border-color: transparent
+  background-color: transparent
+  transition: color .15s
+  text-decoration: none
+  &::after
+    display: block
+    content: ''
+    position: absolute
+    bottom: -2px
+    left: 0
+    width: 100%
+    height: 1px
+    background-color: $backgroundWhite
+    transform: scaleX(0)
+    transition: transform .15s
+  &:hover
+    &::after
+      transform: scaleX(1)
+    &.link--underline
+      &::after
+        transform: scaleX(0)
+  &--white
+    &,
+    &:hover
+      color: $textDefault
+      &::after
+        background-color: $backgroundWhite
+  &--green
+    &,
+    &:hover
+      color: $textSuccess
+      &::after
+        background-color: $backgroundSuccess
+  &--underline
+    &::after
+      transform: scaleX(1)
+  &--default
+    &::after
+      display: none
+    &
+      text-decoration: none
+      &.link--underline
+        text-decoration: underline
+    &:hover
+      text-decoration: underline
+      &.link--underline
+        text-decoration: none
+  &:not(.link--default)
+    white-space: nowrap

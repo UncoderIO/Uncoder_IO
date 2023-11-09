@@ -1,0 +1,15 @@
+platform: Sigma
+source: azure_aadnoninteractiveusersigninlogs
+description: Text that describe current mapping
+
+log_source:
+  product: [azure]
+  service: [aadnoninteractiveusersigninlogs]
+
+default_log_source:
+  product: azure
+  service: aadnoninteractiveusersigninlogs
+
+field_mapping:
+  UserAgent: UserAgent
+  Type: Type

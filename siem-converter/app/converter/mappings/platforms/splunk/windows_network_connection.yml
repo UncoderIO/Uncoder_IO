@@ -1,0 +1,20 @@
+platform: Splunk
+source: windows_network_connection
+description: Text that describe current mapping
+
+log_source:
+  source: [WinEventLog:Microsoft-Windows-Sysmon/Operational]
+  sourceType: [XmlWinEventLog:Microsoft-Windows-Sysmon/Operational]
+
+default_log_source:
+  source: WinEventLog:Microsoft-Windows-Sysmon/Operational
+  sourceType: XmlWinEventLog:Microsoft-Windows-Sysmon/Operational
+
+field_mapping:
+  Image: Image
+  DestinationHostname: DestinationHostname
+  DestinationIp: DestinationIp
+  DestinationPort: DestinationPort
+  SourceIp: SourceIp
+  SourcePort: SourcePort
+  Initiated: Initiated

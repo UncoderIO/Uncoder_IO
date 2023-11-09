@@ -1,0 +1,15 @@
+platform: Qradar
+source: macos_file_event
+description: Text that describe current mapping
+
+log_source:
+  devicetype: [102]
+  category: [8028]
+
+default_log_source:
+  devicetype: 102
+  category: 8028
+
+field_mapping:
+  Image: Process Path
+  TargetFilename: Filename

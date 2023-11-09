@@ -1,0 +1,25 @@
+platform: Athena
+source: windows_process_creation
+description: Text that describe current mapping
+
+default_log_source:
+  table: eventlog
+
+field_mapping:
+  CommandLine: process.cmd_line
+  Hashes:
+    - proces.file.fingerprints.value
+    - actor.proces.file.fingerprints.value
+  Image: process.file.path
+  IntegrityLevel: process.integrity
+  ParentCommandLine:
+    - process.parent_process.cmd_line
+    - actor.process.cmd_line
+  ParentImage:
+    - process.parent_process.file.path
+    - actor.process.file.path
+  ParentUser: process.parent_process.user
+  Product:
+    - process.file.product.name
+    - process.file.product.vendor_name
+  User: process.user.name

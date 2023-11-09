@@ -1,0 +1,23 @@
+platform: OpenSearch
+source: azure_m365
+description: Text that describe current mapping
+
+log_source:
+  index: [logs-*]
+
+default_log_source:
+  index: logs-*
+
+field_mapping:
+  ClientInfoString: ClientInfoString
+  LogonError: LogonError
+  ModifiedProperties: ModifiedProperties
+  OfficeObjectId: OfficeObjectId
+  OfficeWorkload: OfficeWorkload
+  Operation: Operation
+  Parameters: Parameters
+  RecordType: RecordType
+  ResultStatus: ResultStatus
+  SourceFileExtension: SourceFileExtension
+  SourceFileName: SourceFileName
+  UserAgent: UserAgent

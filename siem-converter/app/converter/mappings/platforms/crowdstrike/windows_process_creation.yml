@@ -1,0 +1,21 @@
+platform: Crowdstrike
+source: windows_process_creation
+description: Text that describe current mapping
+
+log_source:
+  event_simpleName: [ProcessRollup2]
+
+default_log_source:
+  event_simpleName: ProcessRollup2
+
+field_mapping:
+  CommandLine: CommandLine
+  CurrentDirectory: CurrentDirectory
+  Hashes: Hashes
+  Image: Image
+  IntegrityLevel: IntegrityLevel
+  ParentCommandLine: ParentCommandLine
+  ParentImage: ParentImage
+  ParentUser: ParentUser
+  Product: Product
+  User: User

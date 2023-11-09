@@ -1,0 +1,23 @@
+platform: ElasticSearch
+source: azure_azuread
+description: Text that describe current mapping
+
+log_source:
+  index: [logs-*]
+
+default_log_source:
+  index: logs-*
+
+field_mapping:
+  ActivityDisplayName: event.action
+  Category: azure.auditlogs.properties.category
+  LoggedByService: azure.auditlogs.properties.logged_by_service
+  Result: event.outcome
+  OperationName: OperationName
+  TargetResources: TargetResources
+  AADOperationType: AADOperationType
+  InitiatedBy: InitiatedBy
+  ResultReason: ResultReason
+  Status: Status
+  Status.errorCode: Status.errorCode
+  UserAgent: UserAgent

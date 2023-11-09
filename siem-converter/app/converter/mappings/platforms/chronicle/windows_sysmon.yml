@@ -1,0 +1,33 @@
+platform: Chronicle
+source: windows_sysmon
+description: Text that describe current mapping
+
+
+field_mapping:
+  CommandLine: target.process.command_line
+  Image: target.process.file.full_path
+  ParentImage: principal.process.file.full_path
+  EventID: metadata.product_event_type
+  CallTrace: principal.process.file.full_path
+  Description: metadata.description
+  DestinationHostname: target.hostname
+  DestinationIp: target.ip
+  DestinationPort: target.port
+  ParentCommandLine: principal.process.command_line
+  Protocol: network.ip_protocol
+  RuleName: security_result.rule_name
+  SourceHostname: principal.hostname
+  SourceIp: principal.ip
+  SourcePort: principal.port
+  TargetFilename: target.file.full_path
+  TargetObject: target.registry.registry_key
+  Details: target.registry.registry_value_data
+  QueryName: network.dns.questions
+  QueryResults: network.dns.answers
+  PipeName: target.resource.name
+  ImageLoaded: principal.process.file.full_path
+  Imphash: target.process.file.file_metadata.pe.import_hash
+  SourceImage: principal.process.file.full_path
+  StartModule: target.resource.name
+  TargetImage: target.process.file.full_path
+  StartFunction: ScriptBlockText
