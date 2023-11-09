@@ -124,10 +124,12 @@ TODO list of languages we will support shortly:
 # :computer: Installation
 Uncoder IO can be installed in a following manner:
   1. Docker container with web server and UI [Launch Instructions for Docker container](#launch-instructions-for-docker-container)
-  2. Docker continer API and CLI only (work in progress)
+  2. Docker container API and CLI only (work in progress)
   3. Build from source code directly (for advanced users, can be done following instructions from docker files)
   4. Ready to use as SaaS, privately with no registration or cookies at [https://uncoder.io/](https://uncoder.io/)
   5. Ready to use at SOC Prime SaaS with private AI augmentation, SOC 2 Type II certified environment and supporting ToS on data privacy, GDPR etc. at [https://tdm.socprime.com/uncoder-ai](https://tdm.socprime.com/uncoder-ai)
+
+Below are the requirements and launch instructions for the Docker container with web server.
 
 ## Requirements
 * Host with Windows, Linux, or other operating system supported by Docker
