@@ -183,7 +183,6 @@ If the input rule cannot be translated, you'll see an error message. When transl
         - Email
         - File
     - Set the number of IOCs per query to take into account the performance of your platform
-    - Select what hash types to use for queries if the hash is enabled as an IOC type
     - Define exceptions: specify hashes, domains, IPs, emails, files, or URLs (in full or only partially) you want to exclude from your queries
 6. Click Translate.
 
