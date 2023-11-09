@@ -85,9 +85,7 @@ The following types of IOCs are supported:
 - Hash  
 - Domain  
 - URL  
-- IP  
-- Email  
-- File  
+- IP   
 
 TODO list of languages we will support shortly:
 - Graylog
@@ -180,8 +178,6 @@ If the input rule cannot be translated, you'll see an error message. When transl
         - Domain
         - URL
         - IP
-        - Email
-        - File
     - Set the number of IOCs per query to take into account the performance of your platform
     - Define exceptions: specify hashes, domains, IPs, emails, files, or URLs (in full or only partially) you want to exclude from your queries
 6. Click Translate.
