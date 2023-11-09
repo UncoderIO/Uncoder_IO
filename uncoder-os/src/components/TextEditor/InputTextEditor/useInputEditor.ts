@@ -10,6 +10,7 @@ import ace from 'ace-builds';
 import 'ace-builds/src-noconflict/ext-language_tools';
 import { loadSuggesterData, suggesterSelector } from '../../../reduxData/suggester';
 import { useEditorSuggestion } from '../useEditorSuggestion';
+import { useDetectParserByText } from '../../../hooks';
 
 const defineMode = (parser: string) => {
   if (['sigma', 'roota'].includes(parser)) {
@@ -27,6 +28,7 @@ export const useInputEditor = () => {
   const { text: inputText, platformCode: parser, changed } = useSelector(inputEditorSelector);
   const suggestionData = useSelector(suggesterSelector);
   const { languageCompleter } = useEditorSuggestion(suggestionData);
+  const { detectParser } = useDetectParserByText();
 
   useEffect(() => {
     const langTools = ace.require('ace/ext/language_tools');
@@ -54,11 +56,16 @@ export const useInputEditor = () => {
     dispatch(setText(''));
   };
 
+  const onPasteInputText = (value: string) => {
+    detectParser(value);
+  };
+
   return {
     isIoc: parser === 'ioc',
     inputText,
     mode: defineMode(parser),
     onChangeInputText,
     onFocusInputText,
+    onPasteInputText,
   };
 };

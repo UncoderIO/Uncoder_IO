@@ -2,6 +2,7 @@ import { useDispatch } from 'react-redux';
 import { Dispatch } from '@reduxjs/toolkit';
 import { setText } from '../../../reduxData/inputEditor';
 import { useInfoProvider } from '../../Info';
+import { useDetectParserByText } from '../../../hooks';
 
 export const FILE_TYPES_ALLOWED_FOR_UPLOAD = [
   'text/csv',
@@ -14,6 +15,7 @@ export const MAX_FILE_SIZE_FOR_UPLOAD = 3 * 1024 * 1024;
 export const useInputEditorFileUploadButton = () => {
   const dispatch = useDispatch<Dispatch<any>>();
   const { showErrorMessage, showSuccessMessage } = useInfoProvider();
+  const { detectParser } = useDetectParserByText();
   const uploadHandler = async (file: File) => {
     if (!file) {
       return;
@@ -34,6 +36,7 @@ export const useInputEditorFileUploadButton = () => {
 
     const fileContent = await file.text();
     dispatch(setText(fileContent));
+    detectParser(fileContent);
     showSuccessMessage('File uploaded successfully');
   };
 
