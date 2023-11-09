@@ -2,7 +2,7 @@
   <img src="images/uncoder_io_logo_double.png" width="120" height="120">
 </p>
 
-# What is Uncoder IO
+# What is Uncoder IO (Public Beta)
 Uncoder IO is an open source version of it's SaaS counterpart https://uncoder.io and it's AI co-pilot version Uncoder AI. 
 Since 2018, Uncoder.IO is a fast, private and easy to use online translator for Sigma Rules, maintaining 100% privacy of its users. 
 An open source Uncoder IO expands use cases into following:
