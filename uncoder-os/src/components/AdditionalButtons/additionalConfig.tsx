@@ -10,6 +10,7 @@ import { ReactComponent as GuideIcon } from './Svg/GuideIcon.svg';
 export type AdditionalType = {
   icon: React.ReactNode;
   text: string;
+  classes?: AdditionalButtonNames;
   href?: string | undefined;
   target?: string | undefined;
   disabled?: boolean;
@@ -19,8 +20,9 @@ export type AdditionalType = {
 export const additionalConfig: AdditionalType[] = [
   {
     icon: <RootaIcon/>,
-    text: AdditionalButtonNames.Roota,
-    href: 'https://github.com/UncoderIO/RootA',
+    text: 'What is RootA',
+    classes: AdditionalButtonNames.Roota,
+    href: 'https://roota.io',
     target: '_blank',
   },
   /* {
@@ -32,18 +34,21 @@ export const additionalConfig: AdditionalType[] = [
   {
     icon: <GitHubIcon/>,
     text: AdditionalButtonNames.GitHub,
+    classes: AdditionalButtonNames.GitHub,
     href: 'https://github.com/UncoderIO/UncoderIO',
     target: '_blank',
   },
   {
     icon: <DiscordIcon/>,
     text: AdditionalButtonNames.Community,
+    classes: AdditionalButtonNames.Community,
     href: 'https://discord.gg/socprime',
     target: '_blank',
   },
   {
     icon: <GuideIcon/>,
     text: AdditionalButtonNames.Guide,
+    classes: AdditionalButtonNames.Guide,
     href: 'https://github.com/UncoderIO/UncoderIO/blob/main/README.md',
     target: '_blank',
   },
