@@ -8,17 +8,17 @@ Uncoder IO is a universal open-source tool for cyber defenders acting as an Inte
 ![Uncoder IO Overview](images/uncoder_io_overview.png)
 
 **Table of Contents:**
-- [Why Uncoder IO](#why-uncoder-io)
-- [Supported Language Formats](#supported-language-formats)
-- [Installation](#installation)
-- [Online Version](#online-version)
-- [How to Use](#how-to-use)
-- [How to Contribute](#how-to-contribute)
-- [Questions & Feedback](#questions--feedback)
-- [Maintainers](#maintainers)
-- [Credits](#credits)
-- [Licenses](#licenses)
-- [Resources & Useful Links](#resources--useful-links)
+- [Why Uncoder IO](#heart_eyes_cat-why-uncoder-io)
+- [Supported Language Formats](#dna-supported-language-formats)
+- [Installation](#computer-installation)
+- [Online Version](#evergreen_tree-online-version)
+- [How to Use](#mortar_board-how-to-use)
+- [How to Contribute](#bulb-how-to-contribute)
+- [Questions & Feedback](#mailbox_with_no_mail-questions--feedback)
+- [Maintainers](#wrench-maintainers)
+- [Credits](#kissing_heart-credits)
+- [Licenses](#briefcase-licenses)
+- [Resources & Useful Links](#book-resources--useful-links)
 
 # :heart_eyes_cat: Why Uncoder IO
 
