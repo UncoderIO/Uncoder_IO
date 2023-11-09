@@ -10,6 +10,7 @@ export const AdditionalButtons: FC = () => (
       additionalConfig?.map(({
         icon,
         text,
+        classes,
         href,
         target,
         disabled = false,
@@ -18,6 +19,7 @@ export const AdditionalButtons: FC = () => (
           <AdditionalButton
             icon={icon}
             text={text}
+            classes={classes}
             target={target}
             href={href}
             disabled={disabled}

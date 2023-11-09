@@ -7,13 +7,14 @@ export const AdditionalButton: FC <AdditionalType> = ({
   href = undefined,
   icon,
   text,
+  classes,
   target = undefined,
   handleClick = () => {},
   disabled = false,
 }) => {
   const element = (
     <div
-      className={`additional-button ${text.toLowerCase()}${disabled ? ' is-disabled' : ''}`}
+      className={`additional-button ${classes?.toLowerCase()}${disabled ? ' is-disabled' : ''}`}
       onClick={handleClick}
     >
       <div className="additional-button__icon m-b-4">
