@@ -32,7 +32,7 @@ class OpenSearchParser(Parser):
     mappings: OpenSearchMappings = opensearch_mappings
     tokenizer = OpenSearchTokenizer()
 
-    log_source_pattern = r"___source_type___\s*(:|=)\s*(?:\"?(?P<d_q_value>[%a-zA-Z_*:0-9\-/]+)\"|(?P<value>[%a-zA-Z_*:0-9\-/]+))(?:\s+(?:and|or)\s+|\s+)?"
+    log_source_pattern = r"___source_type___\s*(?:[:=])\s*(?:\"?(?P<d_q_value>[%a-zA-Z_*:0-9\-/]+)\"|(?P<value>[%a-zA-Z_*:0-9\-/]+))(?:\s+(?:and|or)\s+|\s+)?"
     log_source_key_types = ("index", "event\.category")
 
     def _parse_log_sources(self, query: str) -> Tuple[str, Dict[str, List[str]]]:
@@ -40,7 +40,8 @@ class OpenSearchParser(Parser):
         for source_type in self.log_source_key_types:
             pattern = self.log_source_pattern.replace('___source_type___', source_type)
             while search := re.search(pattern, query, flags=re.IGNORECASE):
-                value = search.group(1)
+                group_dict = search.groupdict()
+                value = group_dict.get("d_q_value") or group_dict.get("value")
                 log_sources.setdefault(source_type, []).append(value)
                 pos_start = search.start()
                 pos_end = search.end()

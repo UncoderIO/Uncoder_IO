@@ -17,7 +17,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 import copy
-from typing import Any
+from typing import Any, List
 
 import yaml
 
@@ -25,7 +25,7 @@ from app.converter.backends.sigma.const import SIGMA_RULE_DETAILS
 from app.converter.backends.sigma.mapping import SigmaMappings, sigma_mappings, SigmaLogSourceSignature
 from app.converter.core.compiler import DataStructureCompiler
 from app.converter.core.exceptions.core import StrictPlatformFieldException
-from app.converter.core.mapping import SourceMapping
+from app.converter.core.mapping import SourceMapping, DEFAULT_MAPPING_NAME
 from app.converter.core.models.field import Field, Keyword
 from app.converter.core.models.functions.types import ParsedFunctions
 from app.converter.core.models.group import Group
@@ -229,11 +229,18 @@ class SigmaRender:
         self.reset_counters()
 
         return detection
+
+    def __get_source_mapping(self, source_mapping_ids: List[str]) -> SourceMapping:
+        for source_mapping_id in source_mapping_ids:
+            if source_mapping := self.mappings.get_source_mapping(source_mapping_id):
+                return source_mapping
+
+        return self.mappings.get_source_mapping(DEFAULT_MAPPING_NAME)
     
     def generate(self, query, meta_info: MetaInfoContainer, functions: ParsedFunctions):
         self.reset_counters()
 
-        source_mapping = self.mappings.get_source_mapping(meta_info.source_mapping_ids[0])
+        source_mapping = self.__get_source_mapping(meta_info.source_mapping_ids)
         log_source_signature: SigmaLogSourceSignature = source_mapping.log_source_signature
         sigma_condition = copy.deepcopy(query)
         prepared_data_structure = DataStructureCompiler().generate(tokens=sigma_condition)
@@ -243,7 +250,7 @@ class SigmaRender:
             "id": meta_info.id,
             "description": meta_info.description,
             "status": "experimental",
-            "author": "",
+            "author": meta_info.author,
             "references": meta_info.references,
             "tags": meta_info.tags,
             "logsource": log_source_signature.log_sources,
