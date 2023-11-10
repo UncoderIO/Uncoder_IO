@@ -32,13 +32,13 @@ class OpenSearchTokenizer(QueryTokenizer):
     match_operator_pattern = r"(?:___field___\s*(?P<match_operator>:))\s*"
 
     num_value_pattern = r"(?P<num_value>\d+(?:\.\d+)*)\s*"
-    double_quotes_value_pattern = r'"(?P<d_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{\}\s]|\\\"|\\)+)"\s*'
+    double_quotes_value_pattern = r'"(?P<d_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{\}\s]|\\\"|\\)*)"\s*'
     no_quotes_value_pattern = r"(?P<n_q_value>(?:[a-zA-Z\*0-9=%#_/,\'\.$@]|\\\"|\\\\)+)\s*"
     re_value_pattern = r"/(?P<re_value>[:a-zA-Z\*0-9=+%#\\\-_\,\"\'\.$&^@!\(\)\{\}\[\]\s?]+)/\s*"
     _value_pattern = fr"{num_value_pattern}|{re_value_pattern}|{no_quotes_value_pattern}|{double_quotes_value_pattern}"
     keyword_pattern = r"(?P<n_q_value>(?:[a-zA-Z\*0-9=%#_/,\'\.$@]|\\\"|\\\(|\\\)|\\\[|\\\]|\\\{|\\\}|\\\:|\\)+)(?:\s+|\)|$)"
 
-    multi_value_pattern = r"""\((?P<value>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\[\]\s]*)\)"""
+    multi_value_pattern = r"""\((?P<value>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\[\]\s]+)\)"""
     multi_value_check_pattern = r"___field___\s*___operator___\s*\("
 
     wildcard_symbol = "*"
