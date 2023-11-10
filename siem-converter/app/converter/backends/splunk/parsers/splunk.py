@@ -45,8 +45,8 @@ class SplunkParser(Parser):
             log_sources.setdefault(source_type, [])
             pattern = self.log_source_pattern.replace('___source_type___', source_type)
             while search := re.search(pattern, query, flags=re.IGNORECASE):
-                results = search.groupdict()
-                value = results.get("value")
+                group_dict = search.groupdict()
+                value = group_dict.get("d_q_value") or group_dict.get("value")
                 log_sources.setdefault(source_type, []).append(value)
                 pos_start = search.start()
                 pos_end = search.end()
