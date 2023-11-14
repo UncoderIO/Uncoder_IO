@@ -5,23 +5,29 @@ from typing import Optional, List
 from pydantic import BaseModel
 
 from app.converter.core.exceptions.iocs import IocsLimitExceededException, EmptyIOCSException
-from app.converter.tools.const import IP_IOC_REGEXP_PATTERN, DOMAIN_IOC_REGEXP_PATTERN, URL_IOC_REGEXP_PATTERN,\
-    hash_regexes, IOCType, HashType, IocParsingRule
+from app.converter.tools.const import IP_IOC_REGEXP_PATTERN, DOMAIN_IOC_REGEXP_PATTERN, URL_IOC_REGEXP_PATTERN, \
+    hash_regexes, IOCType, HashType, IocParsingRule, HASH_MAP
 
 
 class Iocs(BaseModel):
     ip: list[str] = []
     url: list[str] = []
     domain: list[str] = []
-    hash: list[str] = []
+    hash_dict: dict = {}
 
     def get_total_count(self) -> int:
-        return len(self.ip) + len(self.url) + len(self.domain) + len(self.hash)
+        hash_len = 0
+        for value in self.hash_dict.values():
+            hash_len += len(value)
+        return len(self.ip) + len(self.url) + len(self.domain) + hash_len
 
     def return_iocs(self) -> dict:
-        if all(not value for value in [self.ip, self.url, self.domain, self.hash]):
+        if all(not value for value in [self.ip, self.url, self.domain, self.hash_dict]):
             raise EmptyIOCSException()
-        return {"ip": self.ip, "url": self.url, "domain": self.domain, "hash": self.hash}
+        result = {"DestinationIP": self.ip, "URL": self.url, "Domain": self.domain}
+        for key, value in self.hash_dict.items():
+            result[HASH_MAP[key]] = value
+        return result
 
 
 class CTIParser:
@@ -47,7 +53,7 @@ class CTIParser:
             if not include_hash_types:
                 include_hash_types = list(hash_regexes.keys())
             for hash_type in include_hash_types:
-                iocs.hash.extend(self._find_all_str_by_regex(string, hash_regexes[hash_type]))
+                iocs.hash_dict[hash_type] = self._find_all_str_by_regex(string, hash_regexes[hash_type])
         iocs = self.remove_duplicates(iocs)
         iocs = self.remove_exceptions(iocs, exceptions)
         if ioc_parsing_rules is None or "remove_private_and_reserved_ips" in ioc_parsing_rules:
@@ -69,14 +75,16 @@ class CTIParser:
         iocs.ip = self._remove_duplicates_from_list(iocs.ip)
         iocs.domain = self._remove_duplicates_from_list(iocs.domain)
         iocs.url = self._remove_duplicates_from_list(iocs.url)
-        iocs.hash = self._remove_duplicates_from_list(iocs.hash)
+        for key, value in iocs.hash_dict.items():
+            iocs.hash_dict[key] = self._remove_duplicates_from_list(value)
         return iocs
 
     def remove_exceptions(self, iocs, exceptions=None):
         iocs.ip = self._remove_exceptions(iocs.ip, exceptions)
         iocs.domain = self._remove_exceptions(iocs.domain, exceptions)
         iocs.url = self._remove_exceptions(iocs.url, exceptions)
-        iocs.hash = self._remove_exceptions(iocs.hash, exceptions)
+        for key, value in iocs.hash_dict.items():
+            iocs.hash_dict[key] = self._remove_exceptions(value, exceptions)
         return iocs
 
     @staticmethod

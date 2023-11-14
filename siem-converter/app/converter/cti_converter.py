@@ -17,14 +17,8 @@ class CTIConverter:
         self.logger = logging.getLogger("cti_converter")
         self.parser = CTIParser()
 
-    def _reverse_mapping(self, platform: CTIPlatform, data: Dict[str, List[str]],
-                         include_source_ip: bool = False) -> Dict[str, str]:
-        mapping: Dict = self.renders.get(platform.name).get_default_mapping(include_source_ip)
-        reverse_mapping = {}
-        for platform_field, generic_field in mapping.items():
-            if data.get(generic_field):
-                reverse_mapping.update({generic_field: platform_field})
-        return reverse_mapping
+    def _get_render_mapping(self, platform: CTIPlatform, include_source_ip: bool = False) -> Dict[str, str]:
+        return self.renders.get(platform.name).default_mapping
 
     @handle_translation_exceptions
     def __parse_iocs_from_string(self, text: str, include_ioc_types: list = None, include_hash_types: list = None,
@@ -39,11 +33,10 @@ class CTIConverter:
     @handle_translation_exceptions
     def __render_translation(self, parsed_data: dict, platform_data: CTIPlatform, iocs_per_query: int,
                              include_source_ip: bool = False) -> List[str]:
-        reverse_mapping = self._reverse_mapping(data=parsed_data,
-                                                include_source_ip=include_source_ip, platform=platform_data)
+        mapping = self._get_render_mapping(platform=platform_data, include_source_ip=include_source_ip)
         platform = self.renders.get(platform_data.name)
         platform_generation = self.generate(data=parsed_data, platform=platform, iocs_per_query=iocs_per_query,
-                                            mapping=reverse_mapping)
+                                            mapping=mapping)
         return platform_generation
 
     def convert(self, text: str,
@@ -73,9 +66,10 @@ class CTIConverter:
         result = []
         for generic_field, iocs_list in data.items():
             for ioc in iocs_list:
-                result.append(IocsChunkValue(generic_field=generic_field,
-                                             platform_field=mapping.get(generic_field, generic_field),
-                                             value=ioc))
+                if mapping.get(generic_field):
+                    result.append(IocsChunkValue(generic_field=generic_field,
+                                                 platform_field=mapping[generic_field],
+                                                 value=ioc))
         return [result[i:i + chunks_size] for i in range(0, len(result), chunks_size)]
 
     def generate(self, platform: RenderCTI, iocs_per_query, data: Dict[str, List[str]],
