@@ -11,9 +11,11 @@ export const DropdownIocSettingsMenu: FC = () => {
     iocTypesFields,
     exceptionsField,
     iocsPerQueryField,
+    hashTypesFields,
     onChangeIocTypes,
     onChangeExceptions,
     onChangeIocsPerQuery,
+    onChangeHashTypes,
     iocTypeErrorMessage,
   } = useIocSettingsMenu();
 
@@ -33,6 +35,18 @@ export const DropdownIocSettingsMenu: FC = () => {
         (iocTypeErrorMessage?.length) && (
           <HelperText children={iocTypeErrorMessage} />
         )
+      }
+    </div>
+    <div className="ioc-settings-menu__label m-b-10">
+      <Label label="Hash Type"/>
+    </div>
+    <div className="ioc-settings-menu-list m-b-14" onChange={onChangeHashTypes}>
+      {
+        hashTypesFields.map((field) => (
+          <div className="ioc-settings-menu-list__item m-r-16 m-b-6" key={field.name}>
+            <Checkbox label={field.label} checked={field.checked} name={field.name}/>
+          </div>
+        ))
       }
     </div>
     <div className="ioc-settings-menu__label m-b-10">

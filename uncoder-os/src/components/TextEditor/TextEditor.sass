@@ -40,4 +40,11 @@
 .ace_editor
   &.ace_autocomplete
     width: 500px
-
+    .ace_scroller
+      padding: 0
+    .ace_text-layer
+      width: calc(100% - 14px)
+    .ace_scrollbar
+      &.ace_scrollbar-v,
+      &.ace_scrollbar-h
+        +scrollbars
