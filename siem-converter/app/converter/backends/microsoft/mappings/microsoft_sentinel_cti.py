@@ -1,5 +1,5 @@
 DEFAULT_MICROSOFT_SENTINEL_MAPPING = {
-    "DestinationIP": "DestinationIP",
+    "DestinationIP": "DestinationIp",
     "SourceIP": "SourceIp",
     "HashSha512": "FileHashSha512",
     "HashSha256": "FileHashSha256",
@@ -7,6 +7,6 @@ DEFAULT_MICROSOFT_SENTINEL_MAPPING = {
     "Emails": "SenderFromAddress",
     "Domain": "DestinationHostname",
     "HashSha1": "FileHashSha1",
-    "Files": "FileName",
+    "Files": "TargetFileName",
     "URL": "URL"
 }

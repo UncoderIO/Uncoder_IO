@@ -10,6 +10,13 @@ IocParsingRule = Literal[
     "replace_dots", "remove_private_and_reserved_ips", "replace_hxxp"
 ]
 
+HASH_MAP = {
+    "md5": "HashMd5",
+    "sha1": "HashSha1",
+    "sha256": "HashSha256",
+    "sha512": "HashSha512"
+}
+
 hash_regexes = {
     "md5": r"(?:^|[\s\/\[(\"',;{>|])([A-Fa-f0-9]{32})(?=[\s)\]\"',;\n<|]|$)",
     "sha1": r"(?:^|[\s\/\[(\"',;{>|])([A-Fa-f0-9]{40})(?=[\s)\]\"',;\n<|]|$)",

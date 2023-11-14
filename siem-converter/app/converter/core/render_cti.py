@@ -34,9 +34,6 @@ class RenderCTI:
     final_result_for_one: str = "union * | where {result}\n"
     default_mapping = None
 
-    def get_default_mapping(self, include_source_ip=False):
-        return self.prepare_mapping(self.default_mapping, include_source_ip)
-
     def create_field_value(self, field: str, value: str, generic_field: str):
         return self.data_map.format(key=field, value=value)
 
@@ -53,35 +50,17 @@ class RenderCTI:
     def collect_data_values(self, chunk):
         data_values = []
         key_chunk = []
-        processing_key = chunk[0].generic_field
+        processing_key = chunk[0].platform_field
         for value in chunk:
-            if processing_key != value.generic_field:
+            if processing_key != value.platform_field:
                 data_values.append(self.or_group.format(or_group=self.or_operator.join(key_chunk),
                                                         processing_key=processing_key))
                 key_chunk = []
-                processing_key = value.generic_field
-            key_chunk.append(self.create_field_value(field=value.generic_field,
+                processing_key = value.platform_field
+            key_chunk.append(self.create_field_value(field=value.platform_field,
                                                      value=value.value,
                                                      generic_field=value.generic_field))
         if key_chunk:
             data_values.append(
                 self.or_group.format(or_group=self.or_operator.join(key_chunk), processing_key=processing_key))
         return data_values
-
-    def prepare_mapping(self, mapping: dict, include_source_ip: bool = False) -> dict:
-        m = {
-            "DestinationIP": "ip",
-            "Domain": "domain",
-            "URL": "url",
-            "HashMd5": "hash",
-            "HashSha1": "hash",
-            "HashSha256": "hash",
-            "HashSha512": "hash",
-        }
-        if include_source_ip:
-            m["SourceIP"] = "ip"
-        res = {}
-        for key, new_field_name in mapping.items():
-            if key in m:
-                res[new_field_name] = m[key]
-        return res
