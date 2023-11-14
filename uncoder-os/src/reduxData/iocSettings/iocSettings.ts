@@ -1,7 +1,7 @@
 import type { CaseReducer, PayloadAction } from '@reduxjs/toolkit';
 import { createSelector, createSlice } from '@reduxjs/toolkit';
 import { IocSettingsStateType, RootState } from '../RootStore';
-import { BasicIocType, IocParsingRulesType } from '../../types/iocsTypes';
+import { BasicIocType, HashIocType, IocParsingRulesType } from '../../types/iocsTypes';
 
 type IocSettingsReducers = {
   setIocPerQuery: CaseReducer<IocSettingsStateType, PayloadAction<number>>;
@@ -22,7 +22,12 @@ const initialState: IocSettingsStateType = {
     BasicIocType.Url,
     BasicIocType.Hash,
   ],
-  includeHashTypes: [],
+  includeHashTypes: [
+    HashIocType.Md5,
+    HashIocType.Sha1,
+    HashIocType.Sha256,
+    HashIocType.Sha512,
+  ],
   exceptions: '',
   iocParsingRules: [
     IocParsingRulesType.RemovePrivateAndReservedIps,
