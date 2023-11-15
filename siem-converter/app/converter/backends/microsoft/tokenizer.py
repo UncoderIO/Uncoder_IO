@@ -34,7 +34,7 @@ class MicrosoftSentinelTokenizer(QueryTokenizer, OperatorBasedMixin):
     single_quotes_value_pattern = r"@?'(?P<s_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,\"\.$&^@!\(\)\{\}\s]|\\\'|\\\\)*)'\s*"
     str_value_pattern = fr"""{double_quotes_value_pattern}|{single_quotes_value_pattern}"""
     _value_pattern = fr"""{bool_value_pattern}|{num_value_pattern}|{str_value_pattern}"""
-    multi_value_pattern = r"""\((?P<value>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\s]*)\)"""
+    multi_value_pattern = r"""\((?P<value>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\s]+)\)"""
     keyword_pattern = fr"\*\s+contains\s+(?:{str_value_pattern})"
 
     multi_value_operators = ("in", "in~")
@@ -50,16 +50,16 @@ class MicrosoftSentinelTokenizer(QueryTokenizer, OperatorBasedMixin):
         self.operators_map.update(super().operators_map)
 
     def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> Tuple[str, Any]:
-        if num_value := get_match_group(match, group_name='num_value'):
+        if (num_value := get_match_group(match, group_name='num_value')) is not None:
             return operator, num_value
 
-        elif bool_value := get_match_group(match, group_name='bool_value'):
+        elif (bool_value := get_match_group(match, group_name='bool_value')) is not None:
             return operator, bool_value
 
-        elif d_q_value := get_match_group(match, group_name='d_q_value'):
+        elif (d_q_value := get_match_group(match, group_name='d_q_value')) is not None:
             return operator, d_q_value
 
-        elif s_q_value := get_match_group(match, group_name='s_q_value'):
+        elif (s_q_value := get_match_group(match, group_name='s_q_value')) is not None:
             return operator, s_q_value
 
         return super().get_operator_and_value(match, operator)

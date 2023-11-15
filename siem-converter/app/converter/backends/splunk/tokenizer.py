@@ -25,29 +25,29 @@ from app.converter.tools.utils import get_match_group
 
 
 class SplunkTokenizer(QueryTokenizer):
-    field_pattern = r"(?P<field_name>[a-zA-Z\.\-]+)"
+    field_pattern = r"(?P<field_name>[a-zA-Z\.\-_\{\}]+)"
     num_value_pattern = r"(?P<num_value>\d+(?:\.\d+)*)\s*"
-    double_quotes_value_pattern = r'"(?P<d_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{\}\s]|\\\"|\\)*)"\s*'
-    single_quotes_value_pattern = r"'(?P<s_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,\"\.$&^@!\(\)\{\}\s]|\\\'|\\)*)'\s*"
+    double_quotes_value_pattern = r'"(?P<d_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,;\'\.$&^@!\(\)\{\}\s]|\\\"|\\)*)"\s*'
+    single_quotes_value_pattern = r"'(?P<s_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,;\"\.$&^@!\(\)\{\}\s]|\\\'|\\)*)'\s*"
     no_quotes_value = r"(?P<no_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,\.\\$&^@!])+)\s*"
     _value_pattern = fr"{num_value_pattern}|{no_quotes_value}|{double_quotes_value_pattern}|{single_quotes_value_pattern}"
-    multi_value_pattern = r"""\((?P<value>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\s]+)\)"""
+    multi_value_pattern = r"""\((?P<value>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,;.$&^@!\{\}\(\s]+)\)"""
     keyword_pattern = double_quotes_value_pattern
 
     multi_value_operators = ("in",)
     wildcard_symbol = "*"
 
     def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> Tuple[str, Any]:
-        if num_value := get_match_group(match, group_name='num_value'):
+        if (num_value := get_match_group(match, group_name='num_value')) is not None:
             return operator, num_value
 
-        elif no_q_value := get_match_group(match, group_name='no_q_value'):
+        elif (no_q_value := get_match_group(match, group_name='no_q_value')) is not None:
             return operator, no_q_value
 
-        elif d_q_value := get_match_group(match, group_name='d_q_value'):
+        elif (d_q_value := get_match_group(match, group_name='d_q_value')) is not None:
             return operator, d_q_value
 
-        elif s_q_value := get_match_group(match, group_name='s_q_value'):
+        elif (s_q_value := get_match_group(match, group_name='s_q_value')) is not None:
             return operator, s_q_value
 
         return super().get_operator_and_value(match)

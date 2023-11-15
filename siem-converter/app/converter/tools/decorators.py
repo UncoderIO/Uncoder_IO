@@ -9,12 +9,15 @@ def handle_translation_exceptions(func):
         try:
             result = func(*args, **kwargs)
             if result:
+                print("Translated successfully.")
                 return True, result
             else:
+                print("Unexpected error.")
                 return False, f"Unexpected error. To resolve it, please, contact us via GitHub."
         except (BaseParserException, BasePlatformException, BaseRenderException, BaseIOCsException) as err:
-            print(str(err))
+            print(f"Unexpected error. {str(err)}")
             return False, str(err)
         except Exception as err:
+            print(f"Unexpected error. {str(err)}")
             return False, f"Unexpected error. To resolve it, please, contact us via GitHub."
     return exception_handler

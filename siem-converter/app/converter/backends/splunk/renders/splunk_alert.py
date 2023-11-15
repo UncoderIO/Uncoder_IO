@@ -34,7 +34,7 @@ class SplunkAlertFieldValue(SplunkFieldValue):
 class SplunkAlertRender(SplunkQueryRender):
     details: PlatformDetails = splunk_alert_details
     or_token = "OR"
-    field_value_map = SplunkFieldValue(or_token=or_token)
+    field_value_map = SplunkAlertFieldValue(or_token=or_token)
 
     def finalize_query(self, prefix: str, query: str, functions: str, meta_info: MetaInfoContainer,
                        source_mapping: SourceMapping = None, not_supported_functions: list = None):

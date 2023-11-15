@@ -30,20 +30,20 @@ class LogScaleTokenizer(QueryTokenizer):
     match_operator_pattern = r"""(?:___field___\s?(?P<match_operator>=|!=))\s?"""
     num_value_pattern = r"(?P<num_value>\d+(?:\.\d+)*)\s*"
     double_quotes_value_pattern = r'"(?P<d_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{\}\s]|\\\"|\\)*)"\s*'
-    re_value_pattern = r"/(?P<re_value>[:a-zA-Z\*0-9=+%#\\\-_\,\"\'\.$&^@!\(\)\{\}\s?]*)/i?\s*"
+    re_value_pattern = r"/(?P<re_value>[:a-zA-Z\*0-9=+%#\\\-_\,\"\'\.$&^@!\(\)\{\}\s?]+)/i?\s*"
     _value_pattern = fr"""{num_value_pattern}|{re_value_pattern}|{double_quotes_value_pattern}"""
     keyword_pattern = double_quotes_value_pattern
 
     wildcard_symbol = "*"
 
     def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> Tuple[str, Any]:
-        if num_value := get_match_group(match, group_name='num_value'):
+        if (num_value := get_match_group(match, group_name='num_value')) is not None:
             return operator, num_value
 
-        elif d_q_value := get_match_group(match, group_name='d_q_value'):
+        elif (d_q_value := get_match_group(match, group_name='d_q_value')) is not None:
             return operator, d_q_value
 
-        elif re_value := get_match_group(match, group_name='re_value'):
+        elif (re_value := get_match_group(match, group_name='re_value')) is not None:
             return OperatorType.REGEX, re_value
 
         return super().get_operator_and_value(match, operator)

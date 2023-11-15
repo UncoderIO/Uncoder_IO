@@ -24,7 +24,7 @@ class Field:
             self.values.extend(value)
         elif value and isinstance(value, str) and value.isnumeric():
             self.values.append(int(value))
-        elif value and isinstance(value, (int, str)):
+        elif value is not None and isinstance(value, (int, str)):
             self.values.append(value)
 
     def __add__(self, other):

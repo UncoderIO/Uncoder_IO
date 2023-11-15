@@ -84,7 +84,8 @@ class BaseQueryRender:
     query_pattern = '{table} {query} {functions}'
 
     comment_symbol: str = None
-    unsupported_functions_text = 'Unsupported functions were excluded from the result query:\n'
+    is_multi_line_comment: bool = False
+    unsupported_functions_text = 'Unsupported functions were excluded from the result query:'
 
     def __init__(self):
         self.operator_map = {
@@ -153,11 +154,12 @@ class BaseQueryRender:
         return query
 
     def render_not_supported_functions(self, not_supported_functions: list) -> str:
-        render_not_supported = "\n".join(f"//{i}" for i in not_supported_functions)
-        return "\n\n" + f"// {self.unsupported_functions_text}" + render_not_supported
+        line_template = f"{self.comment_symbol} " if self.comment_symbol and self.is_multi_line_comment else ""
+        not_supported_functions_str = "\n".join(line_template + func for func in not_supported_functions)
+        return "\n\n" + self.wrap_with_comment(f"{self.unsupported_functions_text}\n{not_supported_functions_str}")
 
     def wrap_with_comment(self, value: str) -> str:
-        return f"{self.comment_symbol}{value}"
+        return f"{self.comment_symbol} {value}"
 
     def finalize(self, queries_map: Dict[str, str]) -> str:
         unique_queries = set(queries_map.values())
