@@ -31,22 +31,22 @@ class ChronicleQueryTokenizer(QueryTokenizer):
     num_value_pattern = r"(?P<num_value>\d+(?:\.\d+)*)\s*"
     bool_value_pattern = r"(?P<bool_value>true|false)\s*"
     double_quotes_value_pattern = r'"(?P<d_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{\}\s]|\\\"|\\\\)*)"\s*(?:nocase)?'
-    re_value_pattern = r"/(?P<re_value>[:a-zA-Z\*0-9=+%#\\\-_\,\"\'\.$&^@!\(\)\{\}\s?]*)/\s*(?:nocase)?"
+    re_value_pattern = r"/(?P<re_value>(?:\\\/|[:a-zA-Z\*0-9=+%#\\\-_\,\"\'\.$&^@!\(\)\{\}\s?])+)/\s*(?:nocase)?"
     _value_pattern = fr"{num_value_pattern}|{bool_value_pattern}|{double_quotes_value_pattern}|{re_value_pattern}"
 
     wildcard_symbol = ".*"
 
     def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> Tuple[str, Any]:
-        if num_value := get_match_group(match, group_name='num_value'):
+        if (num_value := get_match_group(match, group_name='num_value')) is not None:
             return operator, num_value
 
-        elif bool_value := get_match_group(match, group_name='bool_value'):
+        elif (bool_value := get_match_group(match, group_name='bool_value')) is not None:
             return operator, bool_value
 
-        elif d_q_value := get_match_group(match, group_name='d_q_value'):
+        elif (d_q_value := get_match_group(match, group_name='d_q_value')) is not None:
             return operator, d_q_value
 
-        elif re_value := get_match_group(match, group_name='re_value'):
+        elif (re_value := get_match_group(match, group_name='re_value')) is not None:
             return OperatorType.REGEX, re_value
 
         return super().get_operator_and_value(match, operator)
@@ -94,10 +94,10 @@ class ChronicleRuleTokenizer(ChronicleQueryTokenizer):
             return super().search_field_value(query=query)
 
     def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> Tuple[str, Any]:
-        if d_q_value := get_match_group(match, group_name='d_q_value'):
+        if (d_q_value := get_match_group(match, group_name='d_q_value')) is not None:
             return operator, d_q_value
 
-        elif b_q_value := get_match_group(match, group_name='b_q_value'):
+        elif (b_q_value := get_match_group(match, group_name='b_q_value')) is not None:
             return operator, b_q_value
 
         return super().get_operator_and_value(match, operator)

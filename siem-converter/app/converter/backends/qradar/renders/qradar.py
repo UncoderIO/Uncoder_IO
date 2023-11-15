@@ -82,4 +82,3 @@ class QradarQueryRender(BaseQueryRender):
 
     def generate_functions(self, functions: list):
         return ""
-

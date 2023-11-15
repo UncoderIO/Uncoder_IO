@@ -11,7 +11,7 @@ QRADAR_QUERY_DETAILS = {
 }
 
 NUM_VALUE_PATTERN = r"(?P<num_value>\d+(?:\.\d+)*)"
-SINGLE_QUOTES_VALUE_PATTERN = r"""'(?P<s_q_value>(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{\}\s]|'')+)'"""
+SINGLE_QUOTES_VALUE_PATTERN = r"""'(?P<s_q_value>(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{\}\s]|'')*)'"""
 
 
 qradar_query_details = PlatformDetails(**QRADAR_QUERY_DETAILS)

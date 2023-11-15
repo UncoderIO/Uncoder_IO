@@ -16,6 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+from typing import Union
 
 from app.converter.backends.microsoft.const import microsoft_sentinel_query_details
 from app.converter.backends.microsoft.mapping import MicrosoftSentinelMappings, microsoft_sentinel_mappings
@@ -28,11 +29,15 @@ from app.converter.backends.microsoft.siem_functions.base import MicroSoftQueryF
 class MicrosoftSentinelFieldValue(BaseQueryFieldValue):
     details: PlatformDetails = microsoft_sentinel_query_details
 
+    @staticmethod
+    def __escape_value(value: Union[int, str]) -> Union[int, str]:
+        return value.replace("'", "''") if isinstance(value, str) else value
+
     def equal_modifier(self, field, value):
         if isinstance(value, str):
-            return f"{field} =~ @'{value}'"
+            return f"{field} =~ @'{self.__escape_value(value)}'"
         elif isinstance(value, list):
-            prepared_values = ", ".join(f"@'{v}'" for v in value)
+            prepared_values = ", ".join(f"@'{self.__escape_value(v)}'" for v in value)
             operator = "in~" if all(isinstance(v, str) for v in value) else "in"
             return f'{field} {operator} ({prepared_values})'
         return f'{field} == {value}'
@@ -40,20 +45,20 @@ class MicrosoftSentinelFieldValue(BaseQueryFieldValue):
     def contains_modifier(self, field, value):
         if isinstance(value, list):
             return f"({self.or_token.join(self.contains_modifier(field=field, value=v) for v in value)})"
-        return f"{field} contains @'{value}'"
+        return f"{field} contains @'{self.__escape_value(value)}'"
 
     def endswith_modifier(self, field, value):
         if isinstance(value, list):
             return f"({self.or_token.join(self.endswith_modifier(field=field, value=v) for v in value)})"
-        return f"{field} endswith @'{value}'"
+        return f"{field} endswith @'{self.__escape_value(value)}'"
 
     def startswith_modifier(self, field, value):
         if isinstance(value, list):
             return f"({self.or_token.join(self.startswith_modifier(field=field, value=v) for v in value)})"
-        return f"{field} startswith @'{value}'"
+        return f"{field} startswith @'{self.__escape_value(value)}'"
 
     def __regex_modifier(self, field, value):
-        return f"{field} matches regex @'(?i){value}'"
+        return f"{field} matches regex @'(?i){self.__escape_value(value)}'"
 
     def regex_modifier(self, field, value):
         if isinstance(value, list):
@@ -63,7 +68,7 @@ class MicrosoftSentinelFieldValue(BaseQueryFieldValue):
     def keywords(self, field, value):
         if isinstance(value, list):
             return f"({self.or_token.join(self.keywords(field=field, value=v) for v in value)})"
-        return f"* contains @'{value}'"
+        return f"* contains @'{self.__escape_value(value)}'"
 
 
 class MicrosoftSentinelQueryRender(BaseQueryRender):
@@ -78,13 +83,10 @@ class MicrosoftSentinelQueryRender(BaseQueryRender):
 
     mappings: MicrosoftSentinelMappings = microsoft_sentinel_mappings
     comment_symbol = "//"
+    is_multi_line_comment = True
 
     def generate_prefix(self, log_source_signature: LogSourceSignature) -> str:
         return str(log_source_signature)
-
-    def render_not_supported_functions(self, not_supported_functions: list) -> str:
-        render_not_suported = "\n".join([f'// {i}' for i in not_supported_functions])
-        return "\n\n" + f"// {self.unsupported_functions_text}" + render_not_suported
 
     def generate_functions(self, functions: list) -> str:
         if not functions:

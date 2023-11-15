@@ -64,16 +64,16 @@ class OpenSearchTokenizer(QueryTokenizer):
         return value
 
     def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> Tuple[str, Any]:
-        if num_value := get_match_group(match, group_name='num_value'):
+        if (num_value := get_match_group(match, group_name='num_value')) is not None:
             return operator, num_value
 
-        elif re_value := get_match_group(match, group_name='re_value'):
+        elif (re_value := get_match_group(match, group_name='re_value')) is not None:
             return OperatorType.REGEX, re_value
 
-        elif n_q_value := get_match_group(match, group_name='n_q_value'):
+        elif (n_q_value := get_match_group(match, group_name='n_q_value')) is not None:
             return operator, n_q_value
 
-        elif d_q_value := get_match_group(match, group_name='d_q_value'):
+        elif (d_q_value := get_match_group(match, group_name='d_q_value')) is not None:
             return operator, d_q_value
 
         return super().get_operator_and_value(match)

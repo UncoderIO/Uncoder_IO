@@ -52,13 +52,13 @@ class QradarTokenizer(QueryTokenizer):
         return operator.lower() in ("like", "ilike")
 
     def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> Tuple[str, Any]:
-        if num_value := get_match_group(match, group_name='num_value'):
+        if (num_value := get_match_group(match, group_name='num_value')) is not None:
             return operator, num_value
 
-        elif bool_value := get_match_group(match, group_name='bool_value'):
+        elif (bool_value := get_match_group(match, group_name='bool_value')) is not None:
             return operator, bool_value
 
-        elif s_q_value := get_match_group(match, group_name='s_q_value'):
+        elif (s_q_value := get_match_group(match, group_name='s_q_value')) is not None:
             return operator, s_q_value
 
         return super().get_operator_and_value(match, operator)

@@ -73,7 +73,3 @@ class SplunkQueryRender(BaseQueryRender):
 
     def wrap_with_comment(self, value: str) -> str:
         return f"{self.comment_symbol} {value} {self.comment_symbol}"
-
-    def render_not_supported_functions(self, not_supported_functions):
-        render_not_suported = "\n".join(not_supported_functions)
-        return f'\n\n""" {self.unsupported_functions_text}' + render_not_suported + '"""'

@@ -82,6 +82,8 @@ class ElasticSearchQueryRender(BaseQueryRender):
 
     field_value_map = ElasticSearchFieldValue(or_token=or_token)
     query_pattern = "{query} {functions}"
+    comment_symbol = "//"
+    is_multi_line_comment = True
 
     def generate_prefix(self, logsource: dict) -> str:
         return ""

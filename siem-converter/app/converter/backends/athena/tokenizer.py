@@ -30,7 +30,7 @@ class AthenaTokenizer(QueryTokenizer):
     match_operator_pattern = r"""(?:___field___\s?(?P<match_operator>like|in|=|>|<|>=|<=|<>|!=))\s?"""
     num_value_pattern = r"(?P<num_value>\d+(?:\.\d+)*)\s*"
     bool_value_pattern = r"(?P<bool_value>true|false)\s*"
-    single_quotes_value_pattern = r"""'(?P<s_q_value>(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{\}\s]|'')+)'"""
+    single_quotes_value_pattern = r"""'(?P<s_q_value>(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{\}\s]|'')*)'"""
     _value_pattern = fr"{num_value_pattern}|{bool_value_pattern}|{single_quotes_value_pattern}"
     multi_value_pattern = r"""\((?P<value>\d+(?:,\s*\d+)*|'(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{\}\s]|'')*'(?:,\s*'(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{\}\s]|'')*')*)\)"""
 
@@ -49,13 +49,13 @@ class AthenaTokenizer(QueryTokenizer):
         return operator.lower() in ("like",)
 
     def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> Tuple[str, Any]:
-        if num_value := get_match_group(match, group_name='num_value'):
+        if (num_value := get_match_group(match, group_name='num_value')) is not None:
             return operator, num_value
 
-        elif bool_value := get_match_group(match, group_name='bool_value'):
+        elif (bool_value := get_match_group(match, group_name='bool_value')) is not None:
             return operator, bool_value
 
-        elif s_q_value := get_match_group(match, group_name='s_q_value'):
+        elif (s_q_value := get_match_group(match, group_name='s_q_value')) is not None:
             return operator, s_q_value
 
         return super().get_operator_and_value(match, operator)
