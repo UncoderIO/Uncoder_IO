@@ -16,6 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+from typing import Union
 
 from app.converter.backends.logscale.const import logscale_query_details
 from app.converter.backends.logscale.mapping import LogScaleMappings, logscale_mappings
@@ -28,35 +29,40 @@ from app.converter.core.render import BaseQueryRender, BaseQueryFieldValue
 class LogScaleFieldValue(BaseQueryFieldValue):
     details: PlatformDetails = logscale_query_details
 
+    def apply_value(self, value: Union[str, int]):
+        if isinstance(value, str) and '"' in value:
+            value = value.translate(str.maketrans({'"':  r'\"'}))
+        return value
+
     def equal_modifier(self, field, value):
         if isinstance(value, list):
             return f"({self.or_token.join(self.equal_modifier(field=field, value=v) for v in value)})"
-        return f'{field}="{value}"'
+        return f'{field}="{self.apply_value(value)}"'
 
     def contains_modifier(self, field, value):
         if isinstance(value, list):
             return f"({self.or_token.join(self.contains_modifier(field=field, value=v) for v in value)})"
-        return f'{field}="*{value}*"'
+        return f'{field}="*{self.apply_value(value)}*"'
 
     def endswith_modifier(self, field, value):
         if isinstance(value, list):
             return f"({self.or_token.join(self.endswith_modifier(field=field, value=v) for v in value)})"
-        return f'{field}="*{value}"'
+        return f'{field}="*{self.apply_value(value)}"'
 
     def startswith_modifier(self, field, value):
         if isinstance(value, list):
             return f"({self.or_token.join(self.startswith_modifier(field=field, value=v) for v in value)})"
-        return f'{field}="{value}*"'
+        return f'{field}="{self.apply_value(value)}*"'
 
     def regex_modifier(self, field, value):
         if isinstance(value, list):
             return f"({self.or_token.join(self.regex_modifier(field=field, value=v) for v in value)})"
-        return f'{field}="/{value}/"'
+        return f'{field}="/{self.apply_value(value)}/"'
 
     def keywords(self, field, value):
         if isinstance(value, list):
             return f"({self.or_token.join(self.keywords(field=field, value=v) for v in value)})"
-        return f'"{value}"'
+        return f'"{self.apply_value(value)}"'
 
 
 class LogScaleQueryRender(BaseQueryRender):
