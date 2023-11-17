@@ -1,8 +1,8 @@
 from abc import ABC
 
-from app.converter.backends import __ALL_PARSERS as PARSERS
-from app.converter.backends import __ALL_RENDERS as RENDERS
-from app.converter.backends import __ALL_RENDERS_CTI as RENDERS_CTI
+from app.converter.platforms import __ALL_PARSERS as PARSERS
+from app.converter.platforms import __ALL_RENDERS as RENDERS
+from app.converter.platforms import __ALL_RENDERS_CTI as RENDERS_CTI
 from app.converter.core.exceptions.core import UnsupportedRootAParser
 from app.models.translation import ConvertorPlatform
 

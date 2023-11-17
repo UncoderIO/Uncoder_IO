@@ -99,7 +99,7 @@ class BaseQueryRender:
             return f"{str(log_source_signature)} {self.and_token}"
         return ""
 
-    def generate_functions(self, functions: list):
+    def generate_functions(self, functions: list) -> str:
         return ""
 
     def map_field(self, field: Field, source_mapping: SourceMapping) -> List[str]:
@@ -147,7 +147,7 @@ class BaseQueryRender:
                        meta_info: MetaInfoContainer,
                        source_mapping: SourceMapping = None,
                        not_supported_functions: list = None) -> str:
-        query = self.query_pattern.format(prefix=prefix, query=query, functions=functions)
+        query = self.query_pattern.format(prefix=prefix, query=query, functions=functions).strip()
         if not_supported_functions:
             rendered_not_supported = self.render_not_supported_functions(not_supported_functions)
             return query + rendered_not_supported
