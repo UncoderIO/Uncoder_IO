@@ -76,7 +76,7 @@ def generate_all_translations(
 @st_router.get(
     "/platforms",
     tags=["siem_translate"],
-    description="Get converter backends",
+    description="Get converter platforms",
 )
 @st_router.get("/platforms/", include_in_schema=False)
 def get_convertor_platforms() -> ConvertorPlatforms:
@@ -86,7 +86,7 @@ def get_convertor_platforms() -> ConvertorPlatforms:
 
 @st_router.get(
     "/all_platforms",
-    description="Get Sigma, RootA and iocs backends",
+    description="Get Sigma, RootA and iocs platforms",
 )
 @st_router.get("/all_platforms/", include_in_schema=False)
 def get_all_platforms() -> list:
