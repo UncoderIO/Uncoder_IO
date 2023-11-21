@@ -3,14 +3,12 @@
 </p>
 
 # What is Uncoder IO (Public Beta)
-Uncoder IO is an open source version of it's SaaS counterpart https://uncoder.io and it's AI co-pilot version Uncoder AI. 
-Since 2018, Uncoder.IO is a fast, private and easy to use online translator for Sigma Rules, maintaining 100% privacy of its users. 
-An open source Uncoder IO expands use cases into following:
-- Translation from Sigma Rules, a generic rule format for SIEM systems, to specific SIEM, EDR and Data Lake languages
-- IOC packaging from any non-binary format such as PDF, text, STIX, OpenIOC to speicifc SIEM, EDR and Data Lake languages
-- Translation from RootA Rules, the newly released language for collective cyber defense, to specific SIEM, EDR and Data Lake languages.
+Uncoder IO is an open-source version of it's SaaS counterpart https://uncoder.io and its AI co-pilot version Uncoder AI. Since 2018, Uncoder IO has been a fast, private, and easy-to-use online translator for Sigma Rules, maintaining 100% privacy of its users. An open-source Uncoder IO expands use cases into the following:
+- Translation from Sigma Rules, a generic rule format for SIEM systems, to specific SIEM, EDR, and Data Lake languages
+- IOC packaging from any non-binary format such as PDF, text, STIX, or OpenIOC to specific SIEM, EDR, and Data Lake languages
+- Translation from RootA Rules, the newly released language for collective cyber defense, to specific SIEM, EDR, and Data Lake languages.
 
-Uncoder is developed by the team of Detection Engineers, Threat Hunters and CTI Analysts from Ukraine, Europe, USA, Argentina and Australia to perform their daily job and nightly cyber defense hobbies faster, better and making their outcomes easier to share for collective good. 
+Uncoder is developed by a team of Detection Engineers, Threat Hunters, and CTI Analysts from Ukraine, Europe, USA, Argentina, and Australia to perform their daily job and nightly cyber defense hobbies faster & better, making their outcomes easier to share for the collective good. 
 
 
 ![Uncoder IO Overview](images/uncoder_io_overview.png)
@@ -34,7 +32,7 @@ Uncoder is developed by the team of Detection Engineers, Threat Hunters and CTI 
 Uncoder IO supports automated translation of RootA and Sigma rules into multiple SIEM, EDR, XDR, and Data Lake formats. 
 - **Sigma** is a generic and open signature format that allows you to describe relevant log events in a straightforward manner, which received industry adoption across 155 countries by over 8000 organizations according to SOC Prime's download and translation statistics. 
  
-- **RootA** is an open source language which supports query definition directly in specific SIEM languages, vendor-agnostic correlation syntax, MITRE ATT&CK 14.0 for code autocompletion, log source taxonomy autocomplete function based on Amazon's OCSF or Sigma. RootA+Uncoder serve as the first bridge towards full cyber security languages compatibility, where one day, knowing one speicific language (say SPL or KQL) or generic language (say RootA or Sigma) would mean that you have master expertise in them all. This way, your complex detection logic can be rendered in other languages in an automated fashion. In case a native rule or query contains functions unsupported by RootA or target technology, those functions won’t be translated, with a corresponding note appended to the code translation. This is done so that experts can either manually complete translations if they know both source and destination languages, or use Uncoder AI to manually take care of such scenarios. If sharing with Sigma was easy, sharing with RootA is natural and future proof.
+- **RootA** is an open-source language that supports query definition directly in specific SIEM languages, vendor-agnostic correlation syntax, MITRE ATT&CK 14.0 for code autocompletion, and log source taxonomy autocomplete function based on Amazon's OCSF or Sigma. RootA+Uncoder serve as the first bridge towards full cyber security languages compatibility, where one day, knowing one specific language (say SPL or KQL) or generic language (say RootA or Sigma) would mean that you have master expertise in them all. This way, your complex detection logic can be rendered in other languages in an automated fashion. In case a native rule or query contains functions unsupported by RootA or target technology, those functions won’t be translated, with a corresponding note appended to the code translation. This is done so that experts can either manually complete translations if they know both source and destination languages, or use Uncoder AI to manually take care of such scenarios. If sharing with Sigma was easy, sharing with RootA is natural and future-proof.
 
 ## :pizza: RootA & Sigma Rule Editor
 
@@ -42,11 +40,11 @@ Uncoder IO supports a built-in Sigma and RootA rules autocompletion wizard sugge
 
 ## :popcorn: IOC Query Generator
 
-Uncoder IO acts as an open-source IOC packager helping CTI and SOC analysts as well as Threat Hunters to quickly parse any number of IOCs directly from from any digital non-binary format(a simple copy-paste of a web page, CSV, OpenIOC, PDF, STIX etc.) and convert them into performance-optimized IOC queries ready to run in a chosen security analytics platform. As Indicators of Compromise sharing are regulated by TLP, it is not advised to share them in Sigma or RootA rules, as the latter are not part of threat intelligence and thus are shared easily without borders. Yet, we need IOC matching just as we need Threat Behavior detections, so Uncoder IO is made to help solve these both tasks in an easy to use and intuitive manner.
+Uncoder IO acts as an open-source IOC packager helping CTI and SOC analysts as well as Threat Hunters to quickly parse any number of IOCs directly from any digital non-binary format (a simple copy-paste of a web page, CSV, OpenIOC, PDF, STIX etc.) and convert them into performance-optimized IOC queries ready to run in a chosen security analytics platform. As Indicators of Compromise sharing is regulated by TLP, it is not advised to share them in Sigma or RootA rules, as the latter are not part of threat intelligence and thus are shared easily without borders. Yet, we need IOC matching just as we need Threat Behavior detections, so Uncoder IO is made to help solve both tasks in an easy-to-use and intuitive manner.
 
 ## :smile_cat: Full Privacy
 
-Uncoder IO can be ran on prem without a need for internet connection, thus supporting air gapped networks operation. We do however suggest to check for updates and deploy them regurarly. Meanwhile a SaaS version still ensures 100% privacy with no cookie tracking, no data or code logging, or sharing with third parties. Even with options Uncoder AI functions, you are always in control of your code and data.
+Uncoder IO can be run on-prem without a need for an internet connection, thus supporting air-gapped network operation. We do however suggest checking for updates and deploying them regularly. Meanwhile, a SaaS version still ensures 100% privacy with no cookie tracking, no data or code logging, or sharing with third parties. Even with options for Uncoder AI functions, you are always in control of your code and data.
 
 # :dna: Supported Language Formats
 RootA and Sigma Rules can be translated into the following formats:
