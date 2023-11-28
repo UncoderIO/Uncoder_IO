@@ -26,8 +26,8 @@ from app.converter.core.mapping import BasePlatformMappings, SourceMapping, LogS
 from app.converter.core.models.field import Field, Keyword
 from app.converter.core.models.functions.types import ParsedFunctions
 from app.converter.core.models.platform_details import PlatformDetails
-from app.converter.core.operator_types.output import MetaInfoContainer
-from app.converter.core.operator_types.tokens import LogicalOperatorType, OperatorType, GroupType
+from app.converter.core.models.parser_output import MetaInfoContainer
+from app.converter.core.custom_types.tokens import LogicalOperatorType, OperatorType, GroupType
 
 
 class BaseQueryFieldValue(ABC):

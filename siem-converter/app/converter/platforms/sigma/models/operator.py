@@ -1,6 +1,6 @@
 from abc import ABC
 
-from app.converter.core.operator_types.tokens import LogicalOperatorType
+from app.converter.core.custom_types.tokens import LogicalOperatorType
 
 
 class BaseOperator(ABC):

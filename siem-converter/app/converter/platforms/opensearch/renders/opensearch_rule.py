@@ -25,7 +25,7 @@ from app.converter.platforms.opensearch.mapping import OpenSearchMappings, opens
 from app.converter.platforms.opensearch.renders.opensearch import OpenSearchQueryRender, OpenSearchFieldValue
 from app.converter.core.mapping import SourceMapping
 from app.converter.core.models.platform_details import PlatformDetails
-from app.converter.core.operator_types.output import MetaInfoContainer
+from app.converter.core.models.parser_output import MetaInfoContainer
 
 
 SEVERITIES_MAP = {"informational": "5", "low": "4", "medium": "3", "high": "2", "critical": "1"}

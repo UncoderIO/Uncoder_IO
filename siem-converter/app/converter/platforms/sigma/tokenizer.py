@@ -23,7 +23,7 @@ from app.converter.platforms.sigma.models.modifiers import ModifierManager
 from app.converter.core.exceptions.parser import TokenizerGeneralException
 from app.converter.core.models.field import Field, Keyword
 from app.converter.core.models.identifier import Identifier
-from app.converter.core.operator_types.tokens import GroupType, LogicalOperatorType
+from app.converter.core.custom_types.tokens import GroupType, LogicalOperatorType
 from app.converter.core.tokenizer import QueryTokenizer
 
 

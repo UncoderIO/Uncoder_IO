@@ -19,7 +19,6 @@ limitations under the License.
 
 import copy
 import json
-import re
 
 from app.converter.platforms.microsoft.renders.microsoft_sentinel import (
     MicrosoftSentinelQueryRender,
@@ -28,7 +27,7 @@ from app.converter.platforms.microsoft.renders.microsoft_sentinel import (
 from app.converter.platforms.microsoft.const import DEFAULT_MICROSOFT_SENTINEL_RULE, microsoft_sentinel_rule_details
 from app.converter.core.mapping import SourceMapping
 from app.converter.core.models.platform_details import PlatformDetails
-from app.converter.core.operator_types.output import MetaInfoContainer
+from app.converter.core.models.parser_output import MetaInfoContainer
 from app.converter.tools.utils import concatenate_str, get_author_str, get_licence_str
 
 

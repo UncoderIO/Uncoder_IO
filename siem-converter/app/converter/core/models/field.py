@@ -2,7 +2,7 @@ from typing import Union, List
 
 from app.converter.core.mapping import SourceMapping
 from app.converter.core.models.identifier import Identifier
-from app.converter.core.operator_types.tokens import OperatorType
+from app.converter.core.custom_types.tokens import OperatorType
 
 
 class Field:

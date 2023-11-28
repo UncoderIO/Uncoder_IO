@@ -17,10 +17,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 from app.converter.core.models.field import Field, Keyword
-from app.converter.core.models.group import Group
+from app.converter.platforms.sigma.models.group import Group
 from app.converter.core.models.identifier import Identifier
-from app.converter.core.models.operator import Operator, NOT
-from app.converter.core.operator_types.tokens import LogicalOperatorType, GroupType
+from app.converter.platforms.sigma.models.operator import Operator, NOT
+from app.converter.core.custom_types.tokens import LogicalOperatorType, GroupType
 
 
 class DataStructureCompiler:

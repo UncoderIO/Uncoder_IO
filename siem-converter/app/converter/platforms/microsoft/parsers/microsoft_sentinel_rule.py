@@ -22,7 +22,7 @@ from app.converter.platforms.microsoft.const import microsoft_sentinel_rule_deta
 from app.converter.platforms.microsoft.parsers.microsoft_sentinel import MicrosoftParser
 from app.converter.core.mixins.rule import JsonRuleMixin
 from app.converter.core.models.platform_details import PlatformDetails
-from app.converter.core.operator_types.output import SiemContainer, MetaInfoContainer
+from app.converter.core.models.parser_output import SiemContainer, MetaInfoContainer
 
 
 class MicrosoftRuleParser(MicrosoftParser, JsonRuleMixin):

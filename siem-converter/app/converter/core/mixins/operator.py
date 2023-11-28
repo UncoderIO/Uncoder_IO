@@ -19,7 +19,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 from typing import Union, List, Tuple
 
 from app.converter.core.models.identifier import Identifier
-from app.converter.core.operator_types.tokens import OperatorType
+from app.converter.core.custom_types.tokens import OperatorType
 
 
 class WildCardMixin:

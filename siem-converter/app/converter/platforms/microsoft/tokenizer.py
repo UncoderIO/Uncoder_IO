@@ -21,7 +21,7 @@ from typing import Tuple, Any, Union
 
 from app.converter.core.mixins.operator import OperatorBasedMixin
 from app.converter.core.tokenizer import QueryTokenizer
-from app.converter.core.operator_types.tokens import OperatorType
+from app.converter.core.custom_types.tokens import OperatorType
 from app.converter.tools.utils import get_match_group
 
 

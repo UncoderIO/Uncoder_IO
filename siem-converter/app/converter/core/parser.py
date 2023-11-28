@@ -22,7 +22,7 @@ from typing import Dict, List, Tuple
 from app.converter.core.mapping import BasePlatformMappings, SourceMapping
 from app.converter.core.models.field import Field
 from app.converter.core.models.platform_details import PlatformDetails
-from app.converter.core.operator_types.output import SiemContainer, MetaInfoContainer
+from app.converter.core.models.parser_output import SiemContainer, MetaInfoContainer
 from app.converter.core.tokenizer import QueryTokenizer, TOKEN_TYPE
 
 

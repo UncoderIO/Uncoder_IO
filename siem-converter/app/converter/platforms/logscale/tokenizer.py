@@ -21,7 +21,7 @@ from typing import Tuple, Any
 
 from app.converter.core.models.field import Keyword, Field
 from app.converter.core.models.identifier import Identifier
-from app.converter.core.operator_types.tokens import GroupType, LogicalOperatorType, OperatorType
+from app.converter.core.custom_types.tokens import GroupType, LogicalOperatorType, OperatorType
 from app.converter.core.tokenizer import QueryTokenizer
 from app.converter.tools.utils import get_match_group
 

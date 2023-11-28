@@ -24,7 +24,7 @@ from app.converter.platforms.athena.mapping import athena_mappings, AthenaMappin
 from app.converter.platforms.athena.tokenizer import AthenaTokenizer
 from app.converter.core.models.platform_details import PlatformDetails
 from app.converter.core.parser import Parser
-from app.converter.core.operator_types.output import SiemContainer, MetaInfoContainer
+from app.converter.core.models.parser_output import SiemContainer, MetaInfoContainer
 
 
 class AthenaParser(Parser):

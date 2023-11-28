@@ -25,7 +25,7 @@ from app.converter.platforms.qradar.mapping import QradarMappings, qradar_mappin
 from app.converter.platforms.qradar.tokenizer import QradarTokenizer
 from app.converter.core.models.platform_details import PlatformDetails
 from app.converter.core.parser import Parser
-from app.converter.core.operator_types.output import SiemContainer, MetaInfoContainer
+from app.converter.core.models.parser_output import SiemContainer, MetaInfoContainer
 from app.converter.tools.utils import get_match_group
 
 

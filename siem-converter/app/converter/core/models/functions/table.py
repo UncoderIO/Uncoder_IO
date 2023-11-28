@@ -1,4 +1,4 @@
-from app.converter.core.operator_types.tokens import OperatorType
+from app.converter.core.custom_types.tokens import OperatorType
 
 
 class TableField:

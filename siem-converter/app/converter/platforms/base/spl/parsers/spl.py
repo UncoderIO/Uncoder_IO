@@ -22,7 +22,7 @@ from typing import Tuple, List, Dict, Optional
 from app.converter.platforms.base.spl.tokenizer import SplTokenizer
 from app.converter.core.models.functions.types import ParsedFunctions
 from app.converter.core.parser import Parser
-from app.converter.core.operator_types.output import SiemContainer, MetaInfoContainer
+from app.converter.core.models.parser_output import SiemContainer, MetaInfoContainer
 
 
 class SplParser(Parser):
