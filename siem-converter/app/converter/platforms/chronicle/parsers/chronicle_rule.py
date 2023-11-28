@@ -25,7 +25,7 @@ from app.converter.platforms.chronicle.tokenizer import ChronicleRuleTokenizer
 from app.converter.core.exceptions.parser import TokenizerGeneralException
 from app.converter.core.models.platform_details import PlatformDetails
 from app.converter.core.parser import Parser
-from app.converter.core.operator_types.output import SiemContainer, MetaInfoContainer
+from app.converter.core.models.parser_output import SiemContainer, MetaInfoContainer
 
 
 class ChronicleRuleParser(Parser):

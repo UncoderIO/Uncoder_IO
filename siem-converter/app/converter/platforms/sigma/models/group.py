@@ -1,9 +1,7 @@
-from app.converter.core.models.operator import OR, AND, NOT
-from app.converter.core.operator_types.tokens import GroupType
+from app.converter.platforms.sigma.models.operator import OR, AND, NOT
 
 
 class Group:
-    token_type = GroupType.GROUP
     parent_group = []
     sub_group = None
     last_field = None

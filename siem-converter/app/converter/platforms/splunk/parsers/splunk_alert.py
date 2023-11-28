@@ -22,7 +22,7 @@ from typing import List, Optional
 from app.converter.platforms.splunk.const import splunk_alert_details
 from app.converter.platforms.splunk.parsers.splunk import SplunkParser
 from app.converter.core.models.platform_details import PlatformDetails
-from app.converter.core.operator_types.output import SiemContainer, MetaInfoContainer
+from app.converter.core.models.parser_output import SiemContainer, MetaInfoContainer
 
 
 class SplunkAlertParser(SplunkParser):

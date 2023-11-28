@@ -14,7 +14,6 @@ class OperatorType(CustomEnum):
     GTE = ">="
     EQ = "="
     NEQ = "!="
-    COLON = ":"
     CONTAINS = "contains"
     STARTSWITH = "startswith"
     ENDSWITH = "endswith"
@@ -25,8 +24,3 @@ class OperatorType(CustomEnum):
 class GroupType(CustomEnum):
     L_PAREN = "("
     R_PAREN = ")"
-    GROUP = "group"
-
-
-class ValidTokens(LogicalOperatorType, OperatorType, GroupType):
-    pass

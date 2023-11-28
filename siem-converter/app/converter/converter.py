@@ -2,7 +2,7 @@ import logging
 
 from app.converter.platforms.roota.parsers.roota import RootAParser
 from app.converter.core.exceptions.core import UnsupportedPlatform
-from app.converter.core.operator_types.output import SiemContainer
+from app.converter.core.models.parser_output import SiemContainer
 from app.converter.managers import RenderManager, ParserManager, render_manager, parser_manager
 from app.converter.tools.decorators import handle_translation_exceptions
 

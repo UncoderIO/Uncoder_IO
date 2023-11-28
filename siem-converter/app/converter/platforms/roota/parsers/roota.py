@@ -18,7 +18,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
 from app.converter.core.exceptions.core import UnsupportedRootAParser, RootARuleValidationException
 from app.converter.core.mixins.rule import YamlRuleMixin
-from app.converter.core.operator_types.output import SiemContainer, MetaInfoContainer
+from app.converter.core.models.parser_output import SiemContainer, MetaInfoContainer
 from app.converter.core.parser import Parser
 from app.converter.managers import parser_manager
 

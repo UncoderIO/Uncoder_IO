@@ -22,7 +22,7 @@ from app.converter.platforms.elasticsearch.const import elasticsearch_rule_detai
 from app.converter.platforms.elasticsearch.parsers.elasticsearch import ElasticSearchParser
 from app.converter.core.mixins.rule import JsonRuleMixin
 from app.converter.core.models.platform_details import PlatformDetails
-from app.converter.core.operator_types.output import SiemContainer, MetaInfoContainer
+from app.converter.core.models.parser_output import SiemContainer, MetaInfoContainer
 
 
 class ElasticSearchRuleParser(ElasticSearchParser, JsonRuleMixin):

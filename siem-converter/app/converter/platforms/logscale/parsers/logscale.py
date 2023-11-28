@@ -25,7 +25,7 @@ from app.converter.core.models.functions.types import ParsedFunctions
 from app.converter.platforms.logscale.tokenizer import LogScaleTokenizer
 from app.converter.core.models.platform_details import PlatformDetails
 from app.converter.core.parser import Parser
-from app.converter.core.operator_types.output import SiemContainer, MetaInfoContainer
+from app.converter.core.models.parser_output import SiemContainer, MetaInfoContainer
 
 
 class LogScaleParser(Parser):

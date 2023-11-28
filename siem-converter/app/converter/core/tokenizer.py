@@ -27,8 +27,8 @@ from app.converter.core.exceptions.parser import (
 from app.converter.core.mapping import SourceMapping, DEFAULT_MAPPING_NAME, BasePlatformMappings
 from app.converter.core.models.field import Field, Keyword
 from app.converter.core.models.identifier import Identifier
-from app.converter.core.models.group import GroupType
-from app.converter.core.operator_types.tokens import OperatorType
+from app.converter.platforms.sigma.models.group import GroupType
+from app.converter.core.custom_types.tokens import OperatorType
 from app.converter.tools.utils import get_match_group
 
 TOKEN_TYPE = Union[Field, Keyword, Identifier]

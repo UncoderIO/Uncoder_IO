@@ -21,7 +21,7 @@ from typing import List, Tuple, Dict
 
 from app.converter.platforms.base.lucene.tokenizer import LuceneTokenizer
 from app.converter.core.parser import Parser
-from app.converter.core.operator_types.output import SiemContainer, MetaInfoContainer
+from app.converter.core.models.parser_output import SiemContainer, MetaInfoContainer
 
 
 class LuceneParser(Parser):

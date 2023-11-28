@@ -22,7 +22,7 @@ from app.converter.platforms.logscale.const import logscale_query_details
 from app.converter.platforms.logscale.mapping import LogScaleMappings, logscale_mappings
 from app.converter.core.mapping import SourceMapping
 from app.converter.core.models.platform_details import PlatformDetails
-from app.converter.core.operator_types.output import MetaInfoContainer
+from app.converter.core.models.parser_output import MetaInfoContainer
 from app.converter.core.render import BaseQueryRender, BaseQueryFieldValue
 
 

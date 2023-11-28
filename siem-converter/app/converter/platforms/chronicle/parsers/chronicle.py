@@ -23,7 +23,7 @@ from app.converter.platforms.chronicle.mapping import chronicle_mappings, Chroni
 from app.converter.platforms.chronicle.tokenizer import ChronicleQueryTokenizer
 from app.converter.core.models.platform_details import PlatformDetails
 from app.converter.core.parser import Parser
-from app.converter.core.operator_types.output import SiemContainer, MetaInfoContainer
+from app.converter.core.models.parser_output import SiemContainer, MetaInfoContainer
 
 
 class ChronicleParser(Parser):

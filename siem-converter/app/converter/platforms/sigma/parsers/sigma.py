@@ -28,7 +28,7 @@ from app.converter.core.exceptions.core import SigmaRuleValidationException
 from app.converter.core.mixins.rule import YamlRuleMixin
 from app.converter.core.models.field import Field
 from app.converter.core.models.platform_details import PlatformDetails
-from app.converter.core.operator_types.output import SiemContainer, MetaInfoContainer
+from app.converter.core.models.parser_output import SiemContainer, MetaInfoContainer
 
 
 class SigmaParser(YamlRuleMixin):

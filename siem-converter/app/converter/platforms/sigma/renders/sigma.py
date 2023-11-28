@@ -23,16 +23,16 @@ import yaml
 
 from app.converter.platforms.sigma.const import SIGMA_RULE_DETAILS
 from app.converter.platforms.sigma.mapping import SigmaMappings, sigma_mappings, SigmaLogSourceSignature
-from app.converter.core.compiler import DataStructureCompiler
+from app.converter.platforms.sigma.models.compiler import DataStructureCompiler
 from app.converter.core.exceptions.core import StrictPlatformFieldException
 from app.converter.core.mapping import SourceMapping, DEFAULT_MAPPING_NAME
 from app.converter.core.models.field import Field, Keyword
 from app.converter.core.models.functions.types import ParsedFunctions
-from app.converter.core.models.group import Group
-from app.converter.core.models.operator import OR, AND, NOT
+from app.converter.platforms.sigma.models.group import Group
+from app.converter.platforms.sigma.models.operator import OR, AND, NOT
 from app.converter.core.models.platform_details import PlatformDetails
-from app.converter.core.operator_types.output import MetaInfoContainer
-from app.converter.core.operator_types.tokens import OperatorType
+from app.converter.core.models.parser_output import MetaInfoContainer
+from app.converter.core.custom_types.tokens import OperatorType
 
 
 class SigmaRender:

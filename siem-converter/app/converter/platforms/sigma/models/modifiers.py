@@ -2,7 +2,7 @@ from typing import Union, List
 
 from app.converter.core.models.field import Field
 from app.converter.core.models.identifier import Identifier
-from app.converter.core.operator_types.tokens import LogicalOperatorType, OperatorType, GroupType
+from app.converter.core.custom_types.tokens import LogicalOperatorType, OperatorType, GroupType
 
 
 class ModifierManager:

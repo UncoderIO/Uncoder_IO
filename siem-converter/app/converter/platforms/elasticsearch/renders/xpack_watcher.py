@@ -25,7 +25,7 @@ from app.converter.platforms.elasticsearch.renders.elasticsearch import ElasticS
 from app.converter.platforms.elasticsearch.const import XPACK_WATCHER_RULE, xpack_watcher_details
 from app.converter.core.mapping import SourceMapping
 from app.converter.core.models.platform_details import PlatformDetails
-from app.converter.core.operator_types.output import MetaInfoContainer
+from app.converter.core.models.parser_output import MetaInfoContainer
 from app.converter.tools.utils import concatenate_str, get_author_str, get_licence_str, get_mitre_attack_str
 
 
