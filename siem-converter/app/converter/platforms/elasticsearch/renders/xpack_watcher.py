@@ -26,7 +26,7 @@ from app.converter.platforms.elasticsearch.const import XPACK_WATCHER_RULE, xpac
 from app.converter.core.mapping import SourceMapping
 from app.converter.core.models.platform_details import PlatformDetails
 from app.converter.core.models.parser_output import MetaInfoContainer
-from app.converter.tools.utils import concatenate_str, get_author_str, get_licence_str, get_mitre_attack_str
+from app.converter.tools.utils import get_rule_description_str
 
 
 class XpackWatcherRuleFieldValue(ElasticSearchFieldValue):
@@ -43,13 +43,15 @@ class XPackWatcherRuleRender(ElasticSearchQueryRender):
                        source_mapping: SourceMapping = None, not_supported_functions: list = None):
         query = super().finalize_query(prefix=prefix, query=query, functions=functions, meta_info=meta_info)
         rule = copy.deepcopy(XPACK_WATCHER_RULE)
-        description = concatenate_str(meta_info.description, get_author_str(meta_info.author))
-        description = concatenate_str(description, get_licence_str(meta_info.license))
-        description = concatenate_str(description, get_mitre_attack_str(meta_info.mitre_attack))
         rule["metadata"].update({
             "query": query,
             "title": meta_info.title,
-            "description": description,
+            "description": get_rule_description_str(
+                description=meta_info.description,
+                author=meta_info.author,
+                license=meta_info.license,
+                mitre_attack=meta_info.mitre_attack
+            ),
             "tags": meta_info.mitre_attack
         })
         rule["input"]["search"]["request"]["body"]["query"]["bool"]["must"][0]["query_string"]["query"] = query
