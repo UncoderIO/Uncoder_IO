@@ -36,7 +36,7 @@ class RootAParser(YamlRuleMixin):
         meta_info.id = rule.get("uuid", meta_info.id)
         meta_info.references = rule.get("references")
         meta_info.license = rule.get("license", meta_info.license)
-        meta_info.tags = rule.get("tags")
+        meta_info.tags = rule.get("tags", meta_info.tags)
         meta_info.mitre_attack = mitre_attack
         meta_info.date = rule.get("date", meta_info.date)
         meta_info.author = rule.get("author", meta_info.author)
