@@ -64,7 +64,7 @@ class ElasticSearchRuleRender(ElasticSearchQueryRender):
             "tags": meta_info.mitre_attack,
             "false_positives": meta_info.false_positives
         })
-        rule_str = json.dumps(rule, indent=4, sort_keys=False)
+        rule_str = json.dumps(rule, indent=4, sort_keys=False, ensure_ascii=False)
         if not_supported_functions:
             rendered_not_supported = self.render_not_supported_functions(not_supported_functions)
             return rule_str + rendered_not_supported

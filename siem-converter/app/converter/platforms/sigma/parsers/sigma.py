@@ -19,7 +19,7 @@ limitations under the License.
 
 
 import re
-from typing import List
+from typing import List, Union
 
 from app.converter.platforms.sigma.const import SIGMA_RULE_DETAILS
 from app.converter.platforms.sigma.mapping import SigmaMappings, sigma_mappings
@@ -47,9 +47,16 @@ class SigmaParser(YamlRuleMixin):
 
         return result
 
+    @staticmethod
+    def __parse_false_positives(false_positives: Union[str, List[str], None]) -> list:
+        if isinstance(false_positives, str):
+            return [i.strip() for i in false_positives.split(',')]
+        return false_positives
+
     def _get_meta_info(self, rule: dict, source_mapping_ids: List[str]) -> MetaInfoContainer:
         return MetaInfoContainer(
             title=rule.get("title"),
+            id_=rule.get('id'),
             description=rule.get("description"),
             author=rule.get("author"),
             date=rule.get("date"),
@@ -58,7 +65,7 @@ class SigmaParser(YamlRuleMixin):
             mitre_attack=self.__parse_mitre_attack(rule.get("tags", [])),
             severity=rule.get("level"),
             status=rule.get("status"),
-            false_positives=rule.get("falsepositives"),
+            false_positives=self.__parse_false_positives(rule.get("falsepositives")),
             source_mapping_ids=source_mapping_ids
         )
 

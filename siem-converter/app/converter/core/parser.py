@@ -24,6 +24,7 @@ from app.converter.core.models.field import Field
 from app.converter.core.models.platform_details import PlatformDetails
 from app.converter.core.models.parser_output import SiemContainer, MetaInfoContainer
 from app.converter.core.tokenizer import QueryTokenizer, TOKEN_TYPE
+from app.converter.core.exceptions.parser import TokenizerGeneralException
 
 
 class Parser(ABC):
@@ -43,6 +44,8 @@ class Parser(ABC):
                                        query: str,
                                        log_sources: Dict[str, List[str]]
                                        ) -> Tuple[List[TOKEN_TYPE], List[SourceMapping]]:
+        if not query:
+            raise TokenizerGeneralException("Can't translate empty query. Please provide more details")
         tokens = self.tokenizer.tokenize(query=query)
         field_tokens = self.tokenizer.filter_tokens(tokens, Field)
         field_names = [field.source_name for field in field_tokens]
