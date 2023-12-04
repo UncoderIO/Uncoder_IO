@@ -20,6 +20,7 @@ import re
 from typing import Tuple, Union, List, Any
 
 from app.converter.core.exceptions.parser import TokenizerGeneralException
+from app.converter.core.mixins.logic import ANDLogicOperatorMixin
 from app.converter.core.models.field import Keyword, Field
 from app.converter.core.models.identifier import Identifier
 from app.converter.core.tokenizer import QueryTokenizer
@@ -27,7 +28,7 @@ from app.converter.core.custom_types.tokens import OperatorType
 from app.converter.tools.utils import get_match_group
 
 
-class LuceneTokenizer(QueryTokenizer):
+class LuceneTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
     field_pattern = r"(?P<field_name>[a-zA-Z\.\-_]+)"
     match_operator_pattern = r"(?:___field___\s*(?P<match_operator>:))\s*"
 
@@ -107,3 +108,7 @@ class LuceneTokenizer(QueryTokenizer):
         keyword = Keyword(value=value)
         pos = keyword_search.end() - 1
         return keyword, query[pos:]
+
+    def tokenize(self, query: str) -> List[Union[Field, Keyword, Identifier]]:
+        tokens = super().tokenize(query=query)
+        return self.add_and_token_if_missed(tokens=tokens)

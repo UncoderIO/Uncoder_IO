@@ -17,14 +17,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 import re
-from typing import Tuple, Any
+from typing import Tuple, Any, List, Union
 
+from app.converter.core.mixins.logic import ANDLogicOperatorMixin
+from app.converter.core.models.field import Field, Keyword
+from app.converter.core.models.identifier import Identifier
 from app.converter.core.tokenizer import QueryTokenizer
 from app.converter.core.custom_types.tokens import OperatorType
 from app.converter.tools.utils import get_match_group
 
 
-class SplTokenizer(QueryTokenizer):
+class SplTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
     field_pattern = r"(?P<field_name>[a-zA-Z\.\-_\{\}]+)"
     num_value_pattern = r"(?P<num_value>\d+(?:\.\d+)*)\s*"
     double_quotes_value_pattern = r'"(?P<d_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,;\'\.$&^@!\(\)\{\}\s]|\\\"|\\)*)"\s*'
@@ -51,3 +54,7 @@ class SplTokenizer(QueryTokenizer):
             return operator, s_q_value
 
         return super().get_operator_and_value(match)
+
+    def tokenize(self, query: str) -> List[Union[Field, Keyword, Identifier]]:
+        tokens = super().tokenize(query=query)
+        return self.add_and_token_if_missed(tokens=tokens)
