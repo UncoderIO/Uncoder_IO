@@ -55,7 +55,6 @@
       { "name": "logscale-lql-query", "description": "Falcon LogScale Query" },
       { "name": "mde-kql-query", "description": "Microsoft Defender for Endpoint Query" },
       { "name": "qradar-aql-query", "description": "IBM QRadar Query" },
-      { "name": "sigma-yml-rule", "description": "Sigma Rule" },
       { "name": "athena-sql-query", "description": "AWS Athena Query (Security Lake)" },
       { "name": "chronicle-yaral-query", "description": "Chronicle Security Query" }
     ]
