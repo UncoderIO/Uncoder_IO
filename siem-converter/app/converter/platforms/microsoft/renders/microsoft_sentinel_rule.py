@@ -28,7 +28,7 @@ from app.converter.platforms.microsoft.const import DEFAULT_MICROSOFT_SENTINEL_R
 from app.converter.core.mapping import SourceMapping
 from app.converter.core.models.platform_details import PlatformDetails
 from app.converter.core.models.parser_output import MetaInfoContainer
-from app.converter.tools.utils import concatenate_str, get_author_str, get_licence_str
+from app.converter.tools.utils import get_rule_description_str
 
 
 class MicrosoftSentinelRuleFieldValue(MicrosoftSentinelFieldValue):
@@ -46,10 +46,11 @@ class MicrosoftSentinelRuleRender(MicrosoftSentinelQueryRender):
         rule = copy.deepcopy(DEFAULT_MICROSOFT_SENTINEL_RULE)
         rule["query"] = query
         rule["displayName"] = meta_info.title
-        description = meta_info.description or rule["description"]
-        description = concatenate_str(description, get_author_str(meta_info.author))
-        description = concatenate_str(description, get_licence_str(meta_info.license))
-        rule["description"] = description
+        rule["description"] = get_rule_description_str(
+            description=meta_info.description or rule["description"],
+            author=meta_info.author,
+            license=meta_info.license
+        )
         rule["severity"] = meta_info.severity
         rule["techniques"] = [el.upper() for el in meta_info.mitre_attack]
         json_rule = json.dumps(rule, indent=4, sort_keys=False)

@@ -26,8 +26,7 @@ from app.converter.platforms.elasticsearch.renders.elasticsearch import ElasticS
 from app.converter.core.mapping import SourceMapping
 from app.converter.core.models.platform_details import PlatformDetails
 from app.converter.core.models.parser_output import MetaInfoContainer
-from app.converter.tools.utils import concatenate_str, get_author_str, get_licence_str, get_mitre_attack_str, \
-    get_rule_id_str, get_references_str
+from app.converter.tools.utils import get_rule_description_str
 
 
 class KibanaFieldValue(ElasticSearchFieldValue):
@@ -49,12 +48,14 @@ class KibanaRuleRender(ElasticSearchQueryRender):
         rule = copy.deepcopy(KIBANA_RULE)
         rule["_source"]["kibanaSavedObjectMeta"]["searchSourceJSON"] = dumped_rule
         rule["_source"]["title"] = meta_info.title
-        description = meta_info.description or rule["_source"]["description"]
-        description = concatenate_str(description, get_author_str(meta_info.author))
-        description = concatenate_str(description, get_rule_id_str(meta_info.id))
-        description = concatenate_str(description, get_licence_str(meta_info.license))
-        description = concatenate_str(description, get_references_str(meta_info.references))
-        rule["_source"]["description"] = concatenate_str(description, get_mitre_attack_str(meta_info.mitre_attack))
+        rule["_source"]["description"] = get_rule_description_str(
+            description=meta_info.description or rule["_source"]["description"],
+            author=meta_info.author,
+            rule_id=meta_info.id,
+            license=meta_info.license,
+            references=meta_info.references,
+            mitre_attack=meta_info.mitre_attack
+        )
         rule_str = json.dumps(rule, indent=4, sort_keys=False)
         if not_supported_functions:
             rendered_not_supported = self.render_not_supported_functions(not_supported_functions)

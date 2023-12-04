@@ -23,7 +23,7 @@ from app.converter.platforms.elasticsearch.renders.elasticsearch import ElasticS
 from app.converter.core.mapping import SourceMapping
 from app.converter.core.models.platform_details import PlatformDetails
 from app.converter.core.models.parser_output import MetaInfoContainer
-from app.converter.tools.utils import get_author_str, concatenate_str, get_mitre_attack_str, get_licence_str
+from app.converter.tools.utils import get_rule_description_str
 
 
 SEVERITIES_MAP = {"informational": "5", "low": "4", "medium": "3", "high": "2", "critical": "1"}
@@ -48,11 +48,14 @@ class ElastAlertRuleRender(ElasticSearchQueryRender):
                        source_mapping: SourceMapping = None, not_supported_functions: list = None):
         query = super().finalize_query(prefix=prefix, query=query, functions=functions, meta_info=meta_info)
         rule = ELASTICSEARCH_ALERT.replace("<query_placeholder>", query)
-        description = concatenate_str(meta_info.description, get_author_str(meta_info.author))
-        description = concatenate_str(description, get_licence_str(meta_info.license))
-        description = concatenate_str(description, get_mitre_attack_str(meta_info.mitre_attack))
-
-        rule = rule.replace("<description_place_holder>", description)
+        rule = rule.replace(
+            "<description_place_holder>",
+            get_rule_description_str(
+                description=meta_info.description,
+                license=meta_info.license,
+                mitre_attack=meta_info.mitre_attack
+            )
+        )
         rule = rule.replace("<title_place_holder>", meta_info.title)
         rule = rule.replace("<priority_place_holder>", SEVERITIES_MAP[meta_info.severity])
         if not_supported_functions:
