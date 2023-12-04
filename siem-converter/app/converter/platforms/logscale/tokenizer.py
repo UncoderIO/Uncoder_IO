@@ -17,8 +17,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 import re
-from typing import Tuple, Any
+from typing import Tuple, Any, List, Union
 
+from app.converter.core.mixins.logic import ANDLogicOperatorMixin
 from app.converter.core.models.field import Keyword, Field
 from app.converter.core.models.identifier import Identifier
 from app.converter.core.custom_types.tokens import GroupType, LogicalOperatorType, OperatorType
@@ -26,7 +27,7 @@ from app.converter.core.tokenizer import QueryTokenizer
 from app.converter.tools.utils import get_match_group
 
 
-class LogScaleTokenizer(QueryTokenizer):
+class LogScaleTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
     match_operator_pattern = r"""(?:___field___\s?(?P<match_operator>=|!=))\s?"""
     num_value_pattern = r"(?P<num_value>\d+(?:\.\d+)*)\s*"
     double_quotes_value_pattern = r'"(?P<d_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{\}\s]|\\\"|\\)*)"\s*'
@@ -65,7 +66,7 @@ class LogScaleTokenizer(QueryTokenizer):
         else:
             return self.search_field_value(query)
 
-    def tokenize(self, query: str) -> list:
+    def tokenize(self, query: str) -> List[Union[Field, Keyword, Identifier]]:
         tokenized = []
         while query:
             identifier, query = self.__get_identifier(query=query)
@@ -78,4 +79,4 @@ class LogScaleTokenizer(QueryTokenizer):
                         tokenized.append(Identifier(token_type=LogicalOperatorType.AND))
             tokenized.append(identifier)
         self._validate_parentheses(tokenized)
-        return tokenized
+        return self.add_and_token_if_missed(tokens=tokenized)
