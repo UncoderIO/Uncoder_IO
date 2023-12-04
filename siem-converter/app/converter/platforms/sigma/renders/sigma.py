@@ -174,12 +174,16 @@ class SigmaRender:
         return not_node
 
     @staticmethod
-    def generate_field(data: Field, source_mapping: SourceMapping):
+    def map_field(source_mapping: SourceMapping, generic_field_name: str) -> str:
+        field_name = source_mapping.fields_mapping.get_platform_field_name(generic_field_name)
+        return field_name or generic_field_name
+
+    def generate_field(self, data: Field, source_mapping: SourceMapping):
         source_id = source_mapping.source_id
         generic_field_name = data.generic_names_map[source_id]
         if not generic_field_name:
             raise StrictPlatformFieldException(field_name=data.source_name, platform_name="Sigma")
-        field_name = source_mapping.fields_mapping.get_platform_field_name(generic_field_name)
+        field_name = self.map_field(source_mapping, generic_field_name)
         if data.operator.token_type != OperatorType.EQ:
             field_name = f"{field_name}|{data.operator.token_type}"
         if isinstance(data.values, list) and len(data.values) == 1 or isinstance(data.values, (str, int)):
