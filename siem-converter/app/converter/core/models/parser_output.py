@@ -17,8 +17,8 @@ class MetaInfoContainer:
                  license_: str = None,
                  severity: str = None,
                  references: List[str] = None,
-                 tags: List[str] = None,
-                 mitre_attack: List[str] = None,
+                 tags: list[str] = None,
+                 mitre_attack: dict[str, list] = None,
                  status: str = None,
                  false_positives: List[str] = None,
                  source_mapping_ids: List[str] = None

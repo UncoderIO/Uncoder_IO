@@ -10,6 +10,7 @@ from fastapi import APIRouter, FastAPI
 
 from const import ROOT_PROJECT_PATH
 
+from app.converter.core.mitre import MitreConfig
 
 assistance_router = APIRouter()
 
@@ -18,6 +19,7 @@ suggestions = {}
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    MitreConfig().update_mitre_config()
     with open(os.path.join(ROOT_PROJECT_PATH, 'app/dictionaries/uncoder_meta_info_roota.json'), 'r') as file:
         json_f = json.load(file)
         suggestions['roota'] = json_f

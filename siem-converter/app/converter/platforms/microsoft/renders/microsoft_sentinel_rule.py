@@ -40,6 +40,18 @@ class MicrosoftSentinelRuleRender(MicrosoftSentinelQueryRender):
     or_token = "or"
     field_value_map = MicrosoftSentinelRuleFieldValue(or_token=or_token)
 
+    def __create_mitre_threat(self, meta_info: MetaInfoContainer) -> tuple[list, list]:
+        tactics = []
+        techniques = []
+
+        for tactic in meta_info.mitre_attack.get('tactics'):
+            tactics.append(tactic['tactic'])
+
+        for technique in meta_info.mitre_attack.get('techniques'):
+            techniques.append(technique['technique_id'])
+
+        return tactics, techniques
+
     def finalize_query(self, prefix: str, query: str, functions: str, meta_info: MetaInfoContainer,
                        source_mapping: SourceMapping = None, not_supported_functions: list = None):
         query = super().finalize_query(prefix=prefix, query=query, functions=functions, meta_info=meta_info)
@@ -52,7 +64,9 @@ class MicrosoftSentinelRuleRender(MicrosoftSentinelQueryRender):
             license=meta_info.license
         )
         rule["severity"] = meta_info.severity
-        rule["techniques"] = [el.upper() for el in meta_info.mitre_attack]
+        mitre_tactics, mitre_techniques = self.__create_mitre_threat(meta_info=meta_info)
+        rule['tactics'] = mitre_tactics
+        rule['techniques'] = mitre_techniques
         json_rule = json.dumps(rule, indent=4, sort_keys=False)
         if not_supported_functions:
             rendered_not_supported = self.render_not_supported_functions(not_supported_functions)

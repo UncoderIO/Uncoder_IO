@@ -39,15 +39,6 @@ class SigmaParser(YamlRuleMixin):
     mandatory_fields = {"title", "description", "references", "logsource", "detection"}
 
     @staticmethod
-    def __parse_mitre_attack(tags: List[str]) -> List[str]:
-        result = []
-        for tag in tags:
-            if search := re.search(r"[tT]\d{4}(?:\.\d{3})?", tag):
-                result.append(search.group())
-
-        return result
-
-    @staticmethod
     def __parse_false_positives(false_positives: Union[str, List[str], None]) -> list:
         if isinstance(false_positives, str):
             return [i.strip() for i in false_positives.split(',')]
@@ -62,9 +53,10 @@ class SigmaParser(YamlRuleMixin):
             date=rule.get("date"),
             references=rule.get("references", []),
             license_=rule.get("license"),
-            mitre_attack=self.__parse_mitre_attack(rule.get("tags", [])),
+            mitre_attack=self.parse_mitre_attack(rule.get("tags", [])),
             severity=rule.get("level"),
             status=rule.get("status"),
+            tags=rule.get("tags"),
             false_positives=self.__parse_false_positives(rule.get("falsepositives")),
             source_mapping_ids=source_mapping_ids
         )

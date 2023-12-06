@@ -7,8 +7,10 @@ DEFAULT_CHRONICLE_SECURITY_RULE = """rule <title_place_holder> {
     version = "0.01"
     rule_id = "<rule_id_place_holder>"
     status = "<status_place_holder>"
-    severity = "<severity_place_holder>"
+    tags = "<tags_place_holder>"
     falsepositives = "<falsepositives_place_holder>"
+    severity = "<severity_place_holder>"
+    created = "<created_place_holder>"
 
   events:
     <query_placeholder>
