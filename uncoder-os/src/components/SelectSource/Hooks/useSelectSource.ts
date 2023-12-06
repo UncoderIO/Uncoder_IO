@@ -7,6 +7,7 @@ import {
 import { useHandleClickOutside } from '../../../hooks';
 import { convertSiemsListToGroupStructure, GroupListType } from '../../../tools';
 import { PlatformData } from '../../../models/Providers/type';
+import { EditorValueTypes } from '../../../types/editorValueTypes';
 
 const favoritePlatforms: any[] = [];
 
@@ -15,8 +16,8 @@ const getActiveItemsIds = (siemsList: SiemsListType, siemSelector: string): Sele
 
   if (!selectedItem) {
     return {
-      selectedGroup: 'none',
-      selectedPlatform: 'none',
+      selectedGroup: EditorValueTypes.none,
+      selectedPlatform: EditorValueTypes.none,
     };
   }
 
@@ -29,7 +30,7 @@ const getActiveItemsIds = (siemsList: SiemsListType, siemSelector: string): Sele
 export const getSiemTitleById = (platformData?: PlatformData[]) => (id: string): string => {
   const platformDataItem = platformData?.find((item) => item.id === id);
 
-  if (['none', 'ioc', 'sigma', 'roota'].includes(id)) {
+  if (Object.keys(EditorValueTypes).includes(id)) {
     return platformDataItem?.group_name ?? '';
   }
 
@@ -120,17 +121,17 @@ export const useSelectSource = (
     handleToggleSelect(false),
   );
 
-  const filterGroup = ():SiemsListType => {
+  const filterGroup = (): SiemsListType => {
     if (typeof filterValue === 'undefined') {
       return siemsList;
     }
 
     return siemsList?.filter((item) => (
       item.group_name.toLowerCase().includes(filterValue?.toLowerCase())
-      || item?.platform_name?.toLowerCase().includes(filterValue?.toLowerCase())
-      || item?.alt_platform_name?.toLowerCase().includes(filterValue?.toLowerCase())
+        || item?.platform_name?.toLowerCase().includes(filterValue?.toLowerCase())
+        || item?.alt_platform_name?.toLowerCase().includes(filterValue?.toLowerCase())
     )
-      && item.group_id !== 'none');
+      && item.group_id !== EditorValueTypes.none);
   };
 
   const groupStructure = convertSiemsListToGroupStructure(filterGroup());
@@ -160,7 +161,9 @@ export const useSelectSource = (
       return item;
     });
 
-  const handleOnHoover = (elementIndex: number) => () => { setCursor(elementIndex); };
+  const handleOnHoover = (elementIndex: number) => () => {
+    setCursor(elementIndex);
+  };
 
   return {
     selectRef,

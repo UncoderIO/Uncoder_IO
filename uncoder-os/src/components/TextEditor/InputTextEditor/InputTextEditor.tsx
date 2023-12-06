@@ -11,12 +11,13 @@ export const InputTextEditor: FC = () => {
     onChangeInputText,
     onFocusInputText,
     onPasteInputText,
+    isIoc,
   } = useInputEditor();
 
   return (
     <div className="input-text-editor-grid">
       <TextEditor
-        className={'ua-text-editor'}
+        className={`ua-text-editor${isIoc ? ' is-short-scroll' : ''}`}
         mode={mode}
         value={inputText}
         name="ua-text-editor-input"

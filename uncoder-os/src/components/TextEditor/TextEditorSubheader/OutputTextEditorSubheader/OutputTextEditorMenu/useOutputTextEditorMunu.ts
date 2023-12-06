@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from '@reduxjs/toolkit';
-import { setText, outputEditorTextSelector } from '../../../../../reduxData/outputEditor';
+import { clearText, outputEditorTextSelector } from '../../../../../reduxData/outputEditor';
 import { useInfoProvider } from '../../../../Info';
 
 export const useOutputTextEditorMenu = () => {
@@ -14,7 +14,7 @@ export const useOutputTextEditorMenu = () => {
   };
 
   const clearTextHandler = () => {
-    dispatch(setText(''));
+    dispatch(clearText());
   };
 
   return {

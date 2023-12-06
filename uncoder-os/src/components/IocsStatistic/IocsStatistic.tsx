@@ -1,16 +1,20 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { BasicIocType } from '../../types/iocsTypes';
-import { useIocsStatistic } from './useIocsStatistic';
 import { OneIocElement } from './IocOneElement';
 
 import './IocsStatistic.sass';
 
-export const IocsStatistic: FC = () => {
-  const {
-    getOneIocTypeCount,
-  } = useIocsStatistic();
+type IocsStatisticProps = {
+  getOneIocTypeCount: (iocType: BasicIocType) => number;
+  totalIocsCount: number;
+}
 
-  return (
+export const IocsStatistic: FC<IocsStatisticProps> = (
+  {
+    getOneIocTypeCount,
+    totalIocsCount,
+  },
+) => (
     <div className="iocs-stat">
       <div className="iocs-stat__list">
         <OneIocElement
@@ -41,9 +45,8 @@ export const IocsStatistic: FC = () => {
           value={getOneIocTypeCount(BasicIocType.Files)}
         /> */}
       </div>
-      {/* <div className="iocs-stat__count">
-        {`${getTotalIocsCount()}/${iocPerQueryCount}`}
-      </div> */}
+      {<div className="iocs-stat__count">
+        {`${totalIocsCount}/10000`}
+      </div>}
     </div>
-  );
-};
+);

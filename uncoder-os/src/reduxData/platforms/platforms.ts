@@ -8,6 +8,7 @@ import { ThunkAction } from '../ThunkAction';
 import { injectNonePlatformElement } from '../../tools';
 import { Severity } from '../../enums';
 import { openInfoMessage } from '../info';
+import { EditorValueTypes } from '../../types/editorValueTypes';
 
 type PlatformsReducers = {
   setPlatformsData: CaseReducer<PlatformsStateType, PayloadAction<PlatformsResponse>>;
@@ -40,7 +41,7 @@ export const renderersSelector = createSelector(
   selectSelf,
   (state: RootState): PlatformData[] => {
     const selectedParser = state.inputEditor.platformCode;
-    if (typeof selectedParser === 'undefined' || selectedParser === 'none') {
+    if (typeof selectedParser === 'undefined' || selectedParser === EditorValueTypes.none) {
       return injectNonePlatformElement([]);
     }
     const parser = state.platforms.data?.find((item) => item.id === selectedParser);

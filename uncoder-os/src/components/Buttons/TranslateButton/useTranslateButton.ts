@@ -2,12 +2,16 @@ import { translateIocsFromInputEditor, translateTextFromInputEditor } from '../.
 import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from '@reduxjs/toolkit';
 import { inputEditorPlatformCodeSelector } from '../../../reduxData/inputEditor';
+import { EditorValueTypes } from '../../../types/editorValueTypes';
+import { iocSettingsSelector } from '../../../reduxData/iocSettings';
 
 export const useTranslateButton = () => {
-  const parser = useSelector(inputEditorPlatformCodeSelector);
   const dispatch = useDispatch<Dispatch<any>>();
+  const parser = useSelector(inputEditorPlatformCodeSelector);
+  const { includeIocTypes } = useSelector(iocSettingsSelector);
+
   const onClickHandler = async () => {
-    if (parser === 'ioc') {
+    if (parser === EditorValueTypes.ioc) {
       dispatch(translateIocsFromInputEditor());
       return;
     }
@@ -15,7 +19,13 @@ export const useTranslateButton = () => {
     dispatch(translateTextFromInputEditor());
   };
 
+  const isActive = includeIocTypes.length > 0 || parser !== 'ioc';
+
+  const disabledMessage = 'IOC Types is not specified';
+
   return {
+    isActive,
+    disabledMessage,
     onClickHandler,
   };
 };

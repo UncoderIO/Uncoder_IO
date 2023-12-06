@@ -1,0 +1,27 @@
+<svg width="127" height="122" viewBox="0 0 127 122" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="13" y="1" width="113" height="82" rx="3" fill="#DEDEDE" stroke="black" stroke-width="2"/>
+    <rect x="24" y="98" width="102" height="23" rx="3" fill="#DEDEDE" stroke="black" stroke-width="2"/>
+    <rect x="1" y="1" width="113" height="82" rx="3" fill="white" stroke="black" stroke-width="2"/>
+    <rect x="1" y="98" width="113" height="23" rx="3" fill="white" stroke="black" stroke-width="2"/>
+    <path d="M26 10L19 17" stroke="black" stroke-width="2"/>
+    <path d="M36 10L29 17" stroke="black" stroke-width="2"/>
+    <path d="M46 10L39 17" stroke="black" stroke-width="2"/>
+    <path d="M56 10L49 17" stroke="black" stroke-width="2"/>
+    <path d="M66 10L59 17" stroke="black" stroke-width="2"/>
+    <path d="M76 10L69 17" stroke="black" stroke-width="2"/>
+    <path d="M86 10L79 17" stroke="black" stroke-width="2"/>
+    <path d="M96 10L89 17" stroke="black" stroke-width="2"/>
+    <path d="M83 106L76 113" stroke="black" stroke-width="2"/>
+    <path d="M93 106L86 113" stroke="black" stroke-width="2"/>
+    <path d="M103 106L96 113" stroke="black" stroke-width="2"/>
+    <path d="M96 72H101" stroke="black" stroke-width="2"/>
+    <path d="M102 72H104" stroke="black" stroke-width="2"/>
+    <path d="M11 109H16" stroke="black" stroke-width="2"/>
+    <path d="M17 109H19" stroke="black" stroke-width="2"/>
+    <rect x="54" y="83" width="18" height="14" fill="#DEDEDE" stroke="black" stroke-width="2"/>
+    <rect x="50" y="83" width="18" height="14" fill="white" stroke="black" stroke-width="2"/>
+    <circle cx="31" cy="38" r="7" stroke="black" stroke-width="2"/>
+    <circle cx="75" cy="38" r="7" stroke="black" stroke-width="2"/>
+    <rect x="46" y="62" width="16" height="2" fill="#292C3D"/>
+</svg>
+

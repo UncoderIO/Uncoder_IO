@@ -7,6 +7,7 @@ import {
   setPlatformCode as setOutputPlatformCode,
 } from '../../../../reduxData/outputEditor';
 import { inputEditorPlatformCodeSelector } from '../../../../reduxData/inputEditor';
+import { EditorValueTypes } from '../../../../types/editorValueTypes';
 
 export const useOutputTextEditorHeader = () => {
   const dispatch = useDispatch<Dispatch<any>>();
@@ -15,13 +16,13 @@ export const useOutputTextEditorHeader = () => {
   const parser = useSelector(inputEditorPlatformCodeSelector);
 
   const onChangeRenderer = (id: string) => {
-    dispatch(setOutputPlatformCode(id));
+    dispatch(setOutputPlatformCode(id as EditorValueTypes));
   };
 
   return {
     renderers,
     onChangeRenderer,
     renderer,
-    isIocMode: parser === 'ioc',
+    isIocMode: parser === EditorValueTypes.ioc,
   };
 };

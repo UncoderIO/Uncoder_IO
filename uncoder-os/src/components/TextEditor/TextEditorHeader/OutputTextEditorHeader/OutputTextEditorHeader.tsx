@@ -30,7 +30,8 @@ export const OutputTextEditorHeader: FC = () => {
         <div className="text-editor-header-list__item m-r-8">
           {
             isIocMode
-              ? <Dropdown
+              ? (
+                <Dropdown
                   children={<DropdownIocSettingsMenu/>}
                   placement="bottom-end"
                   button={
@@ -42,6 +43,7 @@ export const OutputTextEditorHeader: FC = () => {
                     />
                   }
                 />
+              )
               : null
           }
         </div>

@@ -1,6 +1,8 @@
 import { useDispatch } from 'react-redux';
 import { Dispatch } from '@reduxjs/toolkit';
 import { setPlatformCode } from '../../reduxData/inputEditor';
+import { setPlatformCode as setRenderer } from '../../reduxData/outputEditor';
+import { EditorValueTypes } from '../../types/editorValueTypes';
 
 const isSigma = (text: string): boolean => {
   return text.includes('title:') && text.includes('logsource:') && text.includes('detection:');
@@ -11,18 +13,27 @@ const isRoota = (text: string): boolean => {
 };
 export const useDetectParserByText = () => {
   const dispatch = useDispatch<Dispatch<any>>();
-  const detectParser = (text: string) => {
+
+  const detectParser = (
+    text: string,
+    defaultPlatform: EditorValueTypes | undefined = undefined,
+  ) => {
     if (isRoota(text)) {
-      dispatch(setPlatformCode('roota'));
+      dispatch(setPlatformCode(EditorValueTypes.roota));
+      dispatch(setRenderer(EditorValueTypes.none));
       return;
     }
 
     if (isSigma(text)) {
-      dispatch(setPlatformCode('sigma'));
+      dispatch(setPlatformCode(EditorValueTypes.sigma));
+      dispatch(setRenderer(EditorValueTypes.none));
       return;
     }
 
-    dispatch(setPlatformCode('ioc'));
+    if (defaultPlatform) {
+      dispatch(setPlatformCode(defaultPlatform));
+      dispatch(setRenderer(EditorValueTypes.none));
+    }
   };
 
   return {

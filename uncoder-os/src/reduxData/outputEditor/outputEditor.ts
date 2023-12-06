@@ -6,15 +6,17 @@ import { TranslateIocRequest, TranslateRequest } from '../../models/Providers/ty
 import { openInfoMessage, postponedCloseInfoMessage } from '../info';
 import { Severity } from '../../enums';
 import { DEFAULT_ERROR_TTL } from '../../components/Info';
+import { EditorValueTypes } from '../../types/editorValueTypes';
 
 type OutputEditorReducers = {
   setText: CaseReducer<OutputEditorStateType, PayloadAction<string>>;
-  setPlatformCode: CaseReducer<OutputEditorStateType, PayloadAction<string>>;
+  clearText: CaseReducer<OutputEditorStateType>;
+  setPlatformCode: CaseReducer<OutputEditorStateType, PayloadAction<EditorValueTypes>>;
 };
 
 const initialState: OutputEditorStateType = {
   text: '',
-  platformCode: 'none',
+  platformCode: EditorValueTypes.none,
 };
 
 const outputEditorSlice = createSlice<OutputEditorStateType, OutputEditorReducers>({
@@ -23,6 +25,9 @@ const outputEditorSlice = createSlice<OutputEditorStateType, OutputEditorReducer
   reducers: {
     setText: (state, action) => {
       state.text = action.payload;
+    },
+    clearText: (state) => {
+      state.text = '';
     },
     setPlatformCode: (state, action) => {
       state.platformCode = action.payload;
@@ -50,6 +55,7 @@ export const outputEditorPlatformCodeSelector = createSelector(
 
 export const {
   setText,
+  clearText,
   setPlatformCode,
 } = actions;
 
@@ -66,7 +72,7 @@ const getTranslateRequestData = (state: RootState): TranslateRequest | undefined
 
   if (
     typeof platformDataItem?.code === 'undefined'
-    || platformDataItem?.code === 'none'
+    || platformDataItem?.code === EditorValueTypes.none
     || !text.length
   ) {
     return undefined;
@@ -89,12 +95,12 @@ const getTranslateIocRequestData = (state: RootState): TranslateIocRequest | und
   } = state;
 
   const platformDataItem = platforms
-    ?.find((item) => item.id === 'ioc')
+    ?.find((item) => item.id === EditorValueTypes.ioc)
     ?.renders.find((item) => item.id === targetSiem);
 
   if (
     typeof platformDataItem?.code === 'undefined'
-    || platformDataItem?.code === 'none'
+    || platformDataItem?.code === EditorValueTypes.none
     || !text.length
   ) {
     return undefined;

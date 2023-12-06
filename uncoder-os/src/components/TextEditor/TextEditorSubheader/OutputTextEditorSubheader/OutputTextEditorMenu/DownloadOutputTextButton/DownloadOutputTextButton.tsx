@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { Button } from '../../../../../Buttons';
+import { Tooltip } from '../../../../../Tooltip';
 import { ReactComponent as DownloadIcon } from '../../../../../../assets/svg/DownloadIcon.svg';
 import { useSelector } from 'react-redux';
 import { downloadFile } from '../../../../../../tools';
@@ -16,11 +17,15 @@ export const DownloadOutputTextButton: FC = () => {
     return null;
   }
 
-  return <Button
-    classes="button--icon button--xs button--default m-r-6"
-    children={<DownloadIcon />}
-    aria-label="input-copy"
-    type="button"
-    onClick={downloadText}
-  />;
+  return (
+    <Tooltip classes="m-r-6" content="Download">
+      <Button
+        classes="button--icon button--xs button--default"
+        children={<DownloadIcon />}
+        aria-label="output-download"
+        type="button"
+        onClick={downloadText}
+      />
+    </Tooltip>
+  );
 };

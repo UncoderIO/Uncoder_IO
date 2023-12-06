@@ -1,33 +1,38 @@
 import { FC } from 'react';
 import { Button } from '../../../../Buttons';
+import { DownloadOutputTextButton } from './DownloadOutputTextButton';
+import { Tooltip } from '../../../../Tooltip';
 import { useOutputTextEditorMenu } from './useOutputTextEditorMunu';
 
 import { ReactComponent as CopyIcon } from '../../../../../assets/svg/CopyIcon.svg';
 import { ReactComponent as DeleteIcon } from '../../../../../assets/svg/DeleteIcon.svg';
 
 import './OutputTextEditorMenu.sass';
-import { DownloadOutputTextButton } from './DownloadOutputTextButton';
 
 export const OutputTextEditorMenu: FC = () => {
   const { copyTextHandler, clearTextHandler } = useOutputTextEditorMenu();
 
   return (
     <div className="text-editor-menu-output">
-      <Button
-        classes="button--icon button--xs button--default m-r-6"
-        children={<CopyIcon/>}
-        onClick={copyTextHandler}
-        aria-label="input-copy"
-        type="button"
-      />
+      <Tooltip classes="m-r-6" content="Copy">
+        <Button
+          classes="button--icon button--xs button--default"
+          children={<CopyIcon />}
+          onClick={copyTextHandler}
+          aria-label="output-copy"
+          type="button"
+        />
+      </Tooltip>
       <DownloadOutputTextButton />
-      <Button
-        classes="button--icon button--xs button--default"
-        children={<DeleteIcon/>}
-        onClick={clearTextHandler}
-        aria-label="input-delete"
-        type="button"
-      />
+      <Tooltip content="Delete">
+        <Button
+          classes="button--icon button--xs button--default"
+          children={<DeleteIcon />}
+          onClick={clearTextHandler}
+          aria-label="output-delete"
+          type="button"
+        />
+      </Tooltip>
     </div>
   );
 };

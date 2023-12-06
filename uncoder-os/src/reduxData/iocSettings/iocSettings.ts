@@ -78,6 +78,11 @@ export const iocSettingsSelector = createSelector(
   (state: RootState): IocSettingsStateType => state.iocSettings,
 );
 
+export const iocParsingRulesSelector = createSelector(
+  selectSelf,
+  (state: RootState): IocParsingRulesType[] => state.iocSettings.iocParsingRules,
+);
+
 export const {
   setIocPerQuery,
   setIncludeIocTypes,

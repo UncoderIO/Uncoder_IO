@@ -22,7 +22,7 @@ export const OneIocElement: React.FC<OneIocElementPropsType> = ({ value, iocCurr
 
   return (
     <div className="one-ioc-element">
-      <Tooltip title={value}>
+      <Tooltip content={`${value ?? 0}`}>
         <span>
           <span className="one-ioc-element__count m-r-4">
             {convertValue(value)}

@@ -27,13 +27,13 @@ export const DropdownIocSettingsMenu: FC = () => {
       {
         iocTypesFields.map((field) => (
           <div className="ioc-settings-menu-list__item m-r-16 m-b-6" key={field.name}>
-            <Checkbox label={field.label} checked={field.checked} name={field.name}/>
+            <Checkbox label={field.label} checked={field.checked} name={field.name} readOnly/>
           </div>
         ))
       }
       {
         (iocTypeErrorMessage?.length) && (
-          <HelperText children={iocTypeErrorMessage} />
+          <HelperText children={iocTypeErrorMessage}/>
         )
       }
     </div>
@@ -44,13 +44,13 @@ export const DropdownIocSettingsMenu: FC = () => {
       {
         hashTypesFields.map((field) => (
           <div className="ioc-settings-menu-list__item m-r-16 m-b-6" key={field.name}>
-            <Checkbox label={field.label} checked={field.checked} name={field.name}/>
+            <Checkbox label={field.label} checked={field.checked} name={field.name} readOnly/>
           </div>
         ))
       }
     </div>
     <div className="ioc-settings-menu__label m-b-10">
-      <Label label="IOCs per query" />
+      <Label label="IOCs per query"/>
     </div>
     <div className="ioc-settings-menu__slider m-b-12">
       <RangeSlider
@@ -63,7 +63,7 @@ export const DropdownIocSettingsMenu: FC = () => {
       />
     </div>
     <div className="ioc-settings-menu__label m-b-10">
-      <Label label="Exceptions" />
+      <Label label="Exceptions"/>
     </div>
     <div className="ioc-settings-menu-list__textarea m-b-8">
       <Textarea

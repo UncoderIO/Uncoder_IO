@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { Tooltip } from '../../../../Tooltip';
 import { Button } from '../../../../Buttons';
 import { DropdownDefaultMenu } from '../../../../Dropdown/DropdownLayouts';
 import { Dropdown } from '../../../../Dropdown';
@@ -8,16 +9,20 @@ import { ReactComponent as TemplateIcon } from '../../../../../assets/svg/Templa
 export const TemplateSelectorButton: FC = () => {
   const { onSelectorTemplateHandler, options } = useTemplateSelector();
 
-  return <Dropdown
-    button={
-      <Button
-        classes="button--icon button--xs button--default button--bg"
-        children={<TemplateIcon />}
-        aria-label="input-roota"
-        type="button"
-      />
-    }
-  >
-    <DropdownDefaultMenu options={options} handleClick={onSelectorTemplateHandler} />
-  </Dropdown>;
+  return (
+    <Dropdown
+      button={
+        <Tooltip content="Template" positionStrategy="fixed">
+          <Button
+            classes="button--icon button--xs button--default button--bg"
+            children={<TemplateIcon />}
+            aria-label="input-roota"
+            type="button"
+          />
+        </Tooltip>
+      }
+    >
+      <DropdownDefaultMenu options={options} handleClick={onSelectorTemplateHandler} />
+    </Dropdown>
+  );
 };

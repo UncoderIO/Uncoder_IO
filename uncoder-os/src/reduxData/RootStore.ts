@@ -3,10 +3,11 @@ import { StateFromReducersMapObject } from 'redux';
 import { PlatformsResponse, SuggesterDictionaryResponse } from '../models/Providers/type';
 import { BasicIocType, HashIocType, IocParsingRulesType } from '../types/iocsTypes';
 import { Severity } from '../enums';
+import { EditorValueTypes } from '../types/editorValueTypes';
 
 export type UncoderEditorStateType = {
   text: string;
-  platformCode: string;
+  platformCode: EditorValueTypes;
 };
 
 export type InputEditorStateType = UncoderEditorStateType & { changed: boolean };

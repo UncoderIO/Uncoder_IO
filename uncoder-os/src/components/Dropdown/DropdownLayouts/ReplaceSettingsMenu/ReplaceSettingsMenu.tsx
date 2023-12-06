@@ -15,7 +15,7 @@ export const ReplaceSettingsMenu: FC<DropdownDefaultMenuPropsType> = ({ width = 
     replaceSettings,
     isSelectAll,
   } = useReplaceSettings();
-  console.log(replaceSettings);
+
   return (
     <div className="dropdown-menu-checkbox-list" style={{ width }}>
       <div className="dropdown-menu-checkbox-list__item">
@@ -25,7 +25,12 @@ export const ReplaceSettingsMenu: FC<DropdownDefaultMenuPropsType> = ({ width = 
         {
           replaceSettings.map((field) => (
             <div className="dropdown-menu-checkbox-list__item" key={field.name}>
-              <Checkbox label={field.label} checked={field.checked} name={field.name}/>
+              <Checkbox
+                label={field.label}
+                checked={field.checked}
+                name={field.name}
+                readOnly={true}
+              />
             </div>
           ))
         }

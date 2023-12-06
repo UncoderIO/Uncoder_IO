@@ -1,31 +1,7 @@
-import { useSelector } from 'react-redux';
 import { parseInt } from 'lodash';
-import { BasicIocType, IocsListTypes } from '../../types/iocsTypes';
-import { calcIocsInText } from './calcIocsInText';
-import { inputEditorTextSelector } from '../../reduxData/inputEditor';
-// import { getIocPerQueryCount } from '../../service/limitationSettings';
+import { BasicIocType } from '../../types/iocsTypes';
 
 export const useIocsStatistic = () => {
-  const inputText = useSelector(inputEditorTextSelector);
-  const inputTextCalculatedIocs = calcIocsInText(inputText);
-
-  const getOneIocTypeCount = (
-    iocType: IocsListTypes,
-  ): number => (inputTextCalculatedIocs[iocType] || []).length;
-
-  const getTotalIocsCount = (): number => {
-    let total = 0;
-    Object.keys(inputTextCalculatedIocs).forEach((oneIocTypeKey) => {
-      const oneIocType: string[] = inputTextCalculatedIocs[oneIocTypeKey as IocsListTypes] || [];
-
-      if (oneIocTypeKey !== BasicIocType.Hash) {
-        total += oneIocType.length;
-      }
-    });
-
-    return total;
-  };
-
   const getCurrentIocConfig = (
     type: BasicIocType,
   ): { className: string; name: string } | undefined => {
@@ -78,10 +54,6 @@ export const useIocsStatistic = () => {
 
   return {
     convertValue,
-    getOneIocTypeCount,
-    getTotalIocsCount,
     getCurrentIocConfig,
-    iocPerQueryCount: 10,
-    // iocPerQueryCount: getIocPerQueryCount(),
   };
 };

@@ -2,3 +2,4 @@ export { convertSiemsListToGroupStructure } from './convertSiemsListToGroupStruc
 export type { GroupListType, GroupPlatformType } from './convertSiemsListToGroupStructure';
 export { downloadFile } from './downloadFile';
 export * from './injectNonePlatformElement';
+export { getRandomId } from './getRandomId';

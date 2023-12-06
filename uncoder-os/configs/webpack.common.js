@@ -19,7 +19,25 @@ const rules = [
         onlyCompileBundledFiles: true,
       },
     }],
-    exclude: /node_modules/,
+    exclude: [/node_modules/, /workers/],
+  },
+  {
+    test: /\.worker\.ts$/,
+    use: [
+      {
+        loader: 'worker-loader',
+        options: {
+          inline: 'no-fallback',
+        },
+      },
+      'babel-loader',
+      {
+        loader: 'ts-loader',
+        options: {
+          onlyCompileBundledFiles: true,
+        },
+      }],
+    exclude: [/node_modules/],
   },
   {
     test: /\.svg$/,

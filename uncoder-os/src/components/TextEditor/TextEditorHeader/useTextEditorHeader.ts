@@ -10,6 +10,7 @@ import {
   outputEditorPlatformCodeSelector,
   setPlatformCode as setOutputPlatformCode,
 } from '../../../reduxData/outputEditor';
+import { EditorValueTypes } from '../../../types/editorValueTypes';
 
 export const useTextEditorHeader = () => {
   const dispatch = useDispatch<Dispatch<any>>();
@@ -23,15 +24,15 @@ export const useTextEditorHeader = () => {
   }, [dispatch]);
 
   const onChangeParser = (event: ChangeEvent) => {
-    dispatch(setInputPlatformCode((event.target as HTMLInputElement).value));
+    dispatch(setInputPlatformCode((event.target as HTMLInputElement).value as EditorValueTypes));
   };
 
   const onChangeRenderer = (event: ChangeEvent) => {
-    dispatch(setOutputPlatformCode((event.target as HTMLInputElement).value));
+    dispatch(setOutputPlatformCode((event.target as HTMLInputElement).value as EditorValueTypes));
   };
 
   return {
-    parsers: [...parsers, { id: 'ioc', name: 'IOC' }],
+    parsers: [...parsers, { id: EditorValueTypes.ioc, name: 'IOC' }],
     renderers,
     onChangeParser,
     onChangeRenderer,
