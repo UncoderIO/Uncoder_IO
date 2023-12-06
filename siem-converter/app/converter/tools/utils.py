@@ -1,5 +1,5 @@
 import re
-from typing import Optional, List
+from typing import Optional, List, Union
 
 
 def get_match_group(match: re.Match, group_name: str) -> Optional[str]:
@@ -44,7 +44,7 @@ def get_rule_description_str(
         author: str = None,
         rule_id: str = None,
         license: str = None,
-        mitre_attack: str = None,
+        mitre_attack: Union[str, list[str]] = None,
         references: str = None
 ) -> str:
     description_str = get_description_str(description)

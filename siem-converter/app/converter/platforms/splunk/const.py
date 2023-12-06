@@ -22,6 +22,7 @@ action.correlationsearch.enabled = 1
 action.notable.param.rule_title = <title_place_holder>
 action.notable.param.rule_description = <description_place_holder>
 action.correlationsearch.label = <title_place_holder>
+<annotations_place_holder>
 """
 
 PLATFORM_DETAILS = {

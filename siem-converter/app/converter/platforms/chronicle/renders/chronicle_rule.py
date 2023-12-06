@@ -96,4 +96,6 @@ class ChronicleSecurityRuleRender(ChronicleQueryRender):
         rule = rule.replace("<severity_place_holder>", meta_info.severity)
         rule = rule.replace("<status_place_holder>", meta_info.status)
         rule = rule.replace("<falsepositives_place_holder>", ', '.join(meta_info.false_positives))
+        rule = rule.replace("<tags_place_holder>", ", ".join(meta_info.tags))
+        rule = rule.replace("<created_place_holder>", str(meta_info.date))
         return rule

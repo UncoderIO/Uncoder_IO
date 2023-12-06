@@ -15,6 +15,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
+import re
 
 from app.converter.core.exceptions.core import UnsupportedRootAParser, RootARuleValidationException
 from app.converter.core.mixins.rule import YamlRuleMixin
@@ -27,16 +28,19 @@ class RootAParser(YamlRuleMixin):
     parsers = parser_manager
     mandatory_fields = {"name", "details", "author", "severity", "mitre-attack", "detection", "references", "license"}
 
-    @staticmethod
-    def __update_meta_info(meta_info: MetaInfoContainer, rule: dict) -> MetaInfoContainer:
+    def __update_meta_info(self, meta_info: MetaInfoContainer, rule: dict) -> MetaInfoContainer:
         mitre_attack = rule.get("mitre-attack") or []
-        mitre_attack = [i.strip("") for i in mitre_attack.split(",")] if isinstance(mitre_attack, str) else mitre_attack
+        mitre_tags = [i.strip("") for i in mitre_attack.split(",")] if isinstance(mitre_attack, str) else mitre_attack
+        mitre_attack = self.parse_mitre_attack(mitre_tags)
+        rule_tags = rule.get('tags', [])
+        rule_tags += mitre_tags
+
         meta_info.title = rule.get("name")
         meta_info.description = rule.get("details")
         meta_info.id = rule.get("uuid", meta_info.id)
         meta_info.references = rule.get("references")
         meta_info.license = rule.get("license", meta_info.license)
-        meta_info.tags = rule.get("tags", meta_info.tags)
+        meta_info.tags = rule_tags or meta_info.tags
         meta_info.mitre_attack = mitre_attack
         meta_info.date = rule.get("date", meta_info.date)
         meta_info.author = rule.get("author", meta_info.author)
