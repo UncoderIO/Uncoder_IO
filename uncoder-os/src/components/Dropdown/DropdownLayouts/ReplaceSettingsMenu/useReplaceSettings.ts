@@ -21,11 +21,10 @@ const replaceSettings = [
     checked: false,
   },
 ];
+
 export const useReplaceSettings = () => {
-  const {
-    iocParsingRules,
-  } = useSelector(iocSettingsSelector);
   const dispatch = useDispatch<Dispatch<any>>();
+  const { iocParsingRules } = useSelector(iocSettingsSelector);
 
   const onChangeReplaceSettings = (event: ChangeEvent<HTMLInputElement>) => {
     const { checked, name } = event.target;

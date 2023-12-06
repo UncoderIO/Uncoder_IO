@@ -1,29 +1,32 @@
 import { Dispatch } from '@reduxjs/toolkit';
 import { useDispatch } from 'react-redux';
-import { setPlatformCode, setText } from '../../../../../reduxData/inputEditor';
+import { setPlatformCode } from '../../../../../reduxData/inputEditor';
 import { templates, TemplatesKeys } from '../../../../../constants/templates';
+import { useInputTextWithFilters } from '../../../../../hooks/useInputTextWithFilters';
+import { EditorValueTypes } from '../../../../../types/editorValueTypes';
 
-const suggestParserByTemplateName = (templateName: TemplatesKeys): string => {
+const suggestParserByTemplateName = (templateName: TemplatesKeys): EditorValueTypes => {
   switch (templateName) {
     case TemplatesKeys.MinimalRoota:
     case TemplatesKeys.FullRoota:
-      return 'roota';
+      return EditorValueTypes.roota;
 
     case TemplatesKeys.MinimalSigma:
     case TemplatesKeys.FullSigma:
-      return 'sigma';
+      return EditorValueTypes.sigma;
 
     default:
-      return 'none';
+      return EditorValueTypes.none;
   }
 };
 
 export const useTemplateSelector = () => {
   const dispatch = useDispatch<Dispatch<any>>();
+  const { setText } = useInputTextWithFilters();
 
   const onSelectorTemplateHandler = (option: unknown) => (): void => {
     const template = templates.find((t) => t.name === option);
-    dispatch(setText(template?.value || ''));
+    setText(template?.value || '');
     dispatch(setPlatformCode(suggestParserByTemplateName(option as TemplatesKeys)));
   };
 

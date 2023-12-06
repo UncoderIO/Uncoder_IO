@@ -1,5 +1,5 @@
 import {
-  BasicIocType, IocsListTypes, ParsedIocsType, hashTypes,
+  BasicIocType, IocsListTypes, ParsedIocsType, hashTypes, IocsByTypeCountType,
 } from '../../types/iocsTypes';
 import { IOCS_REGEXP, TOP_LEVEL_DOMAIN_LIST } from '../../constants/IocsInputEditorConstats';
 
@@ -38,7 +38,7 @@ const filterDomainsByWhiteList = (domains: string[]) => domains.filter(
     (domain.match(/[^.]+$/ui) || [])[0] || '',
   ),
 );
-export const calcIocsInText = (text: string): ParsedIocsType => {
+export const calcIocsInText = (text: string): IocsByTypeCountType => {
   const result: ParsedIocsType = {};
 
   for (let i = 0; i < Object.entries(IOCS_REGEXP).length; i++) {
@@ -73,8 +73,6 @@ export const calcIocsInText = (text: string): ParsedIocsType => {
       ?.map((ioc) => ioc.trim());
   }
 
-  // result = applyMaxIocsCountLimit(result);
-
   result[BasicIocType.Hash] = [];
   hashTypes.forEach((hasType) => {
     if (Array.isArray(result[hasType])) {
@@ -84,5 +82,12 @@ export const calcIocsInText = (text: string): ParsedIocsType => {
   result[BasicIocType.Hash] = result[BasicIocType.Hash]
     .filter((value, index, self) => self.indexOf(value) === index);
 
-  return result;
+  const countResult: IocsByTypeCountType = {};
+
+  for (let i = 0; i < Object.entries(result).length; i++) {
+    const [iocType, value] = Object.entries(result)[i];
+    countResult[iocType as IocsListTypes] = value?.length || 0;
+  }
+
+  return countResult;
 };

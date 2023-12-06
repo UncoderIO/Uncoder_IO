@@ -1,6 +1,6 @@
+import App from './App';
 import { createRoot } from 'react-dom/client';
 import { disableReactDevTools } from '@fvilers/disable-react-devtools';
-import { MainPage } from './pages/MainPage';
 
 import './assets/sass/index.sass';
 
@@ -15,4 +15,4 @@ if (!rootElement) {
 }
 
 const root = createRoot(rootElement);
-root.render(<MainPage />);
+root.render(<App />);

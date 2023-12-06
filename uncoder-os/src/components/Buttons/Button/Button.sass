@@ -14,8 +14,11 @@
   font-weight: 400
   font-size: 14px
   color: $textDarkBlue
+  text-decoration: none
   transition: background-color .1s
   cursor: pointer
+  &:hover
+    text-decoration: none
   &:disabled,
   &.disabled
     &,
@@ -58,3 +61,5 @@
     font-size: 16px
     &.button--icon
       min-width: 30px
+  &--inline
+    display: inline-flex

@@ -1,38 +1,41 @@
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from '@reduxjs/toolkit';
-import {
-  inputEditorSelector,
-  setText,
-} from '../../../reduxData/inputEditor';
-import { useEffect } from 'react';
+import { clearText, inputEditorSelector } from '../../../reduxData/inputEditor';
 
 import ace from 'ace-builds';
 import 'ace-builds/src-noconflict/ext-language_tools';
 import { loadSuggesterData, suggesterSelector } from '../../../reduxData/suggester';
 import { useEditorSuggestion } from '../useEditorSuggestion';
+import { EditorValueTypes } from '../../../types/editorValueTypes';
 import { useDetectParserByText } from '../../../hooks';
+import { useInputTextWithFilters } from '../../../hooks/useInputTextWithFilters';
+import { iocParsingRulesSelector } from '../../../reduxData/iocSettings';
 
-const defineMode = (parser: string) => {
-  if (['sigma', 'roota'].includes(parser)) {
+const defineMode = (parser: EditorValueTypes) => {
+  if ([EditorValueTypes.sigma, EditorValueTypes.roota].includes(parser)) {
     return 'yaml';
   }
 
-  if (parser === 'ioc') {
+  if (parser === EditorValueTypes.ioc) {
     return 'uncodercti';
   }
 
   return 'text';
 };
+
 export const useInputEditor = () => {
   const dispatch = useDispatch<Dispatch<any>>();
   const { text: inputText, platformCode: parser, changed } = useSelector(inputEditorSelector);
   const suggestionData = useSelector(suggesterSelector);
+  const iocParsingRules = useSelector(iocParsingRulesSelector);
   const { languageCompleter } = useEditorSuggestion(suggestionData);
   const { detectParser } = useDetectParserByText();
+  const { setText } = useInputTextWithFilters();
 
   useEffect(() => {
     const langTools = ace.require('ace/ext/language_tools');
-    if (!['sigma', 'roota'].includes(parser)) {
+    if (![EditorValueTypes.sigma, EditorValueTypes.roota].includes(parser)) {
       langTools.setCompleters([langTools.textCompleter]);
       return;
     }
@@ -45,23 +48,35 @@ export const useInputEditor = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parser, suggestionData.toString()]);
 
+  const isIoc = parser === EditorValueTypes.ioc;
+
   const onChangeInputText = (value: string) => {
-    dispatch(setText(value));
+    setText(value);
   };
 
   const onFocusInputText = () => {
     if (changed) {
       return;
     }
-    dispatch(setText(''));
+    dispatch(clearText());
   };
 
   const onPasteInputText = (value: string) => {
     detectParser(value);
   };
 
+  useEffect(
+    () => {
+      if (changed && isIoc) {
+        setText(inputText);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [iocParsingRules.toString(), isIoc],
+  );
+
   return {
-    isIoc: parser === 'ioc',
+    isIoc,
     inputText,
     mode: defineMode(parser),
     onChangeInputText,

@@ -12,7 +12,7 @@ const plugins = [
     name: 'uncoder',
     filename: 'remoteEntry.js',
     exposes: {
-      './UncoderEditor': './src/pages/UncoderEditor/bootstrap',
+      './UncoderEditor': './src/pages/UncoderEditor/bootstrap.tsx',
     },
     shared: packageJson.dependencies,
   }),

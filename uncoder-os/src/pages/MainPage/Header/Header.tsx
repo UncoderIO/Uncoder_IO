@@ -8,7 +8,9 @@ export const Header: FC = () => (
     <div className="header-grid__inner inner inner--lg">
       <div className="header-grid__row">
         <div className="header-grid__logo m-r-10">
-          <LogoIcon />
+          <a className="header-grid__link" href="/">
+            <LogoIcon />
+          </a>
           <div className="header-grid__text">
             powered by SOC Prime, Inc.
           </div>
