@@ -53,8 +53,7 @@ class KibanaRuleRender(ElasticSearchQueryRender):
             author=meta_info.author,
             rule_id=meta_info.id,
             license=meta_info.license,
-            references=meta_info.references,
-            mitre_attack=meta_info.mitre_attack
+            references=meta_info.references
         )
         rule_str = json.dumps(rule, indent=4, sort_keys=False)
         if not_supported_functions:

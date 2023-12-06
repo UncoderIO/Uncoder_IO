@@ -52,8 +52,7 @@ class ElastAlertRuleRender(ElasticSearchQueryRender):
             "<description_place_holder>",
             get_rule_description_str(
                 description=meta_info.description,
-                license=meta_info.license,
-                mitre_attack=meta_info.mitre_attack
+                license=meta_info.license
             )
         )
         rule = rule.replace("<title_place_holder>", meta_info.title)
