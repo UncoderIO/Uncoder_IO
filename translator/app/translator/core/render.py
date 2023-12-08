@@ -20,6 +20,7 @@ limitations under the License.
 from abc import ABC
 from typing import Union, List, Dict
 
+from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.exceptions.core import NotImplementedException, StrictPlatformException
 from app.translator.core.exceptions.parser import UnsupportedOperatorException
 from app.translator.core.functions import PlatformFunctions
@@ -37,6 +38,11 @@ class BaseQueryFieldValue(ABC):
     def __init__(self, or_token):
         self.field_value = {
             OperatorType.EQ: self.equal_modifier,
+            OperatorType.LT: self.less_modifier,
+            OperatorType.LTE: self.less_or_equal_modifier,
+            OperatorType.GT: self.greater_modifier,
+            OperatorType.GTE: self.greater_or_equal_modifier,
+            OperatorType.NEQ: self.not_equal_modifier,
             OperatorType.CONTAINS: self.contains_modifier,
             OperatorType.ENDSWITH: self.endswith_modifier,
             OperatorType.STARTSWITH: self.startswith_modifier,
@@ -45,22 +51,37 @@ class BaseQueryFieldValue(ABC):
         }
         self.or_token = f" {or_token} "
 
-    def equal_modifier(self, field, value):
+    def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         raise NotImplementedException
 
-    def contains_modifier(self, field, value):
+    def less_modifier(self, field: str, value: Union[int, str]) -> str:
         raise NotImplementedException
 
-    def endswith_modifier(self, field, value):
+    def less_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
         raise NotImplementedException
 
-    def startswith_modifier(self, field, value):
+    def greater_modifier(self, field: str, value: Union[int, str]) -> str:
         raise NotImplementedException
 
-    def regex_modifier(self, field, value):
+    def greater_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
         raise NotImplementedException
 
-    def keywords(self, field, value):
+    def not_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+        raise NotImplementedException
+
+    def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+        raise NotImplementedException
+
+    def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+        raise NotImplementedException
+
+    def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+        raise NotImplementedException
+
+    def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+        raise NotImplementedException
+
+    def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         raise NotImplementedException
 
     def apply_field_value(self, field, operator, value):

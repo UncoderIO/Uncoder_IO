@@ -18,6 +18,7 @@ limitations under the License.
 """
 from typing import Union
 
+from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.platforms.logscale.const import logscale_query_details
 from app.translator.platforms.logscale.functions import LogScaleFunctions, log_scale_functions
 from app.translator.platforms.logscale.mapping import LogScaleMappings, logscale_mappings
@@ -30,37 +31,54 @@ from app.translator.core.render import BaseQueryRender, BaseQueryFieldValue
 class LogScaleFieldValue(BaseQueryFieldValue):
     details: PlatformDetails = logscale_query_details
 
-    def apply_value(self, value: Union[str, int]):
+    def apply_value(self, value: Union[str, int]) -> str:
         if isinstance(value, str) and '"' in value:
             value = value.translate(str.maketrans({'"':  r'\"'}))
         return value
 
-    def equal_modifier(self, field, value):
+    def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.equal_modifier(field=field, value=v) for v in value)})"
         return f'{field}="{self.apply_value(value)}"'
 
-    def contains_modifier(self, field, value):
+    def less_modifier(self, field: str, value: Union[int, str]) -> str:
+        return f'{field}<"{self.apply_value(value)}"'
+
+    def less_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
+        return f'{field}<="{self.apply_value(value)}"'
+
+    def greater_modifier(self, field: str, value: Union[int, str]) -> str:
+        return f'{field}>"{self.apply_value(value)}"'
+
+    def greater_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
+        return f'{field}>="{self.apply_value(value)}"'
+
+    def not_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+        if isinstance(value, list):
+            return f"({self.or_token.join([self.not_equal_modifier(field=field, value=v) for v in value])})"
+        return f'{field}!="{self.apply_value(value)}"'
+
+    def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.contains_modifier(field=field, value=v) for v in value)})"
         return f'{field}="*{self.apply_value(value)}*"'
 
-    def endswith_modifier(self, field, value):
+    def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.endswith_modifier(field=field, value=v) for v in value)})"
         return f'{field}="*{self.apply_value(value)}"'
 
-    def startswith_modifier(self, field, value):
+    def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.startswith_modifier(field=field, value=v) for v in value)})"
         return f'{field}="{self.apply_value(value)}*"'
 
-    def regex_modifier(self, field, value):
+    def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.regex_modifier(field=field, value=v) for v in value)})"
         return f'{field}="/{self.apply_value(value)}/"'
 
-    def keywords(self, field, value):
+    def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.keywords(field=field, value=v) for v in value)})"
         return f'"{self.apply_value(value)}"'

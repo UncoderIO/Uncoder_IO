@@ -29,7 +29,7 @@ from app.translator.tools.utils import get_match_group
 
 class QradarTokenizer(QueryTokenizer):
     field_pattern = r'(?P<field_name>"[a-zA-Z\._\-\s]+"|[a-zA-Z\._\-]+)'
-    match_operator_pattern = r"""(?:___field___\s?(?P<match_operator>like|ilike|matches|imatches|in|=|!=))\s?"""
+    match_operator_pattern = r"""(?:___field___\s?(?P<match_operator>like|ilike|matches|imatches|in|!=|>=|>|<=|<|=))\s?"""
     bool_value_pattern = r"(?P<bool_value>true|false)\s*"
     _value_pattern = fr"{NUM_VALUE_PATTERN}|{bool_value_pattern}|{SINGLE_QUOTES_VALUE_PATTERN}"
     keyword_pattern = fr"{UTF8_PAYLOAD_PATTERN}\s+(?:like|LIKE|ilike|ILIKE)\s+{SINGLE_QUOTES_VALUE_PATTERN}"
@@ -42,7 +42,7 @@ class QradarTokenizer(QueryTokenizer):
         "matches": OperatorType.REGEX,
         "imatches": OperatorType.REGEX
     }
-    
+
     def __init__(self):
         super().__init__()
         self.operators_map.update(super().operators_map)
@@ -74,7 +74,7 @@ class QradarTokenizer(QueryTokenizer):
         should_process_value_wildcard_symbols = self.should_process_value_wildcard_symbols(operator)
         query, operator, value = self.search_value(query=query, operator=operator, field_name=field_name)
 
-        operator_token = Identifier(token_type=OperatorType.EQ)
+        operator_token = Identifier(token_type=operator)
         if should_process_value_wildcard_symbols:
             value, operator_token = self.process_value_wildcard_symbols(
                 value=value,

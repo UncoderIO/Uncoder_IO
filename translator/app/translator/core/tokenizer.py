@@ -46,7 +46,7 @@ class QueryTokenizer(BaseTokenizer):
     field_pattern = r"(?P<field_name>[a-zA-Z\._\-]+)"
     operator_pattern = r"\s?(?P<operator>and|or|not|AND|OR|NOT)\s?"
     field_value_pattern = r"""^___field___\s*___match_operator___\s*___value___"""
-    match_operator_pattern = r"""(?:___field___\s?(?P<match_operator>ilike|contains|endswith|startswith|in|==|=|=~|!=|:|\:))\s?"""
+    match_operator_pattern = r"""(?:___field___\s?(?P<match_operator>ilike|contains|endswith|startswith|in|>=|<=|==|>|<|=~|!=|=|:|\:))\s?"""
     base_value_pattern = r"(?:___value_pattern___)"
     _value_pattern = r"""(?:\"|\')*(?P<value>[:a-zA-Z\*0-9=+%#\-_\/\\'\,.&^@!\(\s]*)(?:\*|\'|\"|\s|\$)*"""
     value_pattern = base_value_pattern.replace('___value_pattern___', _value_pattern)
@@ -60,6 +60,11 @@ class QueryTokenizer(BaseTokenizer):
     operators_map = {
         "=": OperatorType.EQ,
         "in": OperatorType.EQ,
+        "<": OperatorType.LT,
+        "<=": OperatorType.LTE,
+        ">": OperatorType.GT,
+        ">=": OperatorType.GTE,
+        "!=": OperatorType.NEQ,
         "contains": OperatorType.CONTAINS,
         "startswith": OperatorType.STARTSWITH,
         "endswith": OperatorType.ENDSWITH

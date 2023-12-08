@@ -27,7 +27,7 @@ from app.translator.tools.utils import get_match_group
 
 class AthenaTokenizer(QueryTokenizer):
     field_pattern = r'(?P<field_name>"[a-zA-Z\._\-\s]+"|[a-zA-Z\._\-]+)'
-    match_operator_pattern = r"""(?:___field___\s?(?P<match_operator>like|in|=|>|<|>=|<=|<>|!=))\s?"""
+    match_operator_pattern = r"""(?:___field___\s?(?P<match_operator>like|in|<=|>=|==|>|<|<>|!=|=))\s?"""
     num_value_pattern = r"(?P<num_value>\d+(?:\.\d+)*)\s*"
     bool_value_pattern = r"(?P<bool_value>true|false)\s*"
     single_quotes_value_pattern = r"""'(?P<s_q_value>(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{\}\s]|'')*)'"""
@@ -66,7 +66,7 @@ class AthenaTokenizer(QueryTokenizer):
         should_process_value_wildcard_symbols = self.should_process_value_wildcard_symbols(operator)
         query, operator, value = self.search_value(query=query, operator=operator, field_name=field_name)
 
-        operator_token = Identifier(token_type=OperatorType.EQ)
+        operator_token = Identifier(token_type=operator)
         if should_process_value_wildcard_symbols:
             value, operator_token = self.process_value_wildcard_symbols(
                 value=value,
