@@ -26,12 +26,12 @@ from app.translator.core.models.identifier import Identifier
 from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.tools.utils import get_match_group
+from app.translator.platforms.base.lucene.const import COMPARISON_OPERATORS_MAP
 
 
 class LuceneTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
     field_pattern = r"(?P<field_name>[a-zA-Z\.\-_]+)"
-    match_operator_pattern = r"(?:___field___\s*(?P<match_operator>:))\s*"
-
+    match_operator_pattern = r"(?:___field___\s*(?P<match_operator>:\[\*\sTO|:\[|:<|:>|:))\s*"
     num_value_pattern = r"(?P<num_value>\d+(?:\.\d+)*)\s*"
     double_quotes_value_pattern = r'"(?P<d_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{\}\s]|\\\"|\\)*)"\s*'
     no_quotes_value_pattern = r"(?P<n_q_value>(?:[a-zA-Z\*0-9=%#_/,\'\.$@]|\\\"|\\\\)+)\s*"
@@ -46,6 +46,8 @@ class LuceneTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
 
     operators_map = {
         ":": OperatorType.EQ,
+        ":>": OperatorType.GT,
+        ":<": OperatorType.LT
     }
 
     def __init__(self):
@@ -77,9 +79,11 @@ class LuceneTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
         elif (d_q_value := get_match_group(match, group_name='d_q_value')) is not None:
             return operator, d_q_value
 
-        return super().get_operator_and_value(match)
+        return super().get_operator_and_value(match, operator)
 
     def search_value(self, query: str, operator: str, field_name: str) -> Tuple[str, str, Union[str, List[str]]]:
+        if operator in COMPARISON_OPERATORS_MAP.keys():
+            return self.search_value_gte_lte(query, operator, field_name)
         check_pattern = self.multi_value_check_pattern
         check_regex = check_pattern.replace('___field___', field_name).replace('___operator___', operator)
         if re.match(check_regex, query):
@@ -96,10 +100,18 @@ class LuceneTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
         if field_value_search is None:
             raise TokenizerGeneralException(error=f"Value couldn't be found in query part: {query}")
 
-        operator, value = self.get_operator_and_value(field_value_search)
+        operator, value = self.get_operator_and_value(field_value_search, self.map_operator(operator))
         value = [self.clean_quotes(v) for v in re.split(r"\s+OR\s+", value)] if is_multi else value
         pos = field_value_search.end()
         return query[pos:], operator, value
+
+    def search_value_gte_lte(self, query: str, operator: str, field_name: str) -> Tuple[str, str, Union[str, List[str]]]:
+        query_list = query.split("]")
+        to_replace = [v for val in COMPARISON_OPERATORS_MAP.values() for v in val["replace"]]
+        to_replace.append(field_name)
+        regex = re.compile('|'.join(to_replace))
+        value = re.sub(regex, '', query_list.pop(0))
+        return "".join(query_list), COMPARISON_OPERATORS_MAP.get(operator, {}).get("default_op"), value.strip()
 
     def search_keyword(self, query: str) -> Tuple[Keyword, str]:
         keyword_search = re.search(self.keyword_pattern, query)

@@ -28,7 +28,7 @@ from app.translator.tools.utils import get_match_group
 
 
 class LogScaleTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
-    match_operator_pattern = r"""(?:___field___\s?(?P<match_operator>=|!=))\s?"""
+    match_operator_pattern = r"""(?:___field___\s?(?P<match_operator>=|!=|>=|>|<=|<))\s?"""
     num_value_pattern = r"(?P<num_value>\d+(?:\.\d+)*)\s*"
     double_quotes_value_pattern = r'"(?P<d_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{\}\s]|\\\"|\\)*)"\s*'
     re_value_pattern = r"/(?P<re_value>[:a-zA-Z\*0-9=+%#\\\-_\,\"\'\.$&^@!\(\)\{\}\s?]+)/i?\s*"

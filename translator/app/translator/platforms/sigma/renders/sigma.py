@@ -181,7 +181,8 @@ class SigmaRender:
         source_id = source_mapping.source_id
         generic_field_name = data.generic_names_map.get(source_id) or data.source_name
         field_name = self.map_field(source_mapping, generic_field_name)
-        if data.operator.token_type != OperatorType.EQ:
+        if data.operator.token_type not in (OperatorType.EQ, OperatorType.LT, OperatorType.LTE, OperatorType.GT,
+                                            OperatorType.GTE, OperatorType.EQ, OperatorType.NEQ):
             field_name = f"{field_name}|{data.operator.token_type}"
         if isinstance(data.values, list) and len(data.values) == 1 or isinstance(data.values, (str, int)):
             return {field_name: data.values[0]}
