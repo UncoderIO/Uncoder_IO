@@ -9,10 +9,10 @@ services:
       - HOST=0.0.0.0
     ports:
       - '4010:4010'
-  siem-converter:
+  translator:
     build:
-      context: './siem-converter/'
-    container_name: siem-converter
+      context: './translator/'
+    container_name: translator
     restart: always
     environment:
       - HOST=0.0.0.0
