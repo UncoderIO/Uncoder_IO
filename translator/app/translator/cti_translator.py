@@ -41,13 +41,14 @@ class CTIConverter:
 
     def convert(self, text: str,
                 platform_data: CTIPlatform,
-                iocs_per_query: int = CTI_IOCS_PER_QUERY_LIMIT,
+                iocs_per_query: int = None,
                 include_ioc_types: list = None,
                 include_hash_types: list = None,
                 exceptions: list = None,
                 ioc_parsing_rules: list = None,
                 include_source_ip: bool = False) -> (bool, List[str]):
-        if not iocs_per_query: iocs_per_query = CTI_IOCS_PER_QUERY_LIMIT
+        if not iocs_per_query:
+            iocs_per_query = CTI_IOCS_PER_QUERY_LIMIT
         status, parsed_data = self.__parse_iocs_from_string(text=text,
                                                             include_ioc_types=include_ioc_types,
                                                             include_hash_types=include_hash_types,
