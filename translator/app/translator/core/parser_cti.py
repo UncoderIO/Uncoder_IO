@@ -21,10 +21,12 @@ class Iocs(BaseModel):
             hash_len += len(value)
         return len(self.ip) + len(self.url) + len(self.domain) + hash_len
 
-    def return_iocs(self) -> dict:
+    def return_iocs(self, include_source_ip: bool = False) -> dict:
         if all(not value for value in [self.ip, self.url, self.domain, self.hash_dict]):
             raise EmptyIOCSException()
         result = {"DestinationIP": self.ip, "URL": self.url, "Domain": self.domain}
+        if include_source_ip:
+            result["SourceIP"] = self.ip
         for key, value in self.hash_dict.items():
             result[HASH_MAP[key]] = value
         return result
@@ -33,14 +35,15 @@ class Iocs(BaseModel):
 class CTIParser:
 
     def get_iocs_from_string(
-        self,
-        string: str,
-        include_ioc_types: Optional[List[IOCType]] = None,
-        include_hash_types: Optional[List[HashType]] = None,
-        exceptions: Optional[List[str]] = None,
-        ioc_parsing_rules: Optional[List[IocParsingRule]] = None,
-        limit: Optional[int] = None
-    ) -> Iocs:
+            self,
+            string: str,
+            include_ioc_types: Optional[List[IOCType]] = None,
+            include_hash_types: Optional[List[HashType]] = None,
+            exceptions: Optional[List[str]] = None,
+            ioc_parsing_rules: Optional[List[IocParsingRule]] = None,
+            limit: Optional[int] = None,
+            include_source_ip: bool = False
+    ) -> dict:
         iocs = Iocs()
         string = self.replace_dots_hxxp(string, ioc_parsing_rules)
         if not include_ioc_types or "ip" in include_ioc_types:
@@ -62,7 +65,7 @@ class CTIParser:
             total_count = iocs.get_total_count()
             if total_count > limit:
                 raise IocsLimitExceededException(f"IOCs count {total_count} exceeds limit {limit}.")
-        return iocs.return_iocs()
+        return iocs.return_iocs(include_source_ip)
 
     def replace_dots_hxxp(self, string, ioc_parsing_rules):
         if ioc_parsing_rules is None or "replace_dots" in ioc_parsing_rules:

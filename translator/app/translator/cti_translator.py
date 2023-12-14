@@ -1,7 +1,7 @@
 import logging
 from typing import Dict, List
 
-from app.translator.const import CTI_MIN_LIMIT_QUERY
+from app.translator.const import CTI_MIN_LIMIT_QUERY, CTI_IOCS_PER_QUERY_LIMIT
 from app.translator.core.models.iocs import IocsChunkValue
 from app.translator.core.parser_cti import CTIParser, Iocs
 from app.translator.core.render_cti import RenderCTI
@@ -17,44 +17,45 @@ class CTIConverter:
         self.logger = logging.getLogger("cti_converter")
         self.parser = CTIParser()
 
-    def _get_render_mapping(self, platform: CTIPlatform, include_source_ip: bool = False) -> Dict[str, str]:
-        return self.renders.get(platform.name).default_mapping
-
     @handle_translation_exceptions
-    def __parse_iocs_from_string(self, text: str, include_ioc_types: list = None, include_hash_types: list = None,
-                                 exceptions: list = None, ioc_parsing_rules: list = None) -> Iocs:
+    def __parse_iocs_from_string(self, text: str,
+                                 include_ioc_types: list = None,
+                                 include_hash_types: list = None,
+                                 exceptions: list = None,
+                                 ioc_parsing_rules: list = None,
+                                 include_source_ip: bool = False) -> dict:
         return self.parser.get_iocs_from_string(string=text,
                                                 include_ioc_types=include_ioc_types,
                                                 include_hash_types=include_hash_types,
                                                 exceptions=exceptions,
                                                 ioc_parsing_rules=ioc_parsing_rules,
-                                                limit=CTI_MIN_LIMIT_QUERY)
+                                                limit=CTI_MIN_LIMIT_QUERY,
+                                                include_source_ip=include_source_ip)
 
     @handle_translation_exceptions
-    def __render_translation(self, parsed_data: dict, platform_data: CTIPlatform, iocs_per_query: int,
-                             include_source_ip: bool = False) -> List[str]:
-        mapping = self._get_render_mapping(platform=platform_data, include_source_ip=include_source_ip)
+    def __render_translation(self, parsed_data: dict, platform_data: CTIPlatform, iocs_per_query: int) -> List[str]:
         platform = self.renders.get(platform_data.name)
         platform_generation = self.generate(data=parsed_data, platform=platform, iocs_per_query=iocs_per_query,
-                                            mapping=mapping)
+                                            mapping=platform.default_mapping)
         return platform_generation
 
     def convert(self, text: str,
                 platform_data: CTIPlatform,
-                iocs_per_query: int = 25,
+                iocs_per_query: int = CTI_IOCS_PER_QUERY_LIMIT,
                 include_ioc_types: list = None,
                 include_hash_types: list = None,
                 exceptions: list = None,
                 ioc_parsing_rules: list = None,
                 include_source_ip: bool = False) -> (bool, List[str]):
+        if not iocs_per_query: iocs_per_query = CTI_IOCS_PER_QUERY_LIMIT
         status, parsed_data = self.__parse_iocs_from_string(text=text,
                                                             include_ioc_types=include_ioc_types,
                                                             include_hash_types=include_hash_types,
                                                             exceptions=exceptions,
-                                                            ioc_parsing_rules=ioc_parsing_rules)
+                                                            ioc_parsing_rules=ioc_parsing_rules,
+                                                            include_source_ip=include_source_ip)
         if status:
             return self.__render_translation(parsed_data=parsed_data,
-                                             include_source_ip=include_source_ip,
                                              platform_data=platform_data,
                                              iocs_per_query=iocs_per_query
                                              )
