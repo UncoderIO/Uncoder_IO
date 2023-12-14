@@ -5,4 +5,6 @@ APP_PATH = dirname(abspath(__file__))
 
 CTI_MIN_LIMIT_QUERY = 10000
 
+CTI_IOCS_PER_QUERY_LIMIT = 25
+
 DEFAULT_VALUE_TYPE = Union[Union[int, str, List[int], List[str]]]
