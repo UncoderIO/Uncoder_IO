@@ -18,7 +18,7 @@ export const ReplaceSettingsButton: FC = () => {
   return (
     <Dropdown
       button={
-      <Tooltip classes="m-r-6" content="Filter">
+      <Tooltip classes="d-block m-r-6" content="Filter">
         <Button
           classes="button--icon button--xs button--default"
           children={<FilterIcon />}
