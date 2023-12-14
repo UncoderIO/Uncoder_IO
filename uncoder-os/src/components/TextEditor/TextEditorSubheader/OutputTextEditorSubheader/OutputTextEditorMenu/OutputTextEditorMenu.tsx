@@ -14,7 +14,7 @@ export const OutputTextEditorMenu: FC = () => {
 
   return (
     <div className="text-editor-menu-output">
-      <Tooltip classes="m-r-6" content="Copy">
+      <Tooltip classes="d-block m-r-6" content="Copy">
         <Button
           classes="button--icon button--xs button--default"
           children={<CopyIcon />}
@@ -24,7 +24,7 @@ export const OutputTextEditorMenu: FC = () => {
         />
       </Tooltip>
       <DownloadOutputTextButton />
-      <Tooltip content="Delete">
+      <Tooltip classes="d-block" content="Delete">
         <Button
           classes="button--icon button--xs button--default"
           children={<DeleteIcon />}

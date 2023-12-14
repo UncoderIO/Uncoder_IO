@@ -1,8 +1,9 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from '@reduxjs/toolkit';
 import { setPlatformCode } from '../../reduxData/inputEditor';
-import { setPlatformCode as setRenderer } from '../../reduxData/outputEditor';
+import { outputEditorPlatformCodeSelector, setPlatformCode as setRenderer } from '../../reduxData/outputEditor';
 import { EditorValueTypes } from '../../types/editorValueTypes';
+import { renderersSelector } from '../../reduxData/platforms';
 
 const isSigma = (text: string): boolean => {
   return text.includes('title:') && text.includes('logsource:') && text.includes('detection:');
@@ -13,6 +14,14 @@ const isRoota = (text: string): boolean => {
 };
 export const useDetectParserByText = () => {
   const dispatch = useDispatch<Dispatch<any>>();
+  const renderers = useSelector(renderersSelector);
+  const outputPlatform = useSelector(outputEditorPlatformCodeSelector);
+
+  const resolveRenderer = (): void => {
+    if (!renderers.filter((renderer) => renderer.id === outputPlatform).length) {
+      dispatch(setRenderer(EditorValueTypes.none));
+    }
+  };
 
   const detectParser = (
     text: string,
@@ -20,19 +29,19 @@ export const useDetectParserByText = () => {
   ) => {
     if (isRoota(text)) {
       dispatch(setPlatformCode(EditorValueTypes.roota));
-      dispatch(setRenderer(EditorValueTypes.none));
+      resolveRenderer();
       return;
     }
 
     if (isSigma(text)) {
       dispatch(setPlatformCode(EditorValueTypes.sigma));
-      dispatch(setRenderer(EditorValueTypes.none));
+      resolveRenderer();
       return;
     }
 
     if (defaultPlatform) {
       dispatch(setPlatformCode(defaultPlatform));
-      dispatch(setRenderer(EditorValueTypes.none));
+      resolveRenderer();
     }
   };
 

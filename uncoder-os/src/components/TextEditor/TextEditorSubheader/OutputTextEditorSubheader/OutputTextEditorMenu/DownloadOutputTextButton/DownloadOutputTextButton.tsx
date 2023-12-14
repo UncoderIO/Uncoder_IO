@@ -18,7 +18,7 @@ export const DownloadOutputTextButton: FC = () => {
   }
 
   return (
-    <Tooltip classes="m-r-6" content="Download">
+    <Tooltip classes="d-block m-r-6" content="Download">
       <Button
         classes="button--icon button--xs button--default"
         children={<DownloadIcon />}

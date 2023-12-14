@@ -10,12 +10,14 @@ export const DropdownIocSettingsMenu: FC = () => {
   const {
     iocTypesFields,
     exceptionsField,
+    includeSourceIpField,
     iocsPerQueryField,
     hashTypesFields,
     onChangeIocTypes,
     onChangeExceptions,
     onChangeIocsPerQuery,
     onChangeHashTypes,
+    onChangeIncludeSourceIp,
     iocTypeErrorMessage,
   } = useIocSettingsMenu();
 
@@ -71,6 +73,14 @@ export const DropdownIocSettingsMenu: FC = () => {
         rows={5}
         onChange={onChangeExceptions}
         value={exceptionsField}
+      />
+    </div>
+    <div className="ioc-settings-menu-list__checkbox">
+      <Checkbox
+        label="Add Source IP to Query with “OR” operator"
+        onChange={onChangeIncludeSourceIp}
+        name="addSourceIp"
+        checked={includeSourceIpField}
       />
     </div>
   </div>;
