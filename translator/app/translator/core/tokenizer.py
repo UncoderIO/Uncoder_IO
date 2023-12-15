@@ -250,7 +250,8 @@ class QueryTokenizer(BaseTokenizer):
                       token_type: Union[Type[Field], Type[Keyword], Type[Identifier]]) -> List[TOKEN_TYPE]:
         return [token for token in tokens if isinstance(token, token_type)]
 
-    def filter_function_tokens(self, tokens: List[Union[Field, Keyword, Identifier, Function]]) -> List[TOKEN_TYPE]:
+    def filter_function_tokens(self,
+                               tokens: List[Union[Field, Keyword, Identifier, Function, SortArg]]) -> List[TOKEN_TYPE]:
         result = []
         for token in tokens:
             if isinstance(token, Field):
