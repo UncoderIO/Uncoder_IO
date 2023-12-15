@@ -26,23 +26,28 @@ from app.translator.tools.utils import get_match_group
 
 
 class AthenaTokenizer(QueryTokenizer):
+    single_value_operators_map = {
+        "=": OperatorType.EQ,
+        "<=": OperatorType.LTE,
+        "<": OperatorType.LT,
+        ">=": OperatorType.GTE,
+        ">": OperatorType.GT,
+        "!=": OperatorType.NEQ,
+        "<>": OperatorType.NEQ,
+        "like": OperatorType.EQ
+    }
+    multi_value_operators_map = {
+        "in": OperatorType.EQ
+    }
+
     field_pattern = r'(?P<field_name>"[a-zA-Z\._\-\s]+"|[a-zA-Z\._\-]+)'
-    match_operator_pattern = r"""(?:___field___\s?(?P<match_operator>like|in|<=|>=|==|>|<|<>|!=|=))\s?"""
     num_value_pattern = r"(?P<num_value>\d+(?:\.\d+)*)\s*"
     bool_value_pattern = r"(?P<bool_value>true|false)\s*"
     single_quotes_value_pattern = r"""'(?P<s_q_value>(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{\}\s]|'')*)'"""
     _value_pattern = fr"{num_value_pattern}|{bool_value_pattern}|{single_quotes_value_pattern}"
     multi_value_pattern = r"""\((?P<value>\d+(?:,\s*\d+)*|'(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{\}\s]|'')*'(?:,\s*'(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{\}\s]|'')*')*)\)"""
 
-    multi_value_operators = ("in",)
     wildcard_symbol = "%"
-    operators_map = {
-        "like": OperatorType.EQ
-    }
-
-    def __init__(self):
-        super().__init__()
-        self.operators_map.update(super().operators_map)
 
     @staticmethod
     def should_process_value_wildcard_symbols(operator: str) -> bool:
@@ -62,7 +67,7 @@ class AthenaTokenizer(QueryTokenizer):
 
     def search_field_value(self, query):
         field_name = self.search_field(query)
-        operator = self.search_match_operator(query, field_name)
+        operator = self.search_operator(query, field_name)
         should_process_value_wildcard_symbols = self.should_process_value_wildcard_symbols(operator)
         query, operator, value = self.search_value(query=query, operator=operator, field_name=field_name)
 

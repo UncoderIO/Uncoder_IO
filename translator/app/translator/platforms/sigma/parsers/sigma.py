@@ -21,6 +21,7 @@ limitations under the License.
 import re
 from typing import List, Union
 
+from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.platforms.sigma.const import SIGMA_RULE_DETAILS
 from app.translator.platforms.sigma.mapping import SigmaMappings, sigma_mappings
 from app.translator.platforms.sigma.tokenizer import SigmaTokenizer, SigmaConditionTokenizer
@@ -34,7 +35,7 @@ from app.translator.core.models.parser_output import SiemContainer, MetaInfoCont
 class SigmaParser(YamlRuleMixin):
     details: PlatformDetails = PlatformDetails(**SIGMA_RULE_DETAILS)
     condition_tokenizer = SigmaConditionTokenizer()
-    tokenizer = SigmaTokenizer()
+    tokenizer: SigmaTokenizer = SigmaTokenizer()
     mappings: SigmaMappings = sigma_mappings
     mandatory_fields = {"title", "description", "references", "logsource", "detection"}
 
@@ -70,10 +71,10 @@ class SigmaParser(YamlRuleMixin):
         self.__validate_rule(rule=sigma_rule)
         log_sources = {key: [value] for key, value in (sigma_rule.get("logsource", {})).items()}
         tokens = self.tokenizer.tokenize(detection=sigma_rule.get("detection"))
-        field_tokens = self.tokenizer.filter_tokens(tokens, Field)
+        field_tokens = QueryTokenizer.filter_tokens(tokens, Field)
         field_names = [field.source_name for field in field_tokens]
         suitable_source_mappings = self.mappings.get_suitable_source_mappings(field_names=field_names, **log_sources)
-        self.tokenizer.set_field_generic_names_map(field_tokens, suitable_source_mappings, self.mappings)
+        QueryTokenizer.set_field_generic_names_map(field_tokens, suitable_source_mappings, self.mappings)
         return SiemContainer(
             query=tokens,
             meta_info=self._get_meta_info(

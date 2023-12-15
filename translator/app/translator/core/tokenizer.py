@@ -43,35 +43,34 @@ class BaseTokenizer(ABC):
 
 
 class QueryTokenizer(BaseTokenizer):
-    field_pattern = r"(?P<field_name>[a-zA-Z\._\-]+)"
-    operator_pattern = r"\s?(?P<operator>and|or|not|AND|OR|NOT)\s?"
-    field_value_pattern = r"""^___field___\s*___match_operator___\s*___value___"""
-    match_operator_pattern = r"""(?:___field___\s?(?P<match_operator>ilike|contains|endswith|startswith|in|>=|<=|==|>|<|=~|!=|=|:|\:))\s?"""
-    base_value_pattern = r"(?:___value_pattern___)"
-    _value_pattern = r"""(?:\"|\')*(?P<value>[:a-zA-Z\*0-9=+%#\-_\/\\'\,.&^@!\(\s]*)(?:\*|\'|\"|\s|\$)*"""
-    value_pattern = base_value_pattern.replace('___value_pattern___', _value_pattern)
-    multi_value_pattern = r"""\((?P<value>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\s]*)\)"""
-    keyword_pattern = None  # do not modify, use subclasses to define this attribute
+    single_value_operators_map: dict[str, str] = {}  # used to generate re pattern. so the keys order is important
+    multi_value_operators_map: dict[str, str] = {}  # used to generate re pattern. so the keys order is important
+    operators_map: dict[str, str] = {}  # used to generate re pattern. so the keys order is important
 
-    multi_value_operators = tuple()
+    logical_operator_pattern = r"\s?(?P<logical_operator>and|or|not|AND|OR|NOT)\s?"
+    field_value_pattern = r"""^___field___\s*___operator___\s*___value___"""
+    base_value_pattern = r"(?:___value_pattern___)"
+
+    # do not modify, use subclasses to define this attribute
+    field_pattern: str = None
+    _value_pattern: str = None
+    value_pattern: str = None
+    multi_value_pattern: str = None
+    keyword_pattern: str = None
+
     multi_value_delimiter = ","
     wildcard_symbol = None
 
-    operators_map = {
-        "=": OperatorType.EQ,
-        "in": OperatorType.EQ,
-        "<": OperatorType.LT,
-        "<=": OperatorType.LTE,
-        ">": OperatorType.GT,
-        ">=": OperatorType.GTE,
-        "!=": OperatorType.NEQ,
-        "contains": OperatorType.CONTAINS,
-        "startswith": OperatorType.STARTSWITH,
-        "endswith": OperatorType.ENDSWITH
-    }
-
     def __init_subclass__(cls, **kwargs):
+        cls._validate_re_patterns()
         cls.value_pattern = cls.base_value_pattern.replace('___value_pattern___', cls._value_pattern)
+        cls.operators_map = {**cls.single_value_operators_map, **cls.multi_value_operators_map}
+        cls.operator_pattern = fr"""(?:___field___\s*(?P<operator>(?:{'|'.join(cls.operators_map)})))\s*"""
+
+    @classmethod
+    def _validate_re_patterns(cls):
+        if not all([cls.field_pattern, cls._value_pattern]):
+            raise ValueError(f"{cls.__name__} re patterns must be set")
 
     def map_operator(self, operator: str) -> str:
         try:
@@ -89,16 +88,16 @@ class QueryTokenizer(BaseTokenizer):
     def escape_field_name(self, field_name):
         return field_name.replace(".", r"\.")
 
-    def search_match_operator(self, query, field_name) -> str:
+    def search_operator(self, query, field_name) -> str:
         field_name = self.escape_field_name(field_name)
-        match_operator_pattern = self.match_operator_pattern.replace("___field___", field_name)
-        match_operator_regex = re.compile(match_operator_pattern, re.IGNORECASE)
-        match_operator_search = re.search(match_operator_regex, query)
-        if match_operator_search is None:
+        operator_pattern = self.operator_pattern.replace("___field___", field_name)
+        compiled_operator_regex = re.compile(operator_pattern, re.IGNORECASE)
+        if (operator_search := re.search(compiled_operator_regex, query)) is None:
             raise TokenizerGeneralException(error=f"Operator couldn't be found in query part: {query}")
-        match_operator = match_operator_search.group("match_operator")
-        match_operator = match_operator.strip(" ")
-        return match_operator
+
+        operator = operator_search.group("operator")
+        operator = operator.strip(" ")
+        return operator
 
     def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> Tuple[str, Any]:
         return operator, get_match_group(match, group_name='value')
@@ -118,7 +117,7 @@ class QueryTokenizer(BaseTokenizer):
         field_value_pattern = self.get_field_value_pattern(operator, field_name)
         value_pattern = self.value_pattern
         is_multi = False
-        if operator.lower() in self.multi_value_operators:
+        if operator.lower() in self.multi_value_operators_map:
             value_pattern = self.multi_value_pattern
             is_multi = True
 
@@ -142,7 +141,7 @@ class QueryTokenizer(BaseTokenizer):
 
     def get_field_value_pattern(self, operator, field_name):
         field_value_pattern = self.field_value_pattern.replace("___field___", self.escape_field_name(field_name))
-        return field_value_pattern.replace("___match_operator___", operator)
+        return field_value_pattern.replace("___operator___", operator)
 
     @staticmethod
     def _clean_value(value: str, wildcard_symbol: str) -> str:
@@ -183,7 +182,7 @@ class QueryTokenizer(BaseTokenizer):
 
     def search_field_value(self, query):
         field_name = self.search_field(query)
-        operator = self.search_match_operator(query, field_name)
+        operator = self.search_operator(query, field_name)
         query, operator, value = self.search_value(query=query, operator=operator, field_name=field_name)
         value, operator_token = self.process_value_wildcard_symbols(value=value,
                                                                     operator=operator,
@@ -191,20 +190,37 @@ class QueryTokenizer(BaseTokenizer):
         field = self.create_field(field_name=field_name, operator=operator_token, value=value)
         return field, query
 
-    def __get_identifier(self, query: str) -> Tuple[Union[Field, Keyword, Identifier], str]:
+    def _match_field_value(self, query: str, white_space_pattern: str = r"\s+") -> bool:
+        single_value_operator_group = fr"(?:{'|'.join(self.single_value_operators_map)})"
+        single_value_pattern = fr"""{self.field_pattern}\s*{single_value_operator_group}\s*{self.value_pattern}\s*"""
+        if re.match(single_value_pattern, query, re.IGNORECASE):
+            return True
+
+        if self.multi_value_operators_map:
+            multi_value_operator_group = fr"(?:{'|'.join(self.multi_value_operators_map)})"
+            pattern = f"{self.field_pattern}{white_space_pattern}{multi_value_operator_group}{white_space_pattern}"
+            multi_value_pattern = fr"{pattern}{self.multi_value_pattern}"
+            if re.match(multi_value_pattern, query, re.IGNORECASE):
+                return True
+
+        return False
+
+    def _get_identifier(self, query: str) -> Tuple[Union[Field, Keyword, Identifier], str]:
         query = query.strip("\n").strip(" ").strip("\n")
         if query.startswith(GroupType.L_PAREN):
             return Identifier(token_type=GroupType.L_PAREN), query[1:]
         elif query.startswith(GroupType.R_PAREN):
             return Identifier(token_type=GroupType.R_PAREN), query[1:]
-        elif operator_search := re.match(self.operator_pattern, query):
-            operator = operator_search.group("operator")
-            pos = operator_search.end()
-            return Identifier(token_type=operator.lower()), query[pos:]
+        elif logical_operator_search := re.match(self.logical_operator_pattern, query):
+            logical_operator = logical_operator_search.group("logical_operator")
+            pos = logical_operator_search.end()
+            return Identifier(token_type=logical_operator.lower()), query[pos:]
+        elif self._match_field_value(query):
+            return self.search_field_value(query)
         elif self.keyword_pattern and re.match(self.keyword_pattern, query):
             return self.search_keyword(query)
-        else:
-            return self.search_field_value(query)
+
+        raise TokenizerGeneralException("Unsupported query entry")
 
     @staticmethod
     def _validate_parentheses(tokens):
@@ -224,7 +240,7 @@ class QueryTokenizer(BaseTokenizer):
     def tokenize(self, query: str) -> List[Union[Field, Keyword, Identifier]]:
         tokenized = []
         while query:
-            identifier, query = self.__get_identifier(query=query)
+            identifier, query = self._get_identifier(query=query)
             tokenized.append(identifier)
         self._validate_parentheses(tokenized)
         return tokenized
@@ -234,8 +250,7 @@ class QueryTokenizer(BaseTokenizer):
                       token_type: Union[Type[Field], Type[Keyword], Type[Identifier]]) -> List[TOKEN_TYPE]:
         return [token for token in tokens if isinstance(token, token_type)]
 
-    def filter_function_tokens(self,
-                               tokens: List[Union[Field, Keyword, Identifier, Function, SortArg]]) -> List[TOKEN_TYPE]:
+    def filter_function_tokens(self, tokens: List[Union[Field, Keyword, Identifier, Function]]) -> List[TOKEN_TYPE]:
         result = []
         for token in tokens:
             if isinstance(token, Field):

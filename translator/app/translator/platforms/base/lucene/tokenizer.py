@@ -26,33 +26,35 @@ from app.translator.core.models.identifier import Identifier
 from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.tools.utils import get_match_group
-from app.translator.platforms.base.lucene.const import COMPARISON_OPERATORS_MAP
 
 
 class LuceneTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
+    single_value_operators_map = {
+        ":>": OperatorType.GT,
+        ":<": OperatorType.LT,
+        ":": OperatorType.EQ
+    }
+    multi_value_operators_map = {
+        ":": OperatorType.EQ
+    }
+
     field_pattern = r"(?P<field_name>[a-zA-Z\.\-_]+)"
     match_operator_pattern = r"(?:___field___\s*(?P<match_operator>:\[\*\sTO|:\[|:<|:>|:))\s*"
-    num_value_pattern = r"(?P<num_value>\d+(?:\.\d+)*)\s*"
+    _num_value_pattern = r"\d+(?:\.\d+)*"
+    num_value_pattern = fr"(?P<num_value>{_num_value_pattern})\s*"
     double_quotes_value_pattern = r'"(?P<d_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{\}\s]|\\\"|\\)*)"\s*'
     no_quotes_value_pattern = r"(?P<n_q_value>(?:[a-zA-Z\*0-9=%#_/,\'\.$@]|\\\"|\\\\)+)\s*"
     re_value_pattern = r"/(?P<re_value>[:a-zA-Z\*0-9=+%#\\\-_\,\"\'\.$&^@!\(\)\{\}\[\]\s?]+)/\s*"
-    _value_pattern = fr"{num_value_pattern}|{re_value_pattern}|{no_quotes_value_pattern}|{double_quotes_value_pattern}"
+    gte_value_pattern = fr"\[\s*(?P<gte_value>{_num_value_pattern})\s+TO\s+\*\s*\]"
+    lte_value_pattern = fr"\[\s*\*\s+TO\s+(?P<lte_value>{_num_value_pattern})\s*\]"
+    range_value_pattern = fr"{gte_value_pattern}|{lte_value_pattern}"
+    _value_pattern = fr"{num_value_pattern}|{re_value_pattern}|{no_quotes_value_pattern}|{double_quotes_value_pattern}|{range_value_pattern}"
     keyword_pattern = r"(?P<n_q_value>(?:[a-zA-Z\*0-9=%#_/,\'\.$@]|\\\"|\\\(|\\\)|\\\[|\\\]|\\\{|\\\}|\\\:|\\)+)(?:\s+|\)|$)"
 
     multi_value_pattern = r"""\((?P<value>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\[\]\s]+)\)"""
     multi_value_check_pattern = r"___field___\s*___operator___\s*\("
 
     wildcard_symbol = "*"
-
-    operators_map = {
-        ":": OperatorType.EQ,
-        ":>": OperatorType.GT,
-        ":<": OperatorType.LT
-    }
-
-    def __init__(self):
-        super().__init__()
-        self.operators_map.update(super().operators_map)
 
     @staticmethod
     def create_field(field_name: str, operator: Identifier, value: Union[str, List]) -> Field:
@@ -79,11 +81,15 @@ class LuceneTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
         elif (d_q_value := get_match_group(match, group_name='d_q_value')) is not None:
             return operator, d_q_value
 
+        elif (gte_value := get_match_group(match, group_name='gte_value')) is not None:
+            return OperatorType.GTE, gte_value
+
+        elif (lte_value := get_match_group(match, group_name='lte_value')) is not None:
+            return OperatorType.LTE, lte_value
+
         return super().get_operator_and_value(match, operator)
 
     def search_value(self, query: str, operator: str, field_name: str) -> Tuple[str, str, Union[str, List[str]]]:
-        if operator in COMPARISON_OPERATORS_MAP.keys():
-            return self.search_value_gte_lte(query, operator, field_name)
         check_pattern = self.multi_value_check_pattern
         check_regex = check_pattern.replace('___field___', field_name).replace('___operator___', operator)
         if re.match(check_regex, query):
@@ -105,21 +111,21 @@ class LuceneTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
         pos = field_value_search.end()
         return query[pos:], operator, value
 
-    def search_value_gte_lte(self, query: str, operator: str, field_name: str) -> Tuple[str, str, Union[str, List[str]]]:
-        query_list = query.split("]")
-        to_replace = [v for val in COMPARISON_OPERATORS_MAP.values() for v in val["replace"]]
-        to_replace.append(field_name)
-        regex = re.compile('|'.join(to_replace))
-        value = re.sub(regex, '', query_list.pop(0))
-        return "".join(query_list), COMPARISON_OPERATORS_MAP.get(operator, {}).get("default_op"), value.strip()
-
     def search_keyword(self, query: str) -> Tuple[Keyword, str]:
         keyword_search = re.search(self.keyword_pattern, query)
         _, value = self.get_operator_and_value(keyword_search)
         value = value.strip(self.wildcard_symbol)
         keyword = Keyword(value=value)
-        pos = keyword_search.end() - 1
+        pos = keyword_search.end() - 1  # FIXME: do not count the last group of pattern e.g. )
         return keyword, query[pos:]
+
+    def _match_field_value(self, query: str, white_space_pattern: str = r"\s*") -> bool:
+        range_value_pattern = f"(?:{self.gte_value_pattern}|{self.lte_value_pattern})"
+        range_pattern = fr"{self.field_pattern}{white_space_pattern}:\s*{range_value_pattern}"
+        if re.match(range_pattern, query, re.IGNORECASE):
+            return True
+
+        return super()._match_field_value(query, white_space_pattern=white_space_pattern)
 
     def tokenize(self, query: str) -> List[Union[Field, Keyword, Identifier]]:
         tokens = super().tokenize(query=query)
