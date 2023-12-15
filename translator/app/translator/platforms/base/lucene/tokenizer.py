@@ -116,7 +116,7 @@ class LuceneTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
         _, value = self.get_operator_and_value(keyword_search)
         value = value.strip(self.wildcard_symbol)
         keyword = Keyword(value=value)
-        pos = keyword_search.end() - 1  # FIXME: do not count the last group of pattern e.g. )
+        pos = keyword_search.end() - 1
         return keyword, query[pos:]
 
     def _match_field_value(self, query: str, white_space_pattern: str = r"\s*") -> bool:
