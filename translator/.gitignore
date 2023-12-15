@@ -197,7 +197,3 @@ test_data
 
 # backup_logs
 .backup_logs
-
-# sigmac tests stuff
-tactics.json
-techniques.json

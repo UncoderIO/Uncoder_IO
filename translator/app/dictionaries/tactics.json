@@ -1,0 +1,72 @@
+{
+  "credential_access": {
+    "external_id": "TA0006",
+    "url": "https://attack.mitre.org/tactics/TA0006",
+    "tactic": "Credential Access"
+  },
+  "execution": {
+    "external_id": "TA0002",
+    "url": "https://attack.mitre.org/tactics/TA0002",
+    "tactic": "Execution"
+  },
+  "impact": {
+    "external_id": "TA0040",
+    "url": "https://attack.mitre.org/tactics/TA0040",
+    "tactic": "Impact"
+  },
+  "persistence": {
+    "external_id": "TA0003",
+    "url": "https://attack.mitre.org/tactics/TA0003",
+    "tactic": "Persistence"
+  },
+  "privilege_escalation": {
+    "external_id": "TA0004",
+    "url": "https://attack.mitre.org/tactics/TA0004",
+    "tactic": "Privilege Escalation"
+  },
+  "lateral_movement": {
+    "external_id": "TA0008",
+    "url": "https://attack.mitre.org/tactics/TA0008",
+    "tactic": "Lateral Movement"
+  },
+  "defense_evasion": {
+    "external_id": "TA0005",
+    "url": "https://attack.mitre.org/tactics/TA0005",
+    "tactic": "Defense Evasion"
+  },
+  "exfiltration": {
+    "external_id": "TA0010",
+    "url": "https://attack.mitre.org/tactics/TA0010",
+    "tactic": "Exfiltration"
+  },
+  "discovery": {
+    "external_id": "TA0007",
+    "url": "https://attack.mitre.org/tactics/TA0007",
+    "tactic": "Discovery"
+  },
+  "collection": {
+    "external_id": "TA0009",
+    "url": "https://attack.mitre.org/tactics/TA0009",
+    "tactic": "Collection"
+  },
+  "resource_development": {
+    "external_id": "TA0042",
+    "url": "https://attack.mitre.org/tactics/TA0042",
+    "tactic": "Resource Development"
+  },
+  "reconnaissance": {
+    "external_id": "TA0043",
+    "url": "https://attack.mitre.org/tactics/TA0043",
+    "tactic": "Reconnaissance"
+  },
+  "command_and_control": {
+    "external_id": "TA0011",
+    "url": "https://attack.mitre.org/tactics/TA0011",
+    "tactic": "Command and Control"
+  },
+  "initial_access": {
+    "external_id": "TA0001",
+    "url": "https://attack.mitre.org/tactics/TA0001",
+    "tactic": "Initial Access"
+  }
+}
