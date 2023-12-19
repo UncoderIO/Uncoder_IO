@@ -30,6 +30,7 @@ class MitreConfig(metaclass=SingletonMeta):
                 return json.loads(cti_json.read().decode())
         except HTTPError:
             return {}
+
     def update_mitre_config(self) -> None:
         if not (mitre_json := self.__get_mitre_json()):
             self.__load_mitre_configs_from_files()
