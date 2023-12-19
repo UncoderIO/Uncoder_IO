@@ -194,14 +194,21 @@ class BaseQueryRender:
     def wrap_with_comment(self, value: str) -> str:
         return f"{self.comment_symbol} {value}"
 
-    def finalize(self, queries_map: Dict[str, str]) -> str:
-        unique_queries = set(queries_map.values())
-        if len(set(queries_map.values())) == 1:
-            return next(iter(unique_queries))
-
-        result = ""
+    @staticmethod
+    def unique_queries(queries_map: Dict[str, str]) -> Dict[str, List[str]]:
+        unique_queries = {}
         for source_id, query in queries_map.items():
-            result = result + self.wrap_with_comment(source_id) + f"\n{query}\n\n"
+            unique_queries.setdefault(query, []).append(source_id)
+
+        return unique_queries
+
+    def finalize(self, queries_map: Dict[str, str]) -> str:
+        if len(set(queries_map.values())) == 1:
+            return next(iter(queries_map.values()))
+        unique_queries = self.unique_queries(queries_map=queries_map)
+        result = ""
+        for query, source_ids in unique_queries.items():
+            result = result + self.wrap_with_comment(", ".join(source_ids)) + f"\n{query}\n\n"
 
         return result
 
