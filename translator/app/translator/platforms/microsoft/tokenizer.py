@@ -26,8 +26,25 @@ from app.translator.tools.utils import get_match_group
 
 
 class MicrosoftSentinelTokenizer(QueryTokenizer, OperatorBasedMixin):
+    single_value_operators_map = {
+        "==": OperatorType.EQ,
+        "=~": OperatorType.EQ,
+        "<=": OperatorType.LTE,
+        "<": OperatorType.LT,
+        ">=": OperatorType.GTE,
+        ">": OperatorType.GT,
+        "!=": OperatorType.NEQ,
+        "!~": OperatorType.NEQ,
+        "contains": OperatorType.CONTAINS,
+        "startswith": OperatorType.STARTSWITH,
+        "endswith": OperatorType.ENDSWITH,
+    }
+    multi_value_operators_map = {
+        "in~": OperatorType.EQ,
+        "in": OperatorType.EQ,
+    }
+
     field_pattern = r"(?P<field_name>[a-zA-Z\.\-_]+)"
-    match_operator_pattern = r"""(?:___field___\s?(?P<match_operator>contains|endswith|startswith|in~|in|==|=~|!~|!=|>=|>|<=|<|=|<>))\s?"""
     bool_value_pattern = r"(?P<bool_value>true|false)\s*"
     num_value_pattern = r"(?P<num_value>\d+(?:\.\d+)*)\s*"
     double_quotes_value_pattern = r'@?"(?P<d_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{\}\s]|\\\"|\\\\)*)"\s*'
@@ -36,20 +53,6 @@ class MicrosoftSentinelTokenizer(QueryTokenizer, OperatorBasedMixin):
     _value_pattern = fr"""{bool_value_pattern}|{num_value_pattern}|{str_value_pattern}"""
     multi_value_pattern = r"""\((?P<value>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\s]+)\)"""
     keyword_pattern = fr"\*\s+contains\s+(?:{str_value_pattern})"
-
-    multi_value_operators = ("in", "in~")
-
-    operators_map = {
-        "==": OperatorType.EQ,
-        "in~": OperatorType.EQ,
-        "=~": OperatorType.EQ,
-        "<>": OperatorType.NEQ,
-        "!~": OperatorType.NEQ
-    }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.operators_map.update(super().operators_map)
 
     def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> Tuple[str, Any]:
         if (num_value := get_match_group(match, group_name='num_value')) is not None:

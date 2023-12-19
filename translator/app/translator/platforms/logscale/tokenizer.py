@@ -28,7 +28,16 @@ from app.translator.tools.utils import get_match_group
 
 
 class LogScaleTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
-    match_operator_pattern = r"""(?:___field___\s?(?P<match_operator>=|!=|>=|>|<=|<))\s?"""
+    single_value_operators_map = {
+        "=": OperatorType.EQ,
+        "<=": OperatorType.LTE,
+        "<": OperatorType.LT,
+        ">=": OperatorType.GTE,
+        ">": OperatorType.GT,
+        "!=": OperatorType.NEQ
+    }
+
+    field_pattern = r"(?P<field_name>[a-zA-Z\._\-]+)"
     num_value_pattern = r"(?P<num_value>\d+(?:\.\d+)*)\s*"
     double_quotes_value_pattern = r'"(?P<d_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{\}\s]|\\\"|\\)*)"\s*'
     re_value_pattern = r"/(?P<re_value>[:a-zA-Z\*0-9=+%#\\\-_\,\"\'\.$&^@!\(\)\{\}\s?]+)/i?\s*"
@@ -49,27 +58,17 @@ class LogScaleTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
 
         return super().get_operator_and_value(match, operator)
 
-    def __get_identifier(self, query: str) -> (list, str):
+    def _get_identifier(self, query: str) -> (list, str):
         query = query.strip("\n").strip(" ").strip("\n")
-        if query.startswith(GroupType.L_PAREN):
-            return Identifier(token_type=GroupType.L_PAREN), query[1:]
-        elif query.startswith(GroupType.R_PAREN):
-            return Identifier(token_type=GroupType.R_PAREN), query[1:]
-        elif query.startswith('!'):
+        if query.startswith('!'):
             return Identifier(token_type=LogicalOperatorType.NOT), query[1:]
-        elif operator_search := re.match(self.operator_pattern, query):
-            operator = operator_search.group("operator")
-            pos = operator_search.end()
-            return Identifier(token_type=operator.lower()), query[pos:]
-        elif self.keyword_pattern and re.match(self.keyword_pattern, query):
-            return self.search_keyword(query)
-        else:
-            return self.search_field_value(query)
+
+        return super()._get_identifier(query)
 
     def tokenize(self, query: str) -> List[Union[Field, Keyword, Identifier]]:
         tokenized = []
         while query:
-            identifier, query = self.__get_identifier(query=query)
+            identifier, query = self._get_identifier(query=query)
             if tokenized:
                 if isinstance(identifier, Identifier) and identifier.token_type in (GroupType.L_PAREN, LogicalOperatorType.NOT):
                     if isinstance(tokenized[-1], (Field, Keyword)) or tokenized[-1].token_type == GroupType.R_PAREN:

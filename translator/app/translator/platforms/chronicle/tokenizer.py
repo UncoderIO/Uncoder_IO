@@ -26,8 +26,16 @@ from app.translator.tools.utils import get_match_group
 
 
 class ChronicleQueryTokenizer(QueryTokenizer):
-    field_pattern = r"(?P<field_name>[a-zA-Z0-9\._]+)"
+    single_value_operators_map = {
+        "=": OperatorType.EQ,
+        "<=": OperatorType.LTE,
+        "<": OperatorType.LT,
+        ">=": OperatorType.GTE,
+        ">": OperatorType.GT,
+        "!=": OperatorType.NEQ
+    }
 
+    field_pattern = r"(?P<field_name>[a-zA-Z0-9\._]+)"
     num_value_pattern = r"(?P<num_value>\d+(?:\.\d+)*)\s*"
     bool_value_pattern = r"(?P<bool_value>true|false)\s*"
     double_quotes_value_pattern = r'"(?P<d_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{\}\s]|\\\"|\\\\)*)"\s*(?:nocase)?'

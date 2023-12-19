@@ -36,7 +36,7 @@ class Selection:
         return f"Selection({self.name})"
 
 
-class SigmaTokenizer(QueryTokenizer):
+class SigmaTokenizer:
     modifier_manager = ModifierManager()
 
     def __init__(self):
@@ -102,7 +102,7 @@ class SigmaTokenizer(QueryTokenizer):
 
 
 class SigmaConditionTokenizer:
-    operator_pattern = r"\s?(?P<operator>and|or|not)\s?"
+    logical_operator_pattern = r"\s?(?P<logical_operator>and|or|not)\s?"
     selection_pattern = r"(?P<selection_name>[$a-zA-Z\._\-0-9]+)"
     multi_selection_pattern = r"(?P<selection_pattern>[$a-zA-Z\._\-0-9]+)(?:\*){1}"
     one_of_selection = "1 of "
@@ -138,10 +138,10 @@ class SigmaConditionTokenizer:
             return Identifier(token_type=GroupType.L_PAREN), condition[1:]
         elif condition.startswith(GroupType.R_PAREN):
             return Identifier(token_type=GroupType.R_PAREN), condition[1:]
-        elif operator_search := re.match(self.operator_pattern, condition, re.IGNORECASE):
-            operator = operator_search.group("operator")
-            pos = operator_search.end()
-            return Identifier(token_type=operator.lower()), condition[pos:]
+        elif logical_operator_search := re.match(self.logical_operator_pattern, condition, re.IGNORECASE):
+            logical_operator = logical_operator_search.group("logical_operator")
+            pos = logical_operator_search.end()
+            return Identifier(token_type=logical_operator.lower()), condition[pos:]
         elif condition.startswith(self.one_of_selection):
             condition = re.sub(self.one_of_selection, "", condition, 1)
             return self.__get_group(condition=condition, operator=Identifier(token_type=LogicalOperatorType.OR))
