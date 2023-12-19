@@ -37,7 +37,7 @@ class SigmaParser(YamlRuleMixin):
     condition_tokenizer = SigmaConditionTokenizer()
     tokenizer: SigmaTokenizer = SigmaTokenizer()
     mappings: SigmaMappings = sigma_mappings
-    mandatory_fields = {"title", "description", "references", "logsource", "detection"}
+    mandatory_fields = {"title", "description", "logsource", "detection"}
 
     @staticmethod
     def __parse_false_positives(false_positives: Union[str, List[str], None]) -> list:
@@ -69,7 +69,11 @@ class SigmaParser(YamlRuleMixin):
     def parse(self, text: str) -> SiemContainer:
         sigma_rule = self.load_rule(text=text)
         self.__validate_rule(rule=sigma_rule)
-        log_sources = {key: [value] for key, value in (sigma_rule.get("logsource", {})).items()}
+        log_sources = {
+            key: [value]
+            for key, value in (sigma_rule.get("logsource", {})).items()
+            if key in ("product", "service", "category")
+        }
         tokens = self.tokenizer.tokenize(detection=sigma_rule.get("detection"))
         field_tokens = QueryTokenizer.filter_tokens(tokens, Field)
         field_names = [field.source_name for field in field_tokens]
