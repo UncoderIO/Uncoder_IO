@@ -16,6 +16,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+import re
+
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
