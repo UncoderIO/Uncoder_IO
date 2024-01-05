@@ -19,9 +19,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 import re
 from typing import Tuple, Any
 
+from app.translator.core.custom_types.values import ValueType
 from app.translator.core.exceptions.parser import TokenizerGeneralException
 from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.core.custom_types.tokens import OperatorType
+from app.translator.platforms.chronicle.escape_manager import chronicle_escape_manager
 from app.translator.tools.utils import get_match_group
 
 
@@ -36,25 +38,26 @@ class ChronicleQueryTokenizer(QueryTokenizer):
     }
 
     field_pattern = r"(?P<field_name>[a-zA-Z0-9\._]+)"
-    num_value_pattern = r"(?P<num_value>\d+(?:\.\d+)*)\s*"
-    bool_value_pattern = r"(?P<bool_value>true|false)\s*"
-    double_quotes_value_pattern = r'"(?P<d_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{\}\s]|\\\"|\\\\)*)"\s*(?:nocase)?'
-    re_value_pattern = r"/(?P<re_value>(?:\\\/|[:a-zA-Z\*0-9=+%#\\\-_\,\"\'\.$&^@!\(\)\{\}\s?])+)/\s*(?:nocase)?"
+    num_value_pattern = fr"(?P<{ValueType.number_value}>\d+(?:\.\d+)*)\s*"
+    bool_value_pattern = fr"(?P<{ValueType.bool_value}>true|false)\s*"
+    double_quotes_value_pattern = fr'"(?P<{ValueType.double_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{{\}}\s]|\\\"|\\\\)*)"\s*(?:nocase)?'
+    re_value_pattern = fr"/(?P<{ValueType.regular_expression_value}>(?:\\\/|[:a-zA-Z\*0-9=+%#\\\-_\,\"\'\.$&^@!\(\)\{{\}}\s?])+)/\s*(?:nocase)?"
     _value_pattern = fr"{num_value_pattern}|{bool_value_pattern}|{double_quotes_value_pattern}|{re_value_pattern}"
+    escape_manager = chronicle_escape_manager
 
     wildcard_symbol = ".*"
 
     def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> Tuple[str, Any]:
-        if (num_value := get_match_group(match, group_name='num_value')) is not None:
+        if (num_value := get_match_group(match, group_name=ValueType.number_value)) is not None:
             return operator, num_value
 
-        elif (bool_value := get_match_group(match, group_name='bool_value')) is not None:
+        elif (bool_value := get_match_group(match, group_name=ValueType.bool_value)) is not None:
             return operator, bool_value
 
-        elif (d_q_value := get_match_group(match, group_name='d_q_value')) is not None:
-            return operator, d_q_value
+        elif (d_q_value := get_match_group(match, group_name=ValueType.double_quotes_value)) is not None:
+            return operator,  self.escape_manager.remove_escape(d_q_value)
 
-        elif (re_value := get_match_group(match, group_name='re_value')) is not None:
+        elif (re_value := get_match_group(match, group_name=ValueType.regular_expression_value)) is not None:
             return OperatorType.REGEX, re_value
 
         return super().get_operator_and_value(match, operator)
@@ -70,8 +73,8 @@ class ChronicleRuleTokenizer(ChronicleQueryTokenizer):
     field_pattern = r"(?P<field_name>[$a-zA-Z0-9\._]+)"
     regex_field_regex = r"re\.regex\((?P<field>[$a-zA-Z\._]+),"
 
-    double_quotes_value_pattern = r'"(?P<d_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{\}\s]|\\\"|\\\\)*)"'
-    back_quotes_value_pattern = r'`(?P<b_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\"\\\.$&^@!\(\)\{\}\s])*)`'
+    double_quotes_value_pattern = fr'"(?P<{ValueType.double_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{{\}}\s]|\\\"|\\\\)*)"'
+    back_quotes_value_pattern = fr'`(?P<{ValueType.back_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\"\\\.$&^@!\(\)\{{\}}\s])*)`'
     regex_value_regex = fr"{double_quotes_value_pattern}|{back_quotes_value_pattern}\s*\)\s*(?:nocase)?\s*"
 
     def search_field_value(self, query):
@@ -102,10 +105,10 @@ class ChronicleRuleTokenizer(ChronicleQueryTokenizer):
             return super().search_field_value(query=query)
 
     def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> Tuple[str, Any]:
-        if (d_q_value := get_match_group(match, group_name='d_q_value')) is not None:
-            return operator, d_q_value
+        if (d_q_value := get_match_group(match, group_name=ValueType.double_quotes_value)) is not None:
+            return operator, self.escape_manager.remove_escape(d_q_value)
 
-        elif (b_q_value := get_match_group(match, group_name='b_q_value')) is not None:
-            return operator, b_q_value
+        elif (b_q_value := get_match_group(match, group_name=ValueType.back_quotes_value)) is not None:
+            return operator, self.escape_manager.remove_escape(b_q_value)
 
         return super().get_operator_and_value(match, operator)

@@ -19,11 +19,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 import re
 from typing import Tuple, Any, List, Union
 
+from app.translator.core.custom_types.values import ValueType
 from app.translator.core.mixins.logic import ANDLogicOperatorMixin
 from app.translator.core.models.field import Keyword, Field
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.custom_types.tokens import GroupType, LogicalOperatorType, OperatorType
 from app.translator.core.tokenizer import QueryTokenizer
+from app.translator.platforms.logscale.escape_manager import logscale_escape_manager
 from app.translator.tools.utils import get_match_group
 
 
@@ -38,22 +40,22 @@ class LogScaleTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
     }
 
     field_pattern = r"(?P<field_name>[a-zA-Z\._\-]+)"
-    num_value_pattern = r"(?P<num_value>\d+(?:\.\d+)*)\s*"
-    double_quotes_value_pattern = r'"(?P<d_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{\}\s]|\\\"|\\)*)"\s*'
-    re_value_pattern = r"/(?P<re_value>[:a-zA-Z\*0-9=+%#\\\-_\,\"\'\.$&^@!\(\)\{\}\s?]+)/i?\s*"
+    num_value_pattern = fr"(?P<{ValueType.number_value}>\d+(?:\.\d+)*)\s*"
+    double_quotes_value_pattern = fr'"(?P<{ValueType.double_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{{\}}\s]|\\\"|\\)*)"\s*'
+    re_value_pattern = fr"/(?P<{ValueType.regular_expression_value}>[:a-zA-Z\*0-9=+%#\\\-_\,\"\'\.$&^@!\(\)\{{\}}\s?]+)/i?\s*"
     _value_pattern = fr"""{num_value_pattern}|{re_value_pattern}|{double_quotes_value_pattern}"""
     keyword_pattern = double_quotes_value_pattern
-
+    escape_manager = logscale_escape_manager
     wildcard_symbol = "*"
 
     def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> Tuple[str, Any]:
-        if (num_value := get_match_group(match, group_name='num_value')) is not None:
+        if (num_value := get_match_group(match, group_name=ValueType.number_value)) is not None:
             return operator, num_value
 
-        elif (d_q_value := get_match_group(match, group_name='d_q_value')) is not None:
+        elif (d_q_value := get_match_group(match, group_name=ValueType.double_quotes_value)) is not None:
             return operator, d_q_value
 
-        elif (re_value := get_match_group(match, group_name='re_value')) is not None:
+        elif (re_value := get_match_group(match, group_name=ValueType.regular_expression_value)) is not None:
             return OperatorType.REGEX, re_value
 
         return super().get_operator_and_value(match, operator)

@@ -19,9 +19,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 import re
 from typing import Tuple, Any, Union
 
+from app.translator.core.custom_types.values import ValueType
 from app.translator.core.mixins.operator import OperatorBasedMixin
 from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.core.custom_types.tokens import OperatorType
+from app.translator.platforms.microsoft.escape_manager import microsoft_escape_manager
 from app.translator.tools.utils import get_match_group
 
 
@@ -45,27 +47,33 @@ class MicrosoftSentinelTokenizer(QueryTokenizer, OperatorBasedMixin):
     }
 
     field_pattern = r"(?P<field_name>[a-zA-Z\.\-_]+)"
-    bool_value_pattern = r"(?P<bool_value>true|false)\s*"
-    num_value_pattern = r"(?P<num_value>\d+(?:\.\d+)*)\s*"
-    double_quotes_value_pattern = r'@?"(?P<d_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{\}\s]|\\\"|\\\\)*)"\s*'
-    single_quotes_value_pattern = r"@?'(?P<s_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,\"\.$&^@!\(\)\{\}\s]|\\\'|\\\\)*)'\s*"
+    bool_value_pattern = fr"(?P<{ValueType.bool_value}>true|false)\s*"
+    num_value_pattern = fr"(?P<{ValueType.number_value}>\d+(?:\.\d+)*)\s*"
+    double_quotes_value_pattern = fr'(?P<{ValueType.double_quotes_value}>@?"(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{{\}}\s]|\\\"|\\\\)*)"\s*'
+    single_quotes_value_pattern = fr"(?P<{ValueType.single_quotes_value}>@?'(?:[:a-zA-Z\*0-9=+%#\-_/,\"\.$&^@!\(\)\{{\}}\s]|\\\'|\\\\)*)'\s*"
     str_value_pattern = fr"""{double_quotes_value_pattern}|{single_quotes_value_pattern}"""
     _value_pattern = fr"""{bool_value_pattern}|{num_value_pattern}|{str_value_pattern}"""
-    multi_value_pattern = r"""\((?P<value>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\s]+)\)"""
+    multi_value_pattern = fr"""\((?P<{ValueType.value}>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\s]+)\)"""
     keyword_pattern = fr"\*\s+contains\s+(?:{str_value_pattern})"
 
+    escape_manager = microsoft_escape_manager
+
     def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> Tuple[str, Any]:
-        if (num_value := get_match_group(match, group_name='num_value')) is not None:
+        if (num_value := get_match_group(match, group_name=ValueType.number_value)) is not None:
             return operator, num_value
 
-        elif (bool_value := get_match_group(match, group_name='bool_value')) is not None:
+        elif (bool_value := get_match_group(match, group_name=ValueType.bool_value)) is not None:
             return operator, bool_value
 
-        elif (d_q_value := get_match_group(match, group_name='d_q_value')) is not None:
-            return operator, d_q_value
+        elif (d_q_value := get_match_group(match, group_name=ValueType.double_quotes_value)) is not None:
+            if d_q_value.startswith("@"):
+                return operator, d_q_value.lstrip("@").lstrip('"')
+            return operator, self.escape_manager.remove_escape(d_q_value.lstrip('"'))
 
-        elif (s_q_value := get_match_group(match, group_name='s_q_value')) is not None:
-            return operator, s_q_value
+        elif (s_q_value := get_match_group(match, group_name=ValueType.single_quotes_value)) is not None:
+            if s_q_value.startswith("@"):
+                return operator, s_q_value.lstrip("@").lstrip("'")
+            return operator, self.escape_manager.remove_escape(s_q_value.lstrip("'"))
 
         return super().get_operator_and_value(match, operator)
 

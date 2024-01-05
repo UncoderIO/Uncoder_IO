@@ -16,12 +16,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-import re
-
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.platforms.logscale.const import logscale_query_details
+from app.translator.platforms.logscale.escape_manager import logscale_escape_manager
 from app.translator.platforms.logscale.functions import LogScaleFunctions, log_scale_functions
 from app.translator.platforms.logscale.mapping import LogScaleMappings, logscale_mappings
 from app.translator.core.mapping import SourceMapping
@@ -32,13 +31,7 @@ from app.translator.core.render import BaseQueryRender, BaseQueryFieldValue
 
 class LogScaleFieldValue(BaseQueryFieldValue):
     details: PlatformDetails = logscale_query_details
-
-    def apply_value(self, value: Union[str, int]) -> str:
-        if isinstance(value, str) and '"' in value:
-            value = re.sub(r'(?<!\\)"', r'\"', value)
-        if isinstance(value, str) and '/' in value:
-            value = re.sub(r'(?<!\\)/', r'\/', value)
-        return value
+    escape_manager = logscale_escape_manager
 
     def apply_field_name(self, field_name: str) -> str:
         if not field_name.isalpha():

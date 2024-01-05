@@ -20,6 +20,8 @@ from abc import ABC, abstractmethod
 import re
 from typing import Tuple, Union, List, Any, Optional, Type
 
+from app.translator.core.custom_types.values import ValueType
+from app.translator.core.escape_manager import EscapeManager
 from app.translator.core.exceptions.parser import (
     UnsupportedOperatorException,
     TokenizerGeneralException,
@@ -60,6 +62,7 @@ class QueryTokenizer(BaseTokenizer):
 
     multi_value_delimiter = ","
     wildcard_symbol = None
+    escape_manager: EscapeManager = None
 
     def __init_subclass__(cls, **kwargs):
         cls._validate_re_patterns()
@@ -100,7 +103,7 @@ class QueryTokenizer(BaseTokenizer):
         return operator
 
     def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> Tuple[str, Any]:
-        return operator, get_match_group(match, group_name='value')
+        return operator, get_match_group(match, group_name=ValueType.value)
 
     @staticmethod
     def clean_multi_value(value: Union[int, str]) -> Union[int, str]:
