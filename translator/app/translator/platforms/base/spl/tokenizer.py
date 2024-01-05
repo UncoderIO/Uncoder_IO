@@ -19,11 +19,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 import re
 from typing import Tuple, Any, List, Union
 
+from app.translator.core.custom_types.values import ValueType
 from app.translator.core.mixins.logic import ANDLogicOperatorMixin
 from app.translator.core.models.field import Field, Keyword
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.core.custom_types.tokens import OperatorType
+from app.translator.platforms.base.spl.escape_manager import spl_escape_manager
 from app.translator.tools.utils import get_match_group
 
 
@@ -39,28 +41,30 @@ class SplTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
     multi_value_operators_map = {"in": OperatorType.EQ}
 
     field_pattern = r"(?P<field_name>[a-zA-Z\.\-_\{\}]+)"
-    num_value_pattern = r"(?P<num_value>\d+(?:\.\d+)*)(?=$|\s|\))"
-    double_quotes_value_pattern = r'"(?P<d_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,;\'\.$&^@!\]\[\(\)\{\}\s]|\\\"|\\)*)"\s*'
-    single_quotes_value_pattern = r"'(?P<s_q_value>(?:[:a-zA-Z\*0-9=+%#\-_/,;\"\.$&^@!\(\)\{\}\s]|\\\'|\\)*)'\s*"
-    no_quotes_value_pattern = r"(?P<no_q_value>(?:[:a-zA-Z\*0-9+%#\-_/,\.$&^@!]|\\\s|\\=|\\!=|\\<|\\<=|\\>|\\>=|\\\\)+)(?=$|\s|\))"
+    num_value_pattern = fr"(?P<{ValueType.number_value}>\d+(?:\.\d+)*)(?=$|\s|\))"
+    double_quotes_value_pattern = fr'"(?P<{ValueType.double_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,;\'\.<>$&^@!\]\[\(\)\{{\}}\s]|\\\"|\\)*)"\s*'
+    single_quotes_value_pattern = fr"'(?P<{ValueType.single_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,;\"\.<>$&^@!\(\)\{{\}}\s]|\\\'|\\)*)'\s*"
+    no_quotes_value_pattern = fr"(?P<{ValueType.no_quotes_value}>(?:[:a-zA-Z\*0-9+%#\-_/,\.$&^@!]|\\\s|\\=|\\!=|\\<|\\<=|\\>|\\>=|\\\\)+)(?=$|\s|\))"
     _value_pattern = fr"{num_value_pattern}|{no_quotes_value_pattern}|{double_quotes_value_pattern}|{single_quotes_value_pattern}"
-    multi_value_pattern = r"""\((?P<value>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,;.$&^@!\{\}\(\s]+)\)"""
+    multi_value_pattern = fr"""\((?P<{ValueType.value}>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,;.$&^@!\{{\}}\(\s]+)\)"""
     keyword_pattern = fr"{double_quotes_value_pattern}|{no_quotes_value_pattern}"
 
     wildcard_symbol = "*"
 
+    escape_manager = spl_escape_manager
+
     def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> Tuple[str, Any]:
-        if (num_value := get_match_group(match, group_name='num_value')) is not None:
+        if (num_value := get_match_group(match, group_name=ValueType.number_value)) is not None:
             return operator, num_value
 
-        elif (no_q_value := get_match_group(match, group_name='no_q_value')) is not None:
+        elif (no_q_value := get_match_group(match, group_name=ValueType.no_quotes_value)) is not None:
             return operator, no_q_value
 
-        elif (d_q_value := get_match_group(match, group_name='d_q_value')) is not None:
-            return operator, d_q_value
+        elif (d_q_value := get_match_group(match, group_name=ValueType.double_quotes_value)) is not None:
+            return operator, self.escape_manager.remove_escape(d_q_value)
 
-        elif (s_q_value := get_match_group(match, group_name='s_q_value')) is not None:
-            return operator, s_q_value
+        elif (s_q_value := get_match_group(match, group_name=ValueType.single_quotes_value)) is not None:
+            return operator, self.escape_manager.remove_escape(s_q_value)
 
         return super().get_operator_and_value(match)
 

@@ -30,9 +30,9 @@ class OpenSearchFieldValue(LuceneFieldValue):
 
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            values = self.or_token.join(f'"{v}"' for v in value)
+            values = self.or_token.join(f'"{self.apply_value(v)}"' for v in value)
             return f"{field}:({values})"
-        return f'{field}:"{value}"'
+        return f'{field}:"{self.apply_value(value)}"'
 
     def less_modifier(self, field: str, value: Union[int, str]) -> str:
         return f'{field}:<"{self.apply_value(value)}"'
@@ -48,27 +48,27 @@ class OpenSearchFieldValue(LuceneFieldValue):
 
     def not_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            values = self.or_token.join(self.apply_value(f'"{v}"') for v in value)
+            values = self.or_token.join(f'"{self.apply_value(v)}"' for v in value)
             return f"NOT ({field} = ({values})"
         return f'NOT ({field} = "{self.apply_value(value)}")'
 
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            values = self.or_token.join(f'"*{v}*"' for v in value)
+            values = self.or_token.join(f'"*{self.apply_value(v)}*"' for v in value)
             return f"{field}:({values})"
-        return f'{field}:"*{value}*"'
+        return f'{field}:"*{self.apply_value(value)}*"'
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            values = self.or_token.join(f'"*{v}"' for v in value)
+            values = self.or_token.join(f'"*{self.apply_value(v)}"' for v in value)
             return f"{field}:({values})"
-        return f'{field}:"*{value}"'
+        return f'{field}:"*{self.apply_value(value)}"'
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            values = self.or_token.join(f'"{v}*"' for v in value)
+            values = self.or_token.join(f'"{self.apply_value(v)}*"' for v in value)
             return f"{field}:({values})"
-        return f'{field}:"{value}*"'
+        return f'{field}:"{self.apply_value(value)}*"'
 
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
@@ -78,7 +78,7 @@ class OpenSearchFieldValue(LuceneFieldValue):
     def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.keywords(field=field, value=v) for v in value)})"
-        return f'"*{value}*"'
+        return f'"*{self.apply_value(value)}*"'
 
 
 class OpenSearchQueryRender(LuceneQueryRender):

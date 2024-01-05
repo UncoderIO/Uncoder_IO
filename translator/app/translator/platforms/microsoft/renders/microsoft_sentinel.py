@@ -20,6 +20,7 @@ from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.platforms.microsoft.const import microsoft_sentinel_query_details
+from app.translator.platforms.microsoft.escape_manager import microsoft_escape_manager
 from app.translator.platforms.microsoft.functions import MicrosoftFunctions, microsoft_sentinel_functions
 from app.translator.platforms.microsoft.mapping import MicrosoftSentinelMappings, microsoft_sentinel_mappings
 from app.translator.core.mapping import LogSourceSignature
@@ -29,6 +30,7 @@ from app.translator.core.render import BaseQueryRender, BaseQueryFieldValue
 
 class MicrosoftSentinelFieldValue(BaseQueryFieldValue):
     details: PlatformDetails = microsoft_sentinel_query_details
+    escape_manager = microsoft_escape_manager
 
     @staticmethod
     def __escape_value(value: Union[int, str]) -> Union[int, str]:
@@ -41,34 +43,34 @@ class MicrosoftSentinelFieldValue(BaseQueryFieldValue):
             prepared_values = ", ".join(f"@'{self.__escape_value(v)}'" for v in value)
             operator = "in~" if all(isinstance(v, str) for v in value) else "in"
             return f"{field} {operator} ({prepared_values})"
-        return f"{field} == {value}"
+        return f"{field} == {self.apply_value(value)}"
 
     def less_modifier(self, field: str, value: Union[int, str]) -> str:
         if isinstance(value, int):
             return f"{field} < {value}"
-        return f"{field} < '{value}'"
+        return f"{field} < '{self.apply_value(value)}'"
 
     def less_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
         if isinstance(value, int):
             return f"{field} <= {value}"
-        return f"{field} <= '{value}'"
+        return f"{field} <= '{self.apply_value(value)}'"
 
     def greater_modifier(self, field: str, value: Union[int, str]) -> str:
         if isinstance(value, int):
             return f"{field} > {value}"
-        return f"{field} > '{value}'"
+        return f"{field} > '{self.apply_value(value)}'"
 
     def greater_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
         if isinstance(value, int):
             return f"{field} >= {value}"
-        return f"{field} >= '{value}'"
+        return f"{field} >= '{self.apply_value(value)}'"
 
     def not_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join([self.not_equal_modifier(field=field, value=v) for v in value])})"
         if isinstance(value, int):
             return f"{field} !~ {value}"
-        return f"{field} !~ '{value}'"
+        return f"{field} !~ '{self.apply_value(value)}'"
 
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):

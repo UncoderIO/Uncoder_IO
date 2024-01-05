@@ -16,8 +16,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-from typing import Union
-
 from app.translator.platforms.base.lucene.renders.lucene import LuceneQueryRender, LuceneFieldValue
 from app.translator.platforms.elasticsearch.const import elasticsearch_lucene_query_details
 from app.translator.platforms.elasticsearch.mapping import ElasticSearchMappings, elasticsearch_mappings
@@ -26,13 +24,6 @@ from app.translator.core.models.platform_details import PlatformDetails
 
 class ElasticSearchFieldValue(LuceneFieldValue):
     details: PlatformDetails = elasticsearch_lucene_query_details
-
-    def apply_value(self, value: Union[str, int]):
-        if isinstance(value, int):
-            return value
-        if " " in value:
-            return f'"{value}"'.replace(" ", r"\ ")
-        return value
 
 
 class ElasticSearchQueryRender(LuceneQueryRender):

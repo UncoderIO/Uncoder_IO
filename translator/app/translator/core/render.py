@@ -21,6 +21,8 @@ from abc import ABC
 from typing import Union, List, Dict
 
 from app.translator.const import DEFAULT_VALUE_TYPE
+from app.translator.core.custom_types.values import ValueType
+from app.translator.core.escape_manager import EscapeManager
 from app.translator.core.exceptions.core import NotImplementedException, StrictPlatformException
 from app.translator.core.exceptions.parser import UnsupportedOperatorException
 from app.translator.core.functions import PlatformFunctions
@@ -34,6 +36,7 @@ from app.translator.core.custom_types.tokens import LogicalOperatorType, Operato
 
 class BaseQueryFieldValue(ABC):
     details: PlatformDetails = None
+    escape_manager: EscapeManager = None
 
     def __init__(self, or_token):
         self.field_value = {
@@ -83,6 +86,10 @@ class BaseQueryFieldValue(ABC):
 
     def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         raise NotImplementedException
+
+    def apply_value(self, value: Union[str, int], case_type: str = ValueType.value) -> Union[str, int]:
+        updated_value = self.escape_manager.escape(value, case_type)
+        return updated_value
 
     def apply_field_value(self, field, operator, value):
         if modifier_function := self.field_value.get(operator.token_type):

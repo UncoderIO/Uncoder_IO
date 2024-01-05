@@ -38,39 +38,39 @@ class ChronicleRuleFieldValue(ChronicleFieldValue):
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.equal_modifier(field=field, value=v) for v in value)})"
-        return f'{self.apply_field(field)} = "{value}"'
+        return f'{self.apply_field(field)} = "{self.apply_value(value)}"'
 
     def less_modifier(self, field: str, value: Union[int, str]) -> str:
-        return f'{self.apply_field(field)} < "{value}"'
+        return f'{self.apply_field(field)} < "{self.apply_value(value)}"'
 
     def less_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
-        return f'{self.apply_field(field)} <= "{value}"'
+        return f'{self.apply_field(field)} <= "{self.apply_value(value)}"'
 
     def greater_modifier(self, field: str, value: Union[int, str]) -> str:
-        return f'{self.apply_field(field)} > "{value}"'
+        return f'{self.apply_field(field)} > "{self.apply_value(value)}"'
 
     def greater_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
-        return f'{self.apply_field(field)} >= "{value}"'
+        return f'{self.apply_field(field)} >= "{self.apply_value(value)}"'
 
     def not_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join([self.not_equal_modifier(field=field, value=v) for v in value])})"
-        return f'{self.apply_field(field)} != "{value}"'
+        return f'{self.apply_field(field)} != "{self.apply_value(value)}"'
 
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.contains_modifier(field=field, value=v) for v in value)})"
-        return f're.regex({self.apply_field(field)}, `.*{value}.*`)'
+        return f're.regex({self.apply_field(field)}, `.*{self.apply_value(value)}.*`)'
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.endswith_modifier(field=field, value=v) for v in value)})"
-        return f're.regex({self.apply_field(field)}, `.*{value}`)'
+        return f're.regex({self.apply_field(field)}, `.*{self.apply_value(value)}`)'
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.startswith_modifier(field=field, value=v) for v in value)})"
-        return f're.regex({self.apply_field(field)}, `{value}.*`)'
+        return f're.regex({self.apply_field(field)}, `{self.apply_value(value)}.*`)'
 
     @staticmethod
     def apply_field(field):
@@ -79,7 +79,7 @@ class ChronicleRuleFieldValue(ChronicleFieldValue):
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.regex_modifier(field=field, value=v) for v in value)})"
-        return f're.regex({self.apply_field(field)}, `{value}`)'
+        return f're.regex({self.apply_field(field)}, `{self.apply_asterics_value(value)}`)'
 
 
 class ChronicleSecurityRuleRender(ChronicleQueryRender):

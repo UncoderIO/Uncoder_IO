@@ -19,6 +19,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 import re
 from typing import Tuple, Any
 
+from app.translator.core.custom_types.values import ValueType
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.core.custom_types.tokens import OperatorType
@@ -41,11 +42,11 @@ class AthenaTokenizer(QueryTokenizer):
     }
 
     field_pattern = r'(?P<field_name>"[a-zA-Z\._\-\s]+"|[a-zA-Z\._\-]+)'
-    num_value_pattern = r"(?P<num_value>\d+(?:\.\d+)*)\s*"
-    bool_value_pattern = r"(?P<bool_value>true|false)\s*"
-    single_quotes_value_pattern = r"""'(?P<s_q_value>(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{\}\s]|'')*)'"""
+    num_value_pattern = fr"(?P<{ValueType.number_value}>\d+(?:\.\d+)*)\s*"
+    bool_value_pattern = fr"(?P<{ValueType.bool_value}>true|false)\s*"
+    single_quotes_value_pattern = fr"""'(?P<{ValueType.single_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{{\}}\s]|'')*)'"""
     _value_pattern = fr"{num_value_pattern}|{bool_value_pattern}|{single_quotes_value_pattern}"
-    multi_value_pattern = r"""\((?P<value>\d+(?:,\s*\d+)*|'(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{\}\s]|'')*'(?:,\s*'(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{\}\s]|'')*')*)\)"""
+    multi_value_pattern = fr"""\((?P<{ValueType.value}>\d+(?:,\s*\d+)*|'(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{{\}}\s]|'')*'(?:,\s*'(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{{\}}\s]|'')*')*)\)"""
 
     wildcard_symbol = "%"
 
@@ -54,13 +55,13 @@ class AthenaTokenizer(QueryTokenizer):
         return operator.lower() in ("like",)
 
     def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> Tuple[str, Any]:
-        if (num_value := get_match_group(match, group_name='num_value')) is not None:
+        if (num_value := get_match_group(match, group_name=ValueType.number_value)) is not None:
             return operator, num_value
 
-        elif (bool_value := get_match_group(match, group_name='bool_value')) is not None:
+        elif (bool_value := get_match_group(match, group_name=ValueType.bool_value)) is not None:
             return operator, bool_value
 
-        elif (s_q_value := get_match_group(match, group_name='s_q_value')) is not None:
+        elif (s_q_value := get_match_group(match, group_name=ValueType.single_quotes_value)) is not None:
             return operator, s_q_value
 
         return super().get_operator_and_value(match, operator)
