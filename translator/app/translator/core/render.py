@@ -87,8 +87,8 @@ class BaseQueryFieldValue(ABC):
     def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         raise NotImplementedException
 
-    def apply_value(self, value: Union[str, int], case_type: str = ValueType.value) -> Union[str, int]:
-        updated_value = self.escape_manager.escape(value, case_type)
+    def apply_value(self, value: Union[str, int], value_type: str = ValueType.value) -> Union[str, int]:
+        updated_value = self.escape_manager.escape(value, value_type)
         return updated_value
 
     def apply_field_value(self, field, operator, value):
