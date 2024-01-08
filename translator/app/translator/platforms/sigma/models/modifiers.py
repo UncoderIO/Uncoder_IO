@@ -1,6 +1,6 @@
 from typing import Union, List
 
-from app.translator.core.models.field import Field
+from app.translator.core.models.field import FieldValue
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.custom_types.tokens import LogicalOperatorType, OperatorType, GroupType
 
@@ -29,7 +29,7 @@ class ModifierManager:
                      values: Union[str, List[str]]) -> Union[tuple, list]:
         if (isinstance(values, list) and len(values) == 1) or isinstance(values, str):
             operator = self.map_modifier(modifier=modifier)
-            return (Field(source_name=field_name, operator=operator, value=values), )
+            return (FieldValue(source_name=field_name, operator=operator, value=values), )
         else:
             tokens = []
             for value in values:
@@ -53,8 +53,7 @@ class ModifierManager:
                 tokens.append(self.or_token)
             return [Identifier(token_type=GroupType.L_PAREN), *tokens[:-1], Identifier(token_type=GroupType.R_PAREN)]
         operator = self.map_modifier(modifier=modifier)
-        field = Field(source_name=field_name, operator=operator, value=self.__prepare_windash_value(value=values))
-        return (field,)
+        return (FieldValue(source_name=field_name, operator=operator, value=self.__prepare_windash_value(value=values)),)
 
     def apply_multi_modifier(self, field_name: str, modifier: list,
                              values: Union[str, List[str]]) -> Union[tuple, list]:
@@ -69,7 +68,7 @@ class ModifierManager:
             modifier = OperatorType.EQ
             return self.modifier_windash(field_name=field_name, modifier=modifier, values=values)
         operator = self.map_modifier(modifier=modifier)
-        return (Field(source_name=field_name, operator=operator, value=values), )
+        return (FieldValue(source_name=field_name, operator=operator, value=values), )
 
     def create_token(self, field_name: str, modifier: list,
                      value: Union[str, List[str], int]) -> Union[tuple, list]:

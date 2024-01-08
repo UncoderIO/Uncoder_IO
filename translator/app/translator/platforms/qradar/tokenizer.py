@@ -21,7 +21,7 @@ from typing import Tuple, Any
 
 from app.translator.core.custom_types.values import ValueType
 from app.translator.platforms.qradar.const import UTF8_PAYLOAD_PATTERN, SINGLE_QUOTES_VALUE_PATTERN, NUM_VALUE_PATTERN
-from app.translator.core.models.field import Keyword
+from app.translator.core.models.field import Keyword, FieldValue
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.core.custom_types.tokens import OperatorType
@@ -77,7 +77,7 @@ class QradarTokenizer(QueryTokenizer):
         field_name = field_name.replace(' ', r'\ ')
         return field_name
 
-    def search_field_value(self, query):
+    def search_field_value(self, query) -> Tuple[FieldValue, str]:
         field_name = self.search_field(query)
         operator = self.search_operator(query, field_name)
         should_process_value_wildcard_symbols = self.should_process_value_wildcard_symbols(operator)
@@ -92,8 +92,8 @@ class QradarTokenizer(QueryTokenizer):
             )
 
         field_name = field_name.strip('"')
-        field = self.create_field(field_name=field_name, operator=operator_token, value=value)
-        return field, query
+        field_value = self.create_field_value(field_name=field_name, operator=operator_token, value=value)
+        return field_value, query
 
     def search_keyword(self, query: str) -> Tuple[Keyword, str]:
         keyword_search = re.search(self.keyword_pattern, query)

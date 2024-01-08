@@ -21,10 +21,9 @@ from typing import Union, List
 
 from app.translator.platforms.sigma.models.modifiers import ModifierManager
 from app.translator.core.exceptions.parser import TokenizerGeneralException
-from app.translator.core.models.field import Field, Keyword
+from app.translator.core.models.field import FieldValue, Keyword
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.custom_types.tokens import GroupType, LogicalOperatorType
-from app.translator.core.tokenizer import QueryTokenizer
 
 
 class Selection:
@@ -45,7 +44,7 @@ class SigmaTokenizer:
             list: self.__parse_or_selection
         }
 
-    def __parse_field(self, field_name: str, values: Union[int, str, List[str]]) -> Union[List, Field]:
+    def __parse_field(self, field_name: str, values: Union[int, str, List[str]]) -> Union[List, FieldValue]:
         field_name, *modifier = field_name.split("|") if "|" in field_name else (field_name, "=")
         return self.modifier_manager.generate(field_name=field_name, modifier=modifier, value=values)
 

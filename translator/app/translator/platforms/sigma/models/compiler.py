@@ -16,7 +16,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
 
-from app.translator.core.models.field import Field, Keyword
+from app.translator.core.models.field import FieldValue, Keyword
 from app.translator.platforms.sigma.models.group import Group
 from app.translator.core.models.identifier import Identifier
 from app.translator.platforms.sigma.models.operator import Operator, NOT
@@ -31,14 +31,14 @@ class DataStructureCompiler:
             return group
         group = group if group else Group()
         token = tokens[0]
-        if isinstance(token, (Field, Keyword)):
+        if isinstance(token, (FieldValue, Keyword)):
             group += token
             return self.generate(tokens=tokens[1::], group=group)
         elif token.token_type == LogicalOperatorType.OR or token.token_type == LogicalOperatorType.AND:
             group.items = Operator(operator_type=token.token_type)
             return self.generate(tokens=tokens[1::], group=group)
         elif token.token_type == LogicalOperatorType.NOT:
-            if isinstance(tokens[1], (Field, Keyword)):
+            if isinstance(tokens[1], (FieldValue, Keyword)):
                 tokens.insert(2, Identifier(token_type=GroupType.R_PAREN))
                 tokens.insert(1, Identifier(token_type=GroupType.L_PAREN))
             sub_group = Group()

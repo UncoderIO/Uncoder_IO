@@ -27,20 +27,20 @@ from app.translator.core.exceptions.parser import (
     TokenizerGeneralException,
     QueryParenthesesException
 )
-from app.translator.core.mapping import SourceMapping, DEFAULT_MAPPING_NAME, BasePlatformMappings
-from app.translator.core.models.field import Field, Keyword
+from app.translator.core.mapping import SourceMapping
+from app.translator.core.models.field import Field, FieldValue, Keyword
 from app.translator.core.models.functions.base import Function
 from app.translator.core.models.functions.sort import SortArg
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.custom_types.tokens import OperatorType, GroupType
 from app.translator.tools.utils import get_match_group
 
-TOKEN_TYPE = Union[Field, Keyword, Identifier]
+TOKEN_TYPE = Union[FieldValue, Keyword, Identifier]
 
 
 class BaseTokenizer(ABC):
     @abstractmethod
-    def tokenize(self, query: str) -> List[Union[Field, Keyword, Identifier]]:
+    def tokenize(self, query: str) -> List[Union[FieldValue, Keyword, Identifier]]:
         raise NotImplementedError()
 
 
@@ -180,18 +180,18 @@ class QueryTokenizer(BaseTokenizer):
         return self._clean_value(value, wildcard_symbol), op
 
     @staticmethod
-    def create_field(field_name: str, operator: Identifier, value: Union[str, List]) -> Field:
-        return Field(operator=operator, value=value, source_name=field_name)
+    def create_field_value(field_name: str, operator: Identifier, value: Union[str, List]) -> FieldValue:
+        return FieldValue(source_name=field_name, operator=operator, value=value)
 
-    def search_field_value(self, query):
+    def search_field_value(self, query) -> Tuple[FieldValue, str]:
         field_name = self.search_field(query)
         operator = self.search_operator(query, field_name)
         query, operator, value = self.search_value(query=query, operator=operator, field_name=field_name)
         value, operator_token = self.process_value_wildcard_symbols(value=value,
                                                                     operator=operator,
                                                                     wildcard_symbol=self.wildcard_symbol)
-        field = self.create_field(field_name=field_name, operator=operator_token, value=value)
-        return field, query
+        field_value = self.create_field_value(field_name=field_name, operator=operator_token, value=value)
+        return field_value, query
 
     def _match_field_value(self, query: str, white_space_pattern: str = r"\s+") -> bool:
         single_value_operator_group = fr"(?:{'|'.join(self.single_value_operators_map)})"
@@ -208,7 +208,7 @@ class QueryTokenizer(BaseTokenizer):
 
         return False
 
-    def _get_identifier(self, query: str) -> Tuple[Union[Field, Keyword, Identifier], str]:
+    def _get_identifier(self, query: str) -> Tuple[Union[FieldValue, Keyword, Identifier], str]:
         query = query.strip("\n").strip(" ").strip("\n")
         if query.startswith(GroupType.L_PAREN):
             return Identifier(token_type=GroupType.L_PAREN), query[1:]
@@ -240,7 +240,7 @@ class QueryTokenizer(BaseTokenizer):
             raise QueryParenthesesException()
         return True
 
-    def tokenize(self, query: str) -> List[Union[Field, Keyword, Identifier]]:
+    def tokenize(self, query: str) -> List[Union[FieldValue, Keyword, Identifier]]:
         tokenized = []
         while query:
             identifier, query = self._get_identifier(query=query)
@@ -250,34 +250,28 @@ class QueryTokenizer(BaseTokenizer):
 
     @staticmethod
     def filter_tokens(tokens: List[TOKEN_TYPE],
-                      token_type: Union[Type[Field], Type[Keyword], Type[Identifier]]) -> List[TOKEN_TYPE]:
+                      token_type: Union[Type[FieldValue], Type[Keyword], Type[Identifier]]) -> List[TOKEN_TYPE]:
         return [token for token in tokens if isinstance(token, token_type)]
 
-    def filter_function_tokens(self,
-                               tokens: List[Union[Field, Keyword, Identifier, Function, SortArg]]) -> List[TOKEN_TYPE]:
+    def get_field_tokens_from_func_args(self,
+                                        args: List[Union[Field, FieldValue, Keyword, Identifier, Function, SortArg]]
+                                        ) -> List[Field]:
         result = []
-        for token in tokens:
-            if isinstance(token, Field):
-                result.append(token)
-            elif isinstance(token, Function):
-                result.extend(self.filter_function_tokens(tokens=token.args))
-                result.extend(self.filter_function_tokens(tokens=token.by_clauses))
-            elif isinstance(token, SortArg):
-                result.append(token.field)
+        for arg in args:
+            if isinstance(arg, Field):
+                result.append(arg)
+            elif isinstance(arg, FieldValue):
+                result.append(arg.field)
+            elif isinstance(arg, Function):
+                result.extend(self.get_field_tokens_from_func_args(args=arg.args))
+                result.extend(self.get_field_tokens_from_func_args(args=arg.by_clauses))
+            elif isinstance(arg, SortArg):
+                result.append(arg.field)
         return result
 
     @staticmethod
-    def set_field_generic_names_map(tokens: List[Field],
-                                    source_mappings: List[SourceMapping],
-                                    platform_mappings: BasePlatformMappings) -> None:
+    def set_field_tokens_generic_names_map(tokens: List[Field],
+                                           source_mappings: List[SourceMapping],
+                                           default_mapping: SourceMapping) -> None:
         for token in tokens:
-            generic_names_map = {
-                source_mapping.source_id: source_mapping.fields_mapping.get_generic_field_name(token.source_name)
-                for source_mapping in source_mappings
-            }
-            if DEFAULT_MAPPING_NAME not in generic_names_map:
-                default_source_mapping = platform_mappings.get_source_mapping(DEFAULT_MAPPING_NAME)
-                fields_mapping = default_source_mapping.fields_mapping
-                generic_names_map[DEFAULT_MAPPING_NAME] = fields_mapping.get_generic_field_name(token.source_name)
-
-            token.generic_names_map = generic_names_map
+            token.set_generic_names_map(source_mappings, default_mapping)

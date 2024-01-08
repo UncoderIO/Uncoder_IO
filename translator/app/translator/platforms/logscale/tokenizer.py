@@ -21,9 +21,9 @@ from typing import Tuple, Any, List, Union
 
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.mixins.logic import ANDLogicOperatorMixin
-from app.translator.core.models.field import Keyword, Field
+from app.translator.core.models.field import Keyword, FieldValue
 from app.translator.core.models.identifier import Identifier
-from app.translator.core.custom_types.tokens import GroupType, LogicalOperatorType, OperatorType
+from app.translator.core.custom_types.tokens import LogicalOperatorType, OperatorType
 from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.platforms.logscale.escape_manager import logscale_escape_manager
 from app.translator.tools.utils import get_match_group
@@ -67,17 +67,6 @@ class LogScaleTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
 
         return super()._get_identifier(query)
 
-    def tokenize(self, query: str) -> List[Union[Field, Keyword, Identifier]]:
-        tokenized = []
-        while query:
-            identifier, query = self._get_identifier(query=query)
-            if tokenized:
-                if isinstance(identifier, Identifier) and identifier.token_type in (GroupType.L_PAREN, LogicalOperatorType.NOT):
-                    if isinstance(tokenized[-1], (Field, Keyword)) or tokenized[-1].token_type == GroupType.R_PAREN:
-                        tokenized.append(Identifier(token_type=LogicalOperatorType.AND))
-                elif isinstance(identifier, (Field, Keyword)):
-                    if isinstance(tokenized[-1], (Field, Keyword)) or tokenized[-1].token_type == GroupType.R_PAREN:
-                        tokenized.append(Identifier(token_type=LogicalOperatorType.AND))
-            tokenized.append(identifier)
-        self._validate_parentheses(tokenized)
-        return self.add_and_token_if_missed(tokens=tokenized)
+    def tokenize(self, query: str) -> List[Union[FieldValue, Keyword, Identifier]]:
+        tokens = super().tokenize(query=query)
+        return self.add_and_token_if_missed(tokens=tokens)

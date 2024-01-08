@@ -27,11 +27,12 @@ from app.translator.core.exceptions.core import NotImplementedException, StrictP
 from app.translator.core.exceptions.parser import UnsupportedOperatorException
 from app.translator.core.functions import PlatformFunctions
 from app.translator.core.mapping import BasePlatformMappings, SourceMapping, LogSourceSignature, DEFAULT_MAPPING_NAME
-from app.translator.core.models.field import Field, Keyword
+from app.translator.core.models.field import Field, FieldValue, Keyword
 from app.translator.core.models.functions.base import Function, ParsedFunctions
+from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.parser_output import MetaInfoContainer
-from app.translator.core.custom_types.tokens import LogicalOperatorType, OperatorType, GroupType
+from app.translator.core.custom_types.tokens import LogicalOperatorType, OperatorType
 
 
 class BaseQueryFieldValue(ABC):
@@ -133,7 +134,7 @@ class BaseQueryRender:
         return self.platform_functions.render(functions, source_mapping) if self.platform_functions else ""
 
     def map_field(self, field: Field, source_mapping: SourceMapping) -> List[str]:
-        generic_field_name = field.generic_names_map[source_mapping.source_id]
+        generic_field_name = field.get_generic_field_name(source_mapping.source_id)
         # field can be mapped to corresponding platform field name or list of platform field names
         mapped_field = source_mapping.fields_mapping.get_platform_field_name(generic_field_name=generic_field_name)
         if not mapped_field and self.is_strict_mapping:
@@ -145,10 +146,10 @@ class BaseQueryRender:
         return mapped_field if mapped_field else [generic_field_name] if generic_field_name else [field.source_name]
 
     def apply_token(self,
-                    token: Union[Field, Keyword, LogicalOperatorType, GroupType],
+                    token: Union[FieldValue, Keyword, Identifier],
                     source_mapping: SourceMapping) -> str:
-        if isinstance(token, (Field, Keyword)):
-            mapped_fields = self.map_field(token, source_mapping) if isinstance(token, Field) else [None]
+        if isinstance(token, FieldValue):
+            mapped_fields = self.map_field(token.field, source_mapping)
             if len(mapped_fields) > 1:
                 return self.group_token % self.operator_map[LogicalOperatorType.OR].join([
                     self.field_value_map.apply_field_value(field=field, operator=token.operator, value=token.value)
@@ -158,12 +159,17 @@ class BaseQueryRender:
             return self.field_value_map.apply_field_value(field=mapped_fields[0],
                                                           operator=token.operator,
                                                           value=token.value)
+        elif isinstance(token, Keyword):
+            return self.field_value_map.apply_field_value(field=None,
+                                                          operator=token.operator,
+                                                          value=token.value)
         elif token.token_type in LogicalOperatorType:
             return self.operator_map.get(token.token_type)
+
         return token.token_type
 
     def generate_query(self,
-                       query: List[Union[Field, Keyword, LogicalOperatorType, GroupType]],
+                       query: List[Union[FieldValue, Keyword, Identifier]],
                        source_mapping: SourceMapping) -> str:
         result_values = []
         for token in query:
@@ -173,8 +179,7 @@ class BaseQueryRender:
     def wrap_query_with_meta_info(self, meta_info: MetaInfoContainer, query: str):
         if meta_info and (meta_info.id or meta_info.title):
             query_meta_info = "\n".join(
-                self.wrap_with_comment(f"{key}{value}")
-                for key, value in {"name: ": meta_info.title, "uuid: ": meta_info.id}.items() if value
+                self.wrap_with_comment(f"{key}{value}") for key, value in {"name: ": meta_info.title, "uuid: ": meta_info.id}.items() if value
             )
             query = f"{query}\n\n{query_meta_info}"
         return query

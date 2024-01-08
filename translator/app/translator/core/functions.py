@@ -58,7 +58,7 @@ class FunctionRender(ABC):
 
     @staticmethod
     def map_field(field: Field, source_mapping: SourceMapping) -> str:
-        generic_field_name = field.generic_names_map[source_mapping.source_id]
+        generic_field_name = field.get_generic_field_name(source_mapping.source_id)
         mapped_field = source_mapping.fields_mapping.get_platform_field_name(generic_field_name=generic_field_name)
         if isinstance(mapped_field, list):
             mapped_field = mapped_field[0]

@@ -1,16 +1,36 @@
 from typing import Union, Optional
 
+from app.translator.core.mapping import SourceMapping, DEFAULT_MAPPING_NAME
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.custom_types.tokens import OperatorType
 
 
 class Field:
-    def __init__(self, source_name: str, operator: Identifier = None, value: Union[int, str, list, tuple] = None):
+    def __init__(self, source_name: str):
+        self.source_name = source_name
+        self.__generic_names_map = {}
+
+    def get_generic_field_name(self, source_id: str) -> Optional[str]:
+        return self.__generic_names_map.get(source_id)
+
+    def set_generic_names_map(self, source_mappings: list[SourceMapping], default_mapping: SourceMapping) -> None:
+        generic_names_map = {
+            source_mapping.source_id: source_mapping.fields_mapping.get_generic_field_name(self.source_name)
+            for source_mapping in source_mappings
+        }
+        if DEFAULT_MAPPING_NAME not in generic_names_map:
+            fields_mapping = default_mapping.fields_mapping
+            generic_names_map[DEFAULT_MAPPING_NAME] = fields_mapping.get_generic_field_name(self.source_name)
+
+        self.__generic_names_map = generic_names_map
+
+
+class FieldValue:
+    def __init__(self, source_name: str, operator: Identifier, value: Union[int, str, list, tuple]):
+        self.field = Field(source_name=source_name)
         self.operator = operator
         self.values = []
         self.__add_value(value)
-        self.source_name = source_name    # input translation field name
-        self.generic_names_map = {}
 
     @property
     def value(self):
@@ -30,31 +50,7 @@ class Field:
         self.values.append(other)
 
     def __repr__(self):
-        if self.operator:
-            return f"{self.source_name} {self.operator.token_type} {self.values}"
-
-        return f"{self.source_name}"
-
-    def __eq__(self, other):
-        if isinstance(other, Field):
-            return self._hash == other._hash
-        """For OR operator check"""
-        if self.source_name == other.source_name and self.operator == other.operator:
-            return True
-        return False
-
-    def __neq__(self, other):
-        """For AND operator check"""
-        if self.source_name != other.source_name:
-            return True
-        return False
-
-    @property
-    def _hash(self):
-        return hash(str(self))
-
-    def __hash__(self):
-        return hash(str(self))
+        return f"{self.field.source_name} {self.operator.token_type} {self.values}"
 
 
 class Keyword:
