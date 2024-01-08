@@ -1,21 +1,3 @@
-"""
-Uncoder IO Commercial Edition License
------------------------------------------------------------------
-Copyright (c) 2023 SOC Prime, Inc.
-
-This file is part of the Uncoder IO Commercial Edition ("CE") and is
-licensed under the Uncoder IO Non-Commercial License (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    https://github.com/UncoderIO/UncoderIO/blob/main/LICENSE
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
------------------------------------------------------------------
-"""
-
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -58,7 +40,7 @@ class FunctionRender(ABC):
 
     @staticmethod
     def map_field(field: Field, source_mapping: SourceMapping) -> str:
-        generic_field_name = field.generic_names_map[source_mapping.source_id]
+        generic_field_name = field.get_generic_field_name(source_mapping.source_id)
         mapped_field = source_mapping.fields_mapping.get_platform_field_name(generic_field_name=generic_field_name)
         if isinstance(mapped_field, list):
             mapped_field = mapped_field[0]

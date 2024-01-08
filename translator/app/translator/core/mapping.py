@@ -122,3 +122,7 @@ class BasePlatformMappings:
 
     def get_source_mapping(self, source_id: str) -> Optional[SourceMapping]:
         return self._source_mappings.get(source_id)
+
+    @property
+    def default_mapping(self) -> SourceMapping:
+        return self._source_mappings[DEFAULT_MAPPING_NAME]

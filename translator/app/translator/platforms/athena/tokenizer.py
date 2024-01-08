@@ -20,6 +20,7 @@ import re
 from typing import Tuple, Any
 
 from app.translator.core.custom_types.values import ValueType
+from app.translator.core.models.field import FieldValue
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.core.custom_types.tokens import OperatorType
@@ -66,7 +67,7 @@ class AthenaTokenizer(QueryTokenizer):
 
         return super().get_operator_and_value(match, operator)
 
-    def search_field_value(self, query):
+    def search_field_value(self, query) -> Tuple[FieldValue, str]:
         field_name = self.search_field(query)
         operator = self.search_operator(query, field_name)
         should_process_value_wildcard_symbols = self.should_process_value_wildcard_symbols(operator)
@@ -81,8 +82,8 @@ class AthenaTokenizer(QueryTokenizer):
             )
 
         field_name = field_name.strip('"')
-        field = self.create_field(field_name=field_name, operator=operator_token, value=value)
-        return field, query
+        field_value = self.create_field_value(field_name=field_name, operator=operator_token, value=value)
+        return field_value, query
 
     def tokenize(self, query: str) -> list:
         query = re.sub(r"\s*ESCAPE\s*'.'", '', query)  # remove `ESCAPE 'escape_char'` in LIKE expr

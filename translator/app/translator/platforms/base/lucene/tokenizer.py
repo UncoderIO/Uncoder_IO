@@ -22,7 +22,7 @@ from typing import Tuple, Union, List, Any
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.exceptions.parser import TokenizerGeneralException
 from app.translator.core.mixins.logic import ANDLogicOperatorMixin
-from app.translator.core.models.field import Keyword, Field
+from app.translator.core.models.field import Keyword, FieldValue
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.core.custom_types.tokens import OperatorType
@@ -41,7 +41,6 @@ class LuceneTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
     }
 
     field_pattern = r"(?P<field_name>[a-zA-Z\.\-_]+)"
-    match_operator_pattern = r"(?:___field___\s*(?P<match_operator>:\[\*\sTO|:\[|:<|:>|:))\s*"
     _num_value_pattern = r"\d+(?:\.\d+)*"
     num_value_pattern = fr"(?P<{ValueType.number_value}>{_num_value_pattern})\s*"
     double_quotes_value_pattern = fr'"(?P<{ValueType.double_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{{\}}\s]|\\\"|\\)*)"\s*'
@@ -61,10 +60,10 @@ class LuceneTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
     wildcard_symbol = "*"
 
     @staticmethod
-    def create_field(field_name: str, operator: Identifier, value: Union[str, List]) -> Field:
+    def create_field_value(field_name: str, operator: Identifier, value: Union[str, List]) -> FieldValue:
         field_name = field_name.replace(".text", "")
         field_name = field_name.replace(".keyword", "")
-        return Field(operator=operator, value=value, source_name=field_name)
+        return FieldValue(source_name=field_name, operator=operator, value=value)
 
     @staticmethod
     def clean_quotes(value: Union[str, int]):
@@ -131,6 +130,6 @@ class LuceneTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
 
         return super()._match_field_value(query, white_space_pattern=white_space_pattern)
 
-    def tokenize(self, query: str) -> List[Union[Field, Keyword, Identifier]]:
+    def tokenize(self, query: str) -> List[Union[FieldValue, Keyword, Identifier]]:
         tokens = super().tokenize(query=query)
         return self.add_and_token_if_missed(tokens=tokens)
