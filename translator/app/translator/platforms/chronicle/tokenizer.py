@@ -21,6 +21,7 @@ from typing import Tuple, Any
 
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.exceptions.parser import TokenizerGeneralException
+from app.translator.core.models.field import FieldValue
 from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.platforms.chronicle.escape_manager import chronicle_escape_manager
@@ -77,7 +78,7 @@ class ChronicleRuleTokenizer(ChronicleQueryTokenizer):
     back_quotes_value_pattern = fr'`(?P<{ValueType.back_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\"\\\.$&^@!\(\)\{{\}}\s])*)`'
     regex_value_regex = fr"{double_quotes_value_pattern}|{back_quotes_value_pattern}\s*\)\s*(?:nocase)?\s*"
 
-    def search_field_value(self, query):
+    def search_field_value(self, query) -> Tuple[FieldValue, str]:
         if query.startswith("re.regex("):
             field_search = re.search(self.regex_field_regex, query)
             if field_search is None:
@@ -99,8 +100,8 @@ class ChronicleRuleTokenizer(ChronicleQueryTokenizer):
             pos = value_search.end()
             query = query[pos:]
 
-            field = self.create_field(field_name=field, operator=operator, value=value)
-            return field, query
+            field_value = self.create_field_value(field_name=field, operator=operator, value=value)
+            return field_value, query
         else:
             return super().search_field_value(query=query)
 

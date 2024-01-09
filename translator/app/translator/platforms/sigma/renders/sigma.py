@@ -26,7 +26,7 @@ from app.translator.platforms.sigma.const import SIGMA_RULE_DETAILS
 from app.translator.platforms.sigma.mapping import SigmaMappings, sigma_mappings, SigmaLogSourceSignature
 from app.translator.platforms.sigma.models.compiler import DataStructureCompiler
 from app.translator.core.mapping import SourceMapping, DEFAULT_MAPPING_NAME
-from app.translator.core.models.field import Field, Keyword
+from app.translator.core.models.field import FieldValue, Keyword
 from app.translator.platforms.sigma.models.group import Group
 from app.translator.platforms.sigma.models.operator import OR, AND, NOT
 from app.translator.core.models.platform_details import PlatformDetails
@@ -68,7 +68,7 @@ class SigmaRender:
             return self.generate_and(data, source_mapping)
         elif isinstance(data, NOT):
             return self.generate_not(data, source_mapping)
-        elif isinstance(data, Field):
+        elif isinstance(data, FieldValue):
             return self.generate_field(data, source_mapping)
         elif isinstance(data, Keyword):
             return self.generate_keyword(data)
@@ -101,7 +101,7 @@ class SigmaRender:
             elif (
                 result
                 and len(set(result.get(self.selection, [])).intersection(set(updated_node))) != 0
-                and isinstance(data.items[i - 1], Field)
+                and isinstance(data.items[i - 1], FieldValue)
                 and len(updated_node) == 1
                 and self.selection not in updated_node
             ):
@@ -177,9 +177,9 @@ class SigmaRender:
         field_name = source_mapping.fields_mapping.get_platform_field_name(generic_field_name)
         return field_name or generic_field_name
 
-    def generate_field(self, data: Field, source_mapping: SourceMapping):
+    def generate_field(self, data: FieldValue, source_mapping: SourceMapping):
         source_id = source_mapping.source_id
-        generic_field_name = data.generic_names_map.get(source_id) or data.source_name
+        generic_field_name = data.field.get_generic_field_name(source_id) or data.field.source_name
         field_name = self.map_field(source_mapping, generic_field_name)
         if data.operator.token_type not in (OperatorType.EQ, OperatorType.LT, OperatorType.LTE, OperatorType.GT,
                                             OperatorType.GTE, OperatorType.NEQ):

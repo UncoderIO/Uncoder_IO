@@ -21,7 +21,7 @@ from typing import Dict, List, Tuple
 
 from app.translator.core.functions import PlatformFunctions
 from app.translator.core.mapping import BasePlatformMappings, SourceMapping
-from app.translator.core.models.field import Field
+from app.translator.core.models.field import FieldValue
 from app.translator.core.models.functions.base import ParsedFunctions
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.parser_output import SiemContainer, MetaInfoContainer
@@ -50,15 +50,15 @@ class Parser(ABC):
         if not query:
             raise TokenizerGeneralException("Can't translate empty query. Please provide more details")
         tokens = self.tokenizer.tokenize(query=query)
-        field_tokens = self.tokenizer.filter_tokens(tokens, Field)
+        field_tokens = [token.field for token in self.tokenizer.filter_tokens(tokens, FieldValue)]
         field_names = [field.source_name for field in field_tokens]
-        suitable_source_mappings = self.mappings.get_suitable_source_mappings(field_names=field_names, **log_sources)
-        self.tokenizer.set_field_generic_names_map(field_tokens, suitable_source_mappings, self.mappings)
+        source_mappings = self.mappings.get_suitable_source_mappings(field_names=field_names, **log_sources)
+        self.tokenizer.set_field_tokens_generic_names_map(field_tokens, source_mappings, self.mappings.default_mapping)
 
-        return tokens, suitable_source_mappings
+        return tokens, source_mappings
 
     def set_functions_fields_generic_names(self,
                                            functions: ParsedFunctions,
                                            source_mappings: List[SourceMapping]) -> None:
-        field_tokens = self.tokenizer.filter_function_tokens(tokens=functions.functions)
-        self.tokenizer.set_field_generic_names_map(field_tokens, source_mappings, self.mappings)
+        field_tokens = self.tokenizer.get_field_tokens_from_func_args(args=functions.functions)
+        self.tokenizer.set_field_tokens_generic_names_map(field_tokens, source_mappings, self.mappings.default_mapping)

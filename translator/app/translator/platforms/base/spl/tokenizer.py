@@ -21,7 +21,7 @@ from typing import Tuple, Any, List, Union
 
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.mixins.logic import ANDLogicOperatorMixin
-from app.translator.core.models.field import Field, Keyword
+from app.translator.core.models.field import FieldValue, Keyword
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.core.custom_types.tokens import OperatorType
@@ -68,6 +68,6 @@ class SplTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
 
         return super().get_operator_and_value(match)
 
-    def tokenize(self, query: str) -> List[Union[Field, Keyword, Identifier]]:
+    def tokenize(self, query: str) -> List[Union[FieldValue, Keyword, Identifier]]:
         tokens = super().tokenize(query=query)
         return self.add_and_token_if_missed(tokens=tokens)

@@ -18,7 +18,6 @@ limitations under the License.
 """
 
 
-import re
 from typing import List, Union
 
 from app.translator.core.tokenizer import QueryTokenizer
@@ -27,7 +26,7 @@ from app.translator.platforms.sigma.mapping import SigmaMappings, sigma_mappings
 from app.translator.platforms.sigma.tokenizer import SigmaTokenizer, SigmaConditionTokenizer
 from app.translator.core.exceptions.core import SigmaRuleValidationException
 from app.translator.core.mixins.rule import YamlRuleMixin
-from app.translator.core.models.field import Field
+from app.translator.core.models.field import FieldValue
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.parser_output import SiemContainer, MetaInfoContainer
 
@@ -75,14 +74,14 @@ class SigmaParser(YamlRuleMixin):
             if key in ("product", "service", "category")
         }
         tokens = self.tokenizer.tokenize(detection=sigma_rule.get("detection"))
-        field_tokens = QueryTokenizer.filter_tokens(tokens, Field)
+        field_tokens = [token.field for token in QueryTokenizer.filter_tokens(tokens, FieldValue)]
         field_names = [field.source_name for field in field_tokens]
-        suitable_source_mappings = self.mappings.get_suitable_source_mappings(field_names=field_names, **log_sources)
-        QueryTokenizer.set_field_generic_names_map(field_tokens, suitable_source_mappings, self.mappings)
+        source_mappings = self.mappings.get_suitable_source_mappings(field_names=field_names, **log_sources)
+        QueryTokenizer.set_field_tokens_generic_names_map(field_tokens, source_mappings, self.mappings.default_mapping)
         return SiemContainer(
             query=tokens,
             meta_info=self._get_meta_info(
                 rule=sigma_rule,
-                source_mapping_ids=[source_mapping.source_id for source_mapping in suitable_source_mappings]
+                source_mapping_ids=[source_mapping.source_id for source_mapping in source_mappings]
             ),
         )
