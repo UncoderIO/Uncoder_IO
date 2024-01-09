@@ -63,7 +63,7 @@ class LogScaleFieldValue(BaseQueryFieldValue):
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.contains_modifier(field=field, value=v) for v in value)})"
-        return f'{self.apply_field_name(field_name=field)}=/{self.apply_value(value)}/i'
+        return f'{self.apply_field_name(field_name=field)}=/{self.apply_value(value) if value else "^"}/i'
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):

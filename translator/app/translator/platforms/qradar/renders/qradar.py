@@ -35,10 +35,10 @@ class QradarFieldValue(BaseQueryFieldValue):
 
     def apply_value(self, value: Union[str, int], value_type: str = ValueType.value) -> Union[str, int]:
         if isinstance(value, str):
-            value = value.replace("\\'", "%").replace("'", '"')
+            value = value.replace("_", "__").replace("%", "%%").replace("\\'", "%").replace("'", '"')
             if value.endswith("\\\\%"):
                 value = value.replace("\\\\%", "\\%")
-        return super().apply_value(value, value_type)
+        return value
 
     def _apply_value(self, value: Union[str, int]) -> Union[str, int]:
         if isinstance(value, str) and "\\" in value:
