@@ -19,14 +19,14 @@ limitations under the License.
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
+from app.translator.core.mapping import SourceMapping
+from app.translator.core.models.parser_output import MetaInfoContainer
+from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.core.render import BaseQueryFieldValue, BaseQueryRender
 from app.translator.platforms.logscale.const import logscale_query_details
 from app.translator.platforms.logscale.escape_manager import logscale_escape_manager
 from app.translator.platforms.logscale.functions import LogScaleFunctions, log_scale_functions
 from app.translator.platforms.logscale.mapping import LogScaleMappings, logscale_mappings
-from app.translator.core.mapping import SourceMapping
-from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.models.parser_output import MetaInfoContainer
-from app.translator.core.render import BaseQueryRender, BaseQueryFieldValue
 
 
 class LogScaleFieldValue(BaseQueryFieldValue):
@@ -41,6 +41,8 @@ class LogScaleFieldValue(BaseQueryFieldValue):
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.equal_modifier(field=field, value=v) for v in value)})"
+        if value == "":
+            return f'{self.apply_field_name(field_name=field)}=""'
         return f'{self.apply_field_name(field_name=field)}=/{self.apply_value(value)}/i'
 
     def less_modifier(self, field: str, value: Union[int, str]) -> str:
