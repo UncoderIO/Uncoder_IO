@@ -1,19 +1,16 @@
-from typing import List
-
-from app.translator.core.exceptions.functions import NotSupportedFunctionException, InvalidFunctionSignature
+from app.translator.core.exceptions.functions import InvalidFunctionSignature, NotSupportedFunctionException
 from app.translator.core.functions import PlatformFunctions
 from app.translator.core.mapping import SourceMapping
-from app.translator.core.models.functions.base import ParsedFunctions, Function
+from app.translator.core.models.functions.base import Function, ParsedFunctions
 from app.translator.platforms.microsoft.functions.const import KQLFunctionType
 from app.translator.platforms.microsoft.functions.manager import MicrosoftFunctionsManager
 
 
 class MicrosoftFunctions(PlatformFunctions):
-
     def __init__(self):
         self.manager = MicrosoftFunctionsManager()
 
-    def parse(self, query: str):
+    def parse(self, query: str) -> tuple[str, str, ParsedFunctions]:
         parsed = []
         not_supported = []
         invalid = []
@@ -21,7 +18,7 @@ class MicrosoftFunctions(PlatformFunctions):
         table = split_query[0].strip()
         query_parts = []
         for func in split_query[1:]:
-            split_func = func.strip(' ').split(' ')
+            split_func = func.strip(" ").split(" ")
             func_name, func_body = split_func[0], " ".join(split_func[1:])
             if func_name == KQLFunctionType.where:
                 query_parts.append(func_body)
@@ -35,17 +32,21 @@ class MicrosoftFunctions(PlatformFunctions):
             else:
                 not_supported.append(func)
         result_query = " and ".join(f"({query_part})" for query_part in query_parts)
-        return table, result_query, ParsedFunctions(
-            functions=parsed,
-            not_supported=[self.wrap_function_with_delimiter(func) for func in not_supported],
-            invalid=invalid
+        return (
+            table,
+            result_query,
+            ParsedFunctions(
+                functions=parsed,
+                not_supported=[self.wrap_function_with_delimiter(func) for func in not_supported],
+                invalid=invalid,
+            ),
         )
 
-    def render(self, functions: List[Function], source_mapping: SourceMapping) -> str:
+    def render(self, functions: list[Function], source_mapping: SourceMapping) -> str:
         result = ""
         for func in functions:
             if not (func_render := self.manager.get_render(func.name)):
-                raise NotImplementedError()
+                raise NotImplementedError
 
             result += self.wrap_function_with_delimiter(func_render.render(func, source_mapping))
 

@@ -17,16 +17,16 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 
-from app.translator.platforms.logpoint.const import LOGPOINT_QUERY_DETAILS
-from app.translator.platforms.logpoint.mappings.logpoint_cti import DEFAULT_LOGPOINT_MAPPING
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
+from app.translator.platforms.logpoint.const import LOGPOINT_QUERY_DETAILS
+from app.translator.platforms.logpoint.mappings.logpoint_cti import DEFAULT_LOGPOINT_MAPPING
 
 
 class LogpointCTI(RenderCTI):
     details: PlatformDetails = PlatformDetails(**LOGPOINT_QUERY_DETAILS)
 
-    data_map: str = '"{value}"'
+    field_value_template: str = '"{value}"'
     or_operator: str = ", "
     group_or_operator: str = " "
     or_group: str = "{processing_key} IN [{or_group}]"

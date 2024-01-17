@@ -8,5 +8,5 @@ DEFAULT_S1EVENTS_MAPPING = {
     "HashSha256": "Sha256",
     "HashSha512": "Sha512",
     "Emails": "emails",
-    "Files": "TgtFilePath"
+    "Files": "TgtFilePath",
 }

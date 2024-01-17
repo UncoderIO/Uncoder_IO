@@ -17,16 +17,16 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 
-from app.translator.platforms.chronicle.const import chronicle_query_details
-from app.translator.platforms.chronicle.mappings.chronicle_cti import DEFAULT_CHRONICLE_MAPPING
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
+from app.translator.platforms.chronicle.const import chronicle_query_details
+from app.translator.platforms.chronicle.mappings.chronicle_cti import DEFAULT_CHRONICLE_MAPPING
 
 
 class ChronicleQueryCTI(RenderCTI):
     details: PlatformDetails = chronicle_query_details
 
-    data_map: str = '{key} = "{value}"'
+    field_value_template: str = '{key} = "{value}"'
     or_operator: str = " or "
     group_or_operator: str = " or "
     or_group: str = "{or_group}"

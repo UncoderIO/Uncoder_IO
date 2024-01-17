@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import List, Dict, Optional, TypeVar
+from typing import Optional, TypeVar
 
 from app.translator.mappings.utils.load_from_files import LoaderFileMappings
-
 
 DEFAULT_MAPPING_NAME = "default"
 
@@ -28,13 +27,12 @@ class FieldMapping:
 
 
 class FieldsMapping:
-
     def __init__(self, fields_mapping: list):
         self.__parser_mapping = self.__build_parser_mapping(fields_mapping)
         self.__render_mapping = self.__build_render_mapping(fields_mapping)
 
     @staticmethod
-    def __build_parser_mapping(fields: List[FieldMapping]) -> Dict[str, FieldMapping]:
+    def __build_parser_mapping(fields: list[FieldMapping]) -> dict[str, FieldMapping]:
         result = {}
         for field in fields:
             if isinstance(field.platform_field_name, list):
@@ -45,7 +43,7 @@ class FieldsMapping:
         return result
 
     @staticmethod
-    def __build_render_mapping(fields: List[FieldMapping]) -> Dict[str, FieldMapping]:
+    def __build_render_mapping(fields: list[FieldMapping]) -> dict[str, FieldMapping]:
         return {field.generic_field_name: field for field in fields}
 
     def get_generic_field_name(self, platform_field_name: str) -> Optional[str]:
@@ -60,31 +58,32 @@ class FieldsMapping:
         self.__parser_mapping.update(fields_mapping.__parser_mapping)
         self.__render_mapping.update(fields_mapping.__render_mapping)
 
-    def is_suitable(self, field_names: List[str]) -> bool:
+    def is_suitable(self, field_names: list[str]) -> bool:
         return set(field_names).issubset(set(self.__parser_mapping.keys()))
 
 
-_LogSourceSignatureType = TypeVar('_LogSourceSignatureType', bound=LogSourceSignature)
+_LogSourceSignatureType = TypeVar("_LogSourceSignatureType", bound=LogSourceSignature)
 
 
 class SourceMapping:
-    def __init__(self,
-                 source_id: str,
-                 log_source_signature: _LogSourceSignatureType = None,
-                 fields_mapping: FieldsMapping = FieldsMapping([])):
+    def __init__(
+        self,
+        source_id: str,
+        log_source_signature: _LogSourceSignatureType = None,
+        fields_mapping: Optional[FieldsMapping] = None,
+    ):
         self.source_id = source_id
         self.log_source_signature = log_source_signature
-        self.fields_mapping = fields_mapping
+        self.fields_mapping = fields_mapping or FieldsMapping([])
 
 
 class BasePlatformMappings:
-
     def __init__(self, platform_dir: str):
         self.__loader = LoaderFileMappings()
         self.__platform_dir = platform_dir
         self._source_mappings = self.prepare_mapping()
 
-    def prepare_mapping(self) -> Dict[str, SourceMapping]:
+    def prepare_mapping(self) -> dict[str, SourceMapping]:
         source_mappings = {}
         default_mapping = SourceMapping(source_id=DEFAULT_MAPPING_NAME)
         for mapping_dict in self.__loader.load_siem_mappings(self.__platform_dir):
@@ -96,9 +95,7 @@ class BasePlatformMappings:
             default_mapping.fields_mapping.update(fields_mapping)
             log_source_signature = self.prepare_log_source_signature(mapping=mapping_dict)
             source_mappings[source_id] = SourceMapping(
-                source_id=source_id,
-                log_source_signature=log_source_signature,
-                fields_mapping=fields_mapping
+                source_id=source_id, log_source_signature=log_source_signature, fields_mapping=fields_mapping
             )
 
         source_mappings[DEFAULT_MAPPING_NAME] = default_mapping
@@ -117,7 +114,7 @@ class BasePlatformMappings:
         raise NotImplementedError("Abstract method")
 
     @abstractmethod
-    def get_suitable_source_mappings(self, *args, **kwargs) -> List[SourceMapping]:
+    def get_suitable_source_mappings(self, *args, **kwargs) -> list[SourceMapping]:
         raise NotImplementedError("Abstract method")
 
     def get_source_mapping(self, source_id: str) -> Optional[SourceMapping]:

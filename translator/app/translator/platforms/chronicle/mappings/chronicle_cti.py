@@ -7,5 +7,5 @@ DEFAULT_CHRONICLE_MAPPING = {
     "Domain": "target.hostname",
     "HashSha1": "target.file.sha1",
     "Files": "target.file.full_path",
-    "URL": "target.url"
+    "URL": "target.url",
 }

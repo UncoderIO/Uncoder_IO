@@ -17,16 +17,16 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 
-from app.translator.platforms.qradar.const import qradar_query_details
-from app.translator.platforms.qradar.mappings.qradar_cti import DEFAULT_QRADAR_MAPPING
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
+from app.translator.platforms.qradar.const import qradar_query_details
+from app.translator.platforms.qradar.mappings.qradar_cti import DEFAULT_QRADAR_MAPPING
 
 
 class QRadarCTI(RenderCTI):
     details: PlatformDetails = qradar_query_details
 
-    data_map: str = "\"{key}\" = '{value}'"
+    field_value_template: str = "\"{key}\" = '{value}'"
     or_operator: str = " or "
     group_or_operator: str = " or "
     or_group: str = "({or_group})"

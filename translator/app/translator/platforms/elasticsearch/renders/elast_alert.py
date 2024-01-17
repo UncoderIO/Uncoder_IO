@@ -16,17 +16,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+from typing import Optional
 
+from app.translator.core.custom_types.meta_info import SeverityType
+from app.translator.core.mapping import SourceMapping
+from app.translator.core.models.parser_output import MetaInfoContainer
+from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.platforms.elasticsearch.const import ELASTICSEARCH_ALERT, elastalert_details
 from app.translator.platforms.elasticsearch.mapping import ElasticSearchMappings, elasticsearch_mappings
-from app.translator.platforms.elasticsearch.renders.elasticsearch import ElasticSearchQueryRender, ElasticSearchFieldValue
-from app.translator.core.mapping import SourceMapping
-from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.models.parser_output import MetaInfoContainer
+from app.translator.platforms.elasticsearch.renders.elasticsearch import (
+    ElasticSearchFieldValue,
+    ElasticSearchQueryRender,
+)
 from app.translator.tools.utils import get_rule_description_str
 
-
-SEVERITIES_MAP = {"informational": "5", "low": "4", "medium": "3", "high": "2", "critical": "1"}
+_SEVERITIES_MAP = {SeverityType.low: "4", SeverityType.medium: "3", SeverityType.high: "2", SeverityType.critical: "1"}
 
 
 class ElasticAlertRuleFieldValue(ElasticSearchFieldValue):
@@ -44,19 +48,23 @@ class ElastAlertRuleRender(ElasticSearchQueryRender):
     field_value_map = ElasticAlertRuleFieldValue(or_token=or_token)
     query_pattern = "{prefix} {query} {functions}"
 
-    def finalize_query(self, prefix: str, query: str, functions: str, meta_info: MetaInfoContainer = None,
-                       source_mapping: SourceMapping = None, not_supported_functions: list = None):
+    def finalize_query(
+        self,
+        prefix: str,
+        query: str,
+        functions: str,
+        meta_info: Optional[MetaInfoContainer] = None,
+        source_mapping: Optional[SourceMapping] = None,  # noqa: ARG002
+        not_supported_functions: Optional[list] = None,
+    ) -> str:
         query = super().finalize_query(prefix=prefix, query=query, functions=functions)
         rule = ELASTICSEARCH_ALERT.replace("<query_placeholder>", query)
         rule = rule.replace(
             "<description_place_holder>",
-            get_rule_description_str(
-                description=meta_info.description,
-                license=meta_info.license
-            )
+            get_rule_description_str(description=meta_info.description, license_=meta_info.license),
         )
         rule = rule.replace("<title_place_holder>", meta_info.title)
-        rule = rule.replace("<priority_place_holder>", SEVERITIES_MAP[meta_info.severity])
+        rule = rule.replace("<priority_place_holder>", _SEVERITIES_MAP[meta_info.severity])
         if not_supported_functions:
             rendered_not_supported = self.render_not_supported_functions(not_supported_functions)
             return rule + rendered_not_supported

@@ -19,12 +19,12 @@ limitations under the License.
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
-from app.translator.platforms.athena.const import athena_details
-from app.translator.platforms.athena.mapping import AthenaMappings, athena_mappings
 from app.translator.core.exceptions.render import UnsupportedRenderMethod
 from app.translator.core.mapping import LogSourceSignature
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.render import BaseQueryRender, BaseQueryFieldValue
+from app.translator.core.render import BaseQueryFieldValue, BaseQueryRender
+from app.translator.platforms.athena.const import athena_details
+from app.translator.platforms.athena.mapping import AthenaMappings, athena_mappings
 
 
 class AthenaFieldValue(BaseQueryFieldValue):
@@ -72,7 +72,7 @@ class AthenaFieldValue(BaseQueryFieldValue):
             return f"({self.or_token.join(self.regex_modifier(field=field, value=v) for v in value)})"
         return f"{field} ILIKE '{value}'  ESCAPE '\\'"
 
-    def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+    def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
         raise UnsupportedRenderMethod(platform_name=self.details.name, method="Keywords")
 
 

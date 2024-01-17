@@ -7,5 +7,5 @@ DEFAULT_CROWDSTRIKE_MAPPING = {
     "Domain": "DomainName",
     "HashSha1": "SHA1HashData",
     "Files": "TargetFileName",
-    "URL": "HttpUrl"
+    "URL": "HttpUrl",
 }

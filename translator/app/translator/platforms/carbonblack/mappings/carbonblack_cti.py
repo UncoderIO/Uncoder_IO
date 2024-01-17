@@ -6,5 +6,5 @@ DEFAULT_CARBONBLACK_MAPPING = {
     "HashMd5": "hash",
     "HashSha256": "hash",
     "Files": "filemod_name",
-    "Emails": "process_username"
+    "Emails": "process_username",
 }

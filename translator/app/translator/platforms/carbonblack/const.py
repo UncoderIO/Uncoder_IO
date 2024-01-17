@@ -1,4 +1,3 @@
-
 CARBON_BLACK_QUERY_DETAILS = {
     "siem_type": "carbonblack",
     "name": "Carbon Black Cloud",

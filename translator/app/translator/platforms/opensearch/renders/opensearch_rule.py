@@ -16,19 +16,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-
 import copy
 import json
+from typing import Optional
 
+from app.translator.core.custom_types.meta_info import SeverityType
+from app.translator.core.mapping import SourceMapping
+from app.translator.core.models.parser_output import MetaInfoContainer
+from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.platforms.opensearch.const import OPENSEARCH_RULE, opensearch_rule_details
 from app.translator.platforms.opensearch.mapping import OpenSearchMappings, opensearch_mappings
-from app.translator.platforms.opensearch.renders.opensearch import OpenSearchQueryRender, OpenSearchFieldValue
-from app.translator.core.mapping import SourceMapping
-from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.models.parser_output import MetaInfoContainer
+from app.translator.platforms.opensearch.renders.opensearch import OpenSearchFieldValue, OpenSearchQueryRender
 
-
-SEVERITIES_MAP = {"informational": "5", "low": "4", "medium": "3", "high": "2", "critical": "1"}
+_SEVERITIES_MAP = {SeverityType.critical: "5", SeverityType.high: "4", SeverityType.medium: "3", SeverityType.low: "2"}
 
 
 class OpenSearchRuleFieldValue(OpenSearchFieldValue):
@@ -46,14 +46,21 @@ class OpenSearchRuleRender(OpenSearchQueryRender):
     field_value_map = OpenSearchRuleFieldValue(or_token=or_token)
     query_pattern = "{prefix} {query} {functions}"
 
-    def finalize_query(self, prefix: str, query: str, functions: str, meta_info: MetaInfoContainer = None,
-                       source_mapping: SourceMapping = None, not_supported_functions: list = None):
+    def finalize_query(
+        self,
+        prefix: str,
+        query: str,
+        functions: str,
+        meta_info: Optional[MetaInfoContainer] = None,
+        source_mapping: Optional[SourceMapping] = None,  # noqa: ARG002
+        not_supported_functions: Optional[list] = None,
+    ) -> str:
         query = super().finalize_query(prefix=prefix, query=query, functions=functions)
         rule = copy.deepcopy(OPENSEARCH_RULE)
         rule["name"] = meta_info.title
         rule["inputs"][0]["search"]["query"]["query"]["bool"]["must"][0]["query_string"]["query"] = query
         rule["triggers"][0]["name"] = meta_info.title
-        rule["triggers"][0]["severity"] = SEVERITIES_MAP[meta_info.severity]
+        rule["triggers"][0]["severity"] = _SEVERITIES_MAP[meta_info.severity]
         rule_str = json.dumps(rule, indent=4, sort_keys=False)
         if not_supported_functions:
             rendered_not_supported = self.render_not_supported_functions(not_supported_functions)

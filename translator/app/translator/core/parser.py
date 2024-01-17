@@ -17,16 +17,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 from abc import ABC, abstractmethod
-from typing import Dict, List, Tuple
 
+from app.translator.core.exceptions.parser import TokenizerGeneralException
 from app.translator.core.functions import PlatformFunctions
 from app.translator.core.mapping import BasePlatformMappings, SourceMapping
 from app.translator.core.models.field import FieldValue
 from app.translator.core.models.functions.base import ParsedFunctions
+from app.translator.core.models.parser_output import MetaInfoContainer, SiemContainer
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.models.parser_output import SiemContainer, MetaInfoContainer
-from app.translator.core.tokenizer import QueryTokenizer, TOKEN_TYPE
-from app.translator.core.exceptions.parser import TokenizerGeneralException
+from app.translator.core.tokenizer import TOKEN_TYPE, QueryTokenizer
 
 
 class Parser(ABC):
@@ -43,10 +42,9 @@ class Parser(ABC):
     def parse(self, text: str) -> SiemContainer:
         raise NotImplementedError("Abstract method")
 
-    def get_tokens_and_source_mappings(self,
-                                       query: str,
-                                       log_sources: Dict[str, List[str]]
-                                       ) -> Tuple[List[TOKEN_TYPE], List[SourceMapping]]:
+    def get_tokens_and_source_mappings(
+        self, query: str, log_sources: dict[str, list[str]]
+    ) -> tuple[list[TOKEN_TYPE], list[SourceMapping]]:
         if not query:
             raise TokenizerGeneralException("Can't translate empty query. Please provide more details")
         tokens = self.tokenizer.tokenize(query=query)
@@ -57,8 +55,8 @@ class Parser(ABC):
 
         return tokens, source_mappings
 
-    def set_functions_fields_generic_names(self,
-                                           functions: ParsedFunctions,
-                                           source_mappings: List[SourceMapping]) -> None:
+    def set_functions_fields_generic_names(
+        self, functions: ParsedFunctions, source_mappings: list[SourceMapping]
+    ) -> None:
         field_tokens = self.tokenizer.get_field_tokens_from_func_args(args=functions.functions)
         self.tokenizer.set_field_tokens_generic_names_map(field_tokens, source_mappings, self.mappings.default_mapping)

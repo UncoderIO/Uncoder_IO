@@ -16,24 +16,24 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-from typing import Union, List
+from typing import Union
 
+from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.functions.base import Function
-from app.translator.const import DEFAULT_VALUE_TYPE
+from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.core.render import BaseQueryFieldValue, BaseQueryRender
 from app.translator.platforms.qradar.const import qradar_query_details
 from app.translator.platforms.qradar.escape_manager import qradar_escape_manager
 from app.translator.platforms.qradar.mapping import QradarLogSourceSignature, QradarMappings, qradar_mappings
-from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.render import BaseQueryRender, BaseQueryFieldValue
 
 
 class QradarFieldValue(BaseQueryFieldValue):
     details: PlatformDetails = qradar_query_details
     escape_manager = qradar_escape_manager
 
-    def apply_value(self, value: Union[str, int], value_type: str = ValueType.value) -> Union[str, int]:
+    def apply_value(self, value: Union[str, int], value_type: str = ValueType.value) -> Union[str, int]:  # noqa: ARG002
         if isinstance(value, str):
             value = value.replace("_", "__").replace("%", "%%").replace("\\'", "%").replace("'", '"')
             if value.endswith("\\\\%"):
@@ -53,54 +53,54 @@ class QradarFieldValue(BaseQueryFieldValue):
         if isinstance(value, int):
             return f'"{field}"={value}'
 
-        return f'"{field}"=\'{self._apply_value(value)}\''
+        return f"\"{field}\"='{self._apply_value(value)}'"
 
     def less_modifier(self, field: str, value: Union[int, str]) -> str:
         if isinstance(value, int):
             return f'"{field}"<{value}'
-        return f'"{field}"<\'{self._apply_value(value)}\''
+        return f"\"{field}\"<'{self._apply_value(value)}'"
 
     def less_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
         if isinstance(value, int):
             return f'"{field}"<={value}'
-        return f'"{field}"<=\'{self._apply_value(value)}\''
+        return f"\"{field}\"<='{self._apply_value(value)}'"
 
     def greater_modifier(self, field: str, value: Union[int, str]) -> str:
         if isinstance(value, int):
             return f'"{field}">{value}'
-        return f'"{field}">\'{self._apply_value(value)}\''
+        return f"\"{field}\">'{self._apply_value(value)}'"
 
     def greater_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
         if isinstance(value, int):
             return f'"{field}">={value}'
-        return f'"{field}">=\'{self._apply_value(value)}\''
+        return f"\"{field}\">='{self._apply_value(value)}'"
 
     def not_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join([self.not_equal_modifier(field=field, value=v) for v in value])})"
         if isinstance(value, int):
             return f'"{field}"!={value}'
-        return f'"{field}"!=\'{self._apply_value(value)}\''
+        return f"\"{field}\"!='{self._apply_value(value)}'"
 
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.contains_modifier(field=field, value=v) for v in value)})"
-        return f'"{field}" ILIKE \'%{self._apply_value(value)}%\''
+        return f"\"{field}\" ILIKE '%{self._apply_value(value)}%'"
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.endswith_modifier(field=field, value=v) for v in value)})"
-        return f'"{field}" ILIKE \'%{self._apply_value(value)}\''
+        return f"\"{field}\" ILIKE '%{self._apply_value(value)}'"
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.startswith_modifier(field=field, value=v) for v in value)})"
-        return f'"{field}" ILIKE \'{self._apply_value(value)}%\''
+        return f"\"{field}\" ILIKE '{self._apply_value(value)}%'"
 
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.regex_modifier(field=field, value=v) for v in value)})"
-        return f'"{field}" IMATCHES \'{value}\''
+        return f"\"{field}\" IMATCHES '{value}'"
 
     def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
@@ -127,5 +127,5 @@ class QradarQueryRender(BaseQueryRender):
     def wrap_with_comment(self, value: str) -> str:
         return f"/* {value} */"
 
-    def generate_functions(self, functions: List[Function], source_mapping: SourceMapping) -> str:
+    def generate_functions(self, functions: list[Function], source_mapping: SourceMapping) -> str:  # noqa: ARG002
         return ""

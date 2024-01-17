@@ -1,29 +1,29 @@
 from abc import ABC
 
+from app.models.translation import ConvertorPlatform
+from app.translator.core.exceptions.core import UnsupportedRootAParser
 from app.translator.platforms import __ALL_PARSERS as PARSERS
 from app.translator.platforms import __ALL_RENDERS as RENDERS
 from app.translator.platforms import __ALL_RENDERS_CTI as RENDERS_CTI
-from app.translator.core.exceptions.core import UnsupportedRootAParser
-from app.models.translation import ConvertorPlatform
 
 
 class Manager(ABC):
-    platforms_class = tuple()
+    platforms_class = ()
 
     @property
     def platforms(self) -> dict:
         return {platform.details.siem_type: platform for platform in self.platforms_class}
 
-    def get(self, siem):
+    def get(self, siem: str):  # noqa: ANN201
         if platform := self.platforms.get(siem):
             return platform
         raise UnsupportedRootAParser(parser=siem)
 
-    def all_platforms(self):
+    def all_platforms(self) -> list:
         return list(self.platforms)
 
     @property
-    def get_platforms_details(self):
+    def get_platforms_details(self) -> list[ConvertorPlatform]:
         platforms = [
             ConvertorPlatform(
                 id=platform.details.siem_type,
@@ -36,7 +36,8 @@ class Manager(ABC):
                 alt_platform_name=platform.details.alt_platform_name,
                 alt_platform=platform.details.alt_platform,
                 first_choice=platform.details.first_choice,
-            ) for platform in self.platforms_class
+            )
+            for platform in self.platforms_class
         ]
         return sorted(platforms, key=lambda platform: platform.group_name)
 

@@ -17,23 +17,22 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 import re
-from typing import List, Tuple, Dict
 
-from app.translator.platforms.base.lucene.tokenizer import LuceneTokenizer
+from app.translator.core.models.parser_output import MetaInfoContainer, SiemContainer
 from app.translator.core.parser import Parser
-from app.translator.core.models.parser_output import SiemContainer, MetaInfoContainer
+from app.translator.platforms.base.lucene.tokenizer import LuceneTokenizer
 
 
 class LuceneParser(Parser):
     tokenizer = LuceneTokenizer()
 
-    log_source_pattern = r"___source_type___\s*(?:[:=])\s*(?:\"?(?P<d_q_value>[%a-zA-Z_*:0-9\-/]+)\"|(?P<value>[%a-zA-Z_*:0-9\-/]+))(?:\s+(?:and|or)\s+|\s+)?"
+    log_source_pattern = r"___source_type___\s*(?:[:=])\s*(?:\"?(?P<d_q_value>[%a-zA-Z_*:0-9\-/]+)\"|(?P<value>[%a-zA-Z_*:0-9\-/]+))(?:\s+(?:and|or)\s+|\s+)?"  # noqa: E501
     log_source_key_types = ("index", "event\.category")
 
-    def _parse_log_sources(self, query: str) -> Tuple[str, Dict[str, List[str]]]:
+    def _parse_log_sources(self, query: str) -> tuple[str, dict[str, list[str]]]:
         log_sources = {}
         for source_type in self.log_source_key_types:
-            pattern = self.log_source_pattern.replace('___source_type___', source_type)
+            pattern = self.log_source_pattern.replace("___source_type___", source_type)
             while search := re.search(pattern, query, flags=re.IGNORECASE):
                 group_dict = search.groupdict()
                 value = group_dict.get("d_q_value") or group_dict.get("value")
@@ -45,10 +44,10 @@ class LuceneParser(Parser):
         return query, log_sources
 
     @staticmethod
-    def _get_meta_info(source_mapping_ids: List[str], meta_info: dict) -> MetaInfoContainer:
+    def _get_meta_info(source_mapping_ids: list[str], meta_info: dict) -> MetaInfoContainer:  # noqa: ARG004
         return MetaInfoContainer(source_mapping_ids=source_mapping_ids)
 
-    def _parse_query(self, query: str) -> Tuple[str, Dict[str, List[str]]]:
+    def _parse_query(self, query: str) -> tuple[str, dict[str, list[str]]]:
         return self._parse_log_sources(query)
 
     def parse(self, text: str) -> SiemContainer:

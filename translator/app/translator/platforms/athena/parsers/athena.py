@@ -17,14 +17,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 import re
-from typing import List, Tuple, Dict, Optional
+from typing import Optional
 
-from app.translator.platforms.athena.const import athena_details
-from app.translator.platforms.athena.mapping import athena_mappings, AthenaMappings
-from app.translator.platforms.athena.tokenizer import AthenaTokenizer
+from app.translator.core.models.parser_output import MetaInfoContainer, SiemContainer
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.parser import Parser
-from app.translator.core.models.parser_output import SiemContainer, MetaInfoContainer
+from app.translator.platforms.athena.const import athena_details
+from app.translator.platforms.athena.mapping import AthenaMappings, athena_mappings
+from app.translator.platforms.athena.tokenizer import AthenaTokenizer
 
 
 class AthenaParser(Parser):
@@ -35,10 +35,10 @@ class AthenaParser(Parser):
     table_pattern = r"\sFROM\s(?P<table>[a-zA-Z\.\-\*]+)\sWHERE\s"
 
     @staticmethod
-    def _get_meta_info(source_mapping_ids: List[str]) -> MetaInfoContainer:
+    def _get_meta_info(source_mapping_ids: list[str]) -> MetaInfoContainer:
         return MetaInfoContainer(source_mapping_ids=source_mapping_ids)
 
-    def _parse_query(self, text: str) -> Tuple[str, Dict[str, Optional[str]]]:
+    def _parse_query(self, text: str) -> tuple[str, dict[str, Optional[str]]]:
         log_source = {"table": None}
         if re.search(self.query_delimiter_pattern, text, flags=re.IGNORECASE):
             table_search = re.search(self.table_pattern, text)

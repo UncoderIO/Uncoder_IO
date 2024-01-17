@@ -20,7 +20,7 @@ from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.exceptions.render import UnsupportedRenderMethod
-from app.translator.core.render import BaseQueryRender, BaseQueryFieldValue
+from app.translator.core.render import BaseQueryFieldValue, BaseQueryRender
 from app.translator.platforms.base.spl.escape_manager import spl_escape_manager
 
 
@@ -69,18 +69,17 @@ class SplFieldValue(BaseQueryFieldValue):
             return f"({self.or_token.join(self.keywords(field=field, value=v) for v in value)})"
         return f'"{self.apply_value(value)}"'
 
-    def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+    def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
         raise UnsupportedRenderMethod(platform_name=self.details.name, method="Regex Expression")
 
 
 class SplQueryRender(BaseQueryRender):
-
     or_token = "OR"
     and_token = "AND"
     not_token = "NOT"
 
     query_pattern = "{prefix} {query} {functions}"
-    comment_symbol = '```'
+    comment_symbol = "```"
 
     def wrap_with_comment(self, value: str) -> str:
         return f"{self.comment_symbol} {value} {self.comment_symbol}"

@@ -16,17 +16,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
 
+from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.platforms.base.spl.parsers.spl import SplParser
 from app.translator.platforms.splunk.const import splunk_query_details
 from app.translator.platforms.splunk.functions import SplunkFunctions, splunk_functions
 from app.translator.platforms.splunk.mapping import SplunkMappings, splunk_mappings
-from app.translator.core.models.platform_details import PlatformDetails
 
 
 class SplunkParser(SplParser):
     details: PlatformDetails = splunk_query_details
 
-    log_source_pattern = r"___source_type___\s*=\s*(?:\"(?P<d_q_value>[%a-zA-Z_*:0-9\-/]+)\"|(?P<value>[%a-zA-Z_*:0-9\-/]+))(?:\s+(?:and|or)\s+|\s+)?"
+    log_source_pattern = r"___source_type___\s*=\s*(?:\"(?P<d_q_value>[%a-zA-Z_*:0-9\-/]+)\"|(?P<value>[%a-zA-Z_*:0-9\-/]+))(?:\s+(?:and|or)\s+|\s+)?"  # noqa: E501
     log_source_key_types = ("index", "source", "sourcetype", "sourcecategory")
 
     mappings: SplunkMappings = splunk_mappings

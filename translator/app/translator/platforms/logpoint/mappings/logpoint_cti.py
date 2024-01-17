@@ -8,5 +8,5 @@ DEFAULT_LOGPOINT_MAPPING = {
     "Domain": "host",
     "HashSha1": "hash",
     "Files": "files",
-    "URL": "url"
+    "URL": "url",
 }

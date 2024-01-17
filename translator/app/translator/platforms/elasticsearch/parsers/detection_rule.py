@@ -16,35 +16,28 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
 
-from typing import List, Dict
 
+from app.translator.core.mixins.rule import JsonRuleMixin
+from app.translator.core.models.parser_output import MetaInfoContainer, SiemContainer
+from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.platforms.elasticsearch.const import elasticsearch_rule_details
 from app.translator.platforms.elasticsearch.parsers.elasticsearch import ElasticSearchParser
-from app.translator.core.mixins.rule import JsonRuleMixin
-from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.models.parser_output import SiemContainer, MetaInfoContainer
 
 
 class ElasticSearchRuleParser(ElasticSearchParser, JsonRuleMixin):
     details: PlatformDetails = elasticsearch_rule_details
 
-    def _parse_rule(self, text: str) -> Dict:
+    def _parse_rule(self, text: str) -> dict:
         rule = self.load_rule(text=text)
-        query = rule['query']
-        description = rule['description']
-        name = rule['name']
-        return {
-            'query': query,
-            'title': name,
-            'description': description
-        }
+        query = rule["query"]
+        description = rule["description"]
+        name = rule["name"]
+        return {"query": query, "title": name, "description": description}
 
     @staticmethod
-    def _get_meta_info(source_mapping_ids: List[str], meta_info: dict) -> MetaInfoContainer:
+    def _get_meta_info(source_mapping_ids: list[str], meta_info: dict) -> MetaInfoContainer:
         return MetaInfoContainer(
-            title=meta_info['title'],
-            description=meta_info['description'],
-            source_mapping_ids=source_mapping_ids
+            title=meta_info["title"], description=meta_info["description"], source_mapping_ids=source_mapping_ids
         )
 
     def parse(self, text: str) -> SiemContainer:
@@ -53,7 +46,6 @@ class ElasticSearchRuleParser(ElasticSearchParser, JsonRuleMixin):
         return SiemContainer(
             query=tokens,
             meta_info=self._get_meta_info(
-                source_mapping_ids=[source_mapping.source_id for source_mapping in source_mappings],
-                meta_info=rule
+                source_mapping_ids=[source_mapping.source_id for source_mapping in source_mappings], meta_info=rule
             ),
         )

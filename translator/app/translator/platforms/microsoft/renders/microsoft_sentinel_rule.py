@@ -16,19 +16,27 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-
 import copy
 import json
+from typing import Optional
 
-from app.translator.platforms.microsoft.renders.microsoft_sentinel import (
-    MicrosoftSentinelQueryRender,
-    MicrosoftSentinelFieldValue
-)
-from app.translator.platforms.microsoft.const import DEFAULT_MICROSOFT_SENTINEL_RULE, microsoft_sentinel_rule_details
+from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.mapping import SourceMapping
-from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.parser_output import MetaInfoContainer
+from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.platforms.microsoft.const import DEFAULT_MICROSOFT_SENTINEL_RULE, microsoft_sentinel_rule_details
+from app.translator.platforms.microsoft.renders.microsoft_sentinel import (
+    MicrosoftSentinelFieldValue,
+    MicrosoftSentinelQueryRender,
+)
 from app.translator.tools.utils import get_rule_description_str
+
+_SEVERITIES_MAP = {
+    SeverityType.critical: SeverityType.high,
+    SeverityType.high: SeverityType.high,
+    SeverityType.medium: SeverityType.medium,
+    SeverityType.low: SeverityType.low,
+}
 
 
 class MicrosoftSentinelRuleFieldValue(MicrosoftSentinelFieldValue):
@@ -44,16 +52,23 @@ class MicrosoftSentinelRuleRender(MicrosoftSentinelQueryRender):
         tactics = []
         techniques = []
 
-        for tactic in meta_info.mitre_attack.get('tactics'):
-            tactics.append(tactic['tactic'])
+        for tactic in meta_info.mitre_attack.get("tactics"):
+            tactics.append(tactic["tactic"])
 
-        for technique in meta_info.mitre_attack.get('techniques'):
-            techniques.append(technique['technique_id'])
+        for technique in meta_info.mitre_attack.get("techniques"):
+            techniques.append(technique["technique_id"])
 
         return tactics, techniques
 
-    def finalize_query(self, prefix: str, query: str, functions: str, meta_info: MetaInfoContainer = None,
-                       source_mapping: SourceMapping = None, not_supported_functions: list = None):
+    def finalize_query(
+        self,
+        prefix: str,
+        query: str,
+        functions: str,
+        meta_info: Optional[MetaInfoContainer] = None,
+        source_mapping: Optional[SourceMapping] = None,  # noqa: ARG002
+        not_supported_functions: Optional[list] = None,
+    ) -> str:
         query = super().finalize_query(prefix=prefix, query=query, functions=functions)
         rule = copy.deepcopy(DEFAULT_MICROSOFT_SENTINEL_RULE)
         rule["query"] = query
@@ -61,12 +76,12 @@ class MicrosoftSentinelRuleRender(MicrosoftSentinelQueryRender):
         rule["description"] = get_rule_description_str(
             description=meta_info.description or rule["description"],
             author=meta_info.author,
-            license=meta_info.license
+            license_=meta_info.license,
         )
-        rule["severity"] = meta_info.severity
+        rule["severity"] = _SEVERITIES_MAP.get(meta_info.severity, SeverityType.medium)
         mitre_tactics, mitre_techniques = self.__create_mitre_threat(meta_info=meta_info)
-        rule['tactics'] = mitre_tactics
-        rule['techniques'] = mitre_techniques
+        rule["tactics"] = mitre_tactics
+        rule["techniques"] = mitre_techniques
         json_rule = json.dumps(rule, indent=4, sort_keys=False)
         if not_supported_functions:
             rendered_not_supported = self.render_not_supported_functions(not_supported_functions)

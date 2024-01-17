@@ -8,5 +8,5 @@ DEFAULT_SECURONIX_MAPPING = {
     "Domain": "@destinationhostname",
     "HashSha1": "@filehash",
     "Files": "@filename",
-    "URL": "@requesturl"
+    "URL": "@requesturl",
 }

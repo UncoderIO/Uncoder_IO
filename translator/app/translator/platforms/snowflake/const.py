@@ -1,4 +1,3 @@
-
 SNOWFLAKE_QUERY_DETAILS = {
     "siem_type": "snowflake",
     "name": "Snowflake Query",

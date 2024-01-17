@@ -7,7 +7,7 @@ QRADAR_QUERY_DETAILS = {
     "name": "QRadar Query",
     "platform_name": "Query (AQL)",
     "group_id": "qradar",
-    "group_name": "QRadar"
+    "group_name": "QRadar",
 }
 
 NUM_VALUE_PATTERN = r"(?P<num_value>\d+(?:\.\d+)*)"

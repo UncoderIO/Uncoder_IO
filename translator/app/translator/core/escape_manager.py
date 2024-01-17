@@ -1,13 +1,13 @@
 import re
 from abc import ABC
-from typing import Union
+from typing import ClassVar, Union
 
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.models.escape_details import EscapeDetails
 
 
 class EscapeManager(ABC):
-    escape_map: dict[str, EscapeDetails] = {}
+    escape_map: ClassVar[dict[str, EscapeDetails]] = {}
 
     def escape(self, value: Union[str, int], value_type: str = ValueType.value) -> Union[str, int]:
         if isinstance(value, int):
@@ -17,8 +17,8 @@ class EscapeManager(ABC):
             value = symbols_pattern.sub(escape_details.escape_symbols, value)
         return value
 
-    def remove_escape(self, value: Union[str, int]) -> Union[str, int]:
+    @staticmethod
+    def remove_escape(value: Union[str, int]) -> Union[str, int]:
         if isinstance(value, int):
             return value
-        value = value.encode().decode("unicode_escape")
-        return value
+        return value.encode().decode("unicode_escape")

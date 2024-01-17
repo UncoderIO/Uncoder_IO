@@ -1,16 +1,18 @@
-from typing import List, Optional
+from typing import Optional
 
-from app.translator.core.mapping import BasePlatformMappings, LogSourceSignature, SourceMapping, DEFAULT_MAPPING_NAME
+from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
 
 
 class QradarLogSourceSignature(LogSourceSignature):
-    def __init__(self,
-                 tables: Optional[List[str]],
-                 device_types: Optional[List[int]],
-                 categories: Optional[List[int]],
-                 qids: Optional[List[int]],
-                 qid_event_categories: Optional[List[int]],
-                 default_source: dict):
+    def __init__(
+        self,
+        tables: Optional[list[str]],
+        device_types: Optional[list[int]],
+        categories: Optional[list[int]],
+        qids: Optional[list[int]],
+        qid_event_categories: Optional[list[int]],
+        default_source: dict,
+    ):
         self.tables = set(tables or [])
         self.device_types = set(device_types or [])
         self.categories = set(categories or [])
@@ -18,12 +20,14 @@ class QradarLogSourceSignature(LogSourceSignature):
         self.qid_event_categories = set(qid_event_categories or [])
         self._default_source = default_source or {}
 
-    def is_suitable(self,
-                    table: List[str],
-                    devicetype: Optional[List[int]],
-                    category: Optional[List[int]],
-                    qid: Optional[List[int]],
-                    qideventcategory: Optional[List[int]]) -> bool:
+    def is_suitable(
+        self,
+        table: list[str],
+        devicetype: Optional[list[int]],
+        category: Optional[list[int]],
+        qid: Optional[list[int]],
+        qideventcategory: Optional[list[int]],
+    ) -> bool:
         table_match = set(table).issubset(self.tables)
         device_type_match = set(devicetype or []).issubset(self.device_types)
         category_match = set(category or []).issubset(self.categories)
@@ -51,16 +55,18 @@ class QradarMappings(BasePlatformMappings):
             categories=log_source.get("category"),
             qids=log_source.get("qid"),
             qid_event_categories=log_source.get("qideventcategory"),
-            default_source=default_log_source
+            default_source=default_log_source,
         )
 
-    def get_suitable_source_mappings(self,
-                                     field_names: List[str],
-                                     table: List[str],
-                                     devicetype: List[int] = None,
-                                     category: List[int] = None,
-                                     qid: List[int] = None,
-                                     qideventcategory: List[int] = None) -> List[SourceMapping]:
+    def get_suitable_source_mappings(
+        self,
+        field_names: list[str],
+        table: list[str],
+        devicetype: Optional[list[int]] = None,
+        category: Optional[list[int]] = None,
+        qid: Optional[list[int]] = None,
+        qideventcategory: Optional[list[int]] = None,
+    ) -> list[SourceMapping]:
         suitable_source_mappings = []
         for source_mapping in self._source_mappings.values():
             if source_mapping.source_id == DEFAULT_MAPPING_NAME:
@@ -70,9 +76,8 @@ class QradarMappings(BasePlatformMappings):
             if table and log_source_signature.is_suitable(table, devicetype, category, qid, qideventcategory):
                 if source_mapping.fields_mapping.is_suitable(field_names):
                     suitable_source_mappings.append(source_mapping)
-            else:
-                if source_mapping.fields_mapping.is_suitable(field_names):
-                    suitable_source_mappings.append(source_mapping)
+            elif source_mapping.fields_mapping.is_suitable(field_names):
+                suitable_source_mappings.append(source_mapping)
 
         if not suitable_source_mappings:
             suitable_source_mappings = [self._source_mappings[DEFAULT_MAPPING_NAME]]

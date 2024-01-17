@@ -8,5 +8,5 @@ DEFAULT_SUMOLOGIC_MAPPING = {
     "HashSha256": "fileHash",
     "HashSha512": "fileHash",
     "Emails": "flattened_destinations",
-    "Files": "files"
+    "Files": "files",
 }

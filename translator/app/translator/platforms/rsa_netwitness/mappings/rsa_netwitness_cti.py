@@ -8,5 +8,5 @@ DEFAULT_RSA_NETWITNESS_MAPPING = {
     "Domain": "domain",
     "HashSha1": "hash",
     "Files": "files",
-    "URL": "web.page"
+    "URL": "web.page",
 }

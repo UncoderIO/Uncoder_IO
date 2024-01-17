@@ -1,0 +1,29 @@
+[tool.ruff]
+line-length = 120
+target-version = "py39"
+
+select = ["A", "ANN", "ARG", "C4", "E", "F", "ICN", "N", "PL", "Q", "RET", "RSE", "RUF", "SIM", "TID", "TRY", "UP", "W"]
+ignore = [
+    "ANN002", "ANN003", "ANN101", "ANN102", "ANN204",
+    "N818",
+    "PLR0913",
+    "PLW2901",
+    "RET502", "RET503",
+    "TRY002", "TRY003",
+    "UP007",
+    "W605"
+]
+
+exclude = [
+    "app/translator/platforms/arcsight/",
+    "app/translator/platforms/datadog/",
+    "app/translator/platforms/devo/",
+    "app/translator/platforms/sigma",
+    "app/translator/platforms/sumo_logic"
+]
+
+[tool.ruff.format]
+skip-magic-trailing-comma = true
+
+[tool.ruff.lint.flake8-builtins]
+builtins-ignorelist = ["id", "max", "min", "sum"]

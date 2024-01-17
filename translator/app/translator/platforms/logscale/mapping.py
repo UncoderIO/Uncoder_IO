@@ -1,18 +1,17 @@
-from typing import List
+from typing import Optional
 
-from app.translator.core.mapping import BasePlatformMappings, LogSourceSignature, SourceMapping, DEFAULT_MAPPING_NAME
+from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
 
 
 class LogScaleLogSourceSignature(LogSourceSignature):
-
-    def __init__(self, default_source: dict = None):
+    def __init__(self, default_source: Optional[dict] = None):
         self._default_source = default_source or {}
 
     def __str__(self) -> str:
         return " ".join((f"{key}={value}" for key, value in self._default_source.items() if value))
 
-    def is_suitable(self):
-        ...
+    def is_suitable(self) -> bool:
+        raise NotImplementedError
 
 
 class LogScaleMappings(BasePlatformMappings):
@@ -20,7 +19,7 @@ class LogScaleMappings(BasePlatformMappings):
         default_log_source = mapping.get("default_log_source")
         return LogScaleLogSourceSignature(default_source=default_log_source)
 
-    def get_suitable_source_mappings(self, field_names: List[str]) -> List[SourceMapping]:
+    def get_suitable_source_mappings(self, field_names: list[str]) -> list[SourceMapping]:
         suitable_source_mappings = []
         for source_mapping in self._source_mappings.values():
             if source_mapping.source_id == DEFAULT_MAPPING_NAME:

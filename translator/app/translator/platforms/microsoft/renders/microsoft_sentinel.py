@@ -19,13 +19,13 @@ limitations under the License.
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
+from app.translator.core.mapping import LogSourceSignature
+from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.core.render import BaseQueryFieldValue, BaseQueryRender
 from app.translator.platforms.microsoft.const import microsoft_sentinel_query_details
 from app.translator.platforms.microsoft.escape_manager import microsoft_escape_manager
 from app.translator.platforms.microsoft.functions import MicrosoftFunctions, microsoft_sentinel_functions
 from app.translator.platforms.microsoft.mapping import MicrosoftSentinelMappings, microsoft_sentinel_mappings
-from app.translator.core.mapping import LogSourceSignature
-from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.render import BaseQueryRender, BaseQueryFieldValue
 
 
 class MicrosoftSentinelFieldValue(BaseQueryFieldValue):
@@ -39,7 +39,7 @@ class MicrosoftSentinelFieldValue(BaseQueryFieldValue):
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, str):
             return f"{field} =~ @'{self.__escape_value(value)}'"
-        elif isinstance(value, list):
+        if isinstance(value, list):
             prepared_values = ", ".join(f"@'{self.__escape_value(v)}'" for v in value)
             operator = "in~" if all(isinstance(v, str) for v in value) else "in"
             return f"{field} {operator} ({prepared_values})"

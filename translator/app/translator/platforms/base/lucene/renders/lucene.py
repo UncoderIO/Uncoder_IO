@@ -19,9 +19,9 @@ limitations under the License.
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
-from app.translator.core.render import BaseQueryRender
-from app.translator.core.render import BaseQueryFieldValue
+from app.translator.core.render import BaseQueryFieldValue, BaseQueryRender
 from app.translator.platforms.base.lucene.escape_manager import lucene_escape_manager
+from app.translator.platforms.base.lucene.mapping import LuceneLogSourceSignature
 
 
 class LuceneFieldValue(BaseQueryFieldValue):
@@ -29,53 +29,53 @@ class LuceneFieldValue(BaseQueryFieldValue):
 
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            values = self.or_token.join(f'{self.apply_value(v)}' for v in value)
+            values = self.or_token.join(f"{self.apply_value(v)}" for v in value)
             return f"{field}:({values})"
-        return f'{field}:{self.apply_value(value)}'
+        return f"{field}:{self.apply_value(value)}"
 
     def less_modifier(self, field: str, value: Union[int, str]) -> str:
-        return f'{field}:<{self.apply_value(value)}'
+        return f"{field}:<{self.apply_value(value)}"
 
     def less_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
-        return f'{field}:[* TO {self.apply_value(value)}]'
+        return f"{field}:[* TO {self.apply_value(value)}]"
 
     def greater_modifier(self, field: str, value: Union[int, str]) -> str:
-        return f'{field}:>{self.apply_value(value)}'
+        return f"{field}:>{self.apply_value(value)}"
 
     def greater_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
-        return f'{field}:[{self.apply_value(value)} TO *]'
+        return f"{field}:[{self.apply_value(value)} TO *]"
 
     def not_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            values = self.or_token.join(f'{self.apply_value(v)}' for v in value)
+            values = self.or_token.join(f"{self.apply_value(v)}" for v in value)
             return f"NOT ({field} = ({values})"
-        return f'NOT ({field} = {self.apply_value(value)})'
+        return f"NOT ({field} = {self.apply_value(value)})"
 
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            values = self.or_token.join(f'*{self.apply_value(v)}*' for v in value)
+            values = self.or_token.join(f"*{self.apply_value(v)}*" for v in value)
             return f"{field}:({values})"
         prepared_value = f"*{self.apply_value(value)}*"
-        return f'{field}:{prepared_value}'
+        return f"{field}:{prepared_value}"
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            values = self.or_token.join(f'*{self.apply_value(v)}' for v in value)
+            values = self.or_token.join(f"*{self.apply_value(v)}" for v in value)
             return f"{field}:({values})"
         prepared_value = f"*{self.apply_value(value)}"
-        return f'{field}:{prepared_value}'
+        return f"{field}:{prepared_value}"
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            values = self.or_token.join(f'{self.apply_value(v)}*' for v in value)
+            values = self.or_token.join(f"{self.apply_value(v)}*" for v in value)
             return f"{field}:({values})"
         prepared_value = f"{self.apply_value(value)}*"
-        return f'{field}:{prepared_value}'
+        return f"{field}:{prepared_value}"
 
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.regex_modifier(field=field, value=v) for v in value)})"
-        return f'{field}:/{value}/'
+        return f"{field}:/{value}/"
 
     def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
@@ -84,7 +84,6 @@ class LuceneFieldValue(BaseQueryFieldValue):
 
 
 class LuceneQueryRender(BaseQueryRender):
-
     or_token = "OR"
     and_token = "AND"
     not_token = "NOT"
@@ -94,5 +93,5 @@ class LuceneQueryRender(BaseQueryRender):
     comment_symbol = "//"
     is_multi_line_comment = True
 
-    def generate_prefix(self, logsource: dict) -> str:
+    def generate_prefix(self, log_source_signature: LuceneLogSourceSignature) -> str:  # noqa: ARG002
         return ""

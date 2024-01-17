@@ -16,14 +16,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
 
-from typing import List
 
-from app.translator.platforms.chronicle.const import chronicle_query_details
-from app.translator.platforms.chronicle.mapping import chronicle_mappings, ChronicleMappings
-from app.translator.platforms.chronicle.tokenizer import ChronicleQueryTokenizer
+from app.translator.core.models.parser_output import MetaInfoContainer, SiemContainer
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.parser import Parser
-from app.translator.core.models.parser_output import SiemContainer, MetaInfoContainer
+from app.translator.platforms.chronicle.const import chronicle_query_details
+from app.translator.platforms.chronicle.mapping import ChronicleMappings, chronicle_mappings
+from app.translator.platforms.chronicle.tokenizer import ChronicleQueryTokenizer
 
 
 class ChronicleParser(Parser):
@@ -31,12 +30,12 @@ class ChronicleParser(Parser):
     tokenizer: ChronicleQueryTokenizer = ChronicleQueryTokenizer()
     details: PlatformDetails = chronicle_query_details
 
-    def _get_meta_info(self, source_mapping_ids: List[str]) -> MetaInfoContainer:
+    def _get_meta_info(self, source_mapping_ids: list[str]) -> MetaInfoContainer:
         return MetaInfoContainer(source_mapping_ids=source_mapping_ids)
 
     def parse(self, text: str) -> SiemContainer:
         tokens, source_mappings = self.get_tokens_and_source_mappings(text, {})
         return SiemContainer(
             query=tokens,
-            meta_info=self._get_meta_info([source_mapping.source_id for source_mapping in source_mappings])
+            meta_info=self._get_meta_info([source_mapping.source_id for source_mapping in source_mappings]),
         )

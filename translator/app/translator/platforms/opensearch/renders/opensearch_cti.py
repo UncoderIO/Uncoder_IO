@@ -17,16 +17,16 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 
-from app.translator.platforms.opensearch.const import opensearch_query_details
-from app.translator.platforms.opensearch.mappings.opensearch_cti import DEFAULT_OPENSEARCH_MAPPING
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
+from app.translator.platforms.opensearch.const import opensearch_query_details
+from app.translator.platforms.opensearch.mappings.opensearch_cti import DEFAULT_OPENSEARCH_MAPPING
 
 
 class OpenSearchCTI(RenderCTI):
     details: PlatformDetails = opensearch_query_details
 
-    data_map: str = '"{value}"'
+    field_value_template: str = '"{value}"'
     or_operator: str = " OR "
     group_or_operator: str = " OR "
     or_group: str = "{processing_key}:({or_group})"

@@ -17,16 +17,16 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 
-from app.translator.platforms.fireeye_helix.const import FIREEYE_HELIX_QUERY_DETAILS
-from app.translator.platforms.fireeye_helix.mappings.fireeye_helix import DEFAULT_FIREEYE_HELIX_MAPPING
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
+from app.translator.platforms.fireeye_helix.const import FIREEYE_HELIX_QUERY_DETAILS
+from app.translator.platforms.fireeye_helix.mappings.fireeye_helix import DEFAULT_FIREEYE_HELIX_MAPPING
 
 
 class FireeyeHelixCTI(RenderCTI):
     details: PlatformDetails = PlatformDetails(**FIREEYE_HELIX_QUERY_DETAILS)
 
-    data_map: str = "`{value}`"
+    field_value_template: str = "`{value}`"
     or_operator: str = ","
     group_or_operator: str = " "
     or_group: str = "{processing_key}:[{or_group}]"

@@ -75,7 +75,7 @@ __ALL_RENDERS = (
     KibanaRuleRender(),
     XPackWatcherRuleRender(),
     OpenSearchQueryRender(),
-    OpenSearchRuleRender()
+    OpenSearchRuleRender(),
 )
 
 __ALL_PARSERS = (
@@ -94,29 +94,29 @@ __ALL_PARSERS = (
     LogScaleAlertParser(),
     ElasticSearchParser(),
     ElasticSearchRuleParser(),
-    OpenSearchParser()
+    OpenSearchParser(),
 )
 
 
 __ALL_RENDERS_CTI = (
-        MicrosoftSentinelCTI(),
-        MicrosoftDefenderCTI(),
-        QRadarCTI(),
-        SplunkCTI(),
-        ChronicleQueryCTI(),
-        CrowdStrikeCTI(),
-        SumologicCTI(),
-        ElasticsearchCTI(),
-        LogScaleCTI(),
-        OpenSearchCTI(),
-        FireeyeHelixCTI(),
-        CarbonBlackCTI(),
-        GraylogCTI(),
-        LogpointCTI(),
-        QualysCTI(),
-        RSANetwitnessCTI(),
-        S1EventsCTI(),
-        SecuronixCTI(),
-        SnowflakeCTI(),
-        AthenaCTI()
+    MicrosoftSentinelCTI(),
+    MicrosoftDefenderCTI(),
+    QRadarCTI(),
+    SplunkCTI(),
+    ChronicleQueryCTI(),
+    CrowdStrikeCTI(),
+    SumologicCTI(),
+    ElasticsearchCTI(),
+    LogScaleCTI(),
+    OpenSearchCTI(),
+    FireeyeHelixCTI(),
+    CarbonBlackCTI(),
+    GraylogCTI(),
+    LogpointCTI(),
+    QualysCTI(),
+    RSANetwitnessCTI(),
+    S1EventsCTI(),
+    SecuronixCTI(),
+    SnowflakeCTI(),
+    AthenaCTI(),
 )

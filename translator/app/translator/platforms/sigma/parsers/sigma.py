@@ -18,17 +18,17 @@ limitations under the License.
 """
 
 
-from typing import List, Union
+from typing import Union
 
-from app.translator.core.tokenizer import QueryTokenizer
-from app.translator.platforms.sigma.const import SIGMA_RULE_DETAILS
-from app.translator.platforms.sigma.mapping import SigmaMappings, sigma_mappings
-from app.translator.platforms.sigma.tokenizer import SigmaTokenizer, SigmaConditionTokenizer
 from app.translator.core.exceptions.core import SigmaRuleValidationException
 from app.translator.core.mixins.rule import YamlRuleMixin
 from app.translator.core.models.field import FieldValue
+from app.translator.core.models.parser_output import MetaInfoContainer, SiemContainer
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.models.parser_output import SiemContainer, MetaInfoContainer
+from app.translator.core.tokenizer import QueryTokenizer
+from app.translator.platforms.sigma.const import SIGMA_RULE_DETAILS
+from app.translator.platforms.sigma.mapping import SigmaMappings, sigma_mappings
+from app.translator.platforms.sigma.tokenizer import SigmaConditionTokenizer, SigmaTokenizer
 
 
 class SigmaParser(YamlRuleMixin):
@@ -39,15 +39,15 @@ class SigmaParser(YamlRuleMixin):
     mandatory_fields = {"title", "description", "logsource", "detection"}
 
     @staticmethod
-    def __parse_false_positives(false_positives: Union[str, List[str], None]) -> list:
+    def __parse_false_positives(false_positives: Union[str, list[str], None]) -> list:
         if isinstance(false_positives, str):
-            return [i.strip() for i in false_positives.split(',')]
+            return [i.strip() for i in false_positives.split(",")]
         return false_positives
 
-    def _get_meta_info(self, rule: dict, source_mapping_ids: List[str]) -> MetaInfoContainer:
+    def _get_meta_info(self, rule: dict, source_mapping_ids: list[str]) -> MetaInfoContainer:
         return MetaInfoContainer(
             title=rule.get("title"),
-            id_=rule.get('id'),
+            id_=rule.get("id"),
             description=rule.get("description"),
             author=rule.get("author"),
             date=rule.get("date"),
@@ -56,9 +56,9 @@ class SigmaParser(YamlRuleMixin):
             mitre_attack=self.parse_mitre_attack(rule.get("tags", [])),
             severity=rule.get("level"),
             status=rule.get("status"),
-            tags=rule.get("tags"),
+            tags=sorted(set(rule.get("tags") or [])),
             false_positives=self.__parse_false_positives(rule.get("falsepositives")),
-            source_mapping_ids=source_mapping_ids
+            source_mapping_ids=source_mapping_ids,
         )
 
     def __validate_rule(self, rule: dict):
@@ -81,7 +81,6 @@ class SigmaParser(YamlRuleMixin):
         return SiemContainer(
             query=tokens,
             meta_info=self._get_meta_info(
-                rule=sigma_rule,
-                source_mapping_ids=[source_mapping.source_id for source_mapping in source_mappings]
+                rule=sigma_rule, source_mapping_ids=[source_mapping.source_id for source_mapping in source_mappings]
             ),
         )

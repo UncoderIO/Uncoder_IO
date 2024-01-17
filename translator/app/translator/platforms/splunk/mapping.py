@@ -1,26 +1,30 @@
-from typing import List, Optional
+from typing import Optional
 
-from app.translator.core.mapping import BasePlatformMappings, LogSourceSignature, SourceMapping, DEFAULT_MAPPING_NAME
+from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
 
 
 class SplunkLogSourceSignature(LogSourceSignature):
-    def __init__(self,
-                 sources: Optional[List[str]],
-                 source_types: Optional[List[str]],
-                 source_categories: Optional[List[str]],
-                 indices: Optional[List[str]],
-                 default_source: dict = None):
+    def __init__(
+        self,
+        sources: Optional[list[str]],
+        source_types: Optional[list[str]],
+        source_categories: Optional[list[str]],
+        indices: Optional[list[str]],
+        default_source: Optional[dict] = None,
+    ):
         self.sources = set(sources or [])
         self.source_types = set(source_types or [])
         self.source_categories = set(source_categories or [])
         self.indices = set(indices or [])
         self._default_source = default_source or {}
 
-    def is_suitable(self,
-                    source: Optional[List[str]],
-                    source_type: Optional[List[str]],
-                    source_category: Optional[List[str]],
-                    index: Optional[List[str]]) -> bool:
+    def is_suitable(
+        self,
+        source: Optional[list[str]],
+        source_type: Optional[list[str]],
+        source_category: Optional[list[str]],
+        index: Optional[list[str]],
+    ) -> bool:
         source_match = set(source or []).issubset(self.sources)
         source_type_match = set(source_type or []).issubset(self.source_types)
         source_category_match = set(source_category or []).issubset(self.source_categories)
@@ -41,22 +45,24 @@ class SplunkMappings(BasePlatformMappings):
             source_types=log_source.get("source_type"),
             source_categories=log_source.get("source_category"),
             indices=log_source.get("index"),
-            default_source=default_log_source
+            default_source=default_log_source,
         )
 
-    def get_suitable_source_mappings(self,
-                                     field_names: List[str],
-                                     source: List[str] = None,
-                                     sourcetype: List[str] = None,
-                                     sourcecategory: List[str] = None,
-                                     index: List[str] = None) -> List[SourceMapping]:
+    def get_suitable_source_mappings(
+        self,
+        field_names: list[str],
+        source: Optional[list[str]] = None,
+        sourcetype: Optional[list[str]] = None,
+        sourcecategory: Optional[list[str]] = None,
+        index: Optional[list[str]] = None,
+    ) -> list[SourceMapping]:
         suitable_source_mappings = []
         for source_mapping in self._source_mappings.values():
             if source_mapping.source_id == DEFAULT_MAPPING_NAME:
                 continue
 
             source_signature: SplunkLogSourceSignature = source_mapping.log_source_signature
-            if source_signature.is_suitable(source, sourcetype, sourcecategory, index):
+            if source_signature.is_suitable(source, sourcetype, sourcecategory, index):  # noqa: SIM102
                 if source_mapping.fields_mapping.is_suitable(field_names):
                     suitable_source_mappings.append(source_mapping)
 

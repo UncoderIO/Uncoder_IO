@@ -5,7 +5,7 @@ CROWDSTRIKE_QUERY_DETAILS = {
     "name": "CrowdStrike Endpoint Security",
     "platform_name": "Query (SPL)",
     "group_id": "crowdstrike",
-    "group_name": "CrowdStrike Endpoint Security"
+    "group_name": "CrowdStrike Endpoint Security",
 }
 
 crowdstrike_query_details = PlatformDetails(**CROWDSTRIKE_QUERY_DETAILS)

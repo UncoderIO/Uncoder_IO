@@ -8,5 +8,5 @@ DEFAULT_OPENSEARCH_MAPPING = {
     "Domain": "destination.domain",
     "HashSha1": "file.hash.sha1",
     "Files": "file.name",
-    "URL": "url.original"
+    "URL": "url.original",
 }

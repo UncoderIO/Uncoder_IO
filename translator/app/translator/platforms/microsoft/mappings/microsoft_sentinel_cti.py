@@ -8,5 +8,5 @@ DEFAULT_MICROSOFT_SENTINEL_MAPPING = {
     "Domain": "DestinationHostname",
     "HashSha1": "FileHashSha1",
     "Files": "TargetFileName",
-    "URL": "URL"
+    "URL": "URL",
 }

@@ -8,5 +8,5 @@ DEFAULT_SNOWFLAKE_MAPPING = {
     "HashSha256": "file.hash.sha256",
     "HashSha512": "file.hash.sha512",
     "Files": "file.path",
-    "Emails": "user.name"
+    "Emails": "user.name",
 }

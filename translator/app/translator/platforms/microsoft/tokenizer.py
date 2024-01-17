@@ -17,18 +17,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 import re
-from typing import Tuple, Any, Union
+from typing import Any, ClassVar, Union
 
+from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.mixins.operator import OperatorBasedMixin
 from app.translator.core.tokenizer import QueryTokenizer
-from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.platforms.microsoft.escape_manager import microsoft_escape_manager
 from app.translator.tools.utils import get_match_group
 
 
 class MicrosoftSentinelTokenizer(QueryTokenizer, OperatorBasedMixin):
-    single_value_operators_map = {
+    single_value_operators_map: ClassVar[dict[str, str]] = {
         "==": OperatorType.EQ,
         "=~": OperatorType.EQ,
         "<=": OperatorType.LTE,
@@ -41,36 +41,37 @@ class MicrosoftSentinelTokenizer(QueryTokenizer, OperatorBasedMixin):
         "startswith": OperatorType.STARTSWITH,
         "endswith": OperatorType.ENDSWITH,
     }
-    multi_value_operators_map = {
-        "in~": OperatorType.EQ,
-        "in": OperatorType.EQ,
-    }
+    multi_value_operators_map: ClassVar[dict[str, str]] = {"in~": OperatorType.EQ, "in": OperatorType.EQ}
 
     field_pattern = r"(?P<field_name>[a-zA-Z\.\-_]+)"
-    bool_value_pattern = fr"(?P<{ValueType.bool_value}>true|false)\s*"
-    num_value_pattern = fr"(?P<{ValueType.number_value}>\d+(?:\.\d+)*)\s*"
-    double_quotes_value_pattern = fr'(?P<{ValueType.double_quotes_value}>@?"(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{{\}}\s]|\\\"|\\\\)*)"\s*'
-    single_quotes_value_pattern = fr"(?P<{ValueType.single_quotes_value}>@?'(?:[:a-zA-Z\*0-9=+%#\-_/,\"\.$&^@!\(\)\{{\}}\s]|\\\'|\\\\)*)'\s*"
-    str_value_pattern = fr"""{double_quotes_value_pattern}|{single_quotes_value_pattern}"""
-    _value_pattern = fr"""{bool_value_pattern}|{num_value_pattern}|{str_value_pattern}"""
-    multi_value_pattern = fr"""\((?P<{ValueType.value}>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\s]+)\)"""
-    keyword_pattern = fr"\*\s+contains\s+(?:{str_value_pattern})"
+    bool_value_pattern = rf"(?P<{ValueType.bool_value}>true|false)\s*"
+    num_value_pattern = rf"(?P<{ValueType.number_value}>\d+(?:\.\d+)*)\s*"
+    double_quotes_value_pattern = (
+        rf'(?P<{ValueType.double_quotes_value}>@?"(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{{\}}\s]|\\\"|\\\\)*)"\s*'
+    )
+    single_quotes_value_pattern = (
+        rf"(?P<{ValueType.single_quotes_value}>@?'(?:[:a-zA-Z\*0-9=+%#\-_/,\"\.$&^@!\(\)\{{\}}\s]|\\\'|\\\\)*)'\s*"
+    )
+    str_value_pattern = rf"""{double_quotes_value_pattern}|{single_quotes_value_pattern}"""
+    _value_pattern = rf"""{bool_value_pattern}|{num_value_pattern}|{str_value_pattern}"""
+    multi_value_pattern = rf"""\((?P<{ValueType.value}>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\s]+)\)"""
+    keyword_pattern = rf"\*\s+contains\s+(?:{str_value_pattern})"
 
     escape_manager = microsoft_escape_manager
 
-    def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> Tuple[str, Any]:
+    def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> tuple[str, Any]:  # noqa: PLR0911
         if (num_value := get_match_group(match, group_name=ValueType.number_value)) is not None:
             return operator, num_value
 
-        elif (bool_value := get_match_group(match, group_name=ValueType.bool_value)) is not None:
+        if (bool_value := get_match_group(match, group_name=ValueType.bool_value)) is not None:
             return operator, bool_value
 
-        elif (d_q_value := get_match_group(match, group_name=ValueType.double_quotes_value)) is not None:
+        if (d_q_value := get_match_group(match, group_name=ValueType.double_quotes_value)) is not None:
             if d_q_value.startswith("@"):
                 return operator, d_q_value.lstrip("@").lstrip('"')
             return operator, self.escape_manager.remove_escape(d_q_value.lstrip('"'))
 
-        elif (s_q_value := get_match_group(match, group_name=ValueType.single_quotes_value)) is not None:
+        if (s_q_value := get_match_group(match, group_name=ValueType.single_quotes_value)) is not None:
             if s_q_value.startswith("@"):
                 return operator, s_q_value.lstrip("@").lstrip("'")
             return operator, self.escape_manager.remove_escape(s_q_value.lstrip("'"))
@@ -81,9 +82,7 @@ class MicrosoftSentinelTokenizer(QueryTokenizer, OperatorBasedMixin):
         if isinstance(value, str):
             value = value.strip(" ")
             value = value.lstrip("@")
-            if value.startswith("'") and value.endswith("'"):
-                value = value[1:-1]
-            elif value.startswith('"') and value.endswith('"'):
+            if value.startswith("'") and value.endswith("'") or value.startswith('"') and value.endswith('"'):
                 value = value[1:-1]
 
         return value

@@ -1,9 +1,9 @@
 import logging
 
-from app.translator.platforms.roota.parsers.roota import RootAParser
 from app.translator.core.exceptions.core import UnsupportedPlatform
 from app.translator.core.models.parser_output import SiemContainer
-from app.translator.managers import RenderManager, ParserManager, render_manager, parser_manager
+from app.translator.managers import ParserManager, RenderManager, parser_manager, render_manager
+from app.translator.platforms.roota.parsers.roota import RootAParser
 from app.translator.tools.decorators import handle_translation_exceptions
 
 
@@ -27,9 +27,7 @@ class SiemConverter:
         if not render:
             raise UnsupportedPlatform(platform=target)
         return render.generate(
-            query=parsed_data.query,
-            meta_info=parsed_data.meta_info,
-            functions=parsed_data.functions
+            query=parsed_data.query, meta_info=parsed_data.meta_info, functions=parsed_data.functions
         )
 
     def __generate_one_translation(self, text: str, source: str, target: str) -> (bool, str):

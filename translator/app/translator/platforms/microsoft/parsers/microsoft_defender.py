@@ -16,11 +16,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
 
+from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.platforms.microsoft.const import microsoft_defender_details
 from app.translator.platforms.microsoft.functions import MicrosoftFunctions, microsoft_defender_functions
+from app.translator.platforms.microsoft.mapping import MicrosoftDefenderMappings, microsoft_defender_mappings
 from app.translator.platforms.microsoft.parsers.microsoft_sentinel import MicrosoftParser
-from app.translator.platforms.microsoft.mapping import microsoft_defender_mappings, MicrosoftDefenderMappings
-from app.translator.core.models.platform_details import PlatformDetails
 
 
 class MicrosoftDefenderQueryParser(MicrosoftParser):

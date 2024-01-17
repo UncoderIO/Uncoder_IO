@@ -16,40 +16,36 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
 
-from typing import Union, List, Tuple
+from typing import Optional, Union
 
-from app.translator.core.models.identifier import Identifier
 from app.translator.core.custom_types.tokens import OperatorType
+from app.translator.core.models.identifier import Identifier
 
 
 class WildCardMixin:
-
     @staticmethod
     def _clean_value(value: str, wildcard_symbol: str) -> str:
         return value.strip(wildcard_symbol)
 
-    def get_field_value_operator(self,
-                                 value: Union[str, List[str]],
-                                 operator: str = None,
-                                 wildcard_symbol: str = None) -> Tuple[Union[List[str], str], Identifier]:
+    def get_field_value_operator(
+        self, value: Union[str, list[str]], operator: Optional[str] = None, wildcard_symbol: Optional[str] = None
+    ) -> tuple[Union[list[str], str], Identifier]:
         if wildcard_symbol:
             value = self._clean_value(value, wildcard_symbol)
         return value, Identifier(token_type=operator)
 
 
 class OperatorBasedMixin(WildCardMixin):
-
-    def get_field_value_operator(self,
-                                 value: Union[str, List[str]],
-                                 operator: str = None,
-                                 wildcard_symbol: str = None) -> Tuple[Union[List[str], str], Identifier]:
+    def get_field_value_operator(
+        self, value: Union[str, list[str]], operator: Optional[str] = None, wildcard_symbol: Optional[str] = None
+    ) -> tuple[Union[list[str], str], Identifier]:
         value, operator = self.__get_value_operator(operator=operator, value=value)
         if wildcard_symbol:
             value = self._clean_value(value, wildcard_symbol)
         return value, operator
 
     @staticmethod
-    def __get_value_operator(operator: str, value: Union[str, List[str]]) -> Tuple[Union[List[str], str], Identifier]:
+    def __get_value_operator(operator: str, value: Union[str, list[str]]) -> tuple[Union[list[str], str], Identifier]:
         if operator == OperatorType.CONTAINS:
             operator = Identifier(token_type=OperatorType.CONTAINS)
         elif operator == OperatorType.ENDSWITH:

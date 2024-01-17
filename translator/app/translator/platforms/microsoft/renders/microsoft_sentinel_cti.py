@@ -17,16 +17,16 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 
-from app.translator.platforms.microsoft.const import microsoft_sentinel_query_details
-from app.translator.platforms.microsoft.mappings.microsoft_sentinel_cti import DEFAULT_MICROSOFT_SENTINEL_MAPPING
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
+from app.translator.platforms.microsoft.const import microsoft_sentinel_query_details
+from app.translator.platforms.microsoft.mappings.microsoft_sentinel_cti import DEFAULT_MICROSOFT_SENTINEL_MAPPING
 
 
 class MicrosoftSentinelCTI(RenderCTI):
     details: PlatformDetails = microsoft_sentinel_query_details
 
-    data_map: str = '@"{value}"'
+    field_value_template: str = '@"{value}"'
     or_operator: str = " or "
     group_or_operator: str = " or "
     or_group: str = "({or_group})"

@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import List
 
 from app.translator.core.custom_types.functions import FunctionType
 from app.translator.core.models.field import Field
@@ -21,5 +20,5 @@ class SortArg:
 @dataclass
 class SortFunction(Function):
     name: str = FunctionType.sort
-    args: List[SortArg] = None
+    args: list[SortArg] = None
     limit: str = None

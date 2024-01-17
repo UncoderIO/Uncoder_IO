@@ -17,16 +17,16 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 
-from app.translator.platforms.elasticsearch.const import elasticsearch_lucene_query_details
-from app.translator.platforms.elasticsearch.mappings.elasticsearch_cti_cti import DEFAULT_ELASTICSEARCH_MAPPING
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
+from app.translator.platforms.elasticsearch.const import elasticsearch_lucene_query_details
+from app.translator.platforms.elasticsearch.mappings.elasticsearch_cti_cti import DEFAULT_ELASTICSEARCH_MAPPING
 
 
 class ElasticsearchCTI(RenderCTI):
     details: PlatformDetails = elasticsearch_lucene_query_details
 
-    data_map: str = '"{value}"'
+    field_value_template: str = '"{value}"'
     or_operator: str = " OR "
     group_or_operator: str = " OR "
     or_group: str = "{processing_key}:({or_group})"
