@@ -4,6 +4,6 @@ WORKDIR /siem_converter
 COPY . .
 RUN pip install --upgrade pip && \
     python -m pip install --upgrade setuptools && \
-    pip install --trusted-host=pypi.python.org --trusted-host=pypi.org --trusted-host=files.pythonhosted.org --no-cache-dir -Ur requirements.txt
+    pip install --trusted-host=pypi.python.org --trusted-host=pypi.org --trusted-host=files.pythonhosted.org --no-cache-dir -Ur requirements/requirements_prod.txt
 EXPOSE 8000
 CMD ["python", "server.py"]

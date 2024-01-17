@@ -1,7 +1,7 @@
 import json
 import os
-import urllib.request
 import ssl
+import urllib.request
 from urllib.error import HTTPError
 
 from app.translator.tools.singleton_meta import SingletonMeta
@@ -9,10 +9,12 @@ from const import ROOT_PROJECT_PATH
 
 
 class MitreConfig(metaclass=SingletonMeta):
-    config_url: str = 'https://raw.githubusercontent.com/mitre/cti/master/enterprise-attack/enterprise-attack.json'
-    mitre_source_types: tuple = ('mitre-attack', )
-    tactics: dict = {}
-    techniques: dict = {}
+    config_url: str = "https://raw.githubusercontent.com/mitre/cti/master/enterprise-attack/enterprise-attack.json"
+    mitre_source_types: tuple = ("mitre-attack",)
+
+    def __init__(self):
+        self.tactics = {}
+        self.techniques = {}
 
     @staticmethod
     def __revoked_or_deprecated(entry: dict) -> bool:
@@ -31,7 +33,7 @@ class MitreConfig(metaclass=SingletonMeta):
         except HTTPError:
             return {}
 
-    def update_mitre_config(self) -> None:
+    def update_mitre_config(self) -> None:  # noqa: PLR0912
         if not (mitre_json := self.__get_mitre_json()):
             self.__load_mitre_configs_from_files()
             return
@@ -39,23 +41,23 @@ class MitreConfig(metaclass=SingletonMeta):
         tactic_map = {}
         technique_map = {}
 
-        # Map the tatics
+        # Map the tactics
         for entry in mitre_json["objects"]:
-            if not entry["type"] == "x-mitre-tactic" or self.__revoked_or_deprecated(entry):
+            if entry["type"] != "x-mitre-tactic" or self.__revoked_or_deprecated(entry):
                 continue
             for ref in entry["external_references"]:
-                if ref["source_name"] == 'mitre-attack':
+                if ref["source_name"] == "mitre-attack":
                     tactic_map[entry["x_mitre_shortname"]] = entry["name"]
-                    self.tactics[entry["name"].replace(' ', '_').lower()] = {
+                    self.tactics[entry["name"].replace(" ", "_").lower()] = {
                         "external_id": ref["external_id"],
                         "url": ref["url"],
-                        "tactic": entry["name"]
+                        "tactic": entry["name"],
                     }
                     break
 
         # Map the techniques
         for entry in mitre_json["objects"]:
-            if not entry["type"] == "attack-pattern" or self.__revoked_or_deprecated(entry):
+            if entry["type"] != "attack-pattern" or self.__revoked_or_deprecated(entry):
                 continue
             if entry.get("x_mitre_is_subtechnique"):
                 continue
@@ -72,13 +74,13 @@ class MitreConfig(metaclass=SingletonMeta):
                         "technique_id": ref["external_id"],
                         "technique": entry["name"],
                         "url": ref["url"],
-                        "tactic": sub_tactics
+                        "tactic": sub_tactics,
                     }
                     break
 
-        ## Map the sub-techniques
+        # Map the sub-techniques
         for entry in mitre_json["objects"]:
-            if not entry["type"] == "attack-pattern" or self.__revoked_or_deprecated(entry):
+            if entry["type"] != "attack-pattern" or self.__revoked_or_deprecated(entry):
                 continue
             if entry.get("x_mitre_is_subtechnique"):
                 for ref in entry["external_references"]:
@@ -86,7 +88,7 @@ class MitreConfig(metaclass=SingletonMeta):
                         sub_technique_id = ref["external_id"]
                         sub_technique_name = entry["name"]
                         parent_technique_name = technique_map[sub_technique_id.split(".")[0]]
-                        sub_technique_name = "{} : {}".format(parent_technique_name, sub_technique_name)
+                        sub_technique_name = f"{parent_technique_name} : {sub_technique_name}"
                         self.techniques[ref["external_id"].lower()] = {
                             "technique_id": ref["external_id"],
                             "technique": sub_technique_name,
@@ -95,14 +97,14 @@ class MitreConfig(metaclass=SingletonMeta):
                         break
 
     def __load_mitre_configs_from_files(self) -> None:
-        with open(os.path.join(ROOT_PROJECT_PATH, 'app/dictionaries/tactics.json'), 'r') as file:
+        with open(os.path.join(ROOT_PROJECT_PATH, "app/dictionaries/tactics.json")) as file:
             self.tactics = json.load(file)
 
-        with open(os.path.join(ROOT_PROJECT_PATH, 'app/dictionaries/techniques.json'), 'r') as file:
+        with open(os.path.join(ROOT_PROJECT_PATH, "app/dictionaries/techniques.json")) as file:
             self.techniques = json.load(file)
 
     def get_tactic(self, tactic: str) -> dict:
-        tactic = tactic.replace('.', '_')
+        tactic = tactic.replace(".", "_")
         return self.tactics.get(tactic, {})
 
     def get_technique(self, technique_id: str) -> dict:

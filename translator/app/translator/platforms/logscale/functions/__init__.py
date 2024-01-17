@@ -1,6 +1,6 @@
 import re
 
-from app.translator.core.exceptions.functions import NotSupportedFunctionException, InvalidFunctionSignature
+from app.translator.core.exceptions.functions import InvalidFunctionSignature, NotSupportedFunctionException
 from app.translator.core.functions import PlatformFunctions
 from app.translator.core.models.functions.base import ParsedFunctions
 from app.translator.platforms.logscale.functions.const import LogScaleFunctionType
@@ -26,7 +26,7 @@ class LogScaleFunctions(PlatformFunctions):
                 func_name_match = re.search(r"(?P<func_name>[a-zA-Z:]+)\(", func)
             func_name = func_name_match.group("func_name")
             func = func.strip()
-            func_body = func[len(func_name)+1:len(func)-1]
+            func_body = func[len(func_name) + 1 : len(func) - 1]
             if func_parser := self.manager.get_parser(self.manager.get_generic_func_name(func_name)):
                 try:
                     parsed.append(func_parser.parse(func_body))
@@ -39,7 +39,7 @@ class LogScaleFunctions(PlatformFunctions):
         return ParsedFunctions(
             not_supported=[self.wrap_function_with_delimiter(func) for func in not_supported],
             functions=parsed,
-            invalid=invalid
+            invalid=invalid,
         ), query_part
 
 

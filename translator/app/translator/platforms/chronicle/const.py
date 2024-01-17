@@ -2,6 +2,7 @@ from app.translator.core.models.platform_details import PlatformDetails
 
 DEFAULT_CHRONICLE_SECURITY_RULE = """rule <title_place_holder> {
  meta:
+    author = "<author_place_holder>"
     description = "<description_place_holder>"
     license = "<licence_place_holder>"
     version = "0.01"
@@ -19,17 +20,13 @@ DEFAULT_CHRONICLE_SECURITY_RULE = """rule <title_place_holder> {
     $e
 }"""
 
-PLATFORM_DETAILS = {
-    "group_id": "chronicle-pack",
-    "group_name": "Chronicle Security",
-    "alt_platform_name": "UDM"
-}
+PLATFORM_DETAILS = {"group_id": "chronicle-pack", "group_name": "Chronicle Security", "alt_platform_name": "UDM"}
 
 CHRONICLE_QUERY_DETAILS = {
     "siem_type": "chronicle-yaral-query",
     "name": "Chronicle Security Query",
     "platform_name": "Query (UDM)",
-    **PLATFORM_DETAILS
+    **PLATFORM_DETAILS,
 }
 
 CHRONICLE_RULE_DETAILS = {
@@ -37,7 +34,7 @@ CHRONICLE_RULE_DETAILS = {
     "name": "Chronicle Security Rule",
     "platform_name": "Rule (YARA-L)",
     "first_choice": 0,
-    **PLATFORM_DETAILS
+    **PLATFORM_DETAILS,
 }
 
 chronicle_query_details = PlatformDetails(**CHRONICLE_QUERY_DETAILS)

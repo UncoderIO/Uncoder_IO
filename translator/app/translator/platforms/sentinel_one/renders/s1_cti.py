@@ -17,16 +17,16 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 
-from app.translator.platforms.sentinel_one.const import SENTINEL_ONE_EVENTS_QUERY_DETAILS
-from app.translator.platforms.sentinel_one.mappings.s1_cti import DEFAULT_S1EVENTS_MAPPING
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
+from app.translator.platforms.sentinel_one.const import SENTINEL_ONE_EVENTS_QUERY_DETAILS
+from app.translator.platforms.sentinel_one.mappings.s1_cti import DEFAULT_S1EVENTS_MAPPING
 
 
 class S1EventsCTI(RenderCTI):
     details: PlatformDetails = PlatformDetails(**SENTINEL_ONE_EVENTS_QUERY_DETAILS)
 
-    data_map: str = '"{value}"'
+    field_value_template: str = '"{value}"'
     or_operator: str = ", "
     group_or_operator: str = " OR "
     or_group: str = "{processing_key} in contains anycase ({or_group})"

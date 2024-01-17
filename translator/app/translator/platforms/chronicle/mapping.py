@@ -1,9 +1,9 @@
-from typing import List
-
-from app.translator.core.mapping import BasePlatformMappings, LogSourceSignature, SourceMapping, DEFAULT_MAPPING_NAME
+from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
 
 
 class ChronicleLogSourceSignature(LogSourceSignature):
+    def is_suitable(self) -> bool:
+        raise NotImplementedError
 
     def __str__(self) -> str:
         return ""
@@ -11,9 +11,9 @@ class ChronicleLogSourceSignature(LogSourceSignature):
 
 class ChronicleMappings(BasePlatformMappings):
     def prepare_log_source_signature(self, mapping: dict) -> ChronicleLogSourceSignature:
-        return
+        ...
 
-    def get_suitable_source_mappings(self, field_names: List[str]) -> List[SourceMapping]:
+    def get_suitable_source_mappings(self, field_names: list[str]) -> list[SourceMapping]:
         suitable_source_mappings = []
         for source_mapping in self._source_mappings.values():
             if source_mapping.source_id == DEFAULT_MAPPING_NAME:

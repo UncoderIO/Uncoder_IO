@@ -17,15 +17,13 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 
-from typing import List
 
 from app.translator.core.models.iocs import IocsChunkValue
 
 
 class RenderCTI:
-
     # EXAMPLE OF A BACKEND ATTRIBUTES
-    data_map: str = "{key} =~ '{value}'"
+    field_value_template: str = "{key} =~ '{value}'"
     or_operator: str = " or "
     group_or_operator: str = " or "
     or_group: str = "({or_group})"
@@ -34,10 +32,10 @@ class RenderCTI:
     final_result_for_one: str = "union * | where {result}\n"
     default_mapping = None
 
-    def create_field_value(self, field: str, value: str, generic_field: str):
-        return self.data_map.format(key=field, value=value)
+    def create_field_value(self, field: str, value: str, generic_field: str) -> str:  # noqa: ARG002
+        return self.field_value_template.format(key=field, value=value)
 
-    def render(self, data: List[List[IocsChunkValue]]) -> list[str]:
+    def render(self, data: list[list[IocsChunkValue]]) -> list[str]:
         final_result = []
         for iocs_chunk in data:
             data_values = self.collect_data_values(iocs_chunk)
@@ -47,20 +45,24 @@ class RenderCTI:
                 final_result.append(self.final_result_for_one.format(result=data_values[0]))
         return final_result
 
-    def collect_data_values(self, chunk):
+    def collect_data_values(self, chunk: list[IocsChunkValue]) -> list[str]:
         data_values = []
         key_chunk = []
         processing_key = chunk[0].platform_field
         for value in chunk:
             if processing_key != value.platform_field:
-                data_values.append(self.or_group.format(or_group=self.or_operator.join(key_chunk),
-                                                        processing_key=processing_key))
+                data_values.append(
+                    self.or_group.format(or_group=self.or_operator.join(key_chunk), processing_key=processing_key)
+                )
                 key_chunk = []
                 processing_key = value.platform_field
-            key_chunk.append(self.create_field_value(field=value.platform_field,
-                                                     value=value.value,
-                                                     generic_field=value.generic_field))
+            key_chunk.append(
+                self.create_field_value(
+                    field=value.platform_field, value=value.value, generic_field=value.generic_field
+                )
+            )
         if key_chunk:
             data_values.append(
-                self.or_group.format(or_group=self.or_operator.join(key_chunk), processing_key=processing_key))
+                self.or_group.format(or_group=self.or_operator.join(key_chunk), processing_key=processing_key)
+            )
         return data_values

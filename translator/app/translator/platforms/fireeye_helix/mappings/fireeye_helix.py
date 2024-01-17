@@ -8,5 +8,5 @@ DEFAULT_FIREEYE_HELIX_MAPPING = {
     "HashSha256": "~hash",
     "HashSha512": "~hash",
     "Emails": "emails",
-    "Files": "filepath"
+    "Files": "filepath",
 }

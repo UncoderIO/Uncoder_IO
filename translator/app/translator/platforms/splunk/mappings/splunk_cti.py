@@ -8,5 +8,5 @@ DEFAULT_SPLUNK_MAPPING = {
     "Domain": "dest_host",
     "HashSha1": "file_hash",
     "Files": "file_path",
-    "URL": "url"
+    "URL": "url",
 }

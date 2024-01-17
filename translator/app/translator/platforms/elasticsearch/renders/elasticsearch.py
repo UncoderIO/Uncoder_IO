@@ -16,10 +16,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-from app.translator.platforms.base.lucene.renders.lucene import LuceneQueryRender, LuceneFieldValue
+
+from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.platforms.base.lucene.renders.lucene import LuceneFieldValue, LuceneQueryRender
 from app.translator.platforms.elasticsearch.const import elasticsearch_lucene_query_details
 from app.translator.platforms.elasticsearch.mapping import ElasticSearchMappings, elasticsearch_mappings
-from app.translator.core.models.platform_details import PlatformDetails
 
 
 class ElasticSearchFieldValue(LuceneFieldValue):

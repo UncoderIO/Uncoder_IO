@@ -8,5 +8,5 @@ DEFAULT_GRAYLOG_MAPPING = {
     "HashSha256": "file.hash.sha256",
     "HashSha512": "file.hash.sha512",
     "Emails": "emails",
-    "Files": "filePath"
+    "Files": "filePath",
 }

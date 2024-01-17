@@ -8,5 +8,5 @@ DEFAULT_ATHENA_MAPPING = {
     "HashSha256": "unmapped.file.hash.sha256",
     "HashSha512": "unmapped.file.hash.sha512",
     "Email": "email",
-    "FileName": "file.name"
+    "FileName": "file.name",
 }

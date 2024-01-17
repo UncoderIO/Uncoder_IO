@@ -7,5 +7,5 @@ DEFAULT_MICROSOFT_DEFENDER_MAPPING = {
     "Domain": "RemoteUrl",
     "HashSha1": "InitiatingProcessSHA1",
     "Files": "FileName",
-    "URL": "RemoteUrl"
+    "URL": "RemoteUrl",
 }

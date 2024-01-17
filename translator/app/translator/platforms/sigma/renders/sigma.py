@@ -17,21 +17,22 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 import copy
-from typing import Any, List
+from typing import Any
 
 import yaml
 
-from app.translator.core.models.functions.base import ParsedFunctions
-from app.translator.platforms.sigma.const import SIGMA_RULE_DETAILS
-from app.translator.platforms.sigma.mapping import SigmaMappings, sigma_mappings, SigmaLogSourceSignature
-from app.translator.platforms.sigma.models.compiler import DataStructureCompiler
-from app.translator.core.mapping import SourceMapping, DEFAULT_MAPPING_NAME
-from app.translator.core.models.field import FieldValue, Keyword
-from app.translator.platforms.sigma.models.group import Group
-from app.translator.platforms.sigma.models.operator import OR, AND, NOT
-from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.models.parser_output import MetaInfoContainer
+from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.custom_types.tokens import OperatorType
+from app.translator.core.mapping import DEFAULT_MAPPING_NAME, SourceMapping
+from app.translator.core.models.field import FieldValue, Keyword
+from app.translator.core.models.functions.base import ParsedFunctions
+from app.translator.core.models.parser_output import MetaInfoContainer
+from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.platforms.sigma.const import SIGMA_RULE_DETAILS
+from app.translator.platforms.sigma.mapping import SigmaLogSourceSignature, SigmaMappings, sigma_mappings
+from app.translator.platforms.sigma.models.compiler import DataStructureCompiler
+from app.translator.platforms.sigma.models.group import Group
+from app.translator.platforms.sigma.models.operator import AND, NOT, OR
 
 
 class SigmaRender:
@@ -81,7 +82,11 @@ class SigmaRender:
         if isinstance(sub_group, list):
             return sub_group
         if condition := sub_group.get("condition"):
-            sub_group["condition"] = condition if condition.count(self.selection_name) == 1 or condition.count(self.keyword_name) == 1 else f"({condition})"
+            sub_group["condition"] = (
+                condition
+                if condition.count(self.selection_name) == 1 or condition.count(self.keyword_name) == 1
+                else f"({condition})"
+            )
         return sub_group
 
     def generate_or(self, data: Any, source_mapping: SourceMapping):
@@ -113,11 +118,17 @@ class SigmaRender:
             elif not result and self.selection in updated_node:
                 result = updated_node
                 t_c = result.get("condition")
-                condition = t_c if not condition else f"{condition} or {t_c if t_c.count(self.selection_name) == 1 else f'({t_c})'}"
+                condition = (
+                    t_c
+                    if not condition
+                    else f"{condition} or {t_c if t_c.count(self.selection_name) == 1 else f'({t_c})'}"
+                )
             elif result and self.selection in updated_node:
                 result.update(updated_node)
                 t_c = result.get("condition")
-                condition += f"{' or ' if condition else ''}{t_c if t_c.count(self.selection_name) == 1 else f'({t_c})'}"
+                condition += (
+                    f"{' or ' if condition else ''}{t_c if t_c.count(self.selection_name) == 1 else f'({t_c})'}"
+                )
             else:
                 self.increase_selection()
                 result[self.selection] = updated_node
@@ -136,9 +147,13 @@ class SigmaRender:
                 self.increase_selection()
                 condition += f"{' and ' if condition else ''}{self.selection}"
                 result[self.selection] = updated_node
-            elif (result and isinstance(updated_node, dict) and isinstance(result.get(self.selection, []), dict) and
-                  len(set(result.get(self.selection, [])).intersection(set(updated_node))) == 0 and
-                  self.selection not in updated_node):
+            elif (
+                result
+                and isinstance(updated_node, dict)
+                and isinstance(result.get(self.selection, []), dict)
+                and len(set(result.get(self.selection, [])).intersection(set(updated_node))) == 0
+                and self.selection not in updated_node
+            ):
                 if isinstance(result[self.selection], list):
                     result[self.selection].append(updated_node)
                 else:
@@ -181,8 +196,14 @@ class SigmaRender:
         source_id = source_mapping.source_id
         generic_field_name = data.field.get_generic_field_name(source_id) or data.field.source_name
         field_name = self.map_field(source_mapping, generic_field_name)
-        if data.operator.token_type not in (OperatorType.EQ, OperatorType.LT, OperatorType.LTE, OperatorType.GT,
-                                            OperatorType.GTE, OperatorType.NEQ):
+        if data.operator.token_type not in (
+            OperatorType.EQ,
+            OperatorType.LT,
+            OperatorType.LTE,
+            OperatorType.GT,
+            OperatorType.GTE,
+            OperatorType.NEQ,
+        ):
             field_name = f"{field_name}|{data.operator.token_type}"
         if isinstance(data.values, list) and len(data.values) == 1 or isinstance(data.values, (str, int)):
             return {field_name: data.values[0]}
@@ -232,7 +253,7 @@ class SigmaRender:
 
         return detection
 
-    def __get_source_mapping(self, source_mapping_ids: List[str]) -> SourceMapping:
+    def __get_source_mapping(self, source_mapping_ids: list[str]) -> SourceMapping:
         for source_mapping_id in source_mapping_ids:
             if source_mapping := self.mappings.get_source_mapping(source_mapping_id):
                 return source_mapping
@@ -258,7 +279,7 @@ class SigmaRender:
             "logsource": log_source_signature.log_sources,
             "fields": [],
             "detection": self.generate_detection(prepared_data_structure, source_mapping=source_mapping),
-            "level": meta_info.severity or "low",
+            "level": meta_info.severity or SeverityType.low,
             "falsepositives": "",
         }
         return yaml.dump(rule, default_flow_style=False, sort_keys=False)

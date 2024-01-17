@@ -17,18 +17,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 import re
-from typing import Tuple, Any
+from typing import Any, ClassVar
 
+from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.models.field import FieldValue
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.tokenizer import QueryTokenizer
-from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.tools.utils import get_match_group
 
 
 class AthenaTokenizer(QueryTokenizer):
-    single_value_operators_map = {
+    single_value_operators_map: ClassVar[dict[str, str]] = {
         "=": OperatorType.EQ,
         "<=": OperatorType.LTE,
         "<": OperatorType.LT,
@@ -36,18 +36,18 @@ class AthenaTokenizer(QueryTokenizer):
         ">": OperatorType.GT,
         "!=": OperatorType.NEQ,
         "<>": OperatorType.NEQ,
-        "like": OperatorType.EQ
+        "like": OperatorType.EQ,
     }
-    multi_value_operators_map = {
-        "in": OperatorType.EQ
-    }
+    multi_value_operators_map: ClassVar[dict[str, str]] = {"in": OperatorType.EQ}
 
     field_pattern = r'(?P<field_name>"[a-zA-Z\._\-\s]+"|[a-zA-Z\._\-]+)'
-    num_value_pattern = fr"(?P<{ValueType.number_value}>\d+(?:\.\d+)*)\s*"
-    bool_value_pattern = fr"(?P<{ValueType.bool_value}>true|false)\s*"
-    single_quotes_value_pattern = fr"""'(?P<{ValueType.single_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{{\}}\s]|'')*)'"""
-    _value_pattern = fr"{num_value_pattern}|{bool_value_pattern}|{single_quotes_value_pattern}"
-    multi_value_pattern = fr"""\((?P<{ValueType.value}>\d+(?:,\s*\d+)*|'(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{{\}}\s]|'')*'(?:,\s*'(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{{\}}\s]|'')*')*)\)"""
+    num_value_pattern = rf"(?P<{ValueType.number_value}>\d+(?:\.\d+)*)\s*"
+    bool_value_pattern = rf"(?P<{ValueType.bool_value}>true|false)\s*"
+    single_quotes_value_pattern = (
+        rf"""'(?P<{ValueType.single_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{{\}}\s]|'')*)'"""
+    )
+    _value_pattern = rf"{num_value_pattern}|{bool_value_pattern}|{single_quotes_value_pattern}"
+    multi_value_pattern = rf"""\((?P<{ValueType.value}>\d+(?:,\s*\d+)*|'(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{{\}}\s]|'')*'(?:,\s*'(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{{\}}\s]|'')*')*)\)"""  # noqa: E501
 
     wildcard_symbol = "%"
 
@@ -55,19 +55,19 @@ class AthenaTokenizer(QueryTokenizer):
     def should_process_value_wildcard_symbols(operator: str) -> bool:
         return operator.lower() in ("like",)
 
-    def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> Tuple[str, Any]:
+    def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> tuple[str, Any]:
         if (num_value := get_match_group(match, group_name=ValueType.number_value)) is not None:
             return operator, num_value
 
-        elif (bool_value := get_match_group(match, group_name=ValueType.bool_value)) is not None:
+        if (bool_value := get_match_group(match, group_name=ValueType.bool_value)) is not None:
             return operator, bool_value
 
-        elif (s_q_value := get_match_group(match, group_name=ValueType.single_quotes_value)) is not None:
+        if (s_q_value := get_match_group(match, group_name=ValueType.single_quotes_value)) is not None:
             return operator, s_q_value
 
         return super().get_operator_and_value(match, operator)
 
-    def search_field_value(self, query) -> Tuple[FieldValue, str]:
+    def search_field_value(self, query: str) -> tuple[FieldValue, str]:
         field_name = self.search_field(query)
         operator = self.search_operator(query, field_name)
         should_process_value_wildcard_symbols = self.should_process_value_wildcard_symbols(operator)
@@ -76,9 +76,7 @@ class AthenaTokenizer(QueryTokenizer):
         operator_token = Identifier(token_type=operator)
         if should_process_value_wildcard_symbols:
             value, operator_token = self.process_value_wildcard_symbols(
-                value=value,
-                operator=operator,
-                wildcard_symbol=self.wildcard_symbol
+                value=value, operator=operator, wildcard_symbol=self.wildcard_symbol
             )
 
         field_name = field_name.strip('"')
@@ -86,5 +84,5 @@ class AthenaTokenizer(QueryTokenizer):
         return field_value, query
 
     def tokenize(self, query: str) -> list:
-        query = re.sub(r"\s*ESCAPE\s*'.'", '', query)  # remove `ESCAPE 'escape_char'` in LIKE expr
+        query = re.sub(r"\s*ESCAPE\s*'.'", "", query)  # remove `ESCAPE 'escape_char'` in LIKE expr
         return super().tokenize(query)

@@ -1,8 +1,8 @@
 class CustomEnumMeta(type):
-    def __new__(mcs, name: str, bases: tuple, attrs: dict):
+    def __new__(cls, name: str, bases: tuple, attrs: dict):
         _attrs, _enum = {}, {}
         for base in bases:
-            if isinstance(base, mcs):
+            if isinstance(base, cls):
                 _enum.update(getattr(base, "_enum", {}))
 
         for key, value in attrs.items():
@@ -13,12 +13,12 @@ class CustomEnumMeta(type):
 
         _attrs["_enum"] = _enum
 
-        return super().__new__(mcs, name, bases, _attrs)
+        return super().__new__(cls, name, bases, _attrs)
 
-    def __contains__(cls, name):
+    def __contains__(cls, name: str):
         return name in cls._enum.values()
 
-    def __getattr__(cls, name):
+    def __getattr__(cls, name: str):
         try:
             return cls._enum[name]
         except KeyError as e:

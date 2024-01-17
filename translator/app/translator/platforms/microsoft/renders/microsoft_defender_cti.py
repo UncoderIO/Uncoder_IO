@@ -16,17 +16,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+from typing import ClassVar
 
-from app.translator.platforms.microsoft.const import microsoft_defender_details
-from app.translator.platforms.microsoft.mappings.mdatp_cti import DEFAULT_MICROSOFT_DEFENDER_MAPPING
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
+from app.translator.platforms.microsoft.const import microsoft_defender_details
+from app.translator.platforms.microsoft.mappings.mdatp_cti import DEFAULT_MICROSOFT_DEFENDER_MAPPING
 
 
 class MicrosoftDefenderCTI(RenderCTI):
     details: PlatformDetails = microsoft_defender_details
 
-    data_map: dict = {"default": '{key} =~ "{value}"', "url": '{key} has "{value}"'}
+    field_value_templates_map: ClassVar[dict[str, str]] = {
+        "default": '{key} =~ "{value}"',
+        "url": '{key} has "{value}"',
+    }
     or_operator: str = " or "
     group_or_operator: str = " or "
     or_group: str = "({or_group})"
@@ -35,7 +39,7 @@ class MicrosoftDefenderCTI(RenderCTI):
     final_result_for_one: str = "union * | where {result}\n"
     default_mapping = DEFAULT_MICROSOFT_DEFENDER_MAPPING
 
-    def create_field_value(self, field: str, value: str, generic_field: str):
-        if data_map := self.data_map.get(generic_field):
-            return data_map.format(key=field, value=value)
-        return self.data_map.get("default").format(key=field, value=value)
+    def create_field_value(self, field: str, value: str, generic_field: str) -> str:
+        if field_value_template := self.field_value_templates_map.get(generic_field):
+            return field_value_template.format(key=field, value=value)
+        return self.field_value_templates_map["default"].format(key=field, value=value)

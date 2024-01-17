@@ -16,16 +16,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-
 import copy
 import json
+from typing import Optional
 
-from app.translator.platforms.elasticsearch.const import KIBANA_SEARCH_SOURCE_JSON, KIBANA_RULE, kibana_rule_details
-from app.translator.platforms.elasticsearch.mapping import ElasticSearchMappings, elasticsearch_mappings
-from app.translator.platforms.elasticsearch.renders.elasticsearch import ElasticSearchQueryRender, ElasticSearchFieldValue
 from app.translator.core.mapping import SourceMapping
-from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.parser_output import MetaInfoContainer
+from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.platforms.elasticsearch.const import KIBANA_RULE, KIBANA_SEARCH_SOURCE_JSON, kibana_rule_details
+from app.translator.platforms.elasticsearch.mapping import ElasticSearchMappings, elasticsearch_mappings
+from app.translator.platforms.elasticsearch.renders.elasticsearch import (
+    ElasticSearchFieldValue,
+    ElasticSearchQueryRender,
+)
 from app.translator.tools.utils import get_rule_description_str
 
 
@@ -39,8 +42,15 @@ class KibanaRuleRender(ElasticSearchQueryRender):
     or_token = "OR"
     field_value_map = KibanaFieldValue(or_token=or_token)
 
-    def finalize_query(self, prefix: str, query: str, functions: str, meta_info: MetaInfoContainer = None,
-                       source_mapping: SourceMapping = None, not_supported_functions: list = None):
+    def finalize_query(
+        self,
+        prefix: str,
+        query: str,
+        functions: str,
+        meta_info: Optional[MetaInfoContainer] = None,
+        source_mapping: Optional[SourceMapping] = None,  # noqa: ARG002
+        not_supported_functions: Optional[list] = None,
+    ) -> str:
         query = super().finalize_query(prefix=prefix, query=query, functions=functions)
         search_source = copy.deepcopy(KIBANA_SEARCH_SOURCE_JSON)
         search_source["query"]["query_string"]["query"] = query
@@ -52,8 +62,8 @@ class KibanaRuleRender(ElasticSearchQueryRender):
             description=meta_info.description or rule["_source"]["description"],
             author=meta_info.author,
             rule_id=meta_info.id,
-            license=meta_info.license,
-            references=meta_info.references
+            license_=meta_info.license,
+            references=meta_info.references,
         )
         rule_str = json.dumps(rule, indent=4, sort_keys=False)
         if not_supported_functions:

@@ -1,30 +1,31 @@
-from typing import List, Optional
+from typing import Optional
 
-from app.translator.core.mapping import BasePlatformMappings, LogSourceSignature, SourceMapping, DEFAULT_MAPPING_NAME
+from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
 
 
 class SigmaLogSourceSignature(LogSourceSignature):
-    def __init__(self,
-                 product: Optional[List[str]],
-                 category: Optional[List[str]],
-                 service: Optional[List[str]],
-                 default_source: dict = None):
+    def __init__(
+        self,
+        product: Optional[list[str]],
+        category: Optional[list[str]],
+        service: Optional[list[str]],
+        default_source: dict = None,
+    ):
         self.products = set(product or [])
         self.categories = set(category or [])
         self.services = set(service or [])
         self._default_source = default_source or {}
 
-    def is_suitable(self,
-                    service: Optional[List[str]],
-                    product: Optional[List[str]],
-                    category: Optional[List[str]]) -> bool:
+    def is_suitable(
+        self, service: Optional[list[str]], product: Optional[list[str]], category: Optional[list[str]]
+    ) -> bool:
         product_match = set(product or []).issubset(self.products)
         category_match = set(category or []).issubset(self.categories)
         service_match = set(service or []).issubset(self.services)
         return product_match and category_match and service_match
 
     def __str__(self) -> str:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @property
     def log_sources(self) -> dict:
@@ -38,17 +39,12 @@ class SigmaMappings(BasePlatformMappings):
         category = mapping.get("log_source", {}).get("category")
         default_log_source = mapping["default_log_source"]
         return SigmaLogSourceSignature(
-            product=product,
-            service=service,
-            category=category,
-            default_source=default_log_source
+            product=product, service=service, category=category, default_source=default_log_source
         )
 
-    def get_suitable_source_mappings(self,
-                                     field_names: List[str],
-                                     product: List[str] = None,
-                                     service: List[str] = None,
-                                     category: List[str] = None) -> List[SourceMapping]:
+    def get_suitable_source_mappings(
+        self, field_names: list[str], product: list[str] = None, service: list[str] = None, category: list[str] = None
+    ) -> list[SourceMapping]:
         suitable_source_mappings = []
         for source_mapping in self._source_mappings.values():
             if source_mapping.source_id == DEFAULT_MAPPING_NAME:

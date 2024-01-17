@@ -17,16 +17,16 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 
-from app.translator.platforms.graylog.const import GRAYLOG_QUERY_DETAILS
-from app.translator.platforms.graylog.mappings.graylog_cti import DEFAULT_GRAYLOG_MAPPING
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
+from app.translator.platforms.graylog.const import GRAYLOG_QUERY_DETAILS
+from app.translator.platforms.graylog.mappings.graylog_cti import DEFAULT_GRAYLOG_MAPPING
 
 
 class GraylogCTI(RenderCTI):
     details: PlatformDetails = PlatformDetails(**GRAYLOG_QUERY_DETAILS)
 
-    data_map: str = '"{value}"'
+    field_value_template: str = '"{value}"'
     or_operator: str = " "
     group_or_operator: str = " OR "
     or_group: str = "{processing_key}:({or_group})"

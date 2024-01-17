@@ -17,16 +17,16 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 
-from app.translator.platforms.rsa_netwitness.const import RSA_NETWITNESS_QUERY_DETAILS
-from app.translator.platforms.rsa_netwitness.mappings.rsa_netwitness_cti import DEFAULT_RSA_NETWITNESS_MAPPING
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
+from app.translator.platforms.rsa_netwitness.const import RSA_NETWITNESS_QUERY_DETAILS
+from app.translator.platforms.rsa_netwitness.mappings.rsa_netwitness_cti import DEFAULT_RSA_NETWITNESS_MAPPING
 
 
 class RSANetwitnessCTI(RenderCTI):
     details: PlatformDetails = PlatformDetails(**RSA_NETWITNESS_QUERY_DETAILS)
 
-    data_map: str = "'{value}'"
+    field_value_template: str = "'{value}'"
     or_operator: str = ", "
     group_or_operator: str = " or "
     or_group: str = "({processing_key} = {or_group})"

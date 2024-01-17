@@ -1,16 +1,13 @@
-import datetime
 import json
-from datetime import datetime
-from typing import List, Dict
 import os
-
+from collections.abc import Generator
 from contextlib import asynccontextmanager
+from datetime import datetime
 
 from fastapi import APIRouter, FastAPI
 
-from const import ROOT_PROJECT_PATH
-
 from app.translator.core.mitre import MitreConfig
+from const import ROOT_PROJECT_PATH
 
 assistance_router = APIRouter()
 
@@ -18,29 +15,23 @@ suggestions = {}
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> Generator[None, None, None]:  # noqa: ARG001
     MitreConfig().update_mitre_config()
-    with open(os.path.join(ROOT_PROJECT_PATH, 'app/dictionaries/uncoder_meta_info_roota.json'), 'r') as file:
-        json_f = json.load(file)
-        suggestions['roota'] = json_f
-    with open(os.path.join(ROOT_PROJECT_PATH, 'app/dictionaries/uncoder_meta_info_sigma.json'), 'r') as file:
-        json_f = json.load(file)
-        suggestions['sigma'] = json_f
+    with open(os.path.join(ROOT_PROJECT_PATH, "app/dictionaries/uncoder_meta_info_roota.json")) as file:
+        suggestions["roota"] = json.load(file)
+    with open(os.path.join(ROOT_PROJECT_PATH, "app/dictionaries/uncoder_meta_info_sigma.json")) as file:
+        suggestions["sigma"] = json.load(file)
     yield
 
 
-@assistance_router.get(
-    '/suggestions/{parser_id}',
-    tags=["assistance"],
-    description="Get suggestions"
-)
-async def get_suggestions(parser_id: str) -> List[Dict]:
+@assistance_router.get("/suggestions/{parser_id}", tags=["assistance"], description="Get suggestions")
+async def get_suggestions(parser_id: str) -> list[dict]:
     parser_dict = suggestions.get(parser_id, [])
-    if parser_id == 'roota':
-        today = datetime.today().strftime('%Y-%m-%d')
+    if parser_id == "roota":
+        today = datetime.today().strftime("%Y-%m-%d")
         for i in parser_dict:
-            if i['title'] == 'Date':
-                for v in i['dictionary']:
-                    v['name'] = today
+            if i["title"] == "Date":
+                for v in i["dictionary"]:
+                    v["name"] = today
                 return parser_dict
     return parser_dict

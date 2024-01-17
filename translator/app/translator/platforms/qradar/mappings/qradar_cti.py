@@ -8,5 +8,5 @@ DEFAULT_QRADAR_MAPPING = {
     "Domain": "Hostname",
     "HashSha1": "File Hash",
     "Files": "Filename",
-    "URL": "URL"
+    "URL": "URL",
 }

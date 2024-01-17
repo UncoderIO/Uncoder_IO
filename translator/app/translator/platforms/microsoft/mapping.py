@@ -1,14 +1,14 @@
-from typing import List, Optional
+from typing import Optional
 
-from app.translator.core.mapping import BasePlatformMappings, LogSourceSignature, SourceMapping, DEFAULT_MAPPING_NAME
+from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
 
 
 class MicrosoftSentinelLogSourceSignature(LogSourceSignature):
-    def __init__(self, tables: Optional[List[str]], default_source: dict):
+    def __init__(self, tables: Optional[list[str]], default_source: dict):
         self.tables = set(tables or [])
         self._default_source = default_source or {}
 
-    def is_suitable(self, table: List[str]) -> bool:
+    def is_suitable(self, table: list[str]) -> bool:
         return set(table).issubset(self.tables)
 
     def __str__(self) -> str:
@@ -21,16 +21,15 @@ class MicrosoftSentinelMappings(BasePlatformMappings):
         default_log_source = mapping["default_log_source"]
         return MicrosoftSentinelLogSourceSignature(tables=tables, default_source=default_log_source)
 
-    def get_suitable_source_mappings(self, field_names: List[str], table: List[str]) -> List[SourceMapping]:
+    def get_suitable_source_mappings(self, field_names: list[str], table: list[str]) -> list[SourceMapping]:
         suitable_source_mappings = []
         for source_mapping in self._source_mappings.values():
             if source_mapping.source_id == DEFAULT_MAPPING_NAME:
                 continue
 
             log_source_signature: MicrosoftSentinelLogSourceSignature = source_mapping.log_source_signature
-            if log_source_signature.is_suitable(table=table):
-                if source_mapping.fields_mapping.is_suitable(field_names):
-                    suitable_source_mappings.append(source_mapping)
+            if log_source_signature.is_suitable(table=table) and source_mapping.fields_mapping.is_suitable(field_names):
+                suitable_source_mappings.append(source_mapping)
 
         if not suitable_source_mappings:
             suitable_source_mappings = [self._source_mappings[DEFAULT_MAPPING_NAME]]

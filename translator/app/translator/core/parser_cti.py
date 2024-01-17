@@ -1,12 +1,20 @@
-import re
 import ipaddress
+import re
+from typing import Optional
 
-from typing import Optional, List
 from pydantic import BaseModel
 
-from app.translator.core.exceptions.iocs import IocsLimitExceededException, EmptyIOCSException
-from app.translator.tools.const import IP_IOC_REGEXP_PATTERN, DOMAIN_IOC_REGEXP_PATTERN, URL_IOC_REGEXP_PATTERN, \
-    hash_regexes, IOCType, HashType, IocParsingRule, HASH_MAP
+from app.translator.core.exceptions.iocs import EmptyIOCSException, IocsLimitExceededException
+from app.translator.tools.const import (
+    DOMAIN_IOC_REGEXP_PATTERN,
+    HASH_MAP,
+    IP_IOC_REGEXP_PATTERN,
+    URL_IOC_REGEXP_PATTERN,
+    HashType,
+    IocParsingRule,
+    IOCType,
+    hash_regexes,
+)
 
 
 class Iocs(BaseModel):
@@ -23,7 +31,7 @@ class Iocs(BaseModel):
 
     def return_iocs(self, include_source_ip: bool = False) -> dict:
         if all(not value for value in [self.ip, self.url, self.domain, self.hash_dict]):
-            raise EmptyIOCSException()
+            raise EmptyIOCSException
         result = {"DestinationIP": self.ip, "URL": self.url, "Domain": self.domain}
         if include_source_ip:
             result["SourceIP"] = self.ip
@@ -33,16 +41,15 @@ class Iocs(BaseModel):
 
 
 class CTIParser:
-
     def get_iocs_from_string(
-            self,
-            string: str,
-            include_ioc_types: Optional[List[IOCType]] = None,
-            include_hash_types: Optional[List[HashType]] = None,
-            exceptions: Optional[List[str]] = None,
-            ioc_parsing_rules: Optional[List[IocParsingRule]] = None,
-            limit: Optional[int] = None,
-            include_source_ip: bool = False
+        self,
+        string: str,
+        include_ioc_types: Optional[list[IOCType]] = None,
+        include_hash_types: Optional[list[HashType]] = None,
+        exceptions: Optional[list[str]] = None,
+        ioc_parsing_rules: Optional[list[IocParsingRule]] = None,
+        limit: Optional[int] = None,
+        include_source_ip: Optional[bool] = False,
     ) -> dict:
         iocs = Iocs()
         string = self.replace_dots_hxxp(string, ioc_parsing_rules)
@@ -67,14 +74,14 @@ class CTIParser:
                 raise IocsLimitExceededException(f"IOCs count {total_count} exceeds limit {limit}.")
         return iocs.return_iocs(include_source_ip)
 
-    def replace_dots_hxxp(self, string, ioc_parsing_rules):
+    def replace_dots_hxxp(self, string: str, ioc_parsing_rules: Optional[list[IocParsingRule]]) -> str:
         if ioc_parsing_rules is None or "replace_dots" in ioc_parsing_rules:
             string = self._replace_dots(string)
         if ioc_parsing_rules is None or "replace_hxxp" in ioc_parsing_rules:
             string = self._replace_hxxp(string)
         return string
 
-    def remove_duplicates(self, iocs):
+    def remove_duplicates(self, iocs: Iocs) -> Iocs:
         iocs.ip = self._remove_duplicates_from_list(iocs.ip)
         iocs.domain = self._remove_duplicates_from_list(iocs.domain)
         iocs.url = self._remove_duplicates_from_list(iocs.url)
@@ -82,7 +89,7 @@ class CTIParser:
             iocs.hash_dict[key] = self._remove_duplicates_from_list(value)
         return iocs
 
-    def remove_exceptions(self, iocs, exceptions=None):
+    def remove_exceptions(self, iocs: Iocs, exceptions: Optional[list[str]] = None) -> Iocs:
         iocs.ip = self._remove_exceptions(iocs.ip, exceptions)
         iocs.domain = self._remove_exceptions(iocs.domain, exceptions)
         iocs.url = self._remove_exceptions(iocs.url, exceptions)
@@ -99,26 +106,18 @@ class CTIParser:
         return list(dict.fromkeys(ls))
 
     @classmethod
-    def _remove_exceptions(
-        cls, values: list[str], exceptions: Optional[List[str]]
-    ) -> list[str]:
+    def _remove_exceptions(cls, values: list[str], exceptions: Optional[list[str]]) -> list[str]:
         if not exceptions:
             return values
         return [v for v in values if not cls._str_contain_one_of_exceptions(v, exceptions)]
 
     @staticmethod
     def _str_contain_one_of_exceptions(s: str, exceptions: list[str]) -> bool:
-        for e in exceptions:
-            if e in s:
-                return True
-        return False
+        return any(e for e in exceptions if e in s)
 
     @staticmethod
     def _replace_dots(s: str) -> str:
-        s = s.replace("(.)", ".")
-        s = s.replace("[.]", ".")
-        s = s.replace("{.}", ".")
-        return s
+        return s.replace("(.)", ".").replace("[.]", ".").replace("{.}", ".")
 
     @staticmethod
     def _replace_hxxp(s: str) -> str:
@@ -132,6 +131,7 @@ class CTIParser:
     def _is_private_or_reserved(ip: str) -> bool:
         try:
             addr = ipaddress.ip_address(ip)
-            return addr.is_private or addr.is_reserved
         except Exception:
             return False
+        else:
+            return addr.is_private or addr.is_reserved

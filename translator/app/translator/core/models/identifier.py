@@ -1,4 +1,4 @@
-from app.translator.core.custom_types.tokens import LogicalOperatorType, OperatorType, GroupType
+from app.translator.core.custom_types.tokens import GroupType, LogicalOperatorType, OperatorType
 
 
 class _IdentifierTokenType(LogicalOperatorType, GroupType, OperatorType):

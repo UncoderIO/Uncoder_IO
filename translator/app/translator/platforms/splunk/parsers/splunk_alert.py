@@ -17,24 +17,21 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 import re
-from typing import List, Optional
+from typing import Optional
 
+from app.translator.core.models.parser_output import MetaInfoContainer, SiemContainer
+from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.platforms.splunk.const import splunk_alert_details
 from app.translator.platforms.splunk.parsers.splunk import SplunkParser
-from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.models.parser_output import SiemContainer, MetaInfoContainer
 
 
 class SplunkAlertParser(SplunkParser):
     details: PlatformDetails = splunk_alert_details
 
     @staticmethod
-    def _get_meta_info(source_mapping_ids: List[str], meta_info: Optional[str]) -> MetaInfoContainer:
+    def _get_meta_info(source_mapping_ids: list[str], meta_info: Optional[str]) -> MetaInfoContainer:
         description = re.search(r"description\s*=\s*(?P<query>.+)", meta_info).group("description")
-        return MetaInfoContainer(
-            source_mapping_ids=source_mapping_ids,
-            description=description
-        )
+        return MetaInfoContainer(source_mapping_ids=source_mapping_ids, description=description)
 
     def parse(self, text: str) -> SiemContainer:
         query = re.search(r"search\s*=\s*(?P<query>.+)", text).group("query")
@@ -44,5 +41,5 @@ class SplunkAlertParser(SplunkParser):
         return SiemContainer(
             query=tokens,
             meta_info=self._get_meta_info([source_mapping.source_id for source_mapping in source_mappings]),
-            functions=functions
+            functions=functions,
         )

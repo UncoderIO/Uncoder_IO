@@ -8,5 +8,5 @@ DEFAULT_QUALYS_MAPPING = {
     "Domain": "domain",
     "HashSha1": "file.hash.sha1",
     "Files": "file.name",
-    "URL": "url"
+    "URL": "url",
 }

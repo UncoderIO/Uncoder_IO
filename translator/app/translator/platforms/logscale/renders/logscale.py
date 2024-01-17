@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-from typing import Union
+from typing import Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.mapping import SourceMapping
@@ -43,7 +43,7 @@ class LogScaleFieldValue(BaseQueryFieldValue):
             return f"({self.or_token.join(self.equal_modifier(field=field, value=v) for v in value)})"
         if value == "":
             return f'{self.apply_field_name(field_name=field)}=""'
-        return f'{self.apply_field_name(field_name=field)}=/{self.apply_value(value)}/i'
+        return f"{self.apply_field_name(field_name=field)}=/{self.apply_value(value)}/i"
 
     def less_modifier(self, field: str, value: Union[int, str]) -> str:
         return f'{self.apply_field_name(field_name=field)}<"{self.apply_value(value)}"'
@@ -60,7 +60,7 @@ class LogScaleFieldValue(BaseQueryFieldValue):
     def not_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join([self.not_equal_modifier(field=field, value=v) for v in value])})"
-        return f'{self.apply_field_name(field_name=field)}!=/{self.apply_value(value)}/i'
+        return f"{self.apply_field_name(field_name=field)}!=/{self.apply_value(value)}/i"
 
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
@@ -70,22 +70,22 @@ class LogScaleFieldValue(BaseQueryFieldValue):
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.endswith_modifier(field=field, value=v) for v in value)})"
-        return f'{self.apply_field_name(field_name=field)}=/{self.apply_value(value)}$/i'
+        return f"{self.apply_field_name(field_name=field)}=/{self.apply_value(value)}$/i"
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.startswith_modifier(field=field, value=v) for v in value)})"
-        return f'{self.apply_field_name(field_name=field)}=/^{self.apply_value(value)}/i'
+        return f"{self.apply_field_name(field_name=field)}=/^{self.apply_value(value)}/i"
 
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.regex_modifier(field=field, value=v) for v in value)})"
-        return f'{self.apply_field_name(field_name=field)}=/{self.apply_value(value)}/'
+        return f"{self.apply_field_name(field_name=field)}=/{self.apply_value(value)}/"
 
     def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.keywords(field=field, value=v) for v in value)})"
-        return f'/{self.apply_value(value)}/i'
+        return f"/{self.apply_value(value)}/i"
 
 
 class LogScaleQueryRender(BaseQueryRender):
@@ -107,12 +107,19 @@ class LogScaleQueryRender(BaseQueryRender):
     def wrap_with_comment(self, value: str) -> str:
         return f"/* {value} */"
 
-    def finalize_query(self, prefix: str, query: str, functions: str, meta_info: MetaInfoContainer = None,
-                       source_mapping: SourceMapping = None, not_supported_functions: list = None) -> str:
+    def finalize_query(
+        self,
+        prefix: str,
+        query: str,
+        functions: str,
+        meta_info: Optional[MetaInfoContainer] = None,
+        source_mapping: Optional[SourceMapping] = None,  # noqa: ARG002
+        not_supported_functions: Optional[list] = None,
+    ) -> str:
         if prefix:
             query = self.query_pattern.format(prefix=prefix, query=query, functions=functions)
         else:
-            query = f'{query} {functions.lstrip()}'
+            query = f"{query} {functions.lstrip()}"
         query = self.wrap_query_with_meta_info(meta_info=meta_info, query=query)
         if not_supported_functions:
             rendered_not_supported = self.render_not_supported_functions(not_supported_functions)

@@ -1,12 +1,10 @@
-from app.translator.platforms.sigma.models.operator import OR, AND, NOT
+from app.translator.platforms.sigma.models.operator import AND, NOT, OR
 
 
 class Group:
-    parent_group = []
-    sub_group = None
-    last_field = None
-
     def __init__(self):
+        self.sub_group = None
+        self.last_field = None
         self._items = None
 
     def __add__(self, other):
@@ -22,11 +20,11 @@ class Group:
             self._items += other
         self.last_field = other
         return self
-    
+
     @property
-    def _hash(self):
+    def _hash(self) -> int:
         return hash(str(self._items))
-    
+
     def __hash__(self):
         return hash(str(self._items))
 

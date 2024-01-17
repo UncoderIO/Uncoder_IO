@@ -1,8 +1,8 @@
-from typing import Union, Optional
+from typing import Optional, Union
 
-from app.translator.core.mapping import SourceMapping, DEFAULT_MAPPING_NAME
-from app.translator.core.models.identifier import Identifier
 from app.translator.core.custom_types.tokens import OperatorType
+from app.translator.core.mapping import DEFAULT_MAPPING_NAME, SourceMapping
+from app.translator.core.models.identifier import Identifier
 
 
 class Field:
@@ -33,12 +33,12 @@ class FieldValue:
         self.__add_value(value)
 
     @property
-    def value(self):
+    def value(self) -> Union[int, str, list[Union[int, str]]]:
         if isinstance(self.values, list) and len(self.values) == 1:
             return self.values[0]
         return self.values
 
-    def __add_value(self, value: Optional[Union[int, str, list, tuple]]):
+    def __add_value(self, value: Optional[Union[int, str, list, tuple]]) -> None:
         if value and isinstance(value, (list, tuple)):
             self.values.extend(value)
         elif value and isinstance(value, str) and value.isnumeric():
@@ -46,38 +46,28 @@ class FieldValue:
         elif value is not None and isinstance(value, (int, str)):
             self.values.append(value)
 
-    def __add__(self, other):
-        self.values.append(other)
-
     def __repr__(self):
         return f"{self.field.source_name} {self.operator.token_type} {self.values}"
 
 
 class Keyword:
-    def __init__(self, value):
+    def __init__(self, value: Union[str, list[str]]):
         self.operator: Identifier = Identifier(token_type=OperatorType.KEYWORD)
         self.name = "keyword"
         self.values: [str] = []
         self.__add_value(value=value)
 
     @property
-    def value(self):
+    def value(self) -> Union[str, list[str]]:
         if isinstance(self.values, list) and len(self.values) == 1:
             return self.values[0]
         return self.values
 
-    def __add_value(self, value):
+    def __add_value(self, value: Union[str, list[str]]) -> None:
         if value and isinstance(value, (list, tuple)):
             self.values.extend(value)
         elif value and isinstance(value, str):
             self.values.append(value)
-
-    def __add__(self, other):
-        if other and isinstance(other, (list, tuple)):
-            self.values.extend(other)
-        elif other and isinstance(other, str):
-            self.values.append(other)
-        return self
 
     def __repr__(self):
         return f"{self.name} {self.operator.token_type} {self.values}"

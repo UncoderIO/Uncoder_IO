@@ -3,5 +3,5 @@ SIGMA_RULE_DETAILS = {
     "siem_type": "sigma",
     "platform_name": "Sigma",
     "group_name": "Sigma",
-    "group_id": "sigma"
+    "group_id": "sigma",
 }

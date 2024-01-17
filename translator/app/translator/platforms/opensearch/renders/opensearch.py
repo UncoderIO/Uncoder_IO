@@ -19,10 +19,10 @@ limitations under the License.
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
-from app.translator.platforms.base.lucene.renders.lucene import LuceneQueryRender, LuceneFieldValue
+from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.platforms.base.lucene.renders.lucene import LuceneFieldValue, LuceneQueryRender
 from app.translator.platforms.opensearch.const import opensearch_query_details
 from app.translator.platforms.opensearch.mapping import OpenSearchMappings, opensearch_mappings
-from app.translator.core.models.platform_details import PlatformDetails
 
 
 class OpenSearchFieldValue(LuceneFieldValue):

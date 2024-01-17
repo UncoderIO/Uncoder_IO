@@ -16,11 +16,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.platforms.base.spl.renders.spl import SplFieldValue, SplQueryRender
 from app.translator.platforms.crowdstrike.const import crowdstrike_query_details
 from app.translator.platforms.crowdstrike.functions import CrowdStrikeFunctions, crowd_strike_functions
 from app.translator.platforms.crowdstrike.mapping import CrowdstrikeMappings, crowdstrike_mappings
-from app.translator.core.models.platform_details import PlatformDetails
 
 
 class CrowdStrikeFieldValue(SplFieldValue):
@@ -35,7 +35,7 @@ class CrowdStrikeQueryRender(SplQueryRender):
 
     or_token = "OR"
     field_value_map = CrowdStrikeFieldValue(or_token=or_token)
-    comment_symbol = '`'
+    comment_symbol = "`"
 
     def __init__(self):
         super().__init__()

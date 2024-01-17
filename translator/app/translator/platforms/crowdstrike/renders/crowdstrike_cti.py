@@ -17,16 +17,16 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 
-from app.translator.platforms.crowdstrike.const import crowdstrike_query_details
-from app.translator.platforms.crowdstrike.mappings.crowdstrike_cti import DEFAULT_CROWDSTRIKE_MAPPING
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
+from app.translator.platforms.crowdstrike.const import crowdstrike_query_details
+from app.translator.platforms.crowdstrike.mappings.crowdstrike_cti import DEFAULT_CROWDSTRIKE_MAPPING
 
 
 class CrowdStrikeCTI(RenderCTI):
     details: PlatformDetails = crowdstrike_query_details
 
-    data_map: str = '{key}="{value}"'
+    field_value_template: str = '{key}="{value}"'
     or_operator: str = " OR "
     group_or_operator: str = " "
     or_group: str = "({or_group})"

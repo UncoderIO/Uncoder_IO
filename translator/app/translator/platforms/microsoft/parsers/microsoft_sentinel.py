@@ -16,16 +16,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
 
-from typing import Tuple, List, Dict
 
 from app.translator.core.models.functions.base import ParsedFunctions
+from app.translator.core.models.parser_output import MetaInfoContainer, SiemContainer
+from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.core.parser import Parser
 from app.translator.platforms.microsoft.const import microsoft_sentinel_query_details
 from app.translator.platforms.microsoft.functions import MicrosoftFunctions, microsoft_sentinel_functions
 from app.translator.platforms.microsoft.mapping import MicrosoftSentinelMappings, microsoft_sentinel_mappings
 from app.translator.platforms.microsoft.tokenizer import MicrosoftSentinelTokenizer
-from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.parser import Parser
-from app.translator.core.models.parser_output import SiemContainer, MetaInfoContainer
 
 
 class MicrosoftParser(Parser):
@@ -35,12 +34,12 @@ class MicrosoftParser(Parser):
     details: PlatformDetails = microsoft_sentinel_query_details
 
     @staticmethod
-    def _get_meta_info(source_mapping_ids: List[str], meta_info: dict) -> MetaInfoContainer:
+    def _get_meta_info(source_mapping_ids: list[str], meta_info: dict) -> MetaInfoContainer:  # noqa: ARG004
         return MetaInfoContainer(source_mapping_ids=source_mapping_ids)
 
-    def _parse_query(self, query: str) -> Tuple[str, Dict[str, List[str]], ParsedFunctions]:
+    def _parse_query(self, query: str) -> tuple[str, dict[str, list[str]], ParsedFunctions]:
         table, query, functions = self.platform_functions.parse(query)
-        log_sources = dict(table=[table])
+        log_sources = {"table": [table]}
         return query, log_sources, functions
 
     def parse(self, text: str) -> SiemContainer:
@@ -50,5 +49,5 @@ class MicrosoftParser(Parser):
         return SiemContainer(
             query=tokens,
             meta_info=self._get_meta_info([source_mapping.source_id for source_mapping in source_mappings], {}),
-            functions=functions
+            functions=functions,
         )

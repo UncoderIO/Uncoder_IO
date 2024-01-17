@@ -17,16 +17,16 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 
-from app.translator.platforms.securonix.const import SECURONIX_QUERY_DETAILS
-from app.translator.platforms.securonix.mappings.securonix_cti import DEFAULT_SECURONIX_MAPPING
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
+from app.translator.platforms.securonix.const import SECURONIX_QUERY_DETAILS
+from app.translator.platforms.securonix.mappings.securonix_cti import DEFAULT_SECURONIX_MAPPING
 
 
 class SecuronixCTI(RenderCTI):
     details: PlatformDetails = PlatformDetails(**SECURONIX_QUERY_DETAILS)
 
-    data_map: str = '{key} CONTAINS "{value}"'
+    field_value_template: str = '{key} CONTAINS "{value}"'
     or_operator: str = " OR "
     group_or_operator: str = " OR "
     or_group: str = "({or_group})"

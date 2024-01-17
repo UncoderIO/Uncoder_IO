@@ -17,12 +17,14 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 
+from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.platforms.microsoft.const import microsoft_defender_details
 from app.translator.platforms.microsoft.functions import MicrosoftFunctions, microsoft_defender_functions
 from app.translator.platforms.microsoft.mapping import MicrosoftDefenderMappings, microsoft_defender_mappings
-from app.translator.platforms.microsoft.renders.microsoft_sentinel import MicrosoftSentinelQueryRender, \
-    MicrosoftSentinelFieldValue
-from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.platforms.microsoft.renders.microsoft_sentinel import (
+    MicrosoftSentinelFieldValue,
+    MicrosoftSentinelQueryRender,
+)
 
 
 class MicrosoftDefenderFieldValue(MicrosoftSentinelFieldValue):

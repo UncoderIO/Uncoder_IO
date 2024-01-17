@@ -6,7 +6,7 @@ ATHENA_QUERY_DETAILS = {
     "group_name": "AWS Athena",
     "platform_name": "Query",
     "group_id": "athena",
-    "alt_platform_name": "OCSF"
+    "alt_platform_name": "OCSF",
 }
 
 athena_details = PlatformDetails(**ATHENA_QUERY_DETAILS)

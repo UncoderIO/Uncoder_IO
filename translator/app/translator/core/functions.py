@@ -20,9 +20,9 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from functools import cached_property
-from typing import Dict, List, TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional
 
-from app.translator.core.exceptions.functions import NotSupportedFunctionException, InvalidFunctionSignature
+from app.translator.core.exceptions.functions import InvalidFunctionSignature, NotSupportedFunctionException
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.field import Field
 from app.translator.core.models.functions.base import Function, ParsedFunctions
@@ -38,17 +38,16 @@ class FunctionParser(ABC):
 
     @abstractmethod
     def parse(self, func_body: str) -> Function:
-        raise NotImplementedError()
+        raise NotImplementedError
 
 
 class FunctionRender(ABC):
-
     @abstractmethod
     def render(self, function: Function, source_mapping: SourceMapping) -> str:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @staticmethod
-    def concat_kwargs(kwargs: Dict[str, str]) -> str:
+    def concat_kwargs(kwargs: dict[str, str]) -> str:
         result = ""
         for key, value in kwargs.items():
             if value:
@@ -67,16 +66,17 @@ class FunctionRender(ABC):
 
 
 class PlatformFunctionsManager(ABC):
-    _parsers_map: Dict[str, FunctionParser] = {}
-    _renders_map: Dict[str, FunctionRender] = {}
-    _names_map: Dict[str, str] = {}
+    def __init__(self):
+        self._parsers_map: dict[str, FunctionParser] = {}
+        self._renders_map: dict[str, FunctionRender] = {}
+        self._names_map: dict[str, str] = {}
 
     @abstractmethod
     def init_search_func_render(self, platform_render: BaseQueryRender) -> None:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @cached_property
-    def _inverted_names_map(self) -> Dict[str, str]:
+    def _inverted_names_map(self) -> dict[str, str]:
         return {value: key for key, value in self._names_map.items()}
 
     def get_parser(self, func_name: str) -> Optional[FunctionParser]:
@@ -106,7 +106,7 @@ class PlatformFunctions:
         invalid = []
         functions = query.split(self.function_delimiter)
         for func in functions:
-            split_func = func.strip().split(' ')
+            split_func = func.strip().split(" ")
             func_name, func_body = split_func[0], " ".join(split_func[1:])
             if func_parser := self.manager.get_parser(self.manager.get_generic_func_name(func_name)):
                 try:
@@ -120,14 +120,14 @@ class PlatformFunctions:
         return ParsedFunctions(
             functions=parsed,
             not_supported=[self.wrap_function_with_delimiter(func) for func in not_supported],
-            invalid=invalid
+            invalid=invalid,
         )
 
-    def render(self, functions: List[Function], source_mapping: SourceMapping) -> str:
+    def render(self, functions: list[Function], source_mapping: SourceMapping) -> str:
         result = ""
         for func in functions:
             if not (func_render := self.manager.get_render(func.name)):
-                raise NotImplementedError()
+                raise NotImplementedError
 
             func_str = self.wrap_function_with_delimiter(func_render.render(func, source_mapping))
             result = f"{result} {func_str}" if result else func_str

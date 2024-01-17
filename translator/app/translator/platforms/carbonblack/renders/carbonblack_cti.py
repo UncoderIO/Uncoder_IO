@@ -17,16 +17,16 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 
-from app.translator.platforms.carbonblack.const import CARBON_BLACK_QUERY_DETAILS
-from app.translator.platforms.carbonblack.mappings.carbonblack_cti import DEFAULT_CARBONBLACK_MAPPING
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
+from app.translator.platforms.carbonblack.const import CARBON_BLACK_QUERY_DETAILS
+from app.translator.platforms.carbonblack.mappings.carbonblack_cti import DEFAULT_CARBONBLACK_MAPPING
 
 
 class CarbonBlackCTI(RenderCTI):
     details: PlatformDetails = PlatformDetails(**CARBON_BLACK_QUERY_DETAILS)
 
-    data_map: str = "{key}:{value}"
+    field_value_template: str = "{key}:{value}"
     or_operator: str = " OR "
     group_or_operator: str = " OR "
     or_group: str = "({or_group})"

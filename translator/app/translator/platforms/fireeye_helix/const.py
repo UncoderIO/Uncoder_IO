@@ -1,4 +1,3 @@
-
 FIREEYE_HELIX_QUERY_DETAILS = {
     "siem_type": "fireeye_helix",
     "name": "FireEye Helix",

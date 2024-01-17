@@ -16,20 +16,19 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
 
-from typing import List
 
+from app.translator.core.mixins.rule import JsonRuleMixin
+from app.translator.core.models.parser_output import MetaInfoContainer, SiemContainer
+from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.platforms.microsoft.const import microsoft_sentinel_rule_details
 from app.translator.platforms.microsoft.parsers.microsoft_sentinel import MicrosoftParser
-from app.translator.core.mixins.rule import JsonRuleMixin
-from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.models.parser_output import SiemContainer, MetaInfoContainer
 
 
 class MicrosoftRuleParser(MicrosoftParser, JsonRuleMixin):
     details: PlatformDetails = microsoft_sentinel_rule_details
 
     @staticmethod
-    def _get_meta_info(source_mapping_ids: List[str], meta_info: dict) -> MetaInfoContainer:
+    def _get_meta_info(source_mapping_ids: list[str], meta_info: dict) -> MetaInfoContainer:
         return MetaInfoContainer(
             source_mapping_ids=source_mapping_ids,
             title=meta_info.get("displayName"),
@@ -44,8 +43,7 @@ class MicrosoftRuleParser(MicrosoftParser, JsonRuleMixin):
         return SiemContainer(
             query=tokens,
             meta_info=self._get_meta_info(
-                source_mapping_ids=[source_mapping.source_id for source_mapping in source_mappings],
-                meta_info=rule
+                source_mapping_ids=[source_mapping.source_id for source_mapping in source_mappings], meta_info=rule
             ),
-            functions=functions
+            functions=functions,
         )

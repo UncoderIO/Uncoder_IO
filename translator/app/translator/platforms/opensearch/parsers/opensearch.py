@@ -16,10 +16,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
 
+from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.platforms.base.lucene.parsers.lucene import LuceneParser
 from app.translator.platforms.opensearch.const import opensearch_query_details
 from app.translator.platforms.opensearch.mapping import OpenSearchMappings, opensearch_mappings
-from app.translator.core.models.platform_details import PlatformDetails
 
 
 class OpenSearchParser(LuceneParser):
