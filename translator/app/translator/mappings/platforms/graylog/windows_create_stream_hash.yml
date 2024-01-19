@@ -1,0 +1,7 @@
+platform: Graylog
+source: windows_create_stream_hash
+description: Text that describe current mapping
+
+field_mapping:
+  Image: winlog.event_data.Image
+  Hashes: winlog.event_data.Hashes

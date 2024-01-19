@@ -18,7 +18,7 @@ class LuceneLogSourceSignature(LogSourceSignature):
 class LuceneMappings(BasePlatformMappings):
     def prepare_log_source_signature(self, mapping: dict) -> LuceneLogSourceSignature:
         indices = mapping.get("log_source", {}).get("index")
-        default_log_source = mapping["default_log_source"]
+        default_log_source = mapping.get("default_log_source", {})
         return LuceneLogSourceSignature(indices=indices, default_source=default_log_source)
 
     def get_suitable_source_mappings(

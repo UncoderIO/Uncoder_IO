@@ -1,0 +1,14 @@
+platform: Graylog
+source: azure_BehaviorAnalytics
+description: Text that describe current mapping
+
+field_mapping:
+  ActionType: ActionType
+  ActivityInsights: ActivityInsights
+  ActivityType: ActivityType
+  EventSource: EventSource
+  DevicesInsights: DevicesInsights
+  RiskDetail: RiskDetail
+  UsersInsights: UsersInsights
+  UsersInsights.IsDormantAccount: UsersInsights.IsDormantAccount
+  UsersInsights.IsNewAccount: UsersInsights.IsNewAccount

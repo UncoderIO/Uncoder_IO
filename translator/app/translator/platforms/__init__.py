@@ -19,6 +19,8 @@ from app.translator.platforms.elasticsearch.renders.elasticsearch_cti import Ela
 from app.translator.platforms.elasticsearch.renders.kibana import KibanaRuleRender
 from app.translator.platforms.elasticsearch.renders.xpack_watcher import XPackWatcherRuleRender
 from app.translator.platforms.fireeye_helix.renders.fireeye_helix_cti import FireeyeHelixCTI
+from app.translator.platforms.graylog.parsers.graylog import GraylogParser
+from app.translator.platforms.graylog.renders.graylog import GraylogRender
 from app.translator.platforms.graylog.renders.graylog_cti import GraylogCTI
 from app.translator.platforms.logpoint.renders.logpoint_cti import LogpointCTI
 from app.translator.platforms.logscale.parsers.logscale import LogScaleParser
@@ -76,6 +78,7 @@ __ALL_RENDERS = (
     XPackWatcherRuleRender(),
     OpenSearchQueryRender(),
     OpenSearchRuleRender(),
+    GraylogRender(),
 )
 
 __ALL_PARSERS = (
@@ -95,6 +98,7 @@ __ALL_PARSERS = (
     ElasticSearchParser(),
     ElasticSearchRuleParser(),
     OpenSearchParser(),
+    GraylogParser(),
 )
 
 
