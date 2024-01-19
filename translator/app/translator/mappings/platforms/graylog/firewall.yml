@@ -1,0 +1,13 @@
+platform: Graylog
+source: firewall
+description: Text that describe current mapping
+
+field_mapping:
+  src-ip:
+    - source.address
+    - source.ip
+  src-port: source.port
+  dst-ip:
+    - destination.address
+    - destination.ip
+  dst-port: destination.port

@@ -1,0 +1,19 @@
+platform: Graylog
+source: windows_system
+description: Text that describe current mapping
+
+field_mapping:
+  EventID: winlog.event_id
+  AccountName: winlog.event_data.AccountName
+  ImagePath: winlog.event_data.ImagePath
+  ServiceName: winlog.event_data.ServiceName
+  ServiceType: winlog.event_data.ServiceType
+  StartType: winlog.event_data.StartType
+  Provider_Name: winlog.provider_name
+  Origin: winlog.event_data.Origin
+  HiveName: winlog.event_data.HiveName
+  Caption: winlog.event_data.Caption
+  param1: winlog.event_data.param1
+  param2: winlog.event_data.param2
+  Channel: winlog.channel
+  DeviceName: winlog.event_data.DeviceName

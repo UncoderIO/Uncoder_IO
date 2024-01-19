@@ -1,0 +1,10 @@
+platform: Graylog
+source: linux_auditd
+description: Text that describe current mapping
+
+field_mapping:
+  a0: process.args
+  a1: process.args
+  a2: process.args
+  a3: process.args
+  exe: process.executable

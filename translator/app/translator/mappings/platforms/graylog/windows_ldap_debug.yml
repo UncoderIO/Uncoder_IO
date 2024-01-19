@@ -1,0 +1,7 @@
+platform: Graylog
+source: windows_ldap_debug
+description: Text that describe current mapping
+
+field_mapping:
+  EventID: winlog.event_id
+  SearchFilter: winlog.event_data.SearchFilter

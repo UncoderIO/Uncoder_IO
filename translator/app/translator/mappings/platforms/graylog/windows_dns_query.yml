@@ -1,0 +1,9 @@
+platform: Graylog
+source: windows_dns_query
+description: Text that describe current mapping
+
+field_mapping:
+  Image: winlog.event_data.Image
+  User: winlog.event_data.User
+  QueryName: winlog.event_data.QueryName
+  QueryResults: winlog.event_data.QueryResults

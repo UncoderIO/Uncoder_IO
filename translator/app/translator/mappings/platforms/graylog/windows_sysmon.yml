@@ -1,0 +1,55 @@
+platform: Graylog
+source: windows_sysmon
+description: Text that describe current mapping
+
+field_mapping:
+  CommandLine: winlog.event_data.CommandLine
+  Image: winlog.event_data.Image
+  ParentImage: winlog.event_data.ParentImage
+  EventID: winlog.event_id
+  CallTrace: winlog.event_data.CallTrace
+  Company: winlog.event_data.Company
+  CurrentDirectory: winlog.event_data.CurrentDirectory
+  Description: winlog.event_data.Description
+  DestinationHostname: winlog.event_data.DestinationHostname
+  DestinationIp: winlog.event_data.DestinationIp
+  DestinationIsIpv6: winlog.event_data.DestinationIsIpv6
+  DestinationPort: winlog.event_data.DestinationPort
+  DestinationPortName: winlog.event_data.DestinationPortName
+  Hashes: winlog.event_data.Hashes
+  Initiated: winlog.event_data.Initiated
+  IntegrityLevel: winlog.event_data.IntegrityLevel
+  ParentCommandLine: winlog.event_data.ParentCommandLine
+  Product: winlog.event_data.Product
+  Protocol: winlog.event_data.Protocol
+  RuleName: winlog.event_data.RuleName
+  SourceHostname: winlog.event_data.SourceHostname
+  SourceIp: winlog.event_data.SourceIp
+  SourceIsIpv6: winlog.event_data.SourceIsIpv6
+  SourcePort: winlog.event_data.SourcePort
+  SourcePortName: winlog.event_data.SourcePortName
+  TargetFilename: winlog.event_data.TargetFilename
+  User: winlog.event_data.User
+  OriginalFileName: winlog.event_data.OriginalFileName
+  Signed: winlog.event_data.Signed
+  Signature: winlog.event_data.Signature
+  SignatureStatus: winlog.event_data.SignatureStatus
+  TargetObject: winlog.event_data.TargetObject
+  Details: winlog.event_data.Details
+  QueryName: winlog.event_data.QueryName
+  QueryResults: winlog.event_data.QueryResults
+  QueryStatus: winlog.event_data.QueryStatus
+  IsExecutable: winlog.event_data.IsExecutable
+  PipeName: winlog.event_data.PipeName
+  ImageLoaded: winlog.event_data.ImageLoaded
+  ImagePath: winlog.event_data.ImagePath
+  Imphash: winlog.event_data.Imphash
+  SourceImage: winlog.event_data.SourceImage
+  StartModule: winlog.event_data.StartModule
+  TargetImage: winlog.event_data.TargetImage
+  Device: winlog.event_data.Device
+  ProcessID: winlog.event_data.ProcessID
+  FileVersion: winlog.event_data.FileVersion
+  StartAddress: winlog.event_data.StartAddress
+  StartFunction: winlog.event_data.StartFunction
+  EventType: winlog.event_data.EventType

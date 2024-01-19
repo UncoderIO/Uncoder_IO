@@ -1,0 +1,13 @@
+platform: Graylog
+source: windows_powershell
+description: Text that describe current mapping
+
+field_mapping:
+  EventID: winlog.event_id
+  ScriptBlockText: winlog.event_data.ScriptBlockText
+  Payload: winlog.event_data.Payload
+  HostApplication: winlog.event_data.HostApplication
+  ContextInfo: winlog.event_data.ContextInfo
+  HostName: winlog.event_data.HostName
+  EngineVersion: winlog.event_data.EngineVersion
+  HostVersion: winlog.event_data.HostVersion

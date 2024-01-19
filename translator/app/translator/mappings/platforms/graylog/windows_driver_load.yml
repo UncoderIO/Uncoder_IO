@@ -1,0 +1,8 @@
+platform: Graylog
+source: windows_driver_load
+description: Text that describe current mapping
+
+field_mapping:
+  ImageLoaded: winlog.event_data.ImageLoaded
+  ImagePath: winlog.event_data.ImagePath
+  Hashes: winlog.event_data.Hashes

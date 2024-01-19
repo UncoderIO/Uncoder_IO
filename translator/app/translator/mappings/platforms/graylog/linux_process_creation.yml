@@ -1,0 +1,9 @@
+platform: Graylog
+source: linux_process_creation
+description: Text that describe current mapping
+
+field_mapping:
+  CommandLine: process.command_line
+  Image: process.executable
+  ParentCommandLine: process.parent.command_line
+  ParentImage: process.parent.executable

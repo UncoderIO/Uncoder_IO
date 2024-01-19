@@ -1,0 +1,10 @@
+platform: Graylog
+source: windows_application
+description: Text that describe current mapping
+
+field_mapping:
+  Provider_Name: winlog.provider_name
+  EventID: winlog.event_id
+  Data: winlog.event_data.Data
+  Message: winlog.event_data.Message
+  Level: winlog.opcode

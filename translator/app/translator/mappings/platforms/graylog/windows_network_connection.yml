@@ -1,0 +1,12 @@
+platform: Graylog
+source: windows_network_connection
+description: Text that describe current mapping
+
+field_mapping:
+  Image: winlog.event_data.Image
+  DestinationHostname: winlog.event_data.DestinationHostname
+  DestinationIp: winlog.event_data.DestinationIp
+  DestinationPort: winlog.event_data.DestinationPort
+  SourceIp: winlog.event_data.SourceIp
+  SourcePort: winlog.event_data.SourcePort
+  Initiated: winlog.event_data.Initiated
