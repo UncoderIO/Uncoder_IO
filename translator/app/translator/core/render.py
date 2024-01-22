@@ -174,10 +174,15 @@ class BaseQueryRender:
 
     def wrap_query_with_meta_info(self, meta_info: MetaInfoContainer, query: str) -> str:
         if meta_info and (meta_info.id or meta_info.title):
+            meta_info_dict = {
+                "name: ": meta_info.title,
+                "uuid: ": meta_info.id,
+                "author: ": meta_info.author,
+                "licence: ": meta_info.license
+            }
             query_meta_info = "\n".join(
                 self.wrap_with_comment(f"{key}{value}")
-                for key, value in {"name: ": meta_info.title, "uuid: ": meta_info.id}.items()
-                if value
+                for key, value in meta_info_dict.items() if value
             )
             query = f"{query}\n\n{query_meta_info}"
         return query
