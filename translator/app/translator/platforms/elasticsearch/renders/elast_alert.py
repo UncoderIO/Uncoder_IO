@@ -61,7 +61,12 @@ class ElastAlertRuleRender(ElasticSearchQueryRender):
         rule = ELASTICSEARCH_ALERT.replace("<query_placeholder>", query)
         rule = rule.replace(
             "<description_place_holder>",
-            get_rule_description_str(description=meta_info.description, license_=meta_info.license),
+            get_rule_description_str(
+                author=meta_info.author,
+                description=meta_info.description,
+                license_=meta_info.license,
+                rule_id=meta_info.id,
+            ),
         )
         rule = rule.replace("<title_place_holder>", meta_info.title)
         rule = rule.replace("<priority_place_holder>", _SEVERITIES_MAP[meta_info.severity])
