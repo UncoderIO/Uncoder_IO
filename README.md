@@ -85,7 +85,7 @@ The following types of IOCs are supported:
 - IP   
 
 TODO list of languages we will support shortly:
-- Graylog
+- ~Graylog~ :white_check_mark:
 - Devo
 - LimaCharlie
 - Sumo Logic
@@ -96,7 +96,7 @@ TODO list of languages we will support shortly:
 - FortiSIEM
 - Exabeam
 - Palo Alto Cortex XSOAR
-- ElastAlert 
+- ~ElastAlert~ :white_check_mark: 
 - FireEye OpenIOC
 - SentinelOne
 - Datadog
