@@ -29,7 +29,7 @@ def get_license_str(license_: str) -> str:
 
 
 def get_description_str(description: str) -> str:
-    if not description.endswith("."):
+    if description != "" and not description.endswith("."):
         description += "."
     return description
 
