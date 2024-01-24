@@ -63,9 +63,11 @@ Uncoder IO може працювати локально без потреби в
 - CrowdStrike Query - `crowdstrike-spl-query`
 - Elasticsearch Query - `elastic-lucene-query`
 - Elasticsearch Rule - `elastic-lucene-rule`
+- ElastAlert Rule - `elastalert-lucene-rule`
 - Sigma Rule - `sigma-yml-rule`
 - Chronicle Security Query - `chronicle-yaral-query`
 - Chronicle Security Rule - `chronicle-yaral-rule`
+- Graylog Query - `graylog-lucene-query`
 
 Запити на основі індикаторів компрометації можна генерувати в таких форматах:
 - Microsoft Sentinel Query - `sentinel-kql-query`
