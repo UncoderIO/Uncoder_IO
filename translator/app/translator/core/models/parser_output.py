@@ -35,7 +35,7 @@ class MetaInfoContainer:
         self.severity = severity or SeverityType.low
         self.references = references or []
         self.tags = tags or []
-        self.mitre_attack = mitre_attack or []
+        self.mitre_attack = mitre_attack or {}
         self.status = status or "stable"
         self.false_positives = false_positives or []
         self.source_mapping_ids = source_mapping_ids or [DEFAULT_MAPPING_NAME]

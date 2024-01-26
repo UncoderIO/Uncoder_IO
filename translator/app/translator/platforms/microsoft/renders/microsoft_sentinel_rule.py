@@ -52,10 +52,10 @@ class MicrosoftSentinelRuleRender(MicrosoftSentinelQueryRender):
         tactics = []
         techniques = []
 
-        for tactic in meta_info.mitre_attack.get("tactics"):
+        for tactic in meta_info.mitre_attack.get("tactics", []):
             tactics.append(tactic["tactic"])
 
-        for technique in meta_info.mitre_attack.get("techniques"):
+        for technique in meta_info.mitre_attack.get("techniques", []):
             techniques.append(technique["technique_id"])
 
         return tactics, techniques

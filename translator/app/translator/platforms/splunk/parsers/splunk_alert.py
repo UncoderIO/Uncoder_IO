@@ -30,7 +30,8 @@ class SplunkAlertParser(SplunkParser):
 
     @staticmethod
     def _get_meta_info(source_mapping_ids: list[str], meta_info: Optional[str]) -> MetaInfoContainer:
-        description = re.search(r"description\s*=\s*(?P<query>.+)", meta_info).group("description")
+        description = re.search(r"description\s*=\s*(?P<query>.+)", meta_info).group()
+        description = description.replace("description = ", "")
         return MetaInfoContainer(source_mapping_ids=source_mapping_ids, description=description)
 
     def parse(self, text: str) -> SiemContainer:
@@ -40,6 +41,6 @@ class SplunkAlertParser(SplunkParser):
 
         return SiemContainer(
             query=tokens,
-            meta_info=self._get_meta_info([source_mapping.source_id for source_mapping in source_mappings]),
+            meta_info=self._get_meta_info([source_mapping.source_id for source_mapping in source_mappings], text),
             functions=functions,
         )
