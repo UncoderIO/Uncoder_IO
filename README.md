@@ -8,7 +8,7 @@
 Uncoder IO is an open-source version of it's SaaS counterpart https://uncoder.io and its AI co-pilot version Uncoder AI. Since 2018, Uncoder IO has been a fast, private, and easy-to-use online translator for Sigma Rules, maintaining 100% privacy of its users. An open-source Uncoder IO expands use cases into the following:
 - Translation from Sigma Rules, a generic rule format for SIEM systems, to specific SIEM, EDR, and Data Lake languages
 - IOC packaging from any non-binary format such as PDF, text, STIX, or OpenIOC to specific SIEM, EDR, and Data Lake languages
-- Translation from Roota Rules, the newly released language for collective cyber defense, to specific SIEM, EDR, and Data Lake languages.
+- Translation from [Roota](https://github.com/UncoderIO/RootA/blob/main/README.md) Rules, the newly released language for collective cyber defense, to specific SIEM, EDR, and Data Lake languages.
 
 Uncoder is developed by a team of Detection Engineers, Threat Hunters, and CTI Analysts from Ukraine, Europe, USA, Argentina, and Australia to perform their daily job and nightly cyber defense hobbies faster & better, making their outcomes easier to share for the collective good. 
 
@@ -31,14 +31,14 @@ Uncoder is developed by a team of Detection Engineers, Threat Hunters, and CTI A
 
 ## :pretzel: Roota & Sigma Translation Engine
 
-Uncoder IO supports automated translation of Roota and Sigma rules into multiple SIEM, EDR, XDR, and Data Lake formats. 
+Uncoder IO supports automated translation of [Roota](https://github.com/UncoderIO/RootA/blob/main/README.md) and Sigma rules into multiple SIEM, EDR, XDR, and Data Lake formats. 
 - **Sigma** is a generic and open signature format that allows you to describe relevant log events in a straightforward manner, which received industry adoption across 155 countries by over 8000 organizations according to SOC Prime's download and translation statistics. 
  
-- **Roota** is an open-source language that supports query definition directly in specific SIEM languages, vendor-agnostic correlation syntax, MITRE ATT&CK 14.0 for code autocompletion, and log source taxonomy autocomplete function based on Amazon's OCSF or Sigma. Roota+Uncoder serve as the first bridge towards full cyber security languages compatibility, where one day, knowing one specific language (say SPL or KQL) or generic language (say Roota or Sigma) would mean that you have master expertise in them all. This way, your complex detection logic can be rendered in other languages in an automated fashion. In case a native rule or query contains functions unsupported by Roota or target technology, those functions won’t be translated, with a corresponding note appended to the code translation. This is done so that experts can either manually complete translations if they know both source and destination languages, or use Uncoder AI to manually take care of such scenarios. If sharing with Sigma was easy, sharing with Roota is natural and future-proof.
+- **[Roota](https://github.com/UncoderIO/RootA/blob/main/README.md)** is an open-source language that supports query definition directly in specific SIEM languages, vendor-agnostic correlation syntax, MITRE ATT&CK 14.0 for code autocompletion, and log source taxonomy autocomplete function based on Amazon's OCSF or Sigma. Roota+Uncoder serve as the first bridge towards full cyber security languages compatibility, where one day, knowing one specific language (say SPL or KQL) or generic language (say Roota or Sigma) would mean that you have master expertise in them all. This way, your complex detection logic can be rendered in other languages in an automated fashion. In case a native rule or query contains functions unsupported by Roota or target technology, those functions won’t be translated, with a corresponding note appended to the code translation. This is done so that experts can either manually complete translations if they know both source and destination languages, or use Uncoder AI to manually take care of such scenarios. If sharing with Sigma was easy, sharing with Roota is natural and future-proof.
 
 ## :pizza: Roota & Sigma Rule Editor
 
-Uncoder IO supports a built-in Sigma and Roota rules autocompletion wizard suggesting code enhancements with latest MITRE ATT&CK and log source dictionaries to streamline the rule creation process. AI or not, Uncoder is here to make it easier to code.
+Uncoder IO supports a built-in Sigma and [Roota](https://github.com/UncoderIO/RootA/blob/main/README.md) rules autocompletion wizard suggesting code enhancements with latest MITRE ATT&CK and log source dictionaries to streamline the rule creation process. AI or not, Uncoder is here to make it easier to code.
 
 ## :popcorn: IOC Query Generator
 
@@ -49,7 +49,7 @@ Uncoder IO acts as an open-source IOC packager helping CTI and SOC analysts as w
 Uncoder IO can be run on-prem without a need for an internet connection, thus supporting air-gapped network operation. We do however suggest checking for updates and deploying them regularly. Meanwhile, a SaaS version still ensures 100% privacy with no cookie tracking, no data or code logging, or sharing with third parties. Even with options for Uncoder AI functions, you are always in control of your code and data.
 
 # :dna: Supported Language Formats
-Roota and Sigma Rules can be translated into the following formats:
+[Roota](https://github.com/UncoderIO/RootA/blob/main/README.md) and Sigma Rules can be translated into the following formats:
 - AWS OpenSearch Query - `opensearch-lucene-query`
 - AWS Athena Query (Security Lake) - `athena-sql-query`
 - Falcon LogScale Query - `logscale-lql-query`
@@ -182,7 +182,7 @@ If the input rule cannot be translated, you'll see an error message. When transl
 6. Click Translate.
 
 ## :coffee: Writing rules
-Write a Roota or Sigma rule in the input panel. Benefit from code templates, syntax highlighting, autocomplete suggester with MITRE ATT&CK, and other nice little features that improve coding experience.
+Write a [Roota](https://github.com/UncoderIO/RootA/blob/main/README.md) or Sigma rule in the input panel. Benefit from code templates, syntax highlighting, autocomplete suggester with MITRE ATT&CK, and other nice little features that improve coding experience.
 
 # :bulb: How to Contribute
 Thank you for your interest in the Uncoder IO open-source project! Your contribution really matters in evolving the project and helping us make Uncoder IO even more useful for the global cyber defender community.
