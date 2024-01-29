@@ -23,7 +23,7 @@ class QueryParenthesesException(BaseParserException):
     def __init__(self):
         message = (
             "The query logic is broken. In the input, the numbers of opening and closing parentheses "
-            "do not match. If you think there's no error, please contact us via GitHub."
+            "do not match. If you think there's no error, please contact us."
         )
         super().__init__(message)
 
