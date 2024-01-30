@@ -43,7 +43,7 @@ class LogScaleAlertParser(LogScaleParser, JsonRuleMixin):
     def parse(self, text: str) -> SiemContainer:
         parsed_rule = self._parse_rule(text)
         query, functions = self._parse_query(query=parsed_rule.pop("query"))
-        tokens, source_mappings = self.get_tokens_and_source_mappings(text, {})
+        tokens, source_mappings = self.get_tokens_and_source_mappings(query, {})
         return SiemContainer(
             query=tokens,
             meta_info=self._get_meta_info(

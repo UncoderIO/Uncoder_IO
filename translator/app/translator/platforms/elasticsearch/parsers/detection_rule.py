@@ -32,7 +32,8 @@ class ElasticSearchRuleParser(ElasticSearchParser, JsonRuleMixin):
         query = rule["query"]
         description = rule["description"]
         name = rule["name"]
-        return {"query": query, "title": name, "description": description}
+        query, logsources = self._parse_log_sources(query)
+        return {"query": query, "title": name, "description": description, "logsources": logsources}
 
     @staticmethod
     def _get_meta_info(source_mapping_ids: list[str], meta_info: dict) -> MetaInfoContainer:
@@ -41,8 +42,8 @@ class ElasticSearchRuleParser(ElasticSearchParser, JsonRuleMixin):
         )
 
     def parse(self, text: str) -> SiemContainer:
-        rule, log_sources = self._parse_rule(text)
-        tokens, source_mappings = self.get_tokens_and_source_mappings(rule.get("query"), log_sources)
+        rule = self._parse_rule(text)
+        tokens, source_mappings = self.get_tokens_and_source_mappings(rule.get("query"), rule.get("log_sources", {}))
         return SiemContainer(
             query=tokens,
             meta_info=self._get_meta_info(
