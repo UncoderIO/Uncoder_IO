@@ -74,13 +74,24 @@ IOC-based queries can be generated in the following formats:
 - Microsoft Sentinel Query - `sentinel-kql-query`
 - Microsoft Defender for Endpoint Query - `mde-kql-query`
 - Splunk Query - `splunk-spl-query`
-- CrowdStrike Query - `crowdstrike-spl-query`
-- Elasticsearch Query - `elastic-lucene-query`
+- CrowdStrike Endpoint Security Query - `crowdstrike-spl-query`
+- Elastic Stack Query - `elastic-lucene-query`
 - AWS OpenSearch Query - `opensearch-lucene-query`
 - Falcon LogScale Query - `logscale-lql-query`
 - IBM QRadar Query - `qradar-aql-query`
 - AWS Athena Query (Security Lake) - `athena-sql-query`
 - Chronicle Security Query - `chronicle-yaral-query`
+- ArcSight Query - `arcsight`
+- FireEye Query - `fireeye_helix`
+- Graylog Query - `graylog-lucene-query`
+- Logpoint Query - `logpoint`
+- Qualys IOC Query - `qualys`
+- RSA NetWitness Query - `rsa_netwitness`
+- Securonix Query - `securonix`
+- SentinelOne Query (Events) - `s1-events`
+- Snowflake Query - `snowflake`
+- Sumo Logic Query - `sumologic`
+- VMware Carbon Black Query (Cloud) - `carbonblack`
 
 The following types of IOCs are supported:  
 - Hash  
