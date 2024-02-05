@@ -19,6 +19,7 @@ from app.translator.platforms.elasticsearch.renders.elasticsearch_cti import Ela
 from app.translator.platforms.elasticsearch.renders.kibana import KibanaRuleRender
 from app.translator.platforms.elasticsearch.renders.xpack_watcher import XPackWatcherRuleRender
 from app.translator.platforms.fireeye_helix.renders.fireeye_helix_cti import FireeyeHelixCTI
+from app.translator.platforms.forti_siem.renders.forti_siem_rule import FortiSiemRuleRender
 from app.translator.platforms.graylog.parsers.graylog import GraylogParser
 from app.translator.platforms.graylog.renders.graylog import GraylogRender
 from app.translator.platforms.graylog.renders.graylog_cti import GraylogCTI
@@ -99,6 +100,7 @@ __ALL_PARSERS = (
     ElasticSearchRuleParser(),
     OpenSearchParser(),
     GraylogParser(),
+    FortiSiemRuleRender(),
 )
 
 
