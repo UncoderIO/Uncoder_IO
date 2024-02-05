@@ -6,3 +6,4 @@ class SeverityType(CustomEnum):
     high = "high"
     medium = "medium"
     low = "low"
+    informational = "informational"

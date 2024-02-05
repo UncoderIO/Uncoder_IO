@@ -10,6 +10,7 @@ DEFAULT_MAPPING_NAME = "default"
 
 class LogSourceSignature(ABC):
     _default_source: dict
+    wildcard_symbol = "*"
 
     @abstractmethod
     def is_suitable(self, *args, **kwargs) -> bool:
@@ -79,21 +80,21 @@ class SourceMapping:
 
 class BasePlatformMappings:
     def __init__(self, platform_dir: str):
-        self.__loader = LoaderFileMappings()
-        self.__platform_dir = platform_dir
+        self._loader = LoaderFileMappings()
+        self._platform_dir = platform_dir
         self._source_mappings = self.prepare_mapping()
 
     def prepare_mapping(self) -> dict[str, SourceMapping]:
         source_mappings = {}
         default_mapping = SourceMapping(source_id=DEFAULT_MAPPING_NAME)
-        for mapping_dict in self.__loader.load_siem_mappings(self.__platform_dir):
+        for mapping_dict in self._loader.load_siem_mappings(self._platform_dir):
+            log_source_signature = self.prepare_log_source_signature(mapping=mapping_dict)
             if (source_id := mapping_dict["source"]) == DEFAULT_MAPPING_NAME:
-                default_mapping.log_source_signature = self.prepare_log_source_signature(mapping=mapping_dict)
+                default_mapping.log_source_signature = log_source_signature
                 continue
 
             fields_mapping = self.prepare_fields_mapping(field_mapping=mapping_dict.get("field_mapping", {}))
             default_mapping.fields_mapping.update(fields_mapping)
-            log_source_signature = self.prepare_log_source_signature(mapping=mapping_dict)
             source_mappings[source_id] = SourceMapping(
                 source_id=source_id, log_source_signature=log_source_signature, fields_mapping=fields_mapping
             )
@@ -123,3 +124,19 @@ class BasePlatformMappings:
     @property
     def default_mapping(self) -> SourceMapping:
         return self._source_mappings[DEFAULT_MAPPING_NAME]
+
+
+class BaseCommonPlatformMappings(ABC, BasePlatformMappings):
+    def prepare_mapping(self) -> dict[str, SourceMapping]:
+        source_mappings = {}
+        common_field_mapping = self._loader.load_common_mapping(self._platform_dir).get("field_mapping", {})
+
+        for mapping_dict in self._loader.load_siem_mappings(self._platform_dir):
+            source_id = mapping_dict["source"]
+            log_source_signature = self.prepare_log_source_signature(mapping=mapping_dict)
+            fields_mapping = self.prepare_fields_mapping(field_mapping=common_field_mapping)
+            source_mappings[source_id] = SourceMapping(
+                source_id=source_id, log_source_signature=log_source_signature, fields_mapping=fields_mapping
+            )
+
+        return source_mappings
