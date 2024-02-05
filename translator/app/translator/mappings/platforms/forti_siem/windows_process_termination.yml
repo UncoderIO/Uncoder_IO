@@ -1,0 +1,10 @@
+platform: FortiSiem
+source: windows_process_termination
+description: Text that describe current mapping
+
+log_source:
+  eventType:
+    - Win-Sysmon-5-Process-Terminated
+
+default_log_source:
+  eventType: Win-Sysmon-5-Process-Terminated

@@ -1,0 +1,10 @@
+platform: FortiSiem
+source: windows_diagnosis_scripted
+description: Text that describe current mapping
+
+log_source:
+  eventType:
+    - Win-Diagnostics-Scripted-101
+
+default_log_source:
+  eventType: Win-Diagnostics-Scripted*

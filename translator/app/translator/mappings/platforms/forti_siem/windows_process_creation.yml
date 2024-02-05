@@ -1,0 +1,10 @@
+platform: FortiSiem
+source: windows_process_creation
+description: Text that describe current mapping
+
+log_source:
+  eventType:
+    - Win-Sysmon-1-Create-Process
+
+default_log_source:
+  eventType: Win-Sysmon-1-Create-Process

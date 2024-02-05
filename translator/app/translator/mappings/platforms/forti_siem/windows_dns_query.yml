@@ -1,0 +1,10 @@
+platform: FortiSiem
+source: windows_dns_query
+description: Text that describe current mapping
+
+log_source:
+  eventType:
+    - Win-Sysmon-22-DNS-Query
+
+default_log_source:
+  eventType: Win-Sysmon-22-DNS-Query

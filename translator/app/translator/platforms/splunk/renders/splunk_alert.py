@@ -56,6 +56,8 @@ class SplunkAlertRender(SplunkQueryRender):
         meta_info: Optional[MetaInfoContainer] = None,
         source_mapping: Optional[SourceMapping] = None,  # noqa: ARG002
         not_supported_functions: Optional[list] = None,
+        *args,  # noqa: ARG002
+        **kwargs,  # noqa: ARG002
     ) -> str:
         query = super().finalize_query(prefix=prefix, query=query, functions=functions)
         rule = DEFAULT_SPLUNK_ALERT.replace("<query_place_holder>", query)

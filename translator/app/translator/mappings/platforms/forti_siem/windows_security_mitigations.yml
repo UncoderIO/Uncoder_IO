@@ -1,0 +1,11 @@
+platform: FortiSiem
+source: windows_security_mitigations
+description: Text that describe current mapping
+
+log_source:
+  eventType:
+    - Win-Security-Mitigation-11
+    - Win-Security-Mitigation-12
+
+default_log_source:
+  eventType: Win-Security-Mitigation-*

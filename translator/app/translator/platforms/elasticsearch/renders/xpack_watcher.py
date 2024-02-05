@@ -50,6 +50,8 @@ class XPackWatcherRuleRender(ElasticSearchQueryRender):
         meta_info: Optional[MetaInfoContainer] = None,
         source_mapping: Optional[SourceMapping] = None,
         not_supported_functions: Optional[list] = None,
+        *args,  # noqa: ARG002
+        **kwargs,  # noqa: ARG002
     ) -> str:
         query = super().finalize_query(prefix=prefix, query=query, functions=functions)
         rule = copy.deepcopy(XPACK_WATCHER_RULE)

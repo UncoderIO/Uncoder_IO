@@ -1,0 +1,12 @@
+platform: FortiSiem
+source: windows_system
+description: Text that describe current mapping
+
+log_source:
+  eventType:
+    - Win-System-Microsoft-Windows-Eventlog-104
+    - Win-System-Service-Control-Manager-7036-*
+    - Win-System-Service-Control-Manager-7045
+
+default_log_source:
+  eventType: Win-System-*

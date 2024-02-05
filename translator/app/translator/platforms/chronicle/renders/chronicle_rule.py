@@ -107,7 +107,9 @@ class ChronicleSecurityRuleRender(ChronicleQueryRender):
         functions: str,
         meta_info: Optional[MetaInfoContainer] = None,
         source_mapping: Optional[SourceMapping] = None,  # noqa: ARG002
-        not_supported_functions: Optional[list] = None,  # noqa: ARG002
+        not_supported_functions: Optional[list] = None,  # noqa: ARG002,
+        *args,  # noqa: ARG002
+        **kwargs,  # noqa: ARG002
     ) -> str:
         query = super().finalize_query(prefix=prefix, query=query, functions=functions)
         rule = DEFAULT_CHRONICLE_SECURITY_RULE.replace("<query_placeholder>", query)

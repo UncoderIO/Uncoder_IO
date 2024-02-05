@@ -115,6 +115,8 @@ class LogScaleQueryRender(BaseQueryRender):
         meta_info: Optional[MetaInfoContainer] = None,
         source_mapping: Optional[SourceMapping] = None,  # noqa: ARG002
         not_supported_functions: Optional[list] = None,
+        *args,  # noqa: ARG002
+        **kwargs,  # noqa: ARG002
     ) -> str:
         if prefix:
             query = self.query_pattern.format(prefix=prefix, query=query, functions=functions)

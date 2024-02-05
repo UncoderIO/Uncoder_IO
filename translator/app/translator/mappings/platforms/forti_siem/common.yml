@@ -1,0 +1,257 @@
+platform: FortiSiem
+description: Common field mapping
+
+field_mapping:
+  TargetDetails: details
+  Account_Name: user
+  Computer_Name: computer
+  Originating_Computer: srcName
+  FileHash: hashCode
+  FilePath: filePath
+  Fqbn: hostName
+  RuleId: ruleId  # int type
+  RuleName: ruleName
+  CallTrace: procPath
+  IntegrityLevel: integrityLevel
+  ParentIntegrityLevel: procTrustLevel  # int type
+  Company: company
+  ParentProcessGuid: procOwner
+  LogonGuid: uuid
+  ParentUser: userGrp
+  Hashes: hashCode
+  Imphash: hashIMP
+  OriginalFilename: srcFileName
+  OriginalFileName: srcFileName
+  ParentProcess: parentProcName
+  Product: product
+  sha1: hashSHA1
+  DestPort: destIpPort  # int type
+  Destination: destIpAddr  # ip type
+  destination.port: destIpPort  # int type
+  HostApplication: appName
+  TargetName: targetName
+  TargetProcessAddress: destMACAddr
+  Service: serviceName
+  Source: eventSource
+  ImagePath: serviceFileName
+  Path: procPath
+  Payload: dataPayload
+  Properties: propName
+  QueryName: queryId
+  QueryResults: actionResult
+  QueryStatus: status
+  LogonProcessName: winLogonProc
+  ServicePrincipalNames: principal
+  HostVersion: version
+  FailureCode: winKerbFailCode
+  EngineVersion: version
+  DeviceClassName: deviceType
+  DeviceDescription: description
+  Status: winLogonFailCode2
+  AccessList: fileAccess
+  AccessMask: fileAccess
+  AttributeLDAPDisplayName: propName
+  ContextInfo: lineContent
+  AttributeValue: propValue
+  GroupSid: groupID
+  AuditPolicyChanges: actionName
+  CallingProcessName: procName
+  GrantedAccess: accessKeyId
+  KeyLength: msgLen
+  keywords: msg
+  Keywords: msg
+  LayerRTID: permissionLevelID
+  Level: permissionLevelType
+  LDAPDisplayName: propName
+  Value: propValue
+  ObjectClass: osObjType
+  ObjectServer: serverName
+  ObjectValueName: osObjValue
+  PipeName: vpnTunnelName
+  PrivilegeList: privName
+  RelativeTargetName: targetName
+  SAMAccountName: accountName
+  ScriptBlockText: script
+  ShareName: fileName
+  SidHistory: essId
+  Signed: authResult
+  StartFunction: funName
+  StartModule: module
+  TicketEncryptionType: encryptAlgo
+  TicketOptions: kerbTicketOption
+  IpAddress: srcIpAddr  # ip type
+  HiveName: procName
+  DestinationIsIpv6: isIpv6
+  AllowedToDelegateTo: _win_isAllowedToDelegateTo_removed
+  CallerProcessName: procName
+  Caption: description
+  CertThumbprint: certInfo
+  ClassName: deviceType
+  ModifyingApplication: appName
+  OldTargetUserName: oldTargetUser
+  ommandLine: command
+  OriginalName: originalProcName
+  Provider_Name: _win_providerName_removed
+  param1: paraName
+  param2: otherParaName
+  RemoteAddress: remoteAddress
+  SamAccountName: targetUser
+  TargetUserSid: userId
+  TargetSid: groupID
+  TemplateContent: templateContent
+  NewTemplateContent: newTemplateContent
+  NewTargetUserName: targetUser
+  RemoteName: targetName
+  LocalName: filePath
+  processPath: procName
+  Action: eventAction  # int type
+  ApplicationPath: procPath
+  SearchFilter: queryFilter
+  Address: remoteAddress
+  Origin: origLocation
+  PasswordLastSet: passwordLastSet  # Data type
+  TargetServerName: targetName
+  ServerName: serverName
+  DeviceName: hostName
+  AuditSourceName: resourceName
+  TargetLogonId: winLogonId
+  ComputerName: computer
+  CurrentDirectory: dirName
+  Description: description
+  FileVersion: fileVersion
+  GroupName: targetUserGrp
+  LogonId: winLogonId
+  NewName: newObjValue
+  ProcessName: procName
+  QNAME: destName
+  TargetFilename: fileName
+  User: user
+  Image: procName
+  ParentImage: parentProcName
+  CommandLine: command
+  TaskName: task
+  ServiceName: serviceName
+  TargetObject: regKeyPath
+  EventType: osObjAction
+  EventID: eventType
+  EventCode: eventType
+  Details: details
+  ParentCommandLine: parentCommand
+  Message: msg
+  HostName: hostName
+  FileName: fileName
+  TargetImage: targetProcName
+  Accesses: osObjAccessType
+  AccountName: user
+  DestinationIp: destIpAddr  # ip type
+  DestinationPort: destIpPort  # int type
+  DestinationHostname: destName
+  DestinationAddress: destIpAddr  # ip type
+  ObjectType: osObjType
+  ObjectName: osObjName
+  SourceImage: procName
+  SourceAddress: srcIpAddr  # ip type
+  SourcePort: srcIpPort  # int type
+  SourceNetworkAddress: srcIpAddr  # ip type
+  SourceWorkstation: srcName
+  TargetUserName: user
+  UserName: user
+  SubjectDomainName: domain
+  SubjectLogonId: winLogonId
+  SubjectUserName: user
+  SubjectUserSid: securityId
+  Workstation: computer
+  WorkstationName: computer
+  ServiceFileName: serviceFileName
+  Signature: signatureName
+  ImageLoaded: loadedProcName
+  LogonType: winLogonType  # int type
+  AuthenticationPackage: procName
+  AuthenticationPackageName: authenMethod
+  Device: deviceIdentification
+  PolicyName: policyName
+  TargetProcessId: targetProcId
+  TargetUser: targetUser
+  NewValue: newObjValue
+  SubjectAccountName: user
+  ClientAddress: srcIpAddr  # ip type
+  ProcessID: procId
+  TargetFileName: fileName
+  AccountDomain: domain
+  Computer: computer
+  DomainName: targetDomain
+  Initiated: initiated
+  Commandline: command
+  ProcessCommandLine: command
+  Channel: activityType
+  ServiceType: serviceType
+  ServiceStartType: serviceStartType
+  #network
+  dst_ip: destIpAddr  # ip type
+  src_ip: srcIpAddr  # ip type
+  dst_port: destIpPort  # int type
+  src_port: srcIpPort  # int type
+  dns_query: uriQuery
+  uri_query: uriQuery
+  parent_domain: domain
+  record_type: type
+  query: queryId
+  action: activityName
+  operation: opName
+  c-useragent: httpUserAgent
+  c-uri: httpEndUri
+  endpoint: targetName
+  service: serviceName
+  path: procPath
+  name: procName
+  cipher: password
+  request_type: type
+  answer: actionResult
+  resp_mime_types: type
+  message_size: msgLen  # int type
+  question_length: size  # int type
+  cs-method: httpMethod
+  sc-status: status
+  method: httpMethod
+  referer: httpReferrer
+  useragent: httpUserAgent
+  clientip: srcIpAddr  # int type
+  MachineName: hostName
+  TargetPort: destIpPort  # int type
+  DestAddress: destIpAddr  # ip type
+  SourceIp: srcIpAddr  # ip type
+  AppName: appName
+  Binary: code
+  ClientProcessId: procId
+  ParentProcessId: parentProcId
+  Data: lineContent
+  ErrorCode: errorCode
+  FileNameBuffer: fileName
+  ProcessNameBuffer: procName
+  RequestedPolicy: policyIdentity
+  ValidatedPolicy: recipientPolicyId
+  FilterOrigin: filter
+  Application: appName
+  AppID: appName
+  ImageName: procName
+  ImpersonationLevel: permissionLevelID
+  Name: procName
+  PackageFullName: procName
+  PackagePath: procPath
+  ProcessId: procId
+  ProcessPath: procPath
+  Protocol: srcProto
+  SidList: userId
+  SourceCommandLine: command
+  SourceHostname: srcName
+  TargetOutboundUserName: user
+  TaskContent: task
+  TaskContentNew: task
+  md5: hashMD5
+  param3: swParam
+  process: procName
+  sha256: hashSHA256
+  subjectName: subjectContainsWords
+  ExceptionCode: errorCode
+  SignatureStatus: signatureStatus
+  payload: dataPayload

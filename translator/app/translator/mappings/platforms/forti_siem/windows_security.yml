@@ -1,0 +1,13 @@
+platform: FortiSiem
+source: windows_security
+description: Text that describe current mapping
+
+log_source:
+  eventType:
+    - Win-Security-4768-success
+    - Win-Security-4768-failure
+    - Win-Security-4769-failure
+    - Win-Security-4769-success
+
+default_log_source:
+  eventType: Win-Security-*

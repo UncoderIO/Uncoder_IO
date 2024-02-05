@@ -1,0 +1,10 @@
+platform: FortiSiem
+source: windows_dns_client
+description: Text that describe current mapping
+
+log_source:
+  eventType:
+    - Win-DNS-Client-3008
+
+default_log_source:
+  eventType: Win-DNS-Client-*

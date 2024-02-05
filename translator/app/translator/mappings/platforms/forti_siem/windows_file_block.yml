@@ -1,0 +1,10 @@
+platform: FortiSiem
+source: windows_file_block
+description: Text that describe current mapping
+
+log_source:
+  eventType:
+    - Win-Sysmon-27-FileBlockExecutable
+
+default_log_source:
+  eventType: Win-Sysmon-*
