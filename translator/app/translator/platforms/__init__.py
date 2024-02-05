@@ -80,6 +80,7 @@ __ALL_RENDERS = (
     OpenSearchQueryRender(),
     OpenSearchRuleRender(),
     GraylogRender(),
+    FortiSiemRuleRender(),
 )
 
 __ALL_PARSERS = (
@@ -100,7 +101,6 @@ __ALL_PARSERS = (
     ElasticSearchRuleParser(),
     OpenSearchParser(),
     GraylogParser(),
-    FortiSiemRuleRender(),
 )
 
 
