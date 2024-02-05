@@ -1,0 +1,12 @@
+platform: FortiSiem
+source: windows_appxdeployment
+description: Text that describe current mapping
+
+log_source:
+  eventType:
+    - Win-AppXDeployment-Server-400
+    - Win-AppXDeployment-Server-401
+    - Win-AppXDeployment-Server-157
+
+default_log_source:
+  eventType: Win-AppXDeployment-Server-*

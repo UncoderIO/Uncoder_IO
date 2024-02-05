@@ -1,0 +1,12 @@
+platform: FortiSiem
+source: windows_wmi_event
+description: Text that describe current mapping
+
+log_source:
+  eventType:
+    - Win-Sysmon-19-WMI-Event-Filter-Activity
+    - Win-Sysmon-20-WMI-Event-Consumer-Activity
+    - Win-Sysmon-21-WMI-Event-ConsumerToFilter-Activity
+
+default_log_source:
+  eventType: Win-Sysmon-*

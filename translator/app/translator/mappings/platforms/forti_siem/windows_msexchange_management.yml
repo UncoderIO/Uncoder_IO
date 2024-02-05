@@ -1,0 +1,10 @@
+platform: FortiSiem
+source: windows_msexchange_management
+description: Text that describe current mapping
+
+log_source:
+  eventType:
+    - Win-MSExchange-Management-6
+
+default_log_source:
+  eventType: Win-MSExchange-Management-*

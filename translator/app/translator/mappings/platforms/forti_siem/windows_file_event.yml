@@ -1,0 +1,10 @@
+platform: FortiSiem
+source: windows_file_event
+description: Text that describe current mapping
+
+log_source:
+  eventType:
+    - Win-Sysmon-11-FileCreate
+
+default_log_source:
+  eventType: Win-Sysmon-11-FileCreate

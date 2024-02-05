@@ -1,0 +1,6 @@
+platform: FortiSiem
+source: windows_app
+description: Text that describe current mapping
+
+default_log_source:
+  eventType: Win-App-*

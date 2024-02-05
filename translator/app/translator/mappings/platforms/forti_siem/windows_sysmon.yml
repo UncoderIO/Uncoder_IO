@@ -1,0 +1,16 @@
+platform: FortiSiem
+source: windows_sysmon
+description: Text that describe current mapping
+
+log_source:
+  eventType:
+    - Win-Sysmon-2-FileCreation-Time-Changed
+    - Win-Sysmon-8-CreateRemoteThread
+    - Win-Sysmon-9-RawAccessRead
+    - Win-Sysmon-15-FileCreateStreamHash
+    - Win-Sysmon-16-Config-State-Changed
+    - Win-Sysmon-17-PipeCreated
+    - Win-Sysmon-18-PipeConnected
+
+default_log_source:
+  eventType: Win-Sysmon-*
