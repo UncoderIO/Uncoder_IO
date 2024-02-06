@@ -17,7 +17,6 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 
-
 from typing import Union
 
 from app.translator.core.exceptions.core import SigmaRuleValidationException
@@ -56,7 +55,7 @@ class SigmaParser(YamlRuleMixin):
             mitre_attack=self.parse_mitre_attack(rule.get("tags", [])),
             severity=rule.get("level"),
             status=rule.get("status"),
-            tags=sorted(set(rule.get("tags") or [])),
+            tags=sorted(set(rule.get("tags", []))),
             false_positives=self.__parse_false_positives(rule.get("falsepositives")),
             source_mapping_ids=source_mapping_ids,
         )

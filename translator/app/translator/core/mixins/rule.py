@@ -27,7 +27,7 @@ class YamlRuleMixin:
 
     def parse_mitre_attack(self, tags: list[str]) -> dict[str, list]:
         result = {"tactics": [], "techniques": []}
-        for tag in tags:
+        for tag in set(tags):
             tag = tag.lower()
             if tag.startswith("attack."):
                 tag = tag[7::]

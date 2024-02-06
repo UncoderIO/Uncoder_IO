@@ -20,7 +20,7 @@ app.include_router(assistance_router)
 
 
 if __name__ == "__main__":
-    host = os.environ.get("HOST", "127.0.0.1")
+    host = os.environ.get("HOST", "0.0.0.0")
     port = os.environ.get("PORT", "8000")
     if not port.isnumeric():
         raise Exception("Port should be a number!")

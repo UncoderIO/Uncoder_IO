@@ -60,7 +60,7 @@ class ElasticSearchRuleRender(ElasticSearchQueryRender):
                 if "." in technique_name:
                     technique_name = technique_name[: technique_name.index(".")]
                 threat.append(technique_name)
-            return threat
+            return sorted(threat)
 
         for tactic in mitre_attack["tactics"]:
             tactic_render = {"id": tactic["external_id"], "name": tactic["tactic"], "reference": tactic["url"]}
@@ -81,7 +81,7 @@ class ElasticSearchRuleRender(ElasticSearchQueryRender):
             if len(sub_threat["technique"]) > 0:
                 threat.append(sub_threat)
 
-        return threat
+        return sorted(threat, key=lambda x: x["tactic"]["id"])
 
     def finalize_query(
         self,
