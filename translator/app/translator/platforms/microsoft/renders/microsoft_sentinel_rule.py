@@ -49,16 +49,19 @@ class MicrosoftSentinelRuleRender(MicrosoftSentinelQueryRender):
     field_value_map = MicrosoftSentinelRuleFieldValue(or_token=or_token)
 
     def __create_mitre_threat(self, meta_info: MetaInfoContainer) -> tuple[list, list]:
-        tactics = []
+        tactics = set()
         techniques = []
 
-        for tactic in meta_info.mitre_attack.get("tactics", []):
-            tactics.append(tactic["tactic"])
+        for tactic in meta_info.mitre_attack.get("tactics"):
+            tactics.add(tactic["tactic"])
 
-        for technique in meta_info.mitre_attack.get("techniques", []):
+        for technique in meta_info.mitre_attack.get("techniques"):
+            if technique.get("tactic"):
+                for tactic in technique["tactic"]:
+                    tactics.add(tactic)
             techniques.append(technique["technique_id"])
 
-        return tactics, techniques
+        return sorted(tactics), sorted(techniques)
 
     def finalize_query(
         self,

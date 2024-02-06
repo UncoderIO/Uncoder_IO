@@ -2,6 +2,7 @@ import json
 import os
 import ssl
 import urllib.request
+from json import JSONDecodeError
 from urllib.error import HTTPError
 
 from app.translator.tools.singleton_meta import SingletonMeta
@@ -12,9 +13,11 @@ class MitreConfig(metaclass=SingletonMeta):
     config_url: str = "https://raw.githubusercontent.com/mitre/cti/master/enterprise-attack/enterprise-attack.json"
     mitre_source_types: tuple = ("mitre-attack",)
 
-    def __init__(self):
+    def __init__(self, server: bool = False):
         self.tactics = {}
         self.techniques = {}
+        if not server:
+            self.__load_mitre_configs_from_files()
 
     @staticmethod
     def __revoked_or_deprecated(entry: dict) -> bool:
@@ -88,20 +91,30 @@ class MitreConfig(metaclass=SingletonMeta):
                         sub_technique_id = ref["external_id"]
                         sub_technique_name = entry["name"]
                         parent_technique_name = technique_map[sub_technique_id.split(".")[0]]
+                        parent_tactics = self.techniques.get(sub_technique_id.split(".")[0].lower(), {}).get(
+                            "tactic", []
+                        )
                         sub_technique_name = f"{parent_technique_name} : {sub_technique_name}"
                         self.techniques[ref["external_id"].lower()] = {
                             "technique_id": ref["external_id"],
                             "technique": sub_technique_name,
                             "url": ref["url"],
+                            "tactic": parent_tactics
                         }
                         break
 
     def __load_mitre_configs_from_files(self) -> None:
-        with open(os.path.join(ROOT_PROJECT_PATH, "app/dictionaries/tactics.json")) as file:
-            self.tactics = json.load(file)
+        try:
+            with open(os.path.join(ROOT_PROJECT_PATH, "app/dictionaries/tactics.json")) as file:
+                self.tactics = json.load(file)
+        except JSONDecodeError:
+            self.tactics = {}
 
-        with open(os.path.join(ROOT_PROJECT_PATH, "app/dictionaries/techniques.json")) as file:
-            self.techniques = json.load(file)
+        try:
+            with open(os.path.join(ROOT_PROJECT_PATH, "app/dictionaries/techniques.json")) as file:
+                self.techniques = json.load(file)
+        except JSONDecodeError:
+            self.techniques = {}
 
     def get_tactic(self, tactic: str) -> dict:
         tactic = tactic.replace(".", "_")

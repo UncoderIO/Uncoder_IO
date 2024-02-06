@@ -16,7 +16,7 @@ suggestions = {}
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> Generator[None, None, None]:  # noqa: ARG001
-    MitreConfig().update_mitre_config()
+    MitreConfig(server=True).update_mitre_config()
     with open(os.path.join(ROOT_PROJECT_PATH, "app/dictionaries/uncoder_meta_info_roota.json")) as file:
         suggestions["roota"] = json.load(file)
     with open(os.path.join(ROOT_PROJECT_PATH, "app/dictionaries/uncoder_meta_info_sigma.json")) as file:
