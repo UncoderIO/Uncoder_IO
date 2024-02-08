@@ -1,0 +1,16 @@
+platform: Sumologic Query
+source: windows_registry_event
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [windows]
+
+default_log_source:
+  _sourceCategory: windows
+
+field_mapping:
+  TargetObject: ObjectName
+  Image: ProcessName
+  Details: NewValueType
+  EventType: OperationType
+  User: SubjectUserName

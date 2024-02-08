@@ -1,0 +1,9 @@
+platform: Sumologic Query
+source: macos_process_creation
+description: Text that describe current mapping
+
+field_mapping:
+  CommandLine: CommandLine
+  Image: Image
+  ParentCommandLine: ParentCommandLine
+  ParentImage: ParentImage

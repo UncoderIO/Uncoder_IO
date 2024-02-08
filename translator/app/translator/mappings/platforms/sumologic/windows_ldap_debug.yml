@@ -1,0 +1,12 @@
+platform: Sumologic Query
+source: windows_ldap_debug
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [windows]
+
+default_log_source:
+  _sourceCategory: windows
+
+field_mapping:
+  EventID: EventID

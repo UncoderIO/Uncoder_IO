@@ -1,0 +1,9 @@
+platform: Sumologic Query
+source: windows_ntlm
+description: Text that describe current mapping
+
+log_source:
+  event_channel: [Microsoft-Windows-NTLM/Operational]
+
+default_log_source:
+  event_channel: Microsoft-Windows-NTLM/Operational

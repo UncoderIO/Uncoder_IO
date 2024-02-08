@@ -1,0 +1,24 @@
+platform: Sumologic Query
+source: zeek_conn
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [zeek]
+
+default_log_source:
+  _sourceCategory: zeek
+
+field_mapping:
+  history: history
+  id.orig_h: id.orig_h
+  id_resp_p: id_resp_p
+  proto: proto
+  resp_bytes: resp_bytes
+  conn_state: conn_state
+  local_orig: local_orig
+  local_resp: local_resp
+  dst_port: resp_p
+  src_ip: orig_h
+  orig_bytes: orig_bytes
+  src_port: orig_p
+  service: service

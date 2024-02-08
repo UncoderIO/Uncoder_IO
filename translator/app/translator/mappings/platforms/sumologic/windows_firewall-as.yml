@@ -1,0 +1,12 @@
+platform: Sumologic Query
+source: windows_firewall-as
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [FIREWALL]
+
+default_log_source:
+  _sourceCategory: FIREWALL
+
+field_mapping:
+  EventID: EventID

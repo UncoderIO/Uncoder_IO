@@ -1,0 +1,13 @@
+platform: Sumologic Query
+source: windows_wmi_event
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [windows]
+
+default_log_source:
+  _sourceCategory: windows
+
+field_mapping:
+  Destination: Destination
+  EventID: EventID

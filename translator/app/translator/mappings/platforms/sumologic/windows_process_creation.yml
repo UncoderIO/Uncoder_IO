@@ -1,0 +1,14 @@
+platform: Sumologic Query
+source: windows_process_creations
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [windows]
+
+default_log_source:
+  _sourceCategory: windows
+
+field_mapping:
+  CommandLine: CommandLine
+  Image: NewProcessName
+  ParentImage: ParentProcessName

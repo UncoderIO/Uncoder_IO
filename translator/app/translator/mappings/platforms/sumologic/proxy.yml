@@ -1,0 +1,20 @@
+platform: Sumologic Query
+source: proxy
+description: Text that describe current mapping
+
+
+field_mapping:
+  c-uri: c-uri
+  c-useragent: c-useragent
+  cs-method: cs-method
+  cs-bytes: cs-bytes
+  cs-cookie-vars: cs-cookie-vars
+  c-uri-extension: c-uri-extension
+  c-uri-query: c-uri-query
+  cs-cookie: cs-cookie
+  cs-host: cs-host
+  cs-referrer: cs-referrer
+  cs-version: cs-version
+  r-dns: r-dns
+  sc-status: sc-status
+  post-body: post-body

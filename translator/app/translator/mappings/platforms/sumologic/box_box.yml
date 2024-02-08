@@ -1,0 +1,8 @@
+platform: Sumologic Query
+source: box_box
+description: Text that describe current mapping
+
+
+field_mapping:
+  EventType: event_type
+  SourceItemName: item_name

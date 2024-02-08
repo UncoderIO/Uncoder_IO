@@ -1,0 +1,14 @@
+platform: Sumologic Query
+source: windows_dns_query
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [windows]
+
+default_log_source:
+  _sourceCategory: windows
+
+field_mapping:
+  User: UserID
+  QueryName: QueryName
+  QueryResults: QueryResults

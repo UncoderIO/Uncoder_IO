@@ -1,0 +1,13 @@
+platform: Sumologic Query
+source: macos_network_connection
+description: Text that describe current mapping
+
+field_mapping:
+  CommandLine: CommandLine
+  Image: Image
+  DestinationHostname: DestinationHostname
+  DestinationIp: DestinationIp
+  DestinationPort: DestinationPort
+  SourceIp: SourceIp
+  SourcePort: SourcePort
+  ParentImage: ParentImage

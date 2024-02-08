@@ -1,0 +1,24 @@
+platform: Sumologic Query
+source: windows_system
+description: Text that describe current mapping
+
+log_source:
+  _sourceName: [System]
+  _sourceCategory: [windows]
+
+default_log_source:
+  _sourceName: System
+  _sourceCategory: windows
+
+field_mapping:
+  EventID: EventID
+  AccountName: AccountName
+  ImagePath: ImagePath
+  ServiceName: ServiceName
+  ServiceType: ServiceType
+  StartType: StartType
+  HiveName: HiveName
+  param1: param1
+  param2: param2
+  Channel: Channel
+  DeviceName: DeviceName

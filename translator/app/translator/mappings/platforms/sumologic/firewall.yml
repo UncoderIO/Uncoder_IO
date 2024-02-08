@@ -1,0 +1,10 @@
+platform: Sumologic Query
+source: firewall
+description: Text that describe current mapping
+
+
+field_mapping:
+  src-ip: src-ip
+  src-port: src-port
+  dst-ip: dst-ip
+  dst-port: dst-port

@@ -1,0 +1,12 @@
+platform: Sumologic Query
+source: zeek_zeek
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [zeek]
+
+default_log_source:
+  _sourceCategory: zeek
+
+field_mapping:
+  notice.user_agent: user_agent

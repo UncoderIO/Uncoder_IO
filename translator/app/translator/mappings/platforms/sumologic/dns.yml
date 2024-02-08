@@ -1,0 +1,10 @@
+platform: Sumologic Query
+source: dns
+description: Text that describe current mapping
+
+
+field_mapping:
+  dns-query: dns-query
+  parent-domain: parent-domain
+  dns-answer: dns-answer
+  dns-record: dns-record

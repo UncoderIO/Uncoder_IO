@@ -1,0 +1,14 @@
+platform: Sumologic Query
+source: azure_StorageBlobLogs
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [azure]
+
+default_log_source:
+  _sourceCategory: azure
+
+
+field_mapping:
+  Category: category
+  AuthenticationType: AuthenticationType

@@ -1,0 +1,12 @@
+platform: Sumologic Query
+source: zeek_modbus
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [zeek]
+
+default_log_source:
+  _sourceCategory: zeek
+
+field_mapping:
+  id.orig_h: id.orig_h

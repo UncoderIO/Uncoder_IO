@@ -1,0 +1,11 @@
+platform: Sumologic Query
+source: gcp_gcp.audit
+description: Text that describe current mapping
+
+
+field_mapping:
+  message: message
+  protoPayload.methodName: message.data.protoPayload.methodName
+  protoPayload.request.canIpForward: message.data.protopayload.request.canIpforward
+  protoPayload.serviceName: message.data.protopayload.servicename
+

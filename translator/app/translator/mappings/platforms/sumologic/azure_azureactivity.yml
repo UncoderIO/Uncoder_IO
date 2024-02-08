@@ -1,0 +1,17 @@
+platform: Sumologic Query
+source: azure_azureactivity
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [azure]
+
+default_log_source:
+  _sourceCategory: azure
+
+
+field_mapping:
+  Authorization: Authorization
+  Category: Category
+  OperationName: OperationName
+  ResourceId: resourceId
+  Type: type

@@ -1,0 +1,21 @@
+platform: Sumologic Query
+source: windows_powershell
+description: Text that describe current mapping
+
+log_source:
+  _sourceName: [Microsoft-Windows-Powershell]
+  _sourceCategory: [windows]
+
+default_log_source:
+  _sourceName: Microsoft-Windows-Powershell
+  _sourceCategory: windows
+
+field_mapping:
+  EventID: EventID
+  ScriptBlockText: ScriptBlockText
+  Payload: Payload
+  HostApplication: HostApplication
+  ContextInfo: ContextInfo
+  HostName: HostName
+  EngineVersion: EngineVersion
+  HostVersion: HostVersion

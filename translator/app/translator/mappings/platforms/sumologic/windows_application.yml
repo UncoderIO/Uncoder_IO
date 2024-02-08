@@ -1,0 +1,16 @@
+platform: Sumologic Query
+source: windows_application
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [windows]
+
+default_log_source:
+  _sourceCategory: windows
+
+field_mapping:
+  Provider_Name: Provider.Name
+  EventID: EventID
+  Data: EventData.Data
+  Message: Message
+  Level: Level

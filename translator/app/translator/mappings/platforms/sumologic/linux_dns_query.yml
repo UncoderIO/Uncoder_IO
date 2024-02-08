@@ -1,0 +1,15 @@
+platform: Sumologic Query
+source: linux_dns_query
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [linux]
+
+default_log_source:
+  _sourceCategory: linux
+
+field_mapping:
+  Image: Image
+  User: User
+  QueryName: QueryName
+  QueryResults: QueryResults
