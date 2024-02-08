@@ -56,6 +56,7 @@ from app.translator.platforms.splunk.parsers.splunk_alert import SplunkAlertPars
 from app.translator.platforms.splunk.renders.splunk import SplunkQueryRender
 from app.translator.platforms.splunk.renders.splunk_alert import SplunkAlertRender
 from app.translator.platforms.splunk.renders.splunk_cti import SplunkCTI
+from app.translator.platforms.sumo_logic.renders.sumologic import SumoLogicQueryRender
 from app.translator.platforms.sumo_logic.renders.sumologic_cti import SumologicCTI
 
 __ALL_RENDERS = (
@@ -81,6 +82,7 @@ __ALL_RENDERS = (
     OpenSearchRuleRender(),
     GraylogRender(),
     FortiSiemRuleRender(),
+    SumoLogicQueryRender()
 )
 
 __ALL_PARSERS = (
