@@ -43,6 +43,8 @@ class RootAParser(YamlRuleMixin):
         mitre_tags = [i.strip("") for i in mitre_attack.split(",")] if isinstance(mitre_attack, str) else mitre_attack
         mitre_attack = self.parse_mitre_attack(mitre_tags)
         rule_tags = rule.get("tags", [])
+        if isinstance(rule_tags, str):
+            rule_tags = [i.strip() for i in rule_tags.split(",")]
         rule_tags += mitre_tags
 
         meta_info.title = rule.get("name")
