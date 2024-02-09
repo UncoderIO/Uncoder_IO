@@ -1,5 +1,6 @@
-fastapi>=0.95.0,<0.96.0
+fastapi>=0.109.1
 uvicorn[standard]>=0.21.0,<0.22.0
 pydantic~=1.10.13
 PyYAML~=6.0.1
 colorama~=0.4.6
+ruff==0.1.13
