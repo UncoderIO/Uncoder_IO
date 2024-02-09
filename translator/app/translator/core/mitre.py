@@ -99,7 +99,7 @@ class MitreConfig(metaclass=SingletonMeta):
                             "technique_id": ref["external_id"],
                             "technique": sub_technique_name,
                             "url": ref["url"],
-                            "tactic": parent_tactics
+                            "tactic": parent_tactics,
                         }
                         break
 

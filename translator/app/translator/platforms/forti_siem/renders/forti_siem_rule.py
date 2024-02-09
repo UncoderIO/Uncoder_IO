@@ -1,23 +1,5 @@
-"""
-Uncoder IO Community Edition License
------------------------------------------------------------------
-Copyright (c) 2023 SOC Prime, Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
------------------------------------------------------------------
-"""
 import re
-from typing import Optional
+from typing import Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.meta_info import SeverityType
@@ -30,13 +12,14 @@ from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.parser_output import MetaInfoContainer
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render import BaseQueryFieldValue, BaseQueryRender
+from app.translator.core.str_value_processing import StrValue
 from app.translator.platforms.forti_siem.const import (
     FORTI_SIEM_RULE,
     SOURCES_EVENT_TYPES_CONTAINERS_MAP,
     forti_siem_rule_details,
 )
-from app.translator.platforms.forti_siem.escape_manager import forti_siem_escape_manager
 from app.translator.platforms.forti_siem.mapping import FortiSiemMappings, forti_siem_mappings
+from app.translator.platforms.forti_siem.str_value_processing import forti_siem_str_value_manager
 from app.translator.tools.utils import concatenate_str
 
 _EVENT_TYPE_FIELD = "eventType"
@@ -52,37 +35,71 @@ _SEVERITIES_MAP = {
 
 class FortiSiemFieldValue(BaseQueryFieldValue):
     details: PlatformDetails = forti_siem_rule_details
-    escape_manager = forti_siem_escape_manager
+    str_value_manager = forti_siem_str_value_manager
 
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join([self.equal_modifier(field=field, value=v) for v in value])})"
-        return f'{field}="{self.apply_value(value)}"'
+
+        if isinstance(value, StrValue):
+            if value.has_spec_symbols:
+                return self.regex_modifier(field, value)
+
+            value = forti_siem_str_value_manager.from_container_to_str(value)
+        return f'{field}="{value}"'
 
     def not_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join([self.not_equal_modifier(field=field, value=v) for v in value])})"
-        return f'{field}!="{self.apply_value(value)}"'
+        return f'{field}!="{value}"'
 
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join([self.contains_modifier(field=field, value=v) for v in value])})"
-        return f'{field} REGEXP "{self.apply_value(value)}"'
+
+        if isinstance(value, StrValue):
+            value = forti_siem_str_value_manager.from_container_to_re_str(value)
+
+        return f'{field} REGEXP "{value}"'
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join([self.endswith_modifier(field=field, value=v) for v in value])})"
-        return f'{field} REGEXP "{self.apply_value(value)}$"'
+
+        if isinstance(value, StrValue):
+            value = forti_siem_str_value_manager.from_container_to_re_str(value)
+
+        return f'{field} REGEXP "{value}$"'
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join([self.startswith_modifier(field=field, value=v) for v in value])})"
-        return f'{field} REGEXP "^{self.apply_value(value)}"'
+
+        if isinstance(value, StrValue):
+            value = forti_siem_str_value_manager.from_container_to_re_str(value)
+
+        return f'{field} REGEXP "^{value}"'
 
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join([self.regex_modifier(field=field, value=v) for v in value])})"
+
+        if isinstance(value, StrValue):
+            value = forti_siem_str_value_manager.from_container_to_re_str(value)
+
         return f'{field} REGEXP "{value}"'
+
+    def less_modifier(self, field: str, value: Union[int, str]) -> str:  # noqa: ARG002
+        raise UnsupportedRenderMethod(platform_name=self.details.name, method="<")
+
+    def less_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:  # noqa: ARG002
+        raise UnsupportedRenderMethod(platform_name=self.details.name, method="<=")
+
+    def greater_modifier(self, field: str, value: Union[int, str]) -> str:  # noqa: ARG002
+        raise UnsupportedRenderMethod(platform_name=self.details.name, method=">")
+
+    def greater_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:  # noqa: ARG002
+        raise UnsupportedRenderMethod(platform_name=self.details.name, method=">=")
 
     def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
         raise UnsupportedRenderMethod(platform_name=self.details.name, method="Keywords")
