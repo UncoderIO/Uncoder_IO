@@ -1,3 +1,0 @@
--r requirements_prod.txt
-
-ruff==0.1.13
