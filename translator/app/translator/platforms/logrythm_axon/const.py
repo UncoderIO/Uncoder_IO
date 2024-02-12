@@ -29,14 +29,14 @@ PLATFORM_DETAILS = {"group_id": "axon-ads", "group_name": "LogRythm Axon"}
 LOGRYTHM_AXON_QUERY_DETAILS = {
     "siem_type": "axon-ads-query",
     "name": "LogRythm Axon Query",
-    "platform_name": "LogRythm Axon",
+    "platform_name": "Query",
     **PLATFORM_DETAILS,
 }
 
 LOGRYTHM_AXON_RULE_DETAILS = {
     "siem_type": "axon-ads-rule",
     "name": "LogRythm Axon Rule",
-    "platform_name": "LogRythm Axon",
+    "platform_name": "Rule",
     "first_choice": 0,
     **PLATFORM_DETAILS,
 }
