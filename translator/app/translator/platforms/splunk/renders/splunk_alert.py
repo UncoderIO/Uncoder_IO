@@ -43,7 +43,7 @@ class SplunkAlertRender(SplunkQueryRender):
     def __create_mitre_threat(meta_info: MetaInfoContainer) -> dict:
         techniques = {"mitre_attack": []}
 
-        for technique in meta_info.mitre_attack.get("techniques"):
+        for technique in meta_info.mitre_attack.get("techniques", []):
             techniques["mitre_attack"].append(technique["technique_id"])
 
         techniques["mitre_attack"].sort()
