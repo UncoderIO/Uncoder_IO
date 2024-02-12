@@ -17,11 +17,14 @@ class Field:
     def set_generic_names_map(self, source_mappings: list[SourceMapping], default_mapping: SourceMapping) -> None:
         generic_names_map = {
             source_mapping.source_id: source_mapping.fields_mapping.get_generic_field_name(self.source_name)
+            or self.source_name
             for source_mapping in source_mappings
         }
         if DEFAULT_MAPPING_NAME not in generic_names_map:
             fields_mapping = default_mapping.fields_mapping
-            generic_names_map[DEFAULT_MAPPING_NAME] = fields_mapping.get_generic_field_name(self.source_name)
+            generic_names_map[DEFAULT_MAPPING_NAME] = (
+                fields_mapping.get_generic_field_name(self.source_name) or self.source_name
+            )
 
         self.__generic_names_map = generic_names_map
 
