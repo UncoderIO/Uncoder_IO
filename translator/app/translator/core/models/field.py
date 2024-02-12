@@ -3,6 +3,7 @@ from typing import Optional, Union
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, SourceMapping
 from app.translator.core.models.identifier import Identifier
+from app.translator.core.str_value_processing import StrValue
 
 
 class Field:
@@ -26,21 +27,22 @@ class Field:
 
 
 class FieldValue:
-    def __init__(self, source_name: str, operator: Identifier, value: Union[int, str, list, tuple]):
+    def __init__(self, source_name: str, operator: Identifier, value: Union[int, str, StrValue, list, tuple]):
         self.field = Field(source_name=source_name)
         self.operator = operator
         self.values = []
         self.__add_value(value)
 
     @property
-    def value(self) -> Union[int, str, list[Union[int, str]]]:
+    def value(self) -> Union[int, str, StrValue, list[Union[int, str, StrValue]]]:
         if isinstance(self.values, list) and len(self.values) == 1:
             return self.values[0]
         return self.values
 
-    def __add_value(self, value: Optional[Union[int, str, list, tuple]]) -> None:
+    def __add_value(self, value: Optional[Union[int, str, StrValue, list, tuple]]) -> None:
         if value and isinstance(value, (list, tuple)):
-            self.values.extend(value)
+            for v in value:
+                self.__add_value(v)
         elif value and isinstance(value, str) and value.isnumeric():
             self.values.append(int(value))
         elif value is not None and isinstance(value, (int, str)):

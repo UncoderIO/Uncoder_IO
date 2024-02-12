@@ -3,7 +3,8 @@ from typing import ClassVar, Union, Optional
 from app.translator.core.custom_types.tokens import GroupType, LogicalOperatorType, OperatorType
 from app.translator.core.models.field import FieldValue
 from app.translator.core.models.identifier import Identifier
-
+from app.translator.core.str_value_processing import StrValue
+from app.translator.platforms.sigma.str_value_processing import sigma_str_value_manager
 
 _MULTY_MODIFIER_LEN = 2
 
@@ -27,6 +28,7 @@ class ModifierManager:
     def modifier_all(self, field_name: str, modifier: str, values: Union[str, list[str]]) -> Union[tuple, list]:
         if (isinstance(values, list) and len(values) == 1) or isinstance(values, str):
             operator = self.map_modifier(modifier=modifier)
+            values = self.convert_values_to_str_values(values, modifier)
             return (FieldValue(source_name=field_name, operator=operator, value=values),)
 
         tokens = []
@@ -53,9 +55,9 @@ class ModifierManager:
                 tokens.append(self.or_token)
             return [Identifier(token_type=GroupType.L_PAREN), *tokens[:-1], Identifier(token_type=GroupType.R_PAREN)]
         operator = self.map_modifier(modifier=modifier)
-        return (
-            FieldValue(source_name=field_name, operator=operator, value=self.__prepare_windash_value(value=values)),
-        )
+        values = self.__prepare_windash_value(value=values)
+        values = self.convert_values_to_str_values(values, modifier)
+        return (FieldValue(source_name=field_name, operator=operator, value=values),)
 
     def apply_multi_modifier(
         self, field_name: str, modifier: list, values: Union[str, list[str]]
@@ -67,13 +69,26 @@ class ModifierManager:
 
         raise NotImplementedError
 
-    def apply_modifier(self, field_name: str, modifier: list, values: Union[str, list[str]]) -> tuple:
+    def apply_modifier(self, field_name: str, modifier: list, values: Union[int, str, list[Union[int, str]]]) -> tuple:
         modifier = modifier[0]
         if modifier == "windash":
             modifier = OperatorType.EQ
             return self.modifier_windash(field_name=field_name, modifier=modifier, values=values)
         operator = self.map_modifier(modifier=modifier)
+        values = self.convert_values_to_str_values(values, modifier)
         return (FieldValue(source_name=field_name, operator=operator, value=values),)
+
+    @staticmethod
+    def convert_values_to_str_values(
+            values: Union[int, str, list[Union[int, str]]],
+            operator: str
+    ) -> Union[StrValue, list[StrValue]]:
+        if not isinstance(values, list):
+            values = [values]
+
+        if operator == "re":
+            return [sigma_str_value_manager.from_re_str_to_container(str(value)) for value in values]
+        return [sigma_str_value_manager.from_str_to_container(str(value)) for value in values]
 
     def create_token(self, field_name: str, modifier: list, value: Union[str, list[str], int]) -> Union[tuple, list]:
         if len(modifier) == _MULTY_MODIFIER_LEN:

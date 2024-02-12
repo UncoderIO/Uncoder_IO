@@ -41,7 +41,7 @@ class SigmaTokenizer:
     def __init__(self):
         self.supported_selection_types = {dict: self.__parse_and_selection, list: self.__parse_or_selection}
 
-    def __parse_field(self, field_name: str, values: Union[int, str, list[str]]) -> Union[list, FieldValue]:
+    def __parse_field(self, field_name: str, values: Union[int, str, list[Union[int, str]]]) -> Union[list, FieldValue]:
         field_name, *modifier = field_name.split("|") if "|" in field_name else (field_name, "=")
         return self.modifier_manager.generate(field_name=field_name, modifier=modifier, value=values)
 

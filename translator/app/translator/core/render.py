@@ -33,11 +33,13 @@ from app.translator.core.models.functions.base import Function, ParsedFunctions
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.parser_output import MetaInfoContainer
 from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.core.str_value_processing import StrValueManager
 
 
 class BaseQueryFieldValue(ABC):
     details: PlatformDetails = None
     escape_manager: EscapeManager = None
+    str_value_manager: StrValueManager = None
 
     def __init__(self, or_token: str):
         self.field_value: dict[str, Callable[[str, DEFAULT_VALUE_TYPE], str]] = {
