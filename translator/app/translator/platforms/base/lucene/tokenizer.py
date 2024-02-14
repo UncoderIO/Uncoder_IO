@@ -20,7 +20,6 @@ from typing import Any, ClassVar, Union
 
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.custom_types.values import ValueType
-from app.translator.core.exceptions.parser import TokenizerGeneralException
 from app.translator.core.mixins.logic import ANDLogicOperatorMixin
 from app.translator.core.models.field import FieldValue, Keyword
 from app.translator.core.models.identifier import Identifier
@@ -45,7 +44,7 @@ class LuceneTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
     )
     no_quotes_value_pattern = rf"(?P<{ValueType.no_quotes_value}>(?:[a-zA-Z\*0-9=%#_/,\'\.$@]|\\\"|\\\\)+)\s*"
     re_value_pattern = (
-        rf"/(?P<{ValueType.regular_expression_value}>[:a-zA-Z\*0-9=+%#\\\-_\,\"\'\.$&^@!\(\)\{{\}}\[\]\s?]+)/\s*"
+        rf"/(?P<{ValueType.regular_expression_value}>[:a-zA-Z\*0-9=+%#\\\-_\,\"\'\.$&^@!\(\)\{{\}}\[\]\s?<>]+)/\s*"
     )
     gte_value_pattern = rf"\[\s*(?P<{ValueType.greater_than_or_equal}>{_num_value_pattern})\s+TO\s+\*\s*\]"
     lte_value_pattern = rf"\[\s*\*\s+TO\s+(?P<{ValueType.less_than_or_equal}>{_num_value_pattern})\s*\]"
@@ -93,27 +92,31 @@ class LuceneTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
 
         return super().get_operator_and_value(match, operator)
 
-    def search_value(self, query: str, operator: str, field_name: str) -> tuple[str, str, Union[str, list[str]]]:
+    def group_values_by_operator(
+        self, values: list[Union[int, str]], default_operator: str, *args  # noqa: ARG002
+    ) -> dict[str, list[Union[int, str]]]:
+        result = {}
+        for value in values:
+            if isinstance(value, str):
+                if value.startswith("/") and value.endswith("/"):
+                    result.setdefault(OperatorType.REGEX, []).append(value.strip("/"))
+                else:
+                    value, operator = self.process_value_wildcards(value, default_operator, self.wildcard_symbol)
+                    result.setdefault(operator, []).append(value)
+            else:
+                result.setdefault(default_operator, []).append(value)
+
+        return result
+
+    def is_multi_value_flow(self, field_name: str, operator: str, query: str) -> bool:
         check_pattern = self.multi_value_check_pattern
         check_regex = check_pattern.replace("___field___", field_name).replace("___operator___", operator)
-        if re.match(check_regex, query):
-            value_pattern = self.multi_value_pattern
-            is_multi = True
-        else:
-            value_pattern = self.value_pattern
-            is_multi = False
+        return bool(re.match(check_regex, query))
 
-        field_value_pattern = self.get_field_value_pattern(operator, field_name)
-        field_value_pattern = field_value_pattern.replace("___value___", value_pattern)
-        field_value_regex = re.compile(field_value_pattern, re.IGNORECASE)
-        field_value_search = re.search(field_value_regex, query)
-        if field_value_search is None:
-            raise TokenizerGeneralException(error=f"Value couldn't be found in query part: {query}")
-
-        operator, value = self.get_operator_and_value(field_value_search, self.map_operator(operator))
-        value = [self.clean_quotes(v) for v in re.split(r"\s+OR\s+", value)] if is_multi else value
-        pos = field_value_search.end()
-        return query[pos:], operator, value
+    def search_multi_value(self, query: str, operator: str, field_name: str) -> tuple[str, str, list[Union[int, str]]]:
+        query, operator, value = self._search_value(query, operator, field_name, self.multi_value_pattern)
+        values = [self.clean_quotes(v) for v in re.split(r"\s+OR\s+", value)]
+        return query, operator, values
 
     def search_keyword(self, query: str) -> tuple[Keyword, str]:
         keyword_search = re.search(self.keyword_pattern, query)

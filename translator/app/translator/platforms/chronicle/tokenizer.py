@@ -23,6 +23,7 @@ from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.exceptions.parser import TokenizerGeneralException
 from app.translator.core.models.field import FieldValue
+from app.translator.core.models.identifier import Identifier
 from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.platforms.chronicle.escape_manager import chronicle_escape_manager
 from app.translator.tools.utils import get_match_group
@@ -98,13 +99,14 @@ class ChronicleRuleTokenizer(ChronicleQueryTokenizer):
 
             operator = OperatorType.REGEX
             operator, value = self.get_operator_and_value(value_search, operator)
-            value, operator = self.process_value_wildcard_symbols(
+            value, operator = self.process_value_wildcards(
                 value=value, operator=OperatorType.REGEX, wildcard_symbol=self.wildcard_symbol
             )
             pos = value_search.end()
             query = query[pos:]
 
-            field_value = self.create_field_value(field_name=field, operator=operator, value=value)
+            operator_token = Identifier(token_type=operator)
+            field_value = self.create_field_value(field_name=field, operator=operator_token, value=value)
             return field_value, query
 
         return super().search_field_value(query=query)

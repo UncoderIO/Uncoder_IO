@@ -64,12 +64,12 @@ class LogScaleTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
 
         return super().get_operator_and_value(match, operator)
 
-    def _get_identifier(self, query: str) -> (list, str):
+    def _get_next_token(self, query: str) -> (list, str):
         query = query.strip("\n").strip(" ").strip("\n")
         if query.startswith("!"):
             return Identifier(token_type=LogicalOperatorType.NOT), query[1:]
 
-        return super()._get_identifier(query)
+        return super()._get_next_token(query)
 
     def tokenize(self, query: str) -> list[Union[FieldValue, Keyword, Identifier]]:
         tokens = super().tokenize(query=query)
