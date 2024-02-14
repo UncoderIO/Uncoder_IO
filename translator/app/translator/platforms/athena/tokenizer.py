@@ -17,7 +17,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 import re
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Union
 
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.custom_types.values import ValueType
@@ -52,7 +52,7 @@ class AthenaTokenizer(QueryTokenizer):
     wildcard_symbol = "%"
 
     @staticmethod
-    def should_process_value_wildcard_symbols(operator: str) -> bool:
+    def should_process_value_wildcards(operator: str) -> bool:
         return operator.lower() in ("like",)
 
     def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> tuple[str, Any]:
@@ -67,21 +67,10 @@ class AthenaTokenizer(QueryTokenizer):
 
         return super().get_operator_and_value(match, operator)
 
-    def search_field_value(self, query: str) -> tuple[FieldValue, str]:
-        field_name = self.search_field(query)
-        operator = self.search_operator(query, field_name)
-        should_process_value_wildcard_symbols = self.should_process_value_wildcard_symbols(operator)
-        query, operator, value = self.search_value(query=query, operator=operator, field_name=field_name)
-
-        operator_token = Identifier(token_type=operator)
-        if should_process_value_wildcard_symbols:
-            value, operator_token = self.process_value_wildcard_symbols(
-                value=value, operator=operator, wildcard_symbol=self.wildcard_symbol
-            )
-
+    @staticmethod
+    def create_field_value(field_name: str, operator: Identifier, value: Union[str, list]) -> FieldValue:
         field_name = field_name.strip('"')
-        field_value = self.create_field_value(field_name=field_name, operator=operator_token, value=value)
-        return field_value, query
+        return FieldValue(source_name=field_name, operator=operator, value=value)
 
     def tokenize(self, query: str) -> list:
         query = re.sub(r"\s*ESCAPE\s*'.'", "", query)  # remove `ESCAPE 'escape_char'` in LIKE expr
