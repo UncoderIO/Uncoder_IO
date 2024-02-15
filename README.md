@@ -100,6 +100,7 @@ The following types of IOCs are supported:
 - IP   
 
 TODO list of languages we will support shortly:
+- LogRhythm Axon  
 - ~Graylog~ :white_check_mark:
 - Devo
 - LimaCharlie
