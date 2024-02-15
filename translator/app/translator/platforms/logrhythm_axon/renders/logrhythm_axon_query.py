@@ -92,7 +92,9 @@ class LogRhythmAxonFieldValue(BaseQueryFieldValue):
         return f'{field} matches "{self.__escape_value(value)}"'
 
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
-        return self.contains_modifier(field, value)
+        if isinstance(value, list):
+            return f"({self.or_token.join(self.__regex_modifier(field=field, value=v) for v in value)})"
+        return f"{self.__regex_modifier(field=field, value=value)}"
 
 
 class LogRhythmAxonQueryRender(BaseQueryRender):
