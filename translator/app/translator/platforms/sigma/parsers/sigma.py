@@ -47,6 +47,7 @@ class SigmaParser(YamlRuleMixin):
             self,
             rule: dict,
             source_mapping_ids: list[str],
+            parsed_logsources: dict,
             sigma_fields_tokens: Union[list[Field], None] = None
     ) -> MetaInfoContainer:
         return MetaInfoContainer(
@@ -63,7 +64,8 @@ class SigmaParser(YamlRuleMixin):
             status=rule.get("status"),
             tags=sorted(set(rule.get("tags", []))),
             false_positives=self.__parse_false_positives(rule.get("falsepositives")),
-            source_mapping_ids=source_mapping_ids
+            source_mapping_ids=source_mapping_ids,
+            parsed_logsources=parsed_logsources
         )
 
     def __validate_rule(self, rule: dict):
@@ -93,6 +95,7 @@ class SigmaParser(YamlRuleMixin):
             meta_info=self._get_meta_info(
                 rule=sigma_rule,
                 source_mapping_ids=[source_mapping.source_id for source_mapping in source_mappings],
-                sigma_fields_tokens=sigma_fields_tokens
+                sigma_fields_tokens=sigma_fields_tokens,
+                parsed_logsources=log_sources
             )
         )

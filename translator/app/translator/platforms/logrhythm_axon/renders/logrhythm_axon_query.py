@@ -20,15 +20,17 @@ from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.mapping import LogSourceSignature
+from app.translator.core.models.functions.base import ParsedFunctions
+from app.translator.core.models.parser_output import MetaInfoContainer
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render import BaseQueryFieldValue, BaseQueryRender
-from app.translator.platforms.logrythm_axon.const import logrythm_axon_query_details
-from app.translator.platforms.logrythm_axon.mapping import LogrythmAxonMappings, logrythm_axon_mappings
+from app.translator.platforms.logrhythm_axon.const import logrhythm_axon_query_details
+from app.translator.platforms.logrhythm_axon.mapping import LogRhythmAxonMappings, logrhythm_axon_mappings
 from app.translator.platforms.microsoft.escape_manager import microsoft_escape_manager
 
 
-class LogrythmAxonFieldValue(BaseQueryFieldValue):
-    details: PlatformDetails = logrythm_axon_query_details
+class LogRhythmAxonFieldValue(BaseQueryFieldValue):
+    details: PlatformDetails = logrhythm_axon_query_details
     escape_manager = microsoft_escape_manager
 
     @staticmethod
@@ -40,9 +42,9 @@ class LogrythmAxonFieldValue(BaseQueryFieldValue):
             return f"{field} = {self.__escape_value(value)}"
         if isinstance(value, list):
             prepared_values = ", ".join(f"{self.__escape_value(v)}" for v in value)
-            operator = "in" if all(isinstance(v, str) for v in value) else "in"
+            operator = "IN" if all(isinstance(v, str) for v in value) else "in"
             return f"{field} {operator} [{prepared_values}]"
-        return f"{field} = {self.apply_value(value)}"
+        return f'{field} = "{self.apply_value(value)}"'
 
     def less_modifier(self, field: str, value: Union[int, str]) -> str:
         if isinstance(value, int):
@@ -74,44 +76,64 @@ class LogrythmAxonFieldValue(BaseQueryFieldValue):
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.contains_modifier(field=field, value=v) for v in value)})"
-        return f'{field} matches "{self.__escape_value(value)}"'
+        return f'{field} CONTAINS "{self.__escape_value(value)}"'
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.endswith_modifier(field=field, value=v) for v in value)})"
-        return f'{field} matches ".{self.__escape_value(value)}$"'
+        return f'{field} matches ".*{self.__escape_value(value)}$"'
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.startswith_modifier(field=field, value=v) for v in value)})"
-        return f'{field} matches "^{self.__escape_value(value)}."'
+        return f'{field} matches "^{self.__escape_value(value)}.*"'
 
     def __regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
-        return f'{field} matches "(?i){self.__escape_value(value)}"'
+        return f'{field} matches "{self.__escape_value(value)}"'
 
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         return self.contains_modifier(field, value)
 
-    def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
-        if isinstance(value, list):
-            return f"({self.or_token.join(self.keywords(field=field, value=v) for v in value)})"
-        return f"* contains @'{self.__escape_value(value)}'"
 
-
-class LogrythmAxonQueryRender(BaseQueryRender):
-    details: PlatformDetails = logrythm_axon_query_details
+class LogRhythmAxonQueryRender(BaseQueryRender):
+    details: PlatformDetails = logrhythm_axon_query_details
 
     or_token = "or"
     and_token = "and"
     not_token = "not"
 
-    field_value_map = LogrythmAxonFieldValue(or_token=or_token)
+    field_value_map = LogRhythmAxonFieldValue(or_token=or_token)
     query_pattern = "{prefix} and {query}"
 
-    mappings: LogrythmAxonMappings = logrythm_axon_mappings
+    mappings: LogRhythmAxonMappings = logrhythm_axon_mappings
     comment_symbol = "//"
     is_multi_line_comment = True
     is_strict_mapping = True
 
     def generate_prefix(self, log_source_signature: LogSourceSignature) -> str:
         return str(log_source_signature)
+
+    def generate(self, query: list, meta_info: MetaInfoContainer, functions: ParsedFunctions) -> str:
+        queries_map = {}
+        source_mappings = self._get_source_mappings(meta_info.source_mapping_ids)
+
+        for source_mapping in source_mappings:
+            prefix = self.generate_prefix(source_mapping.log_source_signature)
+            if 'product' in meta_info.parsed_logsources:
+                prefix = f"{prefix} CONTAINS {meta_info.parsed_logsources['product'][0]}"
+            else:
+                prefix = f"{prefix} CONTAINS anything"
+
+            result = self.generate_query(query=query, source_mapping=source_mapping)
+
+            finalized_query = self.finalize_query(
+                prefix=prefix,
+                query=result,
+                functions=self.generate_functions(functions.functions, source_mapping),
+                not_supported_functions=functions.not_supported,
+                meta_info=meta_info,
+                source_mapping=source_mapping,
+            )
+            queries_map[source_mapping.source_id] = finalized_query
+
+        return self.finalize(queries_map)

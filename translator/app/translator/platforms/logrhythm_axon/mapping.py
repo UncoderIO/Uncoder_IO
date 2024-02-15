@@ -3,20 +3,17 @@ from typing import Optional
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
 
 
-class LogrythmAxonLogSourceSignature(LogSourceSignature):
+class LogRhythmAxonLogSourceSignature(LogSourceSignature):
     def __init__(self, default_source: Optional[dict] = None):
         self._default_source = default_source or {}
 
     def is_suitable(self) -> bool:
         return True
 
-    def __str__(self) -> str:
-        return "general_information.log_source.type_name " + self._default_source.get(
-            "general_information.log_source.type_name", "*"
-        )
+    def __str__(self):
+        return f"general_information.log_source.type_name"
 
-
-class LogrythmAxonMappings(BasePlatformMappings):
+class LogRhythmAxonMappings(BasePlatformMappings):
     def prepare_mapping(self) -> dict[str, SourceMapping]:
         source_mappings = {}
         for mapping_dict in self._loader.load_siem_mappings(self._platform_dir):
@@ -27,9 +24,9 @@ class LogrythmAxonMappings(BasePlatformMappings):
             )
             return source_mappings
 
-    def prepare_log_source_signature(self, mapping: dict) -> LogrythmAxonLogSourceSignature:
+    def prepare_log_source_signature(self, mapping: dict) -> LogRhythmAxonLogSourceSignature:
         default_log_source = mapping.get("default_log_source")
-        return LogrythmAxonLogSourceSignature(default_source=default_log_source)
+        return LogRhythmAxonLogSourceSignature(default_source=default_log_source)
 
     def get_suitable_source_mappings(self, field_names: list[str]) -> list[SourceMapping]:
         suitable_source_mappings = []
@@ -46,4 +43,4 @@ class LogrythmAxonMappings(BasePlatformMappings):
         return suitable_source_mappings
 
 
-logrythm_axon_mappings = LogrythmAxonMappings(platform_dir="logrythm_axon")
+logrhythm_axon_mappings = LogRhythmAxonMappings(platform_dir="logrhythm_axon")

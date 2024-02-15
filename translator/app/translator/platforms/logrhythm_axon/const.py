@@ -1,10 +1,10 @@
 from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.models.platform_details import PlatformDetails
 
-DEFAULT_LOGRYTHM_AXON_RULE = {
-    "title": "Default LogrythmAxon rule",
+DEFAULT_LOGRHYTHM_AXON_RULE = {
+    "title": "Default LogRhythm Axon rule",
     "version": 3,
-    "description": "Default LogrythmAxon rule description.",
+    "description": "Default LogRhythm Axon rule description.",
     "observationPipeline": {
         "pattern": {
             "operations": [
@@ -24,22 +24,22 @@ DEFAULT_LOGRYTHM_AXON_RULE = {
     },
 }
 
-PLATFORM_DETAILS = {"group_id": "axon-ads", "group_name": "LogRythm Axon"}
+PLATFORM_DETAILS = {"group_id": "axon-ads", "group_name": "LogRhythm Axon"}
 
-LOGRYTHM_AXON_QUERY_DETAILS = {
+LOGRHYTHM_AXON_QUERY_DETAILS = {
     "siem_type": "axon-ads-query",
-    "name": "LogRythm Axon Query",
+    "name": "LogRhythm Axon Query",
     "platform_name": "Query",
     **PLATFORM_DETAILS,
 }
 
-LOGRYTHM_AXON_RULE_DETAILS = {
+LOGRHYTHM_AXON_RULE_DETAILS = {
     "siem_type": "axon-ads-rule",
-    "name": "LogRythm Axon Rule",
+    "name": "LogRhythm Axon Rule",
     "platform_name": "Rule",
     "first_choice": 0,
     **PLATFORM_DETAILS,
 }
 
-logrythm_axon_query_details = PlatformDetails(**LOGRYTHM_AXON_QUERY_DETAILS)
-logrythm_axon_rule_details = PlatformDetails(**LOGRYTHM_AXON_RULE_DETAILS)
+logrhythm_axon_query_details = PlatformDetails(**LOGRHYTHM_AXON_QUERY_DETAILS)
+logrhythm_axon_rule_details = PlatformDetails(**LOGRHYTHM_AXON_RULE_DETAILS)

@@ -24,8 +24,8 @@ from app.translator.platforms.graylog.parsers.graylog import GraylogParser
 from app.translator.platforms.graylog.renders.graylog import GraylogRender
 from app.translator.platforms.graylog.renders.graylog_cti import GraylogCTI
 from app.translator.platforms.logpoint.renders.logpoint_cti import LogpointCTI
-from app.translator.platforms.logrythm_axon.renders.logrythm_axon_query import LogrythmAxonQueryRender
-from app.translator.platforms.logrythm_axon.renders.logrythm_axon_rule import LogrythmAxonRuleRender
+from app.translator.platforms.logrhythm_axon.renders.logrhythm_axon_query import LogRhythmAxonQueryRender
+from app.translator.platforms.logrhythm_axon.renders.logrhythm_axon_rule import LogRhythmAxonRuleRender
 from app.translator.platforms.logscale.parsers.logscale import LogScaleParser
 from app.translator.platforms.logscale.parsers.logscale_alert import LogScaleAlertParser
 from app.translator.platforms.logscale.renders.logscale_cti import LogScaleCTI
@@ -73,8 +73,8 @@ __ALL_RENDERS = (
     ChronicleSecurityRuleRender(),
     AthenaQueryRender(),
     ElasticSearchQueryRender(),
-    LogrythmAxonQueryRender(),
-    LogrythmAxonRuleRender(),
+    LogRhythmAxonQueryRender(),
+    LogRhythmAxonRuleRender(),
     LogScaleQueryRender(),
     LogScaleAlertRender(),
     ElasticSearchRuleRender(),

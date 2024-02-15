@@ -24,10 +24,10 @@ from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.parser_output import MetaInfoContainer
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.platforms.logrythm_axon.const import DEFAULT_LOGRYTHM_AXON_RULE, logrythm_axon_rule_details
-from app.translator.platforms.logrythm_axon.renders.logrythm_axon_query import (
-    LogrythmAxonFieldValue,
-    LogrythmAxonQueryRender,
+from app.translator.platforms.logrhythm_axon.const import DEFAULT_LOGRHYTHM_AXON_RULE, logrhythm_axon_rule_details
+from app.translator.platforms.logrhythm_axon.renders.logrhythm_axon_query import (
+    LogRhythmAxonFieldValue,
+    LogRhythmAxonQueryRender,
 )
 from app.translator.tools.utils import get_rule_description_str
 
@@ -40,14 +40,14 @@ _SEVERITIES_MAP = {
 }
 
 
-class LogrythmAxonRuleFieldValue(LogrythmAxonFieldValue):
-    details: PlatformDetails = logrythm_axon_rule_details
+class LogRhythmAxonRuleFieldValue(LogRhythmAxonFieldValue):
+    details: PlatformDetails = logrhythm_axon_rule_details
 
 
-class LogrythmAxonRuleRender(LogrythmAxonQueryRender):
-    details: PlatformDetails = logrythm_axon_rule_details
+class LogRhythmAxonRuleRender(LogRhythmAxonQueryRender):
+    details: PlatformDetails = logrhythm_axon_rule_details
     or_token = "or"
-    field_value_map = LogrythmAxonRuleFieldValue(or_token=or_token)
+    field_value_map = LogRhythmAxonRuleFieldValue(or_token=or_token)
 
     def __create_mitre_threat(self, meta_info: MetaInfoContainer) -> tuple[list, list]:
         tactics = set()
@@ -76,7 +76,7 @@ class LogrythmAxonRuleRender(LogrythmAxonQueryRender):
         **kwargs,  # noqa: ARG002
     ) -> str:
         query = super().finalize_query(prefix=prefix, query=query, functions=functions)
-        rule = copy.deepcopy(DEFAULT_LOGRYTHM_AXON_RULE)
+        rule = copy.deepcopy(DEFAULT_LOGRHYTHM_AXON_RULE)
         rule["observationPipeline"]["pattern"]["operations"][0]["logObserved"]["filter"] = query
         rule["title"] = meta_info.title
         rule["description"] = get_rule_description_str(

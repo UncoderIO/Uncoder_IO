@@ -1,9 +1,6 @@
-platform: Logrythm Axon
+platform: LogRhythm Axon
 source: default
 description: Text that describe current mapping
-
-default_log_source:
-  general_information.log_source.type_name: "*"
 
 field_mapping:
   EventID: vendor_information.id
@@ -12,6 +9,7 @@ field_mapping:
   FileName: object.file.name
   ProcessId: object.process.id
   Image: object.process.name
+  AccountEmail: unattributed.account.email_address
   CurrentDirectory: object.process.path
   ParentProcessId: object.process.parent_process.id
   ParentImage: object.process.parent_process.path
