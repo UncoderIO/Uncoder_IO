@@ -99,6 +99,7 @@ Uncoder IO може працювати локально без потреби в
 - IP-адреси   
 
 Найближчим часом планується підтримка таких форматів:
+- LogRhythm Axon  
 - ~~Graylog~~ :white_check_mark:
 - Devo
 - LimaCharlie
