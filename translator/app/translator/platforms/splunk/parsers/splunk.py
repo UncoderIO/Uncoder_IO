@@ -26,7 +26,7 @@ from app.translator.platforms.splunk.mapping import SplunkMappings, splunk_mappi
 class SplunkParser(SplParser):
     details: PlatformDetails = splunk_query_details
 
-    log_source_pattern = r"___source_type___\s*=\s*(?:\"(?P<d_q_value>[%a-zA-Z_*:0-9\-/]+)\"|(?P<value>[%a-zA-Z_*:0-9\-/]+))(?:\s+(?:and|or)\s+|\s+)?"  # noqa: E501
+    log_source_pattern = r"^___source_type___\s*=\s*(?:\"(?P<d_q_value>[%a-zA-Z_*:0-9\-/]+)\"|(?P<value>[%a-zA-Z_*:0-9\-/]+))(?:\s+(?:and|or)\s+|\s+)?"  # noqa: E501
     log_source_key_types = ("index", "source", "sourcetype", "sourcecategory")
 
     mappings: SplunkMappings = splunk_mappings
