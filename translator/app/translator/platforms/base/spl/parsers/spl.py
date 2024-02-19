@@ -26,7 +26,7 @@ from app.translator.platforms.base.spl.tokenizer import SplTokenizer
 
 
 class SplParser(Parser):
-    log_source_pattern = r"___source_type___\s*=\s*(?:\"(?P<d_q_value>[%a-zA-Z_*:0-9\-/]+)\"|(?P<value>[%a-zA-Z_*:0-9\-/]+))(?:\s+(?:and|or)\s+|\s+)?"  # noqa: E501
+    log_source_pattern = r"^___source_type___\s*=\s*(?:\"(?P<d_q_value>[%a-zA-Z_*:0-9\-/]+)\"|(?P<value>[%a-zA-Z_*:0-9\-/]+))(?:\s+(?:and|or)\s+|\s+)?"  # noqa: E501
     log_source_key_types = ("index", "source", "sourcetype", "sourcecategory")
 
     tokenizer = SplTokenizer()
@@ -43,6 +43,7 @@ class SplParser(Parser):
                 pos_start = search.start()
                 pos_end = search.end()
                 query = query[:pos_start] + query[pos_end:]
+                query = query.replace("()", "")
 
         return log_sources, query
 

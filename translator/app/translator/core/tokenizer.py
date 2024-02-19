@@ -51,7 +51,7 @@ class QueryTokenizer(BaseTokenizer):
     multi_value_operators_map: ClassVar[dict[str, str]] = {}
     operators_map: ClassVar[dict[str, str]] = {}  # used to generate re pattern. so the keys order is important
 
-    logical_operator_pattern = r"\s?(?P<logical_operator>and|or|not|AND|OR|NOT)\s?"
+    logical_operator_pattern = r"^(?P<logical_operator>and|or|not|AND|OR|NOT)\s+"
     field_value_pattern = r"""^___field___\s*___operator___\s*___value___"""
     base_value_pattern = r"(?:___value_pattern___)"
 

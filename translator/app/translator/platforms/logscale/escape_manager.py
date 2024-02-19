@@ -7,7 +7,7 @@ from app.translator.core.models.escape_details import EscapeDetails
 
 class LogscaleEscapeManager(EscapeManager):
     escape_map: ClassVar[dict[str, EscapeDetails]] = {
-        ValueType.value: EscapeDetails(pattern='(\\\\|/|\+|{|\[|\*|"|\(|\))')
+        ValueType.value: EscapeDetails(pattern='(\\\\|/|\+|{|\[|\?|\*|"|\(|\))')
     }
 
 
