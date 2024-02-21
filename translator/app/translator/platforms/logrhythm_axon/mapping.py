@@ -11,7 +11,8 @@ class LogRhythmAxonLogSourceSignature(LogSourceSignature):
         return True
 
     def __str__(self):
-        return f"general_information.log_source.type_name"
+        return "general_information.log_source.type_name"
+
 
 class LogRhythmAxonMappings(BasePlatformMappings):
     def prepare_mapping(self) -> dict[str, SourceMapping]:

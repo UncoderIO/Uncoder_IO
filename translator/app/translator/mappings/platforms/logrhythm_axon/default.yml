@@ -10,6 +10,7 @@ field_mapping:
   ProcessId: object.process.id
   Image: object.process.name
   AccountEmail: unattributed.account.email_address
+  ContextInfo: general_information.raw_message
   CurrentDirectory: object.process.path
   ParentProcessId: object.process.parent_process.id
   ParentImage: object.process.parent_process.path
@@ -19,7 +20,7 @@ field_mapping:
   SourceHostname: origin.host.name
   SourcePort: origin.host.network_port.value
   DestinationIp: target.host.ip_address.value
-  DestinationHostname: target.host.name target.host.domain
+  DestinationHostname: target.host.name
   DestinationPort: target.host.network_port.value
   DestinationPortName: action.network.protocol.name
   ImageLoaded: object.file.path
@@ -37,8 +38,6 @@ field_mapping:
   ScriptName: object.script.name
   ScriptBlockText: object.script.command_line
   ScriptBlockId: object.script.id
-  AccountDomain: origin.account.domain
-  AccountName: origin.account.name
   Application: object.process.name
   ClientAddress: origin.host.ip_address.value
   ClientName: origin.host.domain.name
@@ -51,7 +50,6 @@ field_mapping:
   ParentProcessName: object.process.parent_process.name
   ProcessName: object.process.name
   SourceAddress: origin.host.ip_address.value
-  TargetDomainName: target.account.domain
   WorkstationName: origin.host.name
   destination.port: target.host.network_port.value
   dst: target.host.ip_address.value
