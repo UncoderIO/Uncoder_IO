@@ -137,7 +137,7 @@ class LogRhythmAxonQueryRender(BaseQueryRender):
                 mapped_fields = self.map_field(token.field, source_mapping)
             except StrictPlatformException:
                 return self.field_value_map.apply_field_value(
-                    field=token.field.source_name, operator=Identifier(token_type="contains"), value=token.value
+                    field='general_information.raw_message', operator=Identifier(token_type="contains"), value=token.value
                 )
             if len(mapped_fields) > 1:
                 return self.group_token % self.operator_map[LogicalOperatorType.OR].join(

@@ -20,7 +20,9 @@ field_mapping:
   SourceHostname: origin.host.name
   SourcePort: origin.host.network_port.value
   DestinationIp: target.host.ip_address.value
-  DestinationHostname: target.host.name
+  DestinationHostname:
+    - target.host.name
+    - target.host.domain
   DestinationPort: target.host.network_port.value
   DestinationPortName: action.network.protocol.name
   ImageLoaded: object.file.path
@@ -55,7 +57,9 @@ field_mapping:
   dst: target.host.ip_address.value
   dst_ip: target.host.ip_address.value
   dst_port: target.host.network_port.value
-  network_application: action.network.protocol.name
+  network_application:
+    - action.network.protocol.name
+    - object.url.protocol
   network_protocol: action.network.protocol.name
   proto: action.network.protocol.name
   src: origin.host.ip_address.value
@@ -128,7 +132,9 @@ field_mapping:
   c-uri-query: object.url.query
   c-uri-stem: object.url.complete
   c-useragent: action.user_agent
-  cs-host: target.host.name
+  cs-host:
+    - target.host.name
+    - target.host.domain
   cs-method: action.network.http_method
   cs-version: object.file.version
   uid: action.session.id
@@ -147,7 +153,9 @@ field_mapping:
   sha256: unattributed.hash.sha256
   sha512: unattributed.hash.sha512
   filename: object.file.name
-  host: unattributed.host.name
+  host:
+    - unattributed.host.name
+    - unattributed.host.ip_address.value
   domainname: unattributed.host.name
   hostname: unattributed.host.name
   server_nb_computer_name: unattributed.host.name
@@ -156,7 +164,10 @@ field_mapping:
   machine: unattributed.host.name
   os: origin.host.os.platform
   mac: unattributed.host.mac_address
-  result: action.result.message
+  result:
+    - action.result.message
+    - action.result.code
+    - action.result.reason
   mailfrom: origin.account.email_address
   rcptto: target.account.email_address
   second_received: target.account.email_address
@@ -167,19 +178,29 @@ field_mapping:
   cs-uri-stem: object.url.complete
   clientip: origin.host.ip_address.value
   clientIP: origin.host.ip_address.value
-  dest_domain: target.host.name
+  dest_domain:
+    - target.host.name
+    - target.host.domain
   dest_ip: target.host.ip_address.value
   dest_port: target.host.network_port.value
   agent.version: object.file.version
-  destination.hostname: target.host.name
-  DestinationAddress: target.host.name
+  destination.hostname:
+    - target.host.name
+    - target.host.domain
+  DestinationAddress:
+    - target.host.name
+    - target.host.domain
+    - target.host.ip_address.value
   DestinationIP: target.host.ip_address.value
   dst-ip: target.host.ip_address.value
   dstip: target.host.ip_address.value
   dstport: target.host.ip_address.value
   Host: target.host.name
   HostVersion: object.file.version
-  http_host: target.host.name
+  http_host:
+    - target.host.name
+    - target.host.domain
+    - target.host.ip_address.value
   http_uri: object.url.path
   http_url: object.url.complete
   http.request.url-query-params: object.url.query
@@ -193,9 +214,14 @@ field_mapping:
   resource.url: object.url.path
   resource.URL: object.url.path
   sc_status: action.result.code
-  sender_domain: target.host.name
+  sender_domain:
+    - target.host.name
+    - target.host.domain
   service.response_code: action.result.code
-  source: origin.host.name
+  source:
+    - origin.host.name
+    - origin.host.domain.name
+    - origin.host.ip_address.value
   SourceAddr: origin.host.ip_address.value
   SourceIP: origin.host.ip_address.value
   SourceNetworkAddress: origin.host.ip_address.value
@@ -213,11 +239,31 @@ field_mapping:
   useragent: action.user_agent
   UserAgent: action.user_agent
   User_Agent: action.user_agent
-  web_dest: target.host.name
-  web.dest: target.host.name
-  Web.dest: target.host.name
-  web.host: target.host.name
-  Web.host: target.host.name
+  web_dest:
+    - target.host.name
+    - target.host.domain
+    - target.host.ip_address.value
+    - object.url.domain
+  web.dest:
+    - target.host.name
+    - target.host.domain
+    - target.host.ip_address.value
+    - object.url.domain
+  Web.dest:
+    - target.host.name
+    - target.host.domain
+    - target.host.ip_address.value
+    - object.url.domain
+  web.host:
+    - target.host.name
+    - target.host.domain
+    - target.host.ip_address.value
+    - object.url.domain
+  Web.host:
+    - target.host.name
+    - target.host.domain
+    - target.host.ip_address.value
+    - object.url.domain
   web_method: action.network.http_method
   Web_method: action.network.http_method
   web.method: action.network.http_method
@@ -232,13 +278,27 @@ field_mapping:
   destination.ip: target.host.ip_address.value
   source.ip: origin.host.ip_address.value
   source.port: origin.host.ip_address.value
-  Computer: target.host.name
+  Computer:
+    - target.host.name
+    - target.host.domain
+    - target.host.ip_address.value
   OriginalFileName: object.file.name
   User: origin.account.name
   EventType: action.command
-  TargetObject: object.registry_object.key
+  TargetObject:
+    - object.registry_object.key
+    - object.registry_object.path
+    - object.resource.name
   CommandLine: object.process.command_line
-  type: action.command
-  a0: object.process.command_line
+  type:
+    - action.command
+    - action.type
+    - action.session.type
+  a0:
+    - object.process.command_line
+    - object.process.command_args
+    - object.process.name
   cs-user-agent: action.user_agent
-  blocked: action.message
+  blocked:
+    - action.message
+    - action.result.reason
