@@ -21,6 +21,7 @@ from typing import Union
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.tokens import LogicalOperatorType
 from app.translator.core.exceptions.core import StrictPlatformException
+from app.translator.core.exceptions.render import BaseRenderException
 from app.translator.core.mapping import LogSourceSignature, SourceMapping
 from app.translator.core.models.field import FieldValue, Keyword
 from app.translator.core.models.functions.base import ParsedFunctions
@@ -33,19 +34,49 @@ from app.translator.platforms.logrhythm_axon.mapping import LogRhythmAxonMapping
 from app.translator.platforms.microsoft.escape_manager import microsoft_escape_manager
 
 
+class LogRhythmRegexRenderException(BaseRenderException):
+    ...
+
+
 class LogRhythmAxonFieldValue(BaseQueryFieldValue):
     details: PlatformDetails = logrhythm_axon_query_details
     escape_manager = microsoft_escape_manager
 
-    @staticmethod
-    def __remove_wildcards(value: Union[int, str]) -> Union[int, str]:
-        if isinstance(value, str):
-            value_parsed = []
-            for i in range(len(value)):
-                if value[i] != "*":
-                    value_parsed.append(value[i])
-            value = "".join(value_parsed)
-        return value
+    def __is_complex_regex(self, regex: str) -> bool:
+        regex_items = ("[", "]", "(", ")", "{", "}", "+", "?", "^", "$", "\d", "\w", "\s", "-")
+        return any(v in regex_items for v in regex)
+
+    def __is_regex(self, value: str) -> bool:
+        regex_items = ("", "[", "]", "(", ")", "{", "}", "*", "+", "?", "^", "$", "|", ".", "\d", "\w", "\s", "\\", "-")
+        return any(v in regex_items for v in value)
+
+    def __regex_to_str_list(self, value: Union[int, str]) -> list[list[str]]:
+        value_groups = []
+        start = 0
+
+        for i in range(1, len(value)):
+            if value[i] == "|" and value[i - 1] != "\\":
+                if start < i:
+                    value_groups.append(value[start:i])
+                start = i + 1
+        if start < len(value):
+            value_groups.append(value[start:])
+
+        joined_components = []
+        for value_group in value_groups:
+            inner_joined_components = []
+            not_joined_components = []
+
+            for i in range(len(value_group)):
+                if value_group[i] == "*" and i > 0 and value_group[i - 1] != "\\":
+                    inner_joined_components.append("".join(not_joined_components))
+                    not_joined_components = []
+                else:
+                    not_joined_components.append(value_group[i])
+            inner_joined_components.append("".join(not_joined_components))
+            joined_components.append(inner_joined_components)
+
+        return joined_components
 
     @staticmethod
     def __escape_value(value: Union[int, str]) -> Union[int, str]:
@@ -53,44 +84,56 @@ class LogRhythmAxonFieldValue(BaseQueryFieldValue):
 
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, str):
-            return f'{field} = "{self.__remove_wildcards(self.__escape_value(value))}"'
+            return f'{field} = "{self.__escape_value(value)}"'
         if isinstance(value, list):
             prepared_values = ", ".join(f"{self.__escape_value(v)}" for v in value)
             operator = "IN" if all(isinstance(v, str) for v in value) else "in"
             return f"{field} {operator} [{prepared_values}]"
-        return f'{field} = "{self.__remove_wildcards(self.apply_value(value))}"'
+        return f'{field} = "{self.apply_value(value)}"'
 
     def less_modifier(self, field: str, value: Union[int, str]) -> str:
         if isinstance(value, int):
             return f"{field} < {value}"
-        return f"{field} < '{self.__remove_wildcards(self.apply_value(value))}'"
+        return f"{field} < '{self.apply_value(value)}'"
 
     def less_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
         if isinstance(value, int):
             return f"{field} <= {value}"
-        return f"{field} <= {self.__remove_wildcards(self.apply_value(value))}"
+        return f"{field} <= {self.apply_value(value)}"
 
     def greater_modifier(self, field: str, value: Union[int, str]) -> str:
         if isinstance(value, int):
             return f"{field} > {value}"
-        return f"{field} > {self.__remove_wildcards(self.apply_value(value))}"
+        return f"{field} > {self.apply_value(value)}"
 
     def greater_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
         if isinstance(value, int):
             return f"{field} >= {value}"
-        return f"{field} >= {self.__remove_wildcards(self.apply_value(value))}"
+        return f"{field} >= {self.apply_value(value)}"
 
     def not_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join([self.not_equal_modifier(field=field, value=v) for v in value])})"
         if isinstance(value, int):
             return f"{field} != {value}"
-        return f"{field} != {self.__remove_wildcards(self.apply_value(value))}"
+        return f"{field} != {self.apply_value(value)}"
 
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.contains_modifier(field=field, value=v) for v in value)})"
-        return f'{field} CONTAINS "{self.__remove_wildcards(self.__escape_value(value))}"'
+        if isinstance(value, str) and self.__is_regex(value):
+            if self.__is_complex_regex(value):
+                raise LogRhythmRegexRenderException
+            values = self.__regex_to_str_list(value)
+            return (
+                "("
+                + self.or_token.join(
+                    " AND ".join(f'{field} CONTAINS "{self.__escape_value(value)}"' for value in value_list)
+                    for value_list in values
+                )
+                + ")"
+            )
+        return f'{field} CONTAINS "{self.__escape_value(value)}"'
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
@@ -136,9 +179,17 @@ class LogRhythmAxonQueryRender(BaseQueryRender):
             try:
                 mapped_fields = self.map_field(token.field, source_mapping)
             except StrictPlatformException:
-                return self.field_value_map.apply_field_value(
-                    field='general_information.raw_message', operator=Identifier(token_type="contains"), value=token.value
-                )
+                try:
+                    return self.field_value_map.apply_field_value(
+                        field="general_information.raw_message",
+                        operator=Identifier(token_type="contains"),
+                        value=token.value,
+                    )
+                except LogRhythmRegexRenderException as exc:
+                    raise LogRhythmRegexRenderException(
+                        f"Uncoder does not support complex regexp for unmapped field:"
+                        f" {token.field.source_name} for LogRhythm Axon"
+                    ) from exc
             if len(mapped_fields) > 1:
                 return self.group_token % self.operator_map[LogicalOperatorType.OR].join(
                     [
@@ -146,7 +197,6 @@ class LogRhythmAxonQueryRender(BaseQueryRender):
                         for field in mapped_fields
                     ]
                 )
-
             return self.field_value_map.apply_field_value(
                 field=mapped_fields[0], operator=token.operator, value=token.value
             )
