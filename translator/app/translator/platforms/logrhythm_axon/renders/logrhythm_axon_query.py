@@ -72,7 +72,7 @@ class LogRhythmAxonFieldValue(BaseQueryFieldValue):
             else:
                 stack.append((value[index], False))
         if stack:
-            value_groups.append("".join(element[0] for element in stack))
+            value_groups.append("".join(element[0] for element in stack if element[0] != '\\' or element[-1] is True))
 
         joined_components = []
         for value_group in value_groups:
@@ -82,9 +82,6 @@ class LogRhythmAxonFieldValue(BaseQueryFieldValue):
                 if value_group[i] == "*" and i > 0 and value_group[i - 1] != "\\":
                     inner_joined_components.append("".join(not_joined_components))
                     not_joined_components = []
-                elif value_group[i] == "|" or value_group[i] == "*" and value_group[i - 1] == "\\":
-                    not_joined_components.pop()
-                    not_joined_components.append(value_group[i])
                 else:
                     not_joined_components.append(value_group[i])
             inner_joined_components.append("".join(not_joined_components))
