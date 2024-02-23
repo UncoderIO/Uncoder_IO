@@ -16,6 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+import re
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
@@ -51,6 +52,7 @@ class LogRhythmAxonFieldValue(BaseQueryFieldValue):
         return any(v in regex_items for v in value)
 
     def __regex_to_str_list(self, value: Union[int, str]) -> list[list[str]]:
+        value = re.sub(r"\\\\", r"\\", value)
         value_groups = []
         start = 0
 
@@ -66,11 +68,13 @@ class LogRhythmAxonFieldValue(BaseQueryFieldValue):
         for value_group in value_groups:
             inner_joined_components = []
             not_joined_components = []
-
             for i in range(len(value_group)):
                 if value_group[i] == "*" and i > 0 and value_group[i - 1] != "\\":
                     inner_joined_components.append("".join(not_joined_components))
                     not_joined_components = []
+                elif value_group[i] == "|" or value_group[i] == "*" and value_group[i - 1] == "\\":
+                    not_joined_components.pop()
+                    not_joined_components.append(value_group[i])
                 else:
                     not_joined_components.append(value_group[i])
             inner_joined_components.append("".join(not_joined_components))
