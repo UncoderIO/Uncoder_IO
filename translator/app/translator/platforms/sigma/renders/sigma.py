@@ -17,10 +17,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 import copy
-from typing import Any
+from typing import Any, Union
 
 import yaml
 
+from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, SourceMapping
@@ -28,11 +29,13 @@ from app.translator.core.models.field import FieldValue, Keyword
 from app.translator.core.models.functions.base import ParsedFunctions
 from app.translator.core.models.parser_output import MetaInfoContainer
 from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.core.str_value_manager import StrValue
 from app.translator.platforms.sigma.const import SIGMA_RULE_DETAILS
 from app.translator.platforms.sigma.mapping import SigmaLogSourceSignature, SigmaMappings, sigma_mappings
 from app.translator.platforms.sigma.models.compiler import DataStructureCompiler
 from app.translator.platforms.sigma.models.group import Group
 from app.translator.platforms.sigma.models.operator import AND, NOT, OR
+from app.translator.platforms.sigma.str_value_manager import sigma_str_value_manager
 
 
 class SigmaRender:
@@ -43,6 +46,7 @@ class SigmaRender:
 
     mappings: SigmaMappings = sigma_mappings
     details: PlatformDetails = PlatformDetails(**SIGMA_RULE_DETAILS)
+    str_value_manager = sigma_str_value_manager
 
     @property
     def selection(self):
@@ -205,17 +209,28 @@ class SigmaRender:
             OperatorType.NEQ,
         ):
             field_name = f"{field_name}|{data.operator.token_type}"
-        if isinstance(data.values, list) and len(data.values) == 1 or isinstance(data.values, (str, int)):
-            return {field_name: data.values[0]}
-        elif isinstance(data.values, list) and len(data.values) == 0:
-            return {field_name: ""}
-        return {field_name: data.values}
 
-    @staticmethod
-    def generate_keyword(data):
-        if isinstance(data.values, list) and len(data.values) == 1 or isinstance(data.values, (str, int)):
-            return [data.values[0]]
-        return data.values
+        values = self.__pre_process_values(data.values)
+        if len(values) == 1:
+            return {field_name: values[0]}
+        elif len(values) == 0:
+            return {field_name: ""}
+        return {field_name: values}
+
+    def __pre_process_values(self, values: DEFAULT_VALUE_TYPE) -> list[Union[int, str]]:
+        processed = []
+        for v in values:
+            if isinstance(v, StrValue):
+                processed.append(self.str_value_manager.from_container_to_str(v))
+            elif isinstance(v, str):
+                processed.append(v)
+            else:
+                processed.append(v)
+
+        return processed
+
+    def generate_keyword(self, data: Keyword):
+        return self.__pre_process_values(data.values)
 
     def __base_detection(self, data: dict):
         self.increase_selection()

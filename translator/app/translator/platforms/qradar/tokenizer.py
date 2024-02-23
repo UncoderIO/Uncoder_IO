@@ -47,7 +47,7 @@ class QradarTokenizer(QueryTokenizer):
     field_pattern = r'(?P<field_name>"[a-zA-Z\._\-\s]+"|[a-zA-Z\._\-]+)'
     bool_value_pattern = rf"(?P<{ValueType.bool_value}>true|false)\s*"
     _value_pattern = rf"{NUM_VALUE_PATTERN}|{bool_value_pattern}|{SINGLE_QUOTES_VALUE_PATTERN}"
-    multi_value_pattern = rf"""\((?P<{ValueType.value}>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\s]*)\)"""
+    multi_value_pattern = rf"""\((?P<{ValueType.multi_value}>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\s]*)\)"""
     keyword_pattern = rf"{UTF8_PAYLOAD_PATTERN}\s+(?:like|LIKE|ilike|ILIKE)\s+{SINGLE_QUOTES_VALUE_PATTERN}"
     escape_manager = qradar_escape_manager
 
@@ -80,6 +80,6 @@ class QradarTokenizer(QueryTokenizer):
     def search_keyword(self, query: str) -> tuple[Keyword, str]:
         keyword_search = re.search(self.keyword_pattern, query)
         _, value = self.get_operator_and_value(keyword_search)
-        keyword = Keyword(value=self._clean_value(value, self.wildcard_symbol))
+        keyword = Keyword(value=value.strip(self.wildcard_symbol))
         pos = keyword_search.end()
         return keyword, query[pos:]

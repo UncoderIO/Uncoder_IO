@@ -3,7 +3,7 @@ from typing import Optional, Union
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, SourceMapping
 from app.translator.core.models.identifier import Identifier
-from app.translator.core.str_value_processing import StrValue
+from app.translator.core.str_value_manager import StrValue
 
 
 class Field:
@@ -59,7 +59,7 @@ class Keyword:
     def __init__(self, value: Union[str, list[str]]):
         self.operator: Identifier = Identifier(token_type=OperatorType.KEYWORD)
         self.name = "keyword"
-        self.values: [str] = []
+        self.values = []
         self.__add_value(value=value)
 
     @property

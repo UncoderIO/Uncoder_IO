@@ -17,7 +17,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 import re
-from typing import Any, ClassVar, Union
+from typing import Any, ClassVar
 
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.custom_types.values import ValueType
@@ -47,14 +47,14 @@ class MicrosoftSentinelTokenizer(QueryTokenizer, OperatorBasedMixin):
     bool_value_pattern = rf"(?P<{ValueType.bool_value}>true|false)\s*"
     num_value_pattern = rf"(?P<{ValueType.number_value}>\d+(?:\.\d+)*)\s*"
     double_quotes_value_pattern = (
-        rf'(?P<{ValueType.double_quotes_value}>@?"(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{{\}}\s]|\\\"|\\\\)*)"\s*'
+        rf'(?P<{ValueType.double_quotes_value}>@?"(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{{\}}\s]|\\\"|\\\\)*")\s*'
     )
     single_quotes_value_pattern = (
-        rf"(?P<{ValueType.single_quotes_value}>@?'(?:[:a-zA-Z\*0-9=+%#\-_/,\"\.$&^@!\(\)\{{\}}\s]|\\\'|\\\\)*)'\s*"
+        rf"(?P<{ValueType.single_quotes_value}>@?'(?:[:a-zA-Z\*0-9=+%#\-_/,\"\.$&^@!\(\)\{{\}}\s]|\\\'|\\\\)*')\s*"
     )
     str_value_pattern = rf"""{double_quotes_value_pattern}|{single_quotes_value_pattern}"""
     _value_pattern = rf"""{bool_value_pattern}|{num_value_pattern}|{str_value_pattern}"""
-    multi_value_pattern = rf"""\((?P<{ValueType.value}>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\s]+)\)"""
+    multi_value_pattern = rf"""\((?P<{ValueType.multi_value}>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\s]+)\)"""
     keyword_pattern = rf"\*\s+contains\s+(?:{str_value_pattern})"
 
     escape_manager = microsoft_escape_manager
@@ -68,21 +68,20 @@ class MicrosoftSentinelTokenizer(QueryTokenizer, OperatorBasedMixin):
 
         if (d_q_value := get_match_group(match, group_name=ValueType.double_quotes_value)) is not None:
             if d_q_value.startswith("@"):
-                return operator, d_q_value.lstrip("@").lstrip('"')
-            return operator, self.escape_manager.remove_escape(d_q_value.lstrip('"'))
+                return operator, d_q_value.lstrip("@").strip('"')
+            return operator, self.escape_manager.remove_escape(d_q_value.strip('"'))
 
         if (s_q_value := get_match_group(match, group_name=ValueType.single_quotes_value)) is not None:
             if s_q_value.startswith("@"):
-                return operator, s_q_value.lstrip("@").lstrip("'")
-            return operator, self.escape_manager.remove_escape(s_q_value.lstrip("'"))
+                return operator, s_q_value.lstrip("@").strip("'")
+            return operator, self.escape_manager.remove_escape(s_q_value.strip("'"))
 
         return super().get_operator_and_value(match, operator)
 
-    def clean_multi_value(self, value: Union[int, str]) -> Union[int, str]:
-        if isinstance(value, str):
-            value = value.strip(" ")
-            value = value.lstrip("@")
-            if value.startswith("'") and value.endswith("'") or value.startswith('"') and value.endswith('"'):
-                value = value[1:-1]
+    def clean_multi_value(self, value: str) -> str:
+        value = value.strip(" ")
+        value = value.lstrip("@")
+        if value.startswith("'") and value.endswith("'") or value.startswith('"') and value.endswith('"'):
+            value = value[1:-1]
 
         return value

@@ -47,7 +47,7 @@ class AthenaTokenizer(QueryTokenizer):
         rf"""'(?P<{ValueType.single_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{{\}}\s]|'')*)'"""
     )
     _value_pattern = rf"{num_value_pattern}|{bool_value_pattern}|{single_quotes_value_pattern}"
-    multi_value_pattern = rf"""\((?P<{ValueType.value}>\d+(?:,\s*\d+)*|'(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{{\}}\s]|'')*'(?:,\s*'(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{{\}}\s]|'')*')*)\)"""  # noqa: E501
+    multi_value_pattern = rf"""\((?P<{ValueType.multi_value}>\d+(?:,\s*\d+)*|'(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{{\}}\s]|'')*'(?:,\s*'(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{{\}}\s]|'')*')*)\)"""  # noqa: E501
 
     wildcard_symbol = "%"
 

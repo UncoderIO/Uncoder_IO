@@ -42,7 +42,7 @@ class SplTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
 
     field_pattern = r"(?P<field_name>[a-zA-Z0-9\.\-_\{\}]+)"
     num_value_pattern = rf"(?P<{ValueType.number_value}>\d+(?:\.\d+)*)(?=$|\s|\))"
-    double_quotes_value_pattern = rf'"(?P<{ValueType.double_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,;`\?~‘○×\'\.<>$&^@!\]\[\(\)\{{\}}\s]|\\\"|\\)*)"\s*' # noqa
+    double_quotes_value_pattern = rf'"(?P<{ValueType.double_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,;`\?~‘○×\'\.<>$&^@!\]\[\(\)\{{\}}\s]|\\\"|\\)*)"\s*'  # noqa: E501
     single_quotes_value_pattern = (
         rf"'(?P<{ValueType.single_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,;\"\.<>$&^@!\(\)\{{\}}\s]|\\\'|\\)*)'\s*"
     )
@@ -50,7 +50,7 @@ class SplTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
     _value_pattern = (
         rf"{num_value_pattern}|{no_quotes_value_pattern}|{double_quotes_value_pattern}|{single_quotes_value_pattern}"
     )
-    multi_value_pattern = rf"""\((?P<{ValueType.value}>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,;.$&^@!\{{\}}\(\s]+)\)"""
+    multi_value_pattern = rf"""\((?P<{ValueType.multi_value}>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,;.$&^@!\{{\}}\(\s]+)\)"""
     keyword_pattern = rf"{double_quotes_value_pattern}|{no_quotes_value_pattern}"
 
     wildcard_symbol = "*"

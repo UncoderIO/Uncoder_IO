@@ -43,7 +43,9 @@ class ChronicleQueryTokenizer(QueryTokenizer):
     num_value_pattern = rf"(?P<{ValueType.number_value}>\d+(?:\.\d+)*)\s*"
     bool_value_pattern = rf"(?P<{ValueType.bool_value}>true|false)\s*"
     double_quotes_value_pattern = rf'"(?P<{ValueType.double_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{{\}}\s]|\\\"|\\\\)*)"\s*(?:nocase)?'  # noqa: E501
-    re_value_pattern = rf"/(?P<{ValueType.regular_expression_value}>(?:\\\/|[:a-zA-Z\*0-9=+%#\\\-_\,\"\'\.$&^@!\(\)\{{\}}\s?])+)/\s*(?:nocase)?"  # noqa: E501
+    re_value_pattern = (
+        rf"/(?P<{ValueType.regex_value}>(?:\\\/|[:a-zA-Z\*0-9=+%#\\\-_\,\"\'\.$&^@!\(\)\{{\}}\s?])+)/\s*(?:nocase)?"
+    )
     _value_pattern = rf"{num_value_pattern}|{bool_value_pattern}|{double_quotes_value_pattern}|{re_value_pattern}"
     escape_manager = chronicle_escape_manager
 
@@ -59,7 +61,7 @@ class ChronicleQueryTokenizer(QueryTokenizer):
         if (d_q_value := get_match_group(match, group_name=ValueType.double_quotes_value)) is not None:
             return operator, self.escape_manager.remove_escape(d_q_value)
 
-        if (re_value := get_match_group(match, group_name=ValueType.regular_expression_value)) is not None:
+        if (re_value := get_match_group(match, group_name=ValueType.regex_value)) is not None:
             return OperatorType.REGEX, re_value
 
         return super().get_operator_and_value(match, operator)
@@ -99,9 +101,7 @@ class ChronicleRuleTokenizer(ChronicleQueryTokenizer):
 
             operator = OperatorType.REGEX
             operator, value = self.get_operator_and_value(value_search, operator)
-            value, operator = self.process_value_wildcards(
-                value=value, operator=OperatorType.REGEX, wildcard_symbol=self.wildcard_symbol
-            )
+            operator, value = self.process_value_wildcards(value=value, operator=OperatorType.REGEX)
             pos = value_search.end()
             query = query[pos:]
 

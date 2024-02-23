@@ -78,7 +78,7 @@ class ChronicleRuleFieldValue(ChronicleFieldValue):
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.regex_modifier(field=field, value=v) for v in value)})"
-        return f"re.regex({self.apply_field(field)}, `{self.apply_asterics_value(value)}`)"
+        return f"re.regex({self.apply_field(field)}, `{self.apply_asterisk_value(value)}`)"
 
 
 class ChronicleSecurityRuleRender(ChronicleQueryRender):

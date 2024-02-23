@@ -35,14 +35,14 @@ class ChronicleFieldValue(BaseQueryFieldValue):
     def apply_value(self, value: Union[str, int], value_type: str = ValueType.value) -> Union[str, int]:
         if isinstance(value, str):
             if "*" in value:
-                return self.apply_asterics_value(value)
+                return self.apply_asterisk_value(value)
             value = self.clean_str_value(value)
         return super().apply_value(value, value_type)
 
-    def apply_asterics_value(self, value: str) -> str:
+    def apply_asterisk_value(self, value: str) -> str:
         value = value.replace(r"\\*", "*")
-        updated_value = super().apply_value(value, ValueType.regular_expression_value)
-        return updated_value.replace("*", ".*")
+        updated_value = super().apply_value(value, ValueType.regex_value)
+        return updated_value.replace(".*", "*").replace("*", ".*")
 
     @staticmethod
     def clean_str_value(value: str) -> str:
@@ -90,7 +90,7 @@ class ChronicleFieldValue(BaseQueryFieldValue):
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.regex_modifier(field=field, value=v) for v in value)})"
-        return f"{field} = /{self.apply_asterics_value(value)}/ nocase"
+        return f"{field} = /{self.apply_asterisk_value(value)}/ nocase"
 
     def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
         raise UnsupportedRenderMethod(platform_name=self.details.name, method="Keywords")

@@ -18,7 +18,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
 import re
 from abc import ABC, abstractmethod
-from typing import Any, ClassVar, Optional, Union
+from typing import Any, ClassVar, Union
 
 from app.translator.core.custom_types.tokens import GroupType, LogicalOperatorType, OperatorType
 from app.translator.core.custom_types.values import ValueType
@@ -33,6 +33,7 @@ from app.translator.core.models.field import Field, FieldValue, Keyword
 from app.translator.core.models.functions.base import Function
 from app.translator.core.models.functions.sort import SortArg
 from app.translator.core.models.identifier import Identifier
+from app.translator.core.str_value_manager import StrValue, StrValueManager
 from app.translator.tools.utils import get_match_group
 
 TOKEN_TYPE = Union[FieldValue, Keyword, Identifier]
@@ -61,10 +62,11 @@ class QueryTokenizer(BaseTokenizer):
     value_pattern: str = None
     multi_value_pattern: str = None
     keyword_pattern: str = None
+    multi_value_delimiter_pattern = r","
 
-    multi_value_delimiter = ","
     wildcard_symbol = None
     escape_manager: EscapeManager = None
+    str_value_manager: StrValueManager = None
 
     def __init_subclass__(cls, **kwargs):
         cls._validate_re_patterns()
@@ -106,32 +108,53 @@ class QueryTokenizer(BaseTokenizer):
         return operator, get_match_group(match, group_name=ValueType.value)
 
     @staticmethod
-    def clean_multi_value(value: Union[int, str]) -> Union[int, str]:
-        if isinstance(value, str):
-            value = value.strip(" ")
-            if value.startswith("'") and value.endswith("'") or value.startswith('"') and value.endswith('"'):
-                value = value[1:-1]
+    def clean_multi_value(value: str) -> str:
+        value = value.strip(" ")
+        if value.startswith("'") and value.endswith("'") or value.startswith('"') and value.endswith('"'):
+            value = value[1:-1]
 
         return value
 
-    def search_single_value(self, query: str, operator: str, field_name: str) -> tuple[str, str, Union[int, str]]:
-        return self._search_value(query, operator, field_name, self.value_pattern)
+    def search_single_value(self, query: str, operator: str, field_name: str) -> tuple[str, str, Union[str, StrValue]]:
+        field_value_match = self._get_field_value_match(query, operator, field_name, self.value_pattern)
+        mapped_operator, value = self.get_operator_and_value(field_value_match, self.map_operator(operator))
+        if self.should_process_value_wildcards(operator):
+            mapped_operator, value = self.process_value_wildcards(value, mapped_operator)
 
-    def search_multi_value(self, query: str, operator: str, field_name: str) -> tuple[str, str, list[Union[int, str]]]:
-        query, operator, value = self._search_value(query, operator, field_name, self.multi_value_pattern)
-        values = [self.clean_multi_value(v) for v in value.split(",")]
-        return query, operator, values
+        pos = field_value_match.end()
+        return query[pos:], mapped_operator, value
 
-    def _search_value(self, query: str, operator: str, field_name: str, value_pattern: str) -> tuple[str, str, Any]:
-        field_value_pattern = self.get_field_value_pattern(operator, field_name, value_pattern)
-        field_value_regex = re.compile(field_value_pattern, re.IGNORECASE)
-        field_value_search = re.match(field_value_regex, query)
-        if field_value_search is None:
+    def search_multi_value(
+        self, query: str, operator: str, field_name: str
+    ) -> tuple[str, dict[str, list[Union[str, StrValue]]]]:
+        field_value_match = self._get_field_value_match(query, operator, field_name, self.multi_value_pattern)
+        if (multi_value := get_match_group(field_value_match, group_name=ValueType.multi_value)) is None:
             raise TokenizerGeneralException(error=f"Value couldn't be found in query part: {query}")
 
-        operator, value = self.get_operator_and_value(field_value_search, self.map_operator(operator))
-        pos = field_value_search.end()
-        return query[pos:], operator, value
+        values = [self.clean_multi_value(v) for v in re.split(self.multi_value_delimiter_pattern, multi_value)]
+        grouped_values = self.group_values_by_operator(values, operator)
+        pos = field_value_match.end()
+        return query[pos:], grouped_values
+
+    def _get_field_value_match(self, query: str, operator: str, field_name: str, value_pattern: str) -> re.Match:
+        field_value_pattern = self.get_field_value_pattern(operator, field_name, value_pattern)
+        field_value_regex = re.compile(field_value_pattern, re.IGNORECASE)
+        field_value_match = re.match(field_value_regex, query)
+        if field_value_match is None:
+            raise TokenizerGeneralException(error=f"Value couldn't be found in query part: {query}")
+
+        return field_value_match
+
+    def group_values_by_operator(self, values: list[str], operator: str) -> dict[str, list[str]]:
+        mapped_operator = self.map_operator(operator)
+        result = {}
+        for value in values:
+            op = mapped_operator
+            if self.should_process_value_wildcards(operator):
+                op, value = self.process_value_wildcards(value, mapped_operator)
+            result.setdefault(op, []).append(value)
+
+        return result
 
     def search_keyword(self, query: str) -> tuple[Keyword, str]:
         keyword_search = re.search(self.keyword_pattern, query)
@@ -149,51 +172,38 @@ class QueryTokenizer(BaseTokenizer):
     def should_process_value_wildcards(operator: str) -> bool:  # noqa: ARG004
         return True
 
-    @staticmethod
-    def _clean_value(value: str, wildcard_symbol: str) -> str:
-        return value.strip(wildcard_symbol) if wildcard_symbol else value
+    def process_value_wildcards(
+        self, value: Union[str, StrValue], operator: str = OperatorType.EQ
+    ) -> tuple[str, Union[str, StrValue]]:
+        if not (wildcard := self.wildcard_symbol) or operator == OperatorType.REGEX or len(value) == 1:
+            return operator, value
 
-    @staticmethod
-    def __get_operator(value: str, op: str, wildcard_symbol: str) -> str:
-        if not wildcard_symbol:
-            return op
+        if value.startswith(wildcard) and value.endswith(wildcard):
+            if isinstance(value, StrValue):
+                value = StrValue(value.strip(wildcard), value.split_value[1:-1])
+            else:
+                value = value.strip(wildcard)
+            return OperatorType.CONTAINS, value
 
-        if op == OperatorType.REGEX and not (value.startswith(wildcard_symbol) and value.endswith(wildcard_symbol)):
-            return OperatorType.REGEX
+        if value.startswith(wildcard):
+            if isinstance(value, StrValue):
+                value = StrValue(value.lstrip(wildcard), value.split_value[1:])
+            else:
+                value = value.lstrip(wildcard)
+            return OperatorType.ENDSWITH, value
 
-        if value.startswith(wildcard_symbol) and value.endswith(wildcard_symbol):
-            return OperatorType.CONTAINS
+        if value.endswith(wildcard):
+            if isinstance(value, StrValue):
+                value = StrValue(value.rstrip(wildcard), value.split_value[:-1])
+            else:
+                value = value.rstrip(wildcard)
+            return OperatorType.STARTSWITH, value
 
-        if value.startswith(wildcard_symbol):
-            return OperatorType.ENDSWITH
-
-        if value.endswith(wildcard_symbol):
-            return OperatorType.STARTSWITH
-
-        return op
-
-    def process_value_wildcards(self, value: str, operator: str, wildcard_symbol: Optional[str]) -> tuple[str, str]:
-        operator = self.__get_operator(value=value, op=operator, wildcard_symbol=wildcard_symbol)
-        return self._clean_value(value, wildcard_symbol), operator
+        return operator, value
 
     @staticmethod
     def create_field_value(field_name: str, operator: Identifier, value: Union[str, list]) -> FieldValue:
         return FieldValue(source_name=field_name, operator=operator, value=value)
-
-    def group_values_by_operator(
-        self, values: list[Union[int, str]], default_operator: str, should_process_value_wildcards: bool
-    ) -> dict[str, list[Union[int, str]]]:
-        result = {}
-        for value in values:
-            if isinstance(value, str):
-                operator = default_operator
-                if should_process_value_wildcards:
-                    value, operator = self.process_value_wildcards(value, default_operator, self.wildcard_symbol)
-                result.setdefault(operator, []).append(value)
-            else:
-                result.setdefault(default_operator, []).append(value)
-
-        return result
 
     @staticmethod
     def concat_field_value_tokens(tokens: list[FieldValue]) -> list[Union[FieldValue, Identifier]]:
@@ -210,10 +220,8 @@ class QueryTokenizer(BaseTokenizer):
     def search_field_value(self, query: str) -> tuple[Union[FieldValue, list[Union[FieldValue, Identifier]]], str]:
         field_name = self.search_field(query)
         operator = self.search_operator(query, field_name)
-        should_process_value_wildcards = self.should_process_value_wildcards(operator)
         if self.is_multi_value_flow(field_name, operator, query):
-            query, operator, values = self.search_multi_value(query=query, operator=operator, field_name=field_name)
-            grouped_values = self.group_values_by_operator(values, operator, should_process_value_wildcards)
+            query, grouped_values = self.search_multi_value(query=query, operator=operator, field_name=field_name)
             tokens = [
                 self.create_field_value(field_name=field_name, operator=Identifier(token_type=op), value=values)
                 for op, values in grouped_values.items()
@@ -226,15 +234,11 @@ class QueryTokenizer(BaseTokenizer):
             return tokens, query
 
         query, operator, value = self.search_single_value(query=query, operator=operator, field_name=field_name)
-        if should_process_value_wildcards:
-            value, operator = self.process_value_wildcards(
-                value=value, operator=operator, wildcard_symbol=self.wildcard_symbol
-            )
         operator_token = Identifier(token_type=operator)
         field_value = self.create_field_value(field_name=field_name, operator=operator_token, value=value)
         return field_value, query
 
-    def _match_field_value(self, query: str, white_space_pattern: str = r"\s+") -> bool:
+    def _check_field_value_match(self, query: str, white_space_pattern: str = r"\s+") -> bool:
         single_value_operator_group = rf"(?:{'|'.join(self.single_value_operators_map)})"
         single_value_pattern = rf"""{self.field_pattern}\s*{single_value_operator_group}\s*{self.value_pattern}\s*"""
         if re.match(single_value_pattern, query, re.IGNORECASE):
@@ -261,7 +265,7 @@ class QueryTokenizer(BaseTokenizer):
             logical_operator = logical_operator_search.group("logical_operator")
             pos = logical_operator_search.end()
             return Identifier(token_type=logical_operator.lower()), query[pos:]
-        if self._match_field_value(query):
+        if self._check_field_value_match(query):
             return self.search_field_value(query)
         if self.keyword_pattern and re.match(self.keyword_pattern, query):
             return self.search_keyword(query)
@@ -285,11 +289,17 @@ class QueryTokenizer(BaseTokenizer):
     def tokenize(self, query: str) -> list[Union[FieldValue, Keyword, Identifier]]:
         tokenized = []
         while query:
-            next_token, query = self._get_next_token(query=query)
+            next_token, sliced_query = self._get_next_token(query=query)
             if isinstance(next_token, list):
                 tokenized.extend(next_token)
             else:
                 tokenized.append(next_token)
+
+            if len(sliced_query) >= len(query):
+                raise TokenizerGeneralException("Unsupported query entry. Infinite loop")
+
+            query = sliced_query
+
         self._validate_parentheses(tokenized)
         return tokenized
 

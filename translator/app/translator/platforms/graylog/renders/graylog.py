@@ -16,9 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-from typing import Union
 
-from app.translator.core.custom_types.values import ValueType
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.platforms.base.lucene.renders.lucene import LuceneFieldValue, LuceneQueryRender
 from app.translator.platforms.graylog.const import graylog_details
@@ -27,13 +25,6 @@ from app.translator.platforms.graylog.mapping import GraylogMappings, graylog_ma
 
 class GraylogFieldValue(LuceneFieldValue):
     details: PlatformDetails = graylog_details
-
-    def apply_value(self, value: Union[str, int], value_type: str = ValueType.value) -> Union[str, int]:
-        if isinstance(value, int):
-            return value
-        if " " in value:
-            return f'"{value}"'.replace(" ", r"\ ")
-        return super().apply_value(value, value_type)
 
 
 class GraylogRender(LuceneQueryRender):

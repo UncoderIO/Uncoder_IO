@@ -33,7 +33,7 @@ from app.translator.core.models.functions.base import Function, ParsedFunctions
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.parser_output import MetaInfoContainer
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.str_value_processing import StrValueManager
+from app.translator.core.str_value_manager import StrValueManager
 
 
 class BaseQueryFieldValue(ABC):

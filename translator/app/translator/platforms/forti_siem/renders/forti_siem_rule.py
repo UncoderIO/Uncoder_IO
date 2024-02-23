@@ -1,27 +1,10 @@
-"""
-Uncoder IO Community Edition License
------------------------------------------------------------------
-Copyright (c) 2023 SOC Prime, Inc.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
------------------------------------------------------------------
-"""
 import re
 from typing import Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.custom_types.tokens import OperatorType
+from app.translator.core.custom_types.values import ValueType
 from app.translator.core.exceptions.render import UnsupportedRenderMethod
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.field import FieldValue
@@ -30,14 +13,14 @@ from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.parser_output import MetaInfoContainer
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render import BaseQueryFieldValue, BaseQueryRender
-from app.translator.core.str_value_processing import StrValue
+from app.translator.core.str_value_manager import StrValue
 from app.translator.platforms.forti_siem.const import (
     FORTI_SIEM_RULE,
     SOURCES_EVENT_TYPES_CONTAINERS_MAP,
     forti_siem_rule_details,
 )
 from app.translator.platforms.forti_siem.mapping import FortiSiemMappings, forti_siem_mappings
-from app.translator.platforms.forti_siem.str_value_processing import forti_siem_str_value_manager
+from app.translator.platforms.forti_siem.str_value_manager import forti_siem_str_value_manager
 from app.translator.tools.utils import concatenate_str
 
 _EVENT_TYPE_FIELD = "eventType"
@@ -76,7 +59,7 @@ class FortiSiemFieldValue(BaseQueryFieldValue):
             return f"({self.or_token.join([self.contains_modifier(field=field, value=v) for v in value])})"
 
         if isinstance(value, StrValue):
-            value = forti_siem_str_value_manager.from_container_to_re_str(value)
+            value = forti_siem_str_value_manager.from_container_to_str(value, value_type=ValueType.regex_value)
 
         return f'{field} REGEXP "{value}"'
 
@@ -85,7 +68,7 @@ class FortiSiemFieldValue(BaseQueryFieldValue):
             return f"({self.or_token.join([self.endswith_modifier(field=field, value=v) for v in value])})"
 
         if isinstance(value, StrValue):
-            value = forti_siem_str_value_manager.from_container_to_re_str(value)
+            value = forti_siem_str_value_manager.from_container_to_str(value, value_type=ValueType.regex_value)
 
         return f'{field} REGEXP "{value}$"'
 
@@ -94,7 +77,7 @@ class FortiSiemFieldValue(BaseQueryFieldValue):
             return f"({self.or_token.join([self.startswith_modifier(field=field, value=v) for v in value])})"
 
         if isinstance(value, StrValue):
-            value = forti_siem_str_value_manager.from_container_to_re_str(value)
+            value = forti_siem_str_value_manager.from_container_to_str(value, value_type=ValueType.regex_value)
 
         return f'{field} REGEXP "^{value}"'
 
@@ -103,7 +86,7 @@ class FortiSiemFieldValue(BaseQueryFieldValue):
             return f"({self.or_token.join([self.regex_modifier(field=field, value=v) for v in value])})"
 
         if isinstance(value, StrValue):
-            value = forti_siem_str_value_manager.from_container_to_re_str(value)
+            value = forti_siem_str_value_manager.from_container_to_str(value, value_type=ValueType.regex_value)
 
         return f'{field} REGEXP "{value}"'
 

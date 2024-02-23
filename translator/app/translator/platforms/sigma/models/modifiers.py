@@ -1,10 +1,10 @@
-from typing import ClassVar, Union, Optional
+from typing import ClassVar, Optional, Union
 
 from app.translator.core.custom_types.tokens import GroupType, LogicalOperatorType, OperatorType
 from app.translator.core.models.field import FieldValue
 from app.translator.core.models.identifier import Identifier
-from app.translator.core.str_value_processing import StrValue
-from app.translator.platforms.sigma.str_value_processing import sigma_str_value_manager
+from app.translator.core.str_value_manager import StrValue
+from app.translator.platforms.sigma.str_value_manager import sigma_str_value_manager
 
 _MULTY_MODIFIER_LEN = 2
 
