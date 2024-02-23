@@ -16,7 +16,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-import re
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
@@ -51,18 +50,29 @@ class LogRhythmAxonFieldValue(BaseQueryFieldValue):
         regex_items = ("", "[", "]", "(", ")", "{", "}", "*", "+", "?", "^", "$", "|", ".", "\d", "\w", "\s", "\\", "-")
         return any(v in regex_items for v in value)
 
-    def __regex_to_str_list(self, value: Union[int, str]) -> list[list[str]]:
-        value = re.sub(r"\\\\", r"\\", value)
+    def __regex_to_str_list(self, value: Union[int, str]) -> list[list[str]]:  # noqa
         value_groups = []
-        start = 0
 
-        for i in range(1, len(value)):
-            if value[i] == "|" and value[i - 1] != "\\":
-                if start < i:
-                    value_groups.append(value[start:i])
-                start = i + 1
-        if start < len(value):
-            value_groups.append(value[start:])
+        stack = []  # [(element: str, escaped: bool)]
+
+        for index in range(len(value)):
+            if value[index] == "\\":
+                if stack[-1][0] == "\\" and stack[-1][1] is False:
+                    stack.pop()
+                    stack.append((value[index], True))
+                else:
+                    stack.append(("\\", False))
+            elif value[index] == "|":
+                if stack[-1][0] == "\\" and stack[-1][1] is False:
+                    stack.pop()
+                    stack.append((value[index], True))
+                else:
+                    value_groups.append("".join(element[0] for element in stack))
+                    stack = []
+            else:
+                stack.append((value[index], False))
+        if stack:
+            value_groups.append("".join(element[0] for element in stack))
 
         joined_components = []
         for value_group in value_groups:
