@@ -5,11 +5,10 @@ from app.translator.core.escape_manager import EscapeManager
 from app.translator.core.models.escape_details import EscapeDetails
 
 
-class ChronicleEscapeManager(EscapeManager):
+class SigmaEscapeManager(EscapeManager):
     escape_map: ClassVar[dict[str, EscapeDetails]] = {
-        ValueType.value: EscapeDetails(pattern='([\\\\|"])'),
-        ValueType.regex_value: EscapeDetails(pattern='([\\\\|/(")\\[\\]{}.^$+<>!?])'),
+        ValueType.value: EscapeDetails(pattern=r'([*?\\])', escape_symbols=r"\\\1"),
     }
 
 
-chronicle_escape_manager = ChronicleEscapeManager()
+sigma_escape_manager = SigmaEscapeManager()

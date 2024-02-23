@@ -44,9 +44,7 @@ class LogScaleTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
     double_quotes_value_pattern = (
         rf'"(?P<{ValueType.double_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{{\}}\s]|\\\"|\\)*)"\s*'
     )
-    re_value_pattern = (
-        rf"/(?P<{ValueType.regular_expression_value}>[:a-zA-Z\*0-9=+%#\\\-_\,\"\'\.$&^@!\(\)\{{\}}\s?]+)/i?\s*"
-    )
+    re_value_pattern = rf"/(?P<{ValueType.regex_value}>[:a-zA-Z\*0-9=+%#\\\-_\,\"\'\.$&^@!\(\)\{{\}}\s?]+)/i?\s*"
     _value_pattern = rf"""{num_value_pattern}|{re_value_pattern}|{double_quotes_value_pattern}"""
     keyword_pattern = double_quotes_value_pattern
     escape_manager = logscale_escape_manager
@@ -59,7 +57,7 @@ class LogScaleTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
         if (d_q_value := get_match_group(match, group_name=ValueType.double_quotes_value)) is not None:
             return operator, d_q_value
 
-        if (re_value := get_match_group(match, group_name=ValueType.regular_expression_value)) is not None:
+        if (re_value := get_match_group(match, group_name=ValueType.regex_value)) is not None:
             return OperatorType.REGEX, re_value
 
         return super().get_operator_and_value(match, operator)

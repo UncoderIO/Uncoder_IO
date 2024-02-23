@@ -1,7 +1,7 @@
 from os.path import abspath, dirname
 from typing import Union
 
-from app.translator.core.str_value_processing import StrValue
+from app.translator.core.str_value_manager import StrValue
 
 APP_PATH = dirname(abspath(__file__))
 
