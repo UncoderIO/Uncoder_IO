@@ -199,6 +199,8 @@ Write a [Roota](https://github.com/UncoderIO/RootA/blob/main/README.md) or Sigma
 # :bulb: How to Contribute
 Thank you for your interest in the Uncoder IO open-source project! Your contribution really matters in evolving the project and helping us make Uncoder IO even more useful for the global cyber defender community.
 
+We encourage you to commit renders into new platforms. Start with reading these [Instructions on Adding New Renders](Instructions_on_Adding_New_Renders.md).
+
 To submit your pull request with your ideas or suggestions for changes, take the following steps:
 
 1. Fork the [Uncoder repository](https://github.com/UncoderIO/UncoderIO) and clone your fork to your local environment.
