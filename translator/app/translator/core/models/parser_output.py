@@ -5,6 +5,7 @@ from typing import Optional
 
 from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME
+from app.translator.core.models.field import Field
 from app.translator.core.models.functions.base import ParsedFunctions
 
 
@@ -17,6 +18,7 @@ class MetaInfoContainer:
         description: Optional[str] = None,
         author: Optional[str] = None,
         date: Optional[str] = None,
+        fields: Optional[list[Field]] = None,
         license_: Optional[str] = None,
         severity: Optional[str] = None,
         references: Optional[list[str]] = None,
@@ -25,6 +27,7 @@ class MetaInfoContainer:
         status: Optional[str] = None,
         false_positives: Optional[list[str]] = None,
         source_mapping_ids: Optional[list[str]] = None,
+        parsed_logsources: Optional[dict] = None
     ) -> None:
         self.id = id_ or str(uuid.uuid4())
         self.title = title or ""
@@ -32,6 +35,7 @@ class MetaInfoContainer:
         self.author = author or ""
         self.date = date or datetime.now().date().strftime("%Y-%m-%d")
         self.license = license_ or "DRL 1.1"
+        self.fields = fields or []
         self.severity = severity or SeverityType.low
         self.references = references or []
         self.tags = tags or []
@@ -39,6 +43,7 @@ class MetaInfoContainer:
         self.status = status or "stable"
         self.false_positives = false_positives or []
         self.source_mapping_ids = source_mapping_ids or [DEFAULT_MAPPING_NAME]
+        self.parsed_logsources = parsed_logsources or {}
 
 
 @dataclass

@@ -21,7 +21,7 @@ from typing import Union
 
 from app.translator.core.exceptions.core import SigmaRuleValidationException
 from app.translator.core.mixins.rule import YamlRuleMixin
-from app.translator.core.models.field import FieldValue
+from app.translator.core.models.field import FieldValue, Field
 from app.translator.core.models.parser_output import MetaInfoContainer, SiemContainer
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.tokenizer import QueryTokenizer
@@ -43,13 +43,20 @@ class SigmaParser(YamlRuleMixin):
             return [i.strip() for i in false_positives.split(",")]
         return false_positives
 
-    def _get_meta_info(self, rule: dict, source_mapping_ids: list[str]) -> MetaInfoContainer:
+    def _get_meta_info(
+            self,
+            rule: dict,
+            source_mapping_ids: list[str],
+            parsed_logsources: dict,
+            sigma_fields_tokens: Union[list[Field], None] = None
+    ) -> MetaInfoContainer:
         return MetaInfoContainer(
             title=rule.get("title"),
             id_=rule.get("id"),
             description=rule.get("description"),
             author=rule.get("author"),
             date=rule.get("date"),
+            fields=sigma_fields_tokens,
             references=rule.get("references", []),
             license_=rule.get("license"),
             mitre_attack=self.parse_mitre_attack(rule.get("tags", [])),
@@ -58,6 +65,7 @@ class SigmaParser(YamlRuleMixin):
             tags=sorted(set(rule.get("tags", []))),
             false_positives=self.__parse_false_positives(rule.get("falsepositives")),
             source_mapping_ids=source_mapping_ids,
+            parsed_logsources=parsed_logsources
         )
 
     def __validate_rule(self, rule: dict):
@@ -77,9 +85,17 @@ class SigmaParser(YamlRuleMixin):
         field_names = [field.source_name for field in field_tokens]
         source_mappings = self.mappings.get_suitable_source_mappings(field_names=field_names, **log_sources)
         QueryTokenizer.set_field_tokens_generic_names_map(field_tokens, source_mappings, self.mappings.default_mapping)
+        sigma_fields_tokens = None
+        if sigma_fields := sigma_rule.get('fields'):
+            sigma_fields_tokens = [Field(source_name=field) for field in sigma_fields]
+            QueryTokenizer.set_field_tokens_generic_names_map(sigma_fields_tokens, source_mappings,
+                                                              self.mappings.default_mapping)
         return SiemContainer(
             query=tokens,
             meta_info=self._get_meta_info(
-                rule=sigma_rule, source_mapping_ids=[source_mapping.source_id for source_mapping in source_mappings]
-            ),
+                rule=sigma_rule,
+                source_mapping_ids=[source_mapping.source_id for source_mapping in source_mappings],
+                sigma_fields_tokens=sigma_fields_tokens,
+                parsed_logsources=log_sources
+            )
         )
