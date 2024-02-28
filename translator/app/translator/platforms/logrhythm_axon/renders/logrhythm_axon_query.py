@@ -19,7 +19,7 @@ limitations under the License.
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
-from app.translator.core.custom_types.tokens import LogicalOperatorType
+from app.translator.core.custom_types.tokens import LogicalOperatorType, OperatorType
 from app.translator.core.exceptions.core import StrictPlatformException
 from app.translator.core.exceptions.render import BaseRenderException
 from app.translator.core.mapping import LogSourceSignature, SourceMapping
@@ -43,36 +43,36 @@ class LogRhythmAxonFieldValue(BaseQueryFieldValue):
     escape_manager = microsoft_escape_manager
 
     def __is_complex_regex(self, regex: str) -> bool:
-        regex_items = ("[", "]", "(", ")", "{", "}", "+", "?", "^", "$", "\d", "\w", "\s", "-")
-        return any(v in regex_items for v in regex)
+        regex_items = ("[", "]", "(", ")", "{", "}", "+", "?", "^", "$", "\\d", "\\w", "\\s", "-")
+        return any(v in regex for v in regex_items)
 
-    def __is_regex(self, value: str) -> bool:
-        regex_items = ("", "[", "]", "(", ")", "{", "}", "*", "+", "?", "^", "$", "|", ".", "\d", "\w", "\s", "\\", "-")
-        return any(v in regex_items for v in value)
+    def __is_contain_regex_items(self, value: str) -> bool:
+        regex_items = ("[", "]", "(", ")", "{", "}", "*", "+", "?", "^", "$", "|", ".", "\\d", "\\w", "\\s", "\\", "-")
+        return any(v in value for v in regex_items)
 
-    def __regex_to_str_list(self, value: Union[int, str]) -> list[list[str]]:  # noqa
+    def __regex_to_str_list(self, value: Union[int, str]) -> list[list[str]]:  # noqa: PLR0912
         value_groups = []
 
         stack = []  # [(element: str, escaped: bool)]
 
-        for index in range(len(value)):
-            if value[index] == "\\":
+        for char in value:
+            if char == "\\":
                 if stack and stack[-1][0] == "\\" and stack[-1][1] is False:
                     stack.pop()
-                    stack.append((value[index], True))
+                    stack.append((char, True))
                 else:
                     stack.append(("\\", False))
-            elif value[index] == "|":
+            elif char == "|":
                 if stack and stack[-1][0] == "\\" and stack[-1][1] is False:
                     stack.pop()
-                    stack.append((value[index], True))
+                    stack.append((char, True))
                 elif stack:
                     value_groups.append("".join(element[0] for element in stack))
                     stack = []
             else:
-                stack.append((value[index], False))
+                stack.append((char, False))
         if stack:
-            value_groups.append("".join(element[0] for element in stack if element[0] != '\\' or element[-1] is True))
+            value_groups.append("".join(element[0] for element in stack if element[0] != "\\" or element[-1] is True))
 
         joined_components = []
         for value_group in value_groups:
@@ -133,7 +133,7 @@ class LogRhythmAxonFieldValue(BaseQueryFieldValue):
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.contains_modifier(field=field, value=v) for v in value)})"
-        if isinstance(value, str) and self.__is_regex(value):
+        if isinstance(value, str) and self.__is_contain_regex_items(value):
             if self.__is_complex_regex(value):
                 raise LogRhythmRegexRenderException
             values = self.__regex_to_str_list(value)
@@ -194,7 +194,7 @@ class LogRhythmAxonQueryRender(BaseQueryRender):
                 try:
                     return self.field_value_map.apply_field_value(
                         field="general_information.raw_message",
-                        operator=Identifier(token_type="contains"),
+                        operator=Identifier(token_type=OperatorType.CONTAINS),
                         value=token.value,
                     )
                 except LogRhythmRegexRenderException as exc:

@@ -10,7 +10,7 @@ class LogRhythmAxonLogSourceSignature(LogSourceSignature):
     def is_suitable(self) -> bool:
         return True
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "general_information.log_source.type_name"
 
 
