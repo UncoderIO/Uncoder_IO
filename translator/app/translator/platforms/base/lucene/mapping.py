@@ -22,7 +22,10 @@ class LuceneMappings(BasePlatformMappings):
         return LuceneLogSourceSignature(indices=indices, default_source=default_log_source)
 
     def get_suitable_source_mappings(
-        self, field_names: list[str], index: Optional[list[str]] = None
+        self,
+        field_names: list[str],
+        index: Optional[list[str]] = None,
+        **kwargs,  # noqa: ARG002
     ) -> list[SourceMapping]:
         suitable_source_mappings = []
         for source_mapping in self._source_mappings.values():

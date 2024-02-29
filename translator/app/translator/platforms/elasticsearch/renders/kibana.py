@@ -17,8 +17,9 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 import copy
-import json
 from typing import Optional
+
+import ujson
 
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.parser_output import MetaInfoContainer
@@ -56,7 +57,7 @@ class KibanaRuleRender(ElasticSearchQueryRender):
         query = super().finalize_query(prefix=prefix, query=query, functions=functions)
         search_source = copy.deepcopy(KIBANA_SEARCH_SOURCE_JSON)
         search_source["query"]["query_string"]["query"] = query
-        dumped_rule = json.dumps(search_source, sort_keys=False)
+        dumped_rule = ujson.dumps(search_source, sort_keys=False, escape_forward_slashes=False)
         rule = copy.deepcopy(KIBANA_RULE)
         rule["_source"]["kibanaSavedObjectMeta"]["searchSourceJSON"] = dumped_rule
         rule["_source"]["title"] = meta_info.title
@@ -67,7 +68,7 @@ class KibanaRuleRender(ElasticSearchQueryRender):
             license_=meta_info.license,
             references=meta_info.references,
         )
-        rule_str = json.dumps(rule, indent=4, sort_keys=False)
+        rule_str = ujson.dumps(rule, indent=4, sort_keys=False)
         if not_supported_functions:
             rendered_not_supported = self.render_not_supported_functions(not_supported_functions)
             return rule_str + rendered_not_supported

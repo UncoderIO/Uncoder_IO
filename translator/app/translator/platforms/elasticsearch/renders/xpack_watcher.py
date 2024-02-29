@@ -17,8 +17,9 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 import copy
-import json
 from typing import Optional
+
+import ujson
 
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.parser_output import MetaInfoContainer
@@ -72,7 +73,7 @@ class XPackWatcherRuleRender(ElasticSearchQueryRender):
         indices = source_mapping and [str(source_mapping.log_source_signature)] or []
         rule["input"]["search"]["request"]["indices"] = indices
         rule["actions"]["send_email"]["email"]["subject"] = meta_info.title
-        rule_str = json.dumps(rule, indent=4, sort_keys=False)
+        rule_str = ujson.dumps(rule, indent=4, sort_keys=False)
         if not_supported_functions:
             rendered_not_supported = self.render_not_supported_functions(not_supported_functions)
             return rule_str + rendered_not_supported

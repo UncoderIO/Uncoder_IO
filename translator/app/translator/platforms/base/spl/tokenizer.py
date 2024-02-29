@@ -42,7 +42,7 @@ class SplTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
 
     field_pattern = r"(?P<field_name>[a-zA-Z0-9\.\-_\{\}]+)"
     num_value_pattern = rf"(?P<{ValueType.number_value}>\d+(?:\.\d+)*)(?=$|\s|\))"
-    double_quotes_value_pattern = rf'"(?P<{ValueType.double_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,;`\?~‘○×\'\.<>$&^@!\]\[\(\)\{{\}}\s]|\\\"|\\)*)"\s*'  # noqa: E501
+    double_quotes_value_pattern = rf'"(?P<{ValueType.double_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,;`\?~‘○×\'\.<>$&^@!\]\[\(\)\{{\}}\s]|\\\"|\\)*)"\s*'  # noqa: E501, RUF001
     single_quotes_value_pattern = (
         rf"'(?P<{ValueType.single_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,;\"\.<>$&^@!\(\)\{{\}}\s]|\\\'|\\)*)'\s*"
     )

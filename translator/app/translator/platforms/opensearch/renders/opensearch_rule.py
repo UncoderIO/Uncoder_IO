@@ -17,8 +17,9 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 import copy
-import json
 from typing import Optional
+
+import ujson
 
 from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.mapping import SourceMapping
@@ -63,7 +64,7 @@ class OpenSearchRuleRender(OpenSearchQueryRender):
         rule["inputs"][0]["search"]["query"]["query"]["bool"]["must"][0]["query_string"]["query"] = query
         rule["triggers"][0]["name"] = meta_info.title
         rule["triggers"][0]["severity"] = _SEVERITIES_MAP[meta_info.severity]
-        rule_str = json.dumps(rule, indent=4, sort_keys=False)
+        rule_str = ujson.dumps(rule, indent=4, sort_keys=False)
         if not_supported_functions:
             rendered_not_supported = self.render_not_supported_functions(not_supported_functions)
             return rule_str + rendered_not_supported
