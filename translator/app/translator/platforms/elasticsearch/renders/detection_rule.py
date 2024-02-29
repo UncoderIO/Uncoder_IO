@@ -18,8 +18,9 @@ limitations under the License.
 """
 
 import copy
-import json
 from typing import Optional, Union
+
+import ujson
 
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.mitre import MitreConfig
@@ -113,7 +114,7 @@ class ElasticSearchRuleRender(ElasticSearchQueryRender):
                 "false_positives": meta_info.false_positives,
             }
         )
-        rule_str = json.dumps(rule, indent=4, sort_keys=False, ensure_ascii=False)
+        rule_str = ujson.dumps(rule, indent=4, sort_keys=False, ensure_ascii=False)
         if not_supported_functions:
             rendered_not_supported = self.render_not_supported_functions(not_supported_functions)
             return rule_str + rendered_not_supported

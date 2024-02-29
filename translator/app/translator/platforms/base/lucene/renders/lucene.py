@@ -42,13 +42,13 @@ class LuceneFieldValue(BaseQueryFieldValue):
     ) -> list[str]:
         value_type = self.__get_value_type(field, value_type)
         processed = []
-        for v in values:
-            if isinstance(v, StrValue):
-                processed.append(self.str_value_manager.from_container_to_str(v, value_type))
-            elif isinstance(v, str):
-                processed.append(self.str_value_manager.escape_manager.escape(v, value_type))
+        for val in values:
+            if isinstance(val, StrValue):
+                processed.append(self.str_value_manager.from_container_to_str(val, value_type))
+            elif isinstance(val, str):
+                processed.append(self.str_value_manager.escape_manager.escape(val, value_type))
             else:
-                processed.append(str(v))
+                processed.append(str(val))
         return processed
 
     def _pre_process_value(
@@ -87,25 +87,32 @@ class LuceneFieldValue(BaseQueryFieldValue):
 
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            values = self.or_token.join(f"*{v}*" for v in self._pre_process_values_list(field, value))
+            values = self.or_token.join(f"*{val}*" for val in self._pre_process_values_list(field, value))
             return f"{field}:({values})"
         return f"{field}:*{self._pre_process_value(field, value)}*"
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            values = self.or_token.join(f"*{v}" for v in self._pre_process_values_list(field, value))
+            values = self.or_token.join(f"*{val}" for val in self._pre_process_values_list(field, value))
             return f"{field}:({values})"
         return f"{field}:*{self._pre_process_value(field, value)}"
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            values = self.or_token.join(f"{v}*" for v in self._pre_process_values_list(field, value))
+            values = self.or_token.join(f"{val}*" for val in self._pre_process_values_list(field, value))
             return f"{field}:({values})"
         return f"{field}:{self._pre_process_value(field, value)}*"
 
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            return f"({self.or_token.join(self.regex_modifier(field=field, value=v) for v in value)})"
+            values = []
+            for val in value:
+                values.append(
+                    f"/{self._pre_process_value(field, val, value_type=ValueType.regex_value)}/"
+                    if isinstance(val, StrValue)
+                    else f"/{val}/"
+                )
+            return f"{field}:({self.or_token.join(values)})"
 
         if isinstance(value, StrValue):
             return f"{field}:/{self._pre_process_value(field, value, value_type=ValueType.regex_value)}/"
@@ -114,7 +121,7 @@ class LuceneFieldValue(BaseQueryFieldValue):
 
     def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            return f"({self.or_token.join(self.keywords(field=field, value=v) for v in value)})"
+            return f"({self.or_token.join(self.keywords(field=field, value=val) for val in value)})"
         return f"*{self._pre_process_value(field, value)}*"
 
 

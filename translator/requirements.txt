@@ -4,3 +4,4 @@ pydantic~=1.10.13
 PyYAML~=6.0.1
 colorama~=0.4.6
 ruff==0.1.13
+ujson==5.9.0
