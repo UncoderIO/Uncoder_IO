@@ -1,6 +1,8 @@
 from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.models.platform_details import PlatformDetails
 
+UNMAPPED_FIELD_DEFAULT_NAME = "general_information.raw_message"
+
 DEFAULT_LOGRHYTHM_AXON_RULE = {
     "title": "Default LogRhythm Axon rule",
     "version": 3,

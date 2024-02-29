@@ -19,7 +19,7 @@ limitations under the License.
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
-from app.translator.core.custom_types.tokens import LogicalOperatorType, OperatorType
+from app.translator.core.custom_types.tokens import LogicalOperatorType
 from app.translator.core.exceptions.core import StrictPlatformException
 from app.translator.core.exceptions.render import BaseRenderException
 from app.translator.core.mapping import LogSourceSignature, SourceMapping
@@ -29,7 +29,7 @@ from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.parser_output import MetaInfoContainer
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render import BaseQueryFieldValue, BaseQueryRender
-from app.translator.platforms.logrhythm_axon.const import logrhythm_axon_query_details
+from app.translator.platforms.logrhythm_axon.const import UNMAPPED_FIELD_DEFAULT_NAME, logrhythm_axon_query_details
 from app.translator.platforms.logrhythm_axon.mapping import LogRhythmAxonMappings, logrhythm_axon_mappings
 from app.translator.platforms.microsoft.escape_manager import microsoft_escape_manager
 
@@ -90,11 +90,26 @@ class LogRhythmAxonFieldValue(BaseQueryFieldValue):
 
         return joined_components
 
+    def __unmapped_regex_field_to_contains_string(self, field: str, value: str) -> str:
+        if self.__is_complex_regex(value):
+            raise LogRhythmRegexRenderException
+        values = self.__regex_to_str_list(value)
+        return (
+            "("
+            + self.or_token.join(
+                " AND ".join(f'{field} CONTAINS "{self.__escape_value(value)}"' for value in value_list)
+                for value_list in values
+            )
+            + ")"
+        )
+
     @staticmethod
     def __escape_value(value: Union[int, str]) -> Union[int, str]:
         return value.replace("'", "''") if isinstance(value, str) else value
 
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+        if field == UNMAPPED_FIELD_DEFAULT_NAME:
+            return self.contains_modifier(field, value)
         if isinstance(value, str):
             return f'{field} = "{self.__escape_value(value)}"'
         if isinstance(value, list):
@@ -104,26 +119,36 @@ class LogRhythmAxonFieldValue(BaseQueryFieldValue):
         return f'{field} = "{self.apply_value(value)}"'
 
     def less_modifier(self, field: str, value: Union[int, str]) -> str:
+        if field == UNMAPPED_FIELD_DEFAULT_NAME:
+            return self.contains_modifier(field, value)
         if isinstance(value, int):
             return f"{field} < {value}"
         return f"{field} < '{self.apply_value(value)}'"
 
     def less_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
+        if field == UNMAPPED_FIELD_DEFAULT_NAME:
+            return self.contains_modifier(field, value)
         if isinstance(value, int):
             return f"{field} <= {value}"
         return f"{field} <= {self.apply_value(value)}"
 
     def greater_modifier(self, field: str, value: Union[int, str]) -> str:
+        if field == UNMAPPED_FIELD_DEFAULT_NAME:
+            return self.contains_modifier(field, value)
         if isinstance(value, int):
             return f"{field} > {value}"
         return f"{field} > {self.apply_value(value)}"
 
     def greater_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
+        if field == UNMAPPED_FIELD_DEFAULT_NAME:
+            return self.contains_modifier(field, value)
         if isinstance(value, int):
             return f"{field} >= {value}"
         return f"{field} >= {self.apply_value(value)}"
 
     def not_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+        if field == UNMAPPED_FIELD_DEFAULT_NAME:
+            return self.contains_modifier(field, value)
         if isinstance(value, list):
             return f"({self.or_token.join([self.not_equal_modifier(field=field, value=v) for v in value])})"
         if isinstance(value, int):
@@ -133,39 +158,37 @@ class LogRhythmAxonFieldValue(BaseQueryFieldValue):
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.contains_modifier(field=field, value=v) for v in value)})"
-        if isinstance(value, str) and self.__is_contain_regex_items(value):
-            if self.__is_complex_regex(value):
-                raise LogRhythmRegexRenderException
-            values = self.__regex_to_str_list(value)
-            return (
-                "("
-                + self.or_token.join(
-                    " AND ".join(f'{field} CONTAINS "{self.__escape_value(value)}"' for value in value_list)
-                    for value_list in values
-                )
-                + ")"
-            )
         return f'{field} CONTAINS "{self.__escape_value(value)}"'
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.endswith_modifier(field=field, value=v) for v in value)})"
-        value = f".*{self.__escape_value(value)}" if not value.startswith(".*") else self.__escape_value(value)
+        if isinstance(value, str) and field == UNMAPPED_FIELD_DEFAULT_NAME:
+            return self.contains_modifier(field, value)
+        value = f".*{self.__escape_value(value)}" if not str(value).startswith(".*") else self.__escape_value(value)
         return f'{field} matches "{value}$"'
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.startswith_modifier(field=field, value=v) for v in value)})"
-        value = f"{self.__escape_value(value)}.*" if not value.endswith(".*") else self.__escape_value(value)
+        if isinstance(value, str) and field == UNMAPPED_FIELD_DEFAULT_NAME:
+            return self.contains_modifier(field, value)
+        value = f"{self.__escape_value(value)}.*" if not str(value).endswith(".*") else self.__escape_value(value)
         return f'{field} matches "^{self.__escape_value(value)}"'
 
-    def __regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
-        return f'{field} matches "{value}"'
-
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+        if field == UNMAPPED_FIELD_DEFAULT_NAME and self.__is_contain_regex_items(value):
+            if isinstance(value, str):
+                return self.__unmapped_regex_field_to_contains_string(field, value)
+            if isinstance(value, list):
+                return self.or_token.join(
+                    self.__unmapped_regex_field_to_contains_string(field=field, value=v) for v in value
+                )
         if isinstance(value, list):
-            return f"({self.or_token.join(self.__regex_modifier(field=field, value=v) for v in value)})"
-        return self.__regex_modifier(field, value)
+            return f"({self.or_token.join(self.regex_modifier(field=field, value=v) for v in value)})"
+        if isinstance(value, str) and field == UNMAPPED_FIELD_DEFAULT_NAME:
+            return self.contains_modifier(field, value)
+        return f'{field} matches "{value}"'
 
 
 class LogRhythmAxonQueryRender(BaseQueryRender):
@@ -193,9 +216,7 @@ class LogRhythmAxonQueryRender(BaseQueryRender):
             except StrictPlatformException:
                 try:
                     return self.field_value_map.apply_field_value(
-                        field="general_information.raw_message",
-                        operator=Identifier(token_type=OperatorType.CONTAINS),
-                        value=token.value,
+                        field=UNMAPPED_FIELD_DEFAULT_NAME, operator=token.operator, value=token.value
                     )
                 except LogRhythmRegexRenderException as exc:
                     raise LogRhythmRegexRenderException(
