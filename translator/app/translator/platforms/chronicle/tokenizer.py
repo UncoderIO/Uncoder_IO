@@ -83,26 +83,15 @@ class ChronicleRuleTokenizer(ChronicleQueryTokenizer):
     back_quotes_value_pattern = (
         rf"`(?P<{ValueType.back_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\"\\\.$&^@!\(\)\{{\}}\s])*)`"
     )
-    regex_value_regex = rf"{double_quotes_value_pattern}|{back_quotes_value_pattern}\s*\)\s*(?:nocase)?\s*"
+    regex_value_pattern = rf"(?:{double_quotes_value_pattern}|{back_quotes_value_pattern})\s*\)\s*(?:nocase)?\s*"
+    regex_field_value_pattern = rf"{regex_field_regex}\s*{regex_value_pattern}"
 
     def search_field_value(self, query: str) -> tuple[FieldValue, str]:
-        if query.startswith("re.regex("):
-            field_search = re.search(self.regex_field_regex, query)
-            if field_search is None:
-                raise TokenizerGeneralException(error=f"Field couldn't be found in query part: {query}")
-
-            field = field_search.group("field")
-            pos = field_search.end()
-            query = query[pos:]
-
-            value_search = re.search(self.regex_value_regex, query)
-            if value_search is None:
-                raise TokenizerGeneralException(error=f"Value couldn't be found in query part: {query}")
-
-            operator = OperatorType.REGEX
-            operator, value = self.get_operator_and_value(value_search, operator)
+        if regex_field_value_search := re.match(self.regex_field_value_pattern, query):
+            field = regex_field_value_search.group("field")
+            operator, value = self.get_operator_and_value(regex_field_value_search, operator=OperatorType.REGEX)
             operator, value = self.process_value_wildcards(value=value, operator=OperatorType.REGEX)
-            pos = value_search.end()
+            pos = regex_field_value_search.end()
             query = query[pos:]
 
             operator_token = Identifier(token_type=operator)
@@ -119,3 +108,9 @@ class ChronicleRuleTokenizer(ChronicleQueryTokenizer):
             return operator, self.escape_manager.remove_escape(b_q_value)
 
         return super().get_operator_and_value(match, operator)
+
+    def _check_field_value_match(self, query: str, white_space_pattern: str = r"\s+") -> bool:
+        if re.match(self.regex_field_value_pattern, query, re.IGNORECASE):
+            return True
+
+        return super()._check_field_value_match(query, white_space_pattern)
