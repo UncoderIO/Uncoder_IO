@@ -1,4 +1,5 @@
-class BaseFunctionException(Exception): ...
+class BaseFunctionException(Exception):
+    ...
 
 
 class InternalFunctionException(Exception):
