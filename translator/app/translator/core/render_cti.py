@@ -17,7 +17,6 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 
-
 from app.translator.core.models.iocs import IocsChunkValue
 
 

@@ -16,13 +16,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from typing import Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.mapping import SourceMapping
-from app.translator.core.models.parser_output import MetaInfoContainer
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.render import BaseQueryFieldValue, BaseQueryRender
+from app.translator.core.models.query_container import MetaInfoContainer
+from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
 from app.translator.platforms.logscale.const import logscale_query_details
 from app.translator.platforms.logscale.escape_manager import logscale_escape_manager
 from app.translator.platforms.logscale.functions import LogScaleFunctions, log_scale_functions
@@ -90,7 +91,7 @@ class LogScaleFieldValue(BaseQueryFieldValue):
         return f"/{self.apply_value(value)}/i"
 
 
-class LogScaleQueryRender(BaseQueryRender):
+class LogScaleQueryRender(PlatformQueryRender):
     details: PlatformDetails = logscale_query_details
     mappings: LogScaleMappings = logscale_mappings
     platform_functions: LogScaleFunctions = log_scale_functions

@@ -22,8 +22,8 @@ from typing import Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.mapping import SourceMapping
-from app.translator.core.models.parser_output import MetaInfoContainer
 from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.core.models.query_container import MetaInfoContainer
 from app.translator.platforms.chronicle.const import DEFAULT_CHRONICLE_SECURITY_RULE, chronicle_rule_details
 from app.translator.platforms.chronicle.renders.chronicle import ChronicleFieldValue, ChronicleQueryRender
 

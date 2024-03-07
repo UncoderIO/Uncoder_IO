@@ -1,4 +1,5 @@
 from collections.abc import Callable
+from typing import Any
 
 from app.translator.core.exceptions.core import BasePlatformException
 from app.translator.core.exceptions.iocs import BaseIOCsException
@@ -6,8 +7,8 @@ from app.translator.core.exceptions.parser import BaseParserException
 from app.translator.core.exceptions.render import BaseRenderException
 
 
-def handle_translation_exceptions(func: Callable[..., ...]) -> Callable[..., tuple[bool, str]]:
-    def exception_handler(*args, **kwargs) -> tuple[bool, str]:
+def handle_translation_exceptions(func: Callable[..., ...]) -> Callable[..., tuple[bool, Any]]:
+    def exception_handler(*args, **kwargs) -> tuple[bool, Any]:
         try:
             result = func(*args, **kwargs)
         except (BaseParserException, BasePlatformException, BaseRenderException, BaseIOCsException) as err:

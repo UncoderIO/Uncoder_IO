@@ -30,7 +30,7 @@ from app.translator.core.tokenizer import BaseTokenizer
 from settings import INIT_FUNCTIONS
 
 if TYPE_CHECKING:
-    from app.translator.core.render import BaseQueryRender
+    from app.translator.core.render import PlatformQueryRender
 
 
 class FunctionParser(ABC):
@@ -72,7 +72,7 @@ class PlatformFunctionsManager(ABC):
         self._names_map: dict[str, str] = {}
 
     @abstractmethod
-    def init_search_func_render(self, platform_render: BaseQueryRender) -> None:
+    def init_search_func_render(self, platform_render: PlatformQueryRender) -> None:
         raise NotImplementedError
 
     @cached_property

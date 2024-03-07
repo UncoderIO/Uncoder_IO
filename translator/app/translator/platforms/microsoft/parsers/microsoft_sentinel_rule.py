@@ -16,34 +16,20 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
 
-
 from app.translator.core.mixins.rule import JsonRuleMixin
-from app.translator.core.models.parser_output import MetaInfoContainer, SiemContainer
 from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer
 from app.translator.platforms.microsoft.const import microsoft_sentinel_rule_details
-from app.translator.platforms.microsoft.parsers.microsoft_sentinel import MicrosoftParser
+from app.translator.platforms.microsoft.parsers.microsoft_sentinel import MicrosoftSentinelQueryParser
 
 
-class MicrosoftRuleParser(MicrosoftParser, JsonRuleMixin):
+class MicrosoftSentinelRuleParser(MicrosoftSentinelQueryParser, JsonRuleMixin):
     details: PlatformDetails = microsoft_sentinel_rule_details
 
-    @staticmethod
-    def _get_meta_info(source_mapping_ids: list[str], meta_info: dict) -> MetaInfoContainer:
-        return MetaInfoContainer(
-            source_mapping_ids=source_mapping_ids,
-            title=meta_info.get("displayName"),
-            description=meta_info.get("description"),
-        )
-
-    def parse(self, text: str) -> SiemContainer:
+    def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
         rule = self.load_rule(text=text)
-        query, log_sources, functions = self._parse_query(query=rule.get("query"))
-        tokens, source_mappings = self.get_tokens_and_source_mappings(query, log_sources)
-
-        return SiemContainer(
-            query=tokens,
-            meta_info=self._get_meta_info(
-                source_mapping_ids=[source_mapping.source_id for source_mapping in source_mappings], meta_info=rule
-            ),
-            functions=functions,
+        return RawQueryContainer(
+            query=rule["query"],
+            language=language,
+            meta_info=MetaInfoContainer(title=rule.get("displayName"), description=rule.get("description")),
         )

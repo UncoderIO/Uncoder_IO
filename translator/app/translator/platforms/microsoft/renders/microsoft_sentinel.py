@@ -16,12 +16,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.mapping import LogSourceSignature
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.render import BaseQueryFieldValue, BaseQueryRender
+from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
 from app.translator.platforms.microsoft.const import microsoft_sentinel_query_details
 from app.translator.platforms.microsoft.escape_manager import microsoft_escape_manager
 from app.translator.platforms.microsoft.functions import MicrosoftFunctions, microsoft_sentinel_functions
@@ -101,7 +102,7 @@ class MicrosoftSentinelFieldValue(BaseQueryFieldValue):
         return f"* contains @'{self.__escape_value(value)}'"
 
 
-class MicrosoftSentinelQueryRender(BaseQueryRender):
+class MicrosoftSentinelQueryRender(PlatformQueryRender):
     details: PlatformDetails = microsoft_sentinel_query_details
     platform_functions: MicrosoftFunctions = microsoft_sentinel_functions
 

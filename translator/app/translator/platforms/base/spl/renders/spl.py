@@ -16,11 +16,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.exceptions.render import UnsupportedRenderMethod
-from app.translator.core.render import BaseQueryFieldValue, BaseQueryRender
+from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
 from app.translator.platforms.base.spl.escape_manager import spl_escape_manager
 
 
@@ -73,7 +74,7 @@ class SplFieldValue(BaseQueryFieldValue):
         raise UnsupportedRenderMethod(platform_name=self.details.name, method="Regex Expression")
 
 
-class SplQueryRender(BaseQueryRender):
+class SplQueryRender(PlatformQueryRender):
     or_token = "OR"
     and_token = "AND"
     not_token = "NOT"

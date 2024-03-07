@@ -16,6 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 import copy
 from typing import Optional
 
@@ -23,8 +24,8 @@ import ujson
 
 from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.mapping import SourceMapping
-from app.translator.core.models.parser_output import MetaInfoContainer
 from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.core.models.query_container import MetaInfoContainer
 from app.translator.platforms.opensearch.const import OPENSEARCH_RULE, opensearch_rule_details
 from app.translator.platforms.opensearch.mapping import OpenSearchMappings, opensearch_mappings
 from app.translator.platforms.opensearch.renders.opensearch import OpenSearchFieldValue, OpenSearchQueryRender

@@ -16,13 +16,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.exceptions.render import UnsupportedRenderMethod
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.render import BaseQueryFieldValue, BaseQueryRender
+from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
 from app.translator.platforms.chronicle.const import chronicle_query_details
 from app.translator.platforms.chronicle.escape_manager import chronicle_escape_manager
 from app.translator.platforms.chronicle.mapping import ChronicleMappings, chronicle_mappings
@@ -96,7 +97,7 @@ class ChronicleFieldValue(BaseQueryFieldValue):
         raise UnsupportedRenderMethod(platform_name=self.details.name, method="Keywords")
 
 
-class ChronicleQueryRender(BaseQueryRender):
+class ChronicleQueryRender(PlatformQueryRender):
     details: PlatformDetails = chronicle_query_details
     mappings: ChronicleMappings = chronicle_mappings
 

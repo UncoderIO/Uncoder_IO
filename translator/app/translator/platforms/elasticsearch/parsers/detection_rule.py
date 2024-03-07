@@ -16,37 +16,20 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
 
-
 from app.translator.core.mixins.rule import JsonRuleMixin
-from app.translator.core.models.parser_output import MetaInfoContainer, SiemContainer
 from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer
 from app.translator.platforms.elasticsearch.const import elasticsearch_rule_details
-from app.translator.platforms.elasticsearch.parsers.elasticsearch import ElasticSearchParser
+from app.translator.platforms.elasticsearch.parsers.elasticsearch import ElasticSearchQueryParser
 
 
-class ElasticSearchRuleParser(ElasticSearchParser, JsonRuleMixin):
+class ElasticSearchRuleParser(ElasticSearchQueryParser, JsonRuleMixin):
     details: PlatformDetails = elasticsearch_rule_details
 
-    def _parse_rule(self, text: str) -> dict:
+    def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
         rule = self.load_rule(text=text)
-        query = rule["query"]
-        description = rule["description"]
-        name = rule["name"]
-        query, logsources = self._parse_log_sources(query)
-        return {"query": query, "title": name, "description": description, "logsources": logsources}
-
-    @staticmethod
-    def _get_meta_info(source_mapping_ids: list[str], meta_info: dict) -> MetaInfoContainer:
-        return MetaInfoContainer(
-            title=meta_info["title"], description=meta_info["description"], source_mapping_ids=source_mapping_ids
-        )
-
-    def parse(self, text: str) -> SiemContainer:
-        rule = self._parse_rule(text)
-        tokens, source_mappings = self.get_tokens_and_source_mappings(rule.get("query"), rule.get("log_sources", {}))
-        return SiemContainer(
-            query=tokens,
-            meta_info=self._get_meta_info(
-                source_mapping_ids=[source_mapping.source_id for source_mapping in source_mappings], meta_info=rule
-            ),
+        return RawQueryContainer(
+            query=rule["query"],
+            language=language,
+            meta_info=MetaInfoContainer(title=rule["name"], description=rule["description"]),
         )
