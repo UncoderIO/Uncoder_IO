@@ -16,7 +16,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-from abc import ABC
+
+from abc import ABC, abstractmethod
 from collections.abc import Callable
 from typing import Optional, Union
 
@@ -29,11 +30,12 @@ from app.translator.core.exceptions.parser import UnsupportedOperatorException
 from app.translator.core.functions import PlatformFunctions
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
 from app.translator.core.models.field import Field, FieldValue, Keyword
-from app.translator.core.models.functions.base import Function, ParsedFunctions
+from app.translator.core.models.functions.base import Function
 from app.translator.core.models.identifier import Identifier
-from app.translator.core.models.parser_output import MetaInfoContainer
 from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.str_value_manager import StrValueManager
+from app.translator.core.tokenizer import TOKEN_TYPE
 
 
 class BaseQueryFieldValue(ABC):
@@ -99,7 +101,13 @@ class BaseQueryFieldValue(ABC):
         raise UnsupportedOperatorException(operator.token_type)
 
 
-class BaseQueryRender:
+class QueryRender(ABC):
+    @abstractmethod
+    def generate(self, query_container: Union[RawQueryContainer, TokenizedQueryContainer]) -> str:
+        raise NotImplementedError("Abstract method")
+
+
+class PlatformQueryRender(QueryRender):
     mappings: BasePlatformMappings = None
     details: PlatformDetails = None
     is_strict_mapping = False
@@ -168,9 +176,9 @@ class BaseQueryRender:
 
         return token.token_type
 
-    def generate_query(self, query: list[Union[FieldValue, Keyword, Identifier]], source_mapping: SourceMapping) -> str:
+    def generate_query(self, tokens: list[TOKEN_TYPE], source_mapping: SourceMapping) -> str:
         result_values = []
-        for token in query:
+        for token in tokens:
             result_values.append(self.apply_token(token=token, source_mapping=source_mapping))
         return "".join(result_values)
 
@@ -243,22 +251,33 @@ class BaseQueryRender:
 
         return source_mappings
 
-    def generate(self, query: list, meta_info: MetaInfoContainer, functions: ParsedFunctions) -> str:
+    def _generate_from_raw_query_container(self, query_container: RawQueryContainer) -> str:
+        return self.finalize_query(
+            prefix="", query=query_container.query, functions="", meta_info=query_container.meta_info
+        )
+
+    def _generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
         queries_map = {}
-        source_mappings = self._get_source_mappings(meta_info.source_mapping_ids)
+        source_mappings = self._get_source_mappings(query_container.meta_info.source_mapping_ids)
 
         for source_mapping in source_mappings:
             prefix = self.generate_prefix(source_mapping.log_source_signature)
-            result = self.generate_query(query=query, source_mapping=source_mapping)
+            result = self.generate_query(tokens=query_container.tokens, source_mapping=source_mapping)
 
             finalized_query = self.finalize_query(
                 prefix=prefix,
                 query=result,
-                functions=self.generate_functions(functions.functions, source_mapping),
-                not_supported_functions=functions.not_supported,
-                meta_info=meta_info,
+                functions=self.generate_functions(query_container.functions.functions, source_mapping),
+                not_supported_functions=query_container.functions.not_supported,
+                meta_info=query_container.meta_info,
                 source_mapping=source_mapping,
             )
             queries_map[source_mapping.source_id] = finalized_query
 
         return self.finalize(queries_map)
+
+    def generate(self, query_container: Union[RawQueryContainer, TokenizedQueryContainer]) -> str:
+        if isinstance(query_container, RawQueryContainer):
+            return self._generate_from_raw_query_container(query_container)
+
+        return self._generate_from_tokenized_query_container(query_container)

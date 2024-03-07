@@ -16,6 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
@@ -24,18 +25,16 @@ from app.translator.core.exceptions.core import StrictPlatformException
 from app.translator.core.exceptions.render import BaseRenderException
 from app.translator.core.mapping import LogSourceSignature, SourceMapping
 from app.translator.core.models.field import FieldValue, Keyword
-from app.translator.core.models.functions.base import ParsedFunctions
 from app.translator.core.models.identifier import Identifier
-from app.translator.core.models.parser_output import MetaInfoContainer
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.render import BaseQueryFieldValue, BaseQueryRender
+from app.translator.core.models.query_container import TokenizedQueryContainer
+from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
 from app.translator.platforms.logrhythm_axon.const import UNMAPPED_FIELD_DEFAULT_NAME, logrhythm_axon_query_details
 from app.translator.platforms.logrhythm_axon.mapping import LogRhythmAxonMappings, logrhythm_axon_mappings
 from app.translator.platforms.microsoft.escape_manager import microsoft_escape_manager
 
 
-class LogRhythmRegexRenderException(BaseRenderException):
-    ...
+class LogRhythmRegexRenderException(BaseRenderException): ...
 
 
 class LogRhythmAxonFieldValue(BaseQueryFieldValue):
@@ -191,7 +190,7 @@ class LogRhythmAxonFieldValue(BaseQueryFieldValue):
         return f'{field} matches "{value}"'
 
 
-class LogRhythmAxonQueryRender(BaseQueryRender):
+class LogRhythmAxonQueryRender(PlatformQueryRender):
     details: PlatformDetails = logrhythm_axon_query_details
 
     or_token = "OR"
@@ -241,25 +240,25 @@ class LogRhythmAxonQueryRender(BaseQueryRender):
 
         return token.token_type
 
-    def generate(self, query: list, meta_info: MetaInfoContainer, functions: ParsedFunctions) -> str:
+    def _generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
         queries_map = {}
-        source_mappings = self._get_source_mappings(meta_info.source_mapping_ids)
+        source_mappings = self._get_source_mappings(query_container.meta_info.source_mapping_ids)
 
         for source_mapping in source_mappings:
             prefix = self.generate_prefix(source_mapping.log_source_signature)
-            if "product" in meta_info.parsed_logsources:
-                prefix = f"{prefix} CONTAINS {meta_info.parsed_logsources['product'][0]}"
+            if "product" in query_container.meta_info.parsed_logsources:
+                prefix = f"{prefix} CONTAINS {query_container.meta_info.parsed_logsources['product'][0]}"
             else:
                 prefix = f"{prefix} CONTAINS anything"
 
-            result = self.generate_query(query=query, source_mapping=source_mapping)
+            result = self.generate_query(tokens=query_container.tokens, source_mapping=source_mapping)
 
             finalized_query = self.finalize_query(
                 prefix=prefix,
                 query=result,
-                functions=self.generate_functions(functions.functions, source_mapping),
-                not_supported_functions=functions.not_supported,
-                meta_info=meta_info,
+                functions=self.generate_functions(query_container.functions.functions, source_mapping),
+                not_supported_functions=query_container.functions.not_supported,
+                meta_info=query_container.meta_info,
                 source_mapping=source_mapping,
             )
             queries_map[source_mapping.source_id] = finalized_query

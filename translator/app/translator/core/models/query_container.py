@@ -7,6 +7,7 @@ from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME
 from app.translator.core.models.field import Field
 from app.translator.core.models.functions.base import ParsedFunctions
+from app.translator.core.tokenizer import TOKEN_TYPE
 
 
 class MetaInfoContainer:
@@ -27,15 +28,15 @@ class MetaInfoContainer:
         status: Optional[str] = None,
         false_positives: Optional[list[str]] = None,
         source_mapping_ids: Optional[list[str]] = None,
-        parsed_logsources: Optional[dict] = None
+        parsed_logsources: Optional[dict] = None,
     ) -> None:
         self.id = id_ or str(uuid.uuid4())
         self.title = title or ""
         self.description = description or ""
         self.author = author or ""
         self.date = date or datetime.now().date().strftime("%Y-%m-%d")
-        self.license = license_ or "DRL 1.1"
         self.fields = fields or []
+        self.license = license_ or "DRL 1.1"
         self.severity = severity or SeverityType.low
         self.references = references or []
         self.tags = tags or []
@@ -47,7 +48,14 @@ class MetaInfoContainer:
 
 
 @dataclass
-class SiemContainer:
-    query: list
+class RawQueryContainer:
+    query: str
+    language: str
+    meta_info: MetaInfoContainer = field(default_factory=MetaInfoContainer)
+
+
+@dataclass
+class TokenizedQueryContainer:
+    tokens: list[TOKEN_TYPE]
     meta_info: MetaInfoContainer
     functions: ParsedFunctions = field(default_factory=ParsedFunctions)

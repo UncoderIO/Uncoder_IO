@@ -20,10 +20,10 @@ from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.platforms.microsoft.const import microsoft_defender_details
 from app.translator.platforms.microsoft.functions import MicrosoftFunctions, microsoft_defender_functions
 from app.translator.platforms.microsoft.mapping import MicrosoftDefenderMappings, microsoft_defender_mappings
-from app.translator.platforms.microsoft.parsers.microsoft_sentinel import MicrosoftParser
+from app.translator.platforms.microsoft.parsers.microsoft_sentinel import MicrosoftSentinelQueryParser
 
 
-class MicrosoftDefenderQueryParser(MicrosoftParser):
+class MicrosoftDefenderQueryParser(MicrosoftSentinelQueryParser):
     mappings: MicrosoftDefenderMappings = microsoft_defender_mappings
     details: PlatformDetails = microsoft_defender_details
     platform_functions: MicrosoftFunctions = microsoft_defender_functions

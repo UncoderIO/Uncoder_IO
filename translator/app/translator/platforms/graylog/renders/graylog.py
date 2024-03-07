@@ -27,7 +27,7 @@ class GraylogFieldValue(LuceneFieldValue):
     details: PlatformDetails = graylog_details
 
 
-class GraylogRender(LuceneQueryRender):
+class GraylogQueryRender(LuceneQueryRender):
     details: PlatformDetails = graylog_details
     mappings: GraylogMappings = graylog_mappings
 

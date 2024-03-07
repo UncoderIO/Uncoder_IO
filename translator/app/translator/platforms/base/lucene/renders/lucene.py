@@ -16,11 +16,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.values import ValueType
-from app.translator.core.render import BaseQueryFieldValue, BaseQueryRender
+from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
 from app.translator.core.str_value_manager import StrValue
 from app.translator.platforms.base.lucene.mapping import LuceneLogSourceSignature
 from app.translator.platforms.base.lucene.str_value_manager import lucene_str_value_manager
@@ -125,7 +126,7 @@ class LuceneFieldValue(BaseQueryFieldValue):
         return f"*{self._pre_process_value(field, value)}*"
 
 
-class LuceneQueryRender(BaseQueryRender):
+class LuceneQueryRender(PlatformQueryRender):
     or_token = "OR"
     and_token = "AND"
     not_token = "NOT"

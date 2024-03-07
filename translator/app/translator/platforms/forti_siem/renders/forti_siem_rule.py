@@ -24,11 +24,10 @@ from app.translator.core.custom_types.values import ValueType
 from app.translator.core.exceptions.render import UnsupportedRenderMethod
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.field import FieldValue
-from app.translator.core.models.functions.base import ParsedFunctions
 from app.translator.core.models.identifier import Identifier
-from app.translator.core.models.parser_output import MetaInfoContainer
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.render import BaseQueryFieldValue, BaseQueryRender
+from app.translator.core.models.query_container import MetaInfoContainer, TokenizedQueryContainer
+from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
 from app.translator.core.str_value_manager import StrValue
 from app.translator.platforms.forti_siem.const import (
     FORTI_SIEM_RULE,
@@ -122,7 +121,7 @@ class FortiSiemFieldValue(BaseQueryFieldValue):
         raise UnsupportedRenderMethod(platform_name=self.details.name, method="Keywords")
 
 
-class FortiSiemRuleRender(BaseQueryRender):
+class FortiSiemRuleRender(PlatformQueryRender):
     details: PlatformDetails = forti_siem_rule_details
     mappings: FortiSiemMappings = forti_siem_mappings
 
@@ -135,13 +134,13 @@ class FortiSiemRuleRender(BaseQueryRender):
 
     field_value_map = FortiSiemFieldValue(or_token=or_token)
 
-    def generate(self, query: list, meta_info: MetaInfoContainer, functions: ParsedFunctions) -> str:
+    def _generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
         queries_map = {}
-        source_mappings = self._get_source_mappings(meta_info.source_mapping_ids)
+        source_mappings = self._get_source_mappings(query_container.meta_info.source_mapping_ids)
 
         for source_mapping in source_mappings:
             is_event_type_set = False
-            field_values = [token for token in query if isinstance(token, FieldValue)]
+            field_values = [token for token in query_container.tokens if isinstance(token, FieldValue)]
             mapped_fields_set = set()
             for field_value in field_values:
                 mapped_fields = self.map_field(field_value.field, source_mapping)
@@ -150,14 +149,14 @@ class FortiSiemRuleRender(BaseQueryRender):
                     is_event_type_set = True
                     self.__update_event_type_values(field_value, source_mapping.source_id)
 
-            result = self.generate_query(query=query, source_mapping=source_mapping)
+            result = self.generate_query(tokens=query_container.tokens, source_mapping=source_mapping)
             prefix = "" if is_event_type_set else self.generate_prefix(source_mapping.log_source_signature)
             finalized_query = self.finalize_query(
                 prefix=prefix,
                 query=result,
-                functions=self.generate_functions(functions.functions, source_mapping),
-                not_supported_functions=functions.not_supported,
-                meta_info=meta_info,
+                functions=self.generate_functions(query_container.functions.functions, source_mapping),
+                not_supported_functions=query_container.functions.not_supported,
+                meta_info=query_container.meta_info,
                 source_mapping=source_mapping,
                 fields=mapped_fields_set,
             )

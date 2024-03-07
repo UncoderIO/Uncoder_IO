@@ -1,4 +1,3 @@
-
 from app.translator.tools.custom_enum import CustomEnum
 
 

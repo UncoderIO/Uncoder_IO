@@ -16,14 +16,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 import copy
 from typing import Optional
 
 import ujson
 
 from app.translator.core.mapping import SourceMapping
-from app.translator.core.models.parser_output import MetaInfoContainer
 from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.core.models.query_container import MetaInfoContainer
 from app.translator.platforms.elasticsearch.const import KIBANA_RULE, KIBANA_SEARCH_SOURCE_JSON, kibana_rule_details
 from app.translator.platforms.elasticsearch.mapping import ElasticSearchMappings, elasticsearch_mappings
 from app.translator.platforms.elasticsearch.renders.elasticsearch import (

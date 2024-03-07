@@ -16,14 +16,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 import copy
 import json
 from typing import Optional
 
 from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.mapping import SourceMapping
-from app.translator.core.models.parser_output import MetaInfoContainer
 from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.core.models.query_container import MetaInfoContainer
 from app.translator.platforms.logrhythm_axon.const import DEFAULT_LOGRHYTHM_AXON_RULE, logrhythm_axon_rule_details
 from app.translator.platforms.logrhythm_axon.renders.logrhythm_axon_query import (
     LogRhythmAxonFieldValue,

@@ -19,16 +19,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 import re
 from typing import Union
 
-from app.translator.core.models.parser_output import MetaInfoContainer, SiemContainer
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.parser import Parser
+from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
+from app.translator.core.parser import PlatformQueryParser
 from app.translator.platforms.qradar.const import NUM_VALUE_PATTERN, SINGLE_QUOTES_VALUE_PATTERN, qradar_query_details
 from app.translator.platforms.qradar.mapping import QradarMappings, qradar_mappings
 from app.translator.platforms.qradar.tokenizer import QradarTokenizer
 from app.translator.tools.utils import get_match_group
 
 
-class QradarParser(Parser):
+class QradarQueryParser(PlatformQueryParser):
     details: PlatformDetails = qradar_query_details
     tokenizer = QradarTokenizer()
     mappings: QradarMappings = qradar_mappings
@@ -106,13 +106,9 @@ class QradarParser(Parser):
         log_sources, query = self.__parse_log_sources(query)
         return query, log_sources
 
-    def _get_meta_info(self, source_mapping_ids: list[str]) -> MetaInfoContainer:
-        return MetaInfoContainer(source_mapping_ids=source_mapping_ids)
-
-    def parse(self, text: str) -> SiemContainer:
-        query, log_sources = self._parse_query(text)
+    def parse(self, raw_query_container: RawQueryContainer) -> TokenizedQueryContainer:
+        query, log_sources = self._parse_query(raw_query_container.query)
         tokens, source_mappings = self.get_tokens_and_source_mappings(query, log_sources)
-        return SiemContainer(
-            query=tokens,
-            meta_info=self._get_meta_info([source_mapping.source_id for source_mapping in source_mappings]),
-        )
+        meta_info = raw_query_container.meta_info
+        meta_info.source_mapping_ids = [source_mapping.source_id for source_mapping in source_mappings]
+        return TokenizedQueryContainer(tokens=tokens, meta_info=meta_info)

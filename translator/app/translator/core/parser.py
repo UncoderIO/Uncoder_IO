@@ -17,33 +17,35 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 from abc import ABC, abstractmethod
+from typing import Union
 
 from app.translator.core.exceptions.parser import TokenizerGeneralException
 from app.translator.core.functions import PlatformFunctions
 from app.translator.core.mapping import BasePlatformMappings, SourceMapping
 from app.translator.core.models.field import FieldValue
 from app.translator.core.models.functions.base import ParsedFunctions
-from app.translator.core.models.parser_output import MetaInfoContainer, SiemContainer
 from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.tokenizer import TOKEN_TYPE, QueryTokenizer
 
 
-class Parser(ABC):
+class QueryParser(ABC):
+    def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
+        return RawQueryContainer(query=text, language=language)
+
+    @abstractmethod
+    def parse(self, raw_query_container: RawQueryContainer) -> TokenizedQueryContainer:
+        raise NotImplementedError("Abstract method")
+
+
+class PlatformQueryParser(QueryParser, ABC):
     mappings: BasePlatformMappings = None
     tokenizer: QueryTokenizer = None
     details: PlatformDetails = None
     platform_functions: PlatformFunctions = None
 
-    @abstractmethod
-    def _get_meta_info(self, *args, **kwargs) -> MetaInfoContainer:
-        raise NotImplementedError("Abstract method")
-
-    @abstractmethod
-    def parse(self, text: str) -> SiemContainer:
-        raise NotImplementedError("Abstract method")
-
     def get_tokens_and_source_mappings(
-        self, query: str, log_sources: dict[str, list[str]]
+        self, query: str, log_sources: dict[str, Union[str, list[str]]]
     ) -> tuple[list[TOKEN_TYPE], list[SourceMapping]]:
         if not query:
             raise TokenizerGeneralException("Can't translate empty query. Please provide more details")

@@ -1,5 +1,4 @@
-class BaseRenderException(BaseException):
-    ...
+class BaseRenderException(BaseException): ...
 
 
 class UnexpectedLogsourceException(BaseRenderException):
@@ -8,8 +7,7 @@ class UnexpectedLogsourceException(BaseRenderException):
         super().__init__(message)
 
 
-class FunctionRenderException(BaseRenderException):
-    ...
+class FunctionRenderException(BaseRenderException): ...
 
 
 class UnsupportedRenderMethod(BaseRenderException):

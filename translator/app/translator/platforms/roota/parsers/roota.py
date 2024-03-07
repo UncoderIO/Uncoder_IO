@@ -20,12 +20,12 @@ from typing import ClassVar
 
 from app.translator.core.exceptions.core import RootARuleValidationException, UnsupportedRootAParser
 from app.translator.core.mixins.rule import YamlRuleMixin
-from app.translator.core.models.parser_output import MetaInfoContainer, SiemContainer
-from app.translator.core.parser import Parser
+from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer, TokenizedQueryContainer
+from app.translator.core.parser import PlatformQueryParser, QueryParser
 from app.translator.managers import parser_manager
 
 
-class RootAParser(YamlRuleMixin):
+class RootAParser(QueryParser, YamlRuleMixin):
     parsers = parser_manager
     mandatory_fields: ClassVar[set[str]] = {
         "name",
@@ -38,7 +38,7 @@ class RootAParser(YamlRuleMixin):
         "license",
     }
 
-    def __update_meta_info(self, meta_info: MetaInfoContainer, rule: dict) -> MetaInfoContainer:
+    def __parse_meta_info(self, rule: dict) -> MetaInfoContainer:
         mitre_attack = rule.get("mitre-attack") or []
         mitre_tags = [i.strip("") for i in mitre_attack.split(",")] if isinstance(mitre_attack, str) else mitre_attack
         mitre_attack = self.parse_mitre_attack(mitre_tags)
@@ -47,33 +47,38 @@ class RootAParser(YamlRuleMixin):
             rule_tags = [i.strip() for i in rule_tags.split(",")]
         rule_tags += mitre_tags
 
-        meta_info.title = rule.get("name")
-        meta_info.description = rule.get("details")
-        meta_info.id = rule.get("uuid", meta_info.id)
-        meta_info.references = rule.get("references")
-        meta_info.license = rule.get("license", meta_info.license)
-        meta_info.tags = rule_tags or meta_info.tags
-        meta_info.mitre_attack = mitre_attack
-        meta_info.date = rule.get("date", meta_info.date)
-        meta_info.author = rule.get("author", meta_info.author)
-        meta_info.severity = rule.get("severity", meta_info.severity)
-        return meta_info
+        return MetaInfoContainer(
+            id_=rule.get("uuid"),
+            title=rule.get("name"),
+            description=rule.get("details"),
+            author=rule.get("author"),
+            date=rule.get("date"),
+            license_=rule.get("license"),
+            severity=rule.get("severity"),
+            references=rule.get("references"),
+            mitre_attack=mitre_attack,
+            tags=rule_tags,
+        )
 
-    def _get_parser_class(self, parser: str) -> Parser:
+    def __get_parser_class(self, parser: str) -> PlatformQueryParser:
         parser_class = self.parsers.get(parser)
         if parser_class:
             return parser_class
         raise UnsupportedRootAParser(parser=parser)
 
-    def __validate_rule(self, rule: dict) -> None:
+    def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
+        rule = self.load_rule(text=text)
         if missing_fields := self.mandatory_fields.difference(set(rule.keys())):
             raise RootARuleValidationException(missing_fields=list(missing_fields))
 
-    def parse(self, text: str) -> SiemContainer:
-        roota_rule = self.load_rule(text=text)
-        self.__validate_rule(rule=roota_rule)
-        detection = roota_rule.get("detection", {}).get("body", "")
-        parser = self._get_parser_class(roota_rule.get("detection", {}).get("language", ""))
-        siem_container = parser.parse(text=detection)
-        siem_container.meta_info = self.__update_meta_info(meta_info=siem_container.meta_info, rule=roota_rule)
-        return siem_container
+        detection = rule.get("detection", {})
+        query = detection.get("body")
+        language = detection.get("language")
+        if not (query or language):
+            raise RootARuleValidationException(missing_fields=["detection"])
+
+        return RawQueryContainer(query=query, language=language, meta_info=self.__parse_meta_info(rule))
+
+    def parse(self, raw_query_container: RawQueryContainer) -> TokenizedQueryContainer:
+        parser = self.__get_parser_class(raw_query_container.language)
+        return parser.parse(raw_query_container)

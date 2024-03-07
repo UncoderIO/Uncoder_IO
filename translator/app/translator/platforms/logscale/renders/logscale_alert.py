@@ -16,13 +16,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 import copy
 import json
 from typing import Optional
 
 from app.translator.core.mapping import SourceMapping
-from app.translator.core.models.parser_output import MetaInfoContainer
 from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.core.models.query_container import MetaInfoContainer
 from app.translator.platforms.logscale.const import DEFAULT_LOGSCALE_ALERT, logscale_alert_details
 from app.translator.platforms.logscale.renders.logscale import LogScaleFieldValue, LogScaleQueryRender
 from app.translator.tools.utils import get_rule_description_str

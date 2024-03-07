@@ -3,15 +3,29 @@ from app.translator.core.models.platform_details import PlatformDetails
 
 PLATFORM_DETAILS = {"group_id": "elk stack", "group_name": "Elastic Stack", "alt_platform_name": "ECS"}
 
+_ELASTIC_LUCENE_QUERY = "elastic-lucene-query"
+_ELASTIC_LUCENE_RULE = "elastic-lucene-rule"
+_ELASTIC_KIBANA_RULE = "elastic-kibana-rule"
+_ELASTALERT_LUCENE_RULE = "elastalert-lucene-rule"
+_ELASTIC_WATCHER_RULE = "elastic-watcher-rule"
+
+ELASTIC_QUERY_TYPES = {
+    _ELASTIC_LUCENE_QUERY,
+    _ELASTIC_LUCENE_RULE,
+    _ELASTIC_KIBANA_RULE,
+    _ELASTALERT_LUCENE_RULE,
+    _ELASTIC_WATCHER_RULE,
+}
+
 ELASTICSEARCH_LUCENE_QUERY_DETAILS = {
-    "siem_type": "elastic-lucene-query",
+    "siem_type": _ELASTIC_LUCENE_QUERY,
     "name": "Elasticsearch Query",
     "platform_name": "Query (Lucene)",
     **PLATFORM_DETAILS,
 }
 
 ELASTICSEARCH_RULE_DETAILS = {
-    "siem_type": "elastic-lucene-rule",
+    "siem_type": _ELASTIC_LUCENE_RULE,
     "name": "Elastic Rule",
     "platform_name": "Detection Rule (Lucene)",
     "first_choice": 0,
@@ -19,7 +33,7 @@ ELASTICSEARCH_RULE_DETAILS = {
 }
 
 KIBANA_DETAILS = {
-    "siem_type": "elastic-kibana-rule",
+    "siem_type": _ELASTIC_KIBANA_RULE,
     "name": "Elastic Kibana Saved Search",
     "platform_name": "Kibana SavedSearch (JSON)",
     "first_choice": 0,
@@ -27,7 +41,7 @@ KIBANA_DETAILS = {
 }
 
 ELASTALERT_DETAILS = {
-    "siem_type": "elastalert-lucene-rule",
+    "siem_type": _ELASTALERT_LUCENE_RULE,
     "name": "ElastAlert",
     "platform_name": "Alert (Lucene)",
     "group_name": "ElastAlert",
@@ -35,7 +49,7 @@ ELASTALERT_DETAILS = {
 }
 
 XPACK_WATCHER_DETAILS = {
-    "siem_type": "elastic-watcher-rule",
+    "siem_type": _ELASTIC_WATCHER_RULE,
     "name": "Elastic Watcher",
     "platform_name": "Rule (Watcher)",
     "first_choice": 0,

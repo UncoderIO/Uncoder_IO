@@ -17,12 +17,13 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 
+
 from typing import Union
 
 from app.translator.core.exceptions.core import SigmaRuleValidationException
 from app.translator.core.mixins.rule import YamlRuleMixin
 from app.translator.core.models.field import FieldValue, Field
-from app.translator.core.models.parser_output import MetaInfoContainer, SiemContainer
+from app.translator.core.models.query_container import MetaInfoContainer, TokenizedQueryContainer
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.platforms.sigma.const import SIGMA_RULE_DETAILS
@@ -72,7 +73,7 @@ class SigmaParser(YamlRuleMixin):
         if missing_fields := self.mandatory_fields.difference(set(rule.keys())):
             raise SigmaRuleValidationException(missing_fields=list(missing_fields))
 
-    def parse(self, text: str) -> SiemContainer:
+    def parse(self, text: str) -> TokenizedQueryContainer:
         sigma_rule = self.load_rule(text=text)
         self.__validate_rule(rule=sigma_rule)
         log_sources = {
@@ -90,8 +91,8 @@ class SigmaParser(YamlRuleMixin):
             sigma_fields_tokens = [Field(source_name=field) for field in sigma_fields]
             QueryTokenizer.set_field_tokens_generic_names_map(sigma_fields_tokens, source_mappings,
                                                               self.mappings.default_mapping)
-        return SiemContainer(
-            query=tokens,
+        return TokenizedQueryContainer(
+            tokens=tokens,
             meta_info=self._get_meta_info(
                 rule=sigma_rule,
                 source_mapping_ids=[source_mapping.source_id for source_mapping in source_mappings],

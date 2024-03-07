@@ -17,15 +17,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 import re
-from typing import Optional
 
 from app.translator.core.models.functions.base import ParsedFunctions
-from app.translator.core.models.parser_output import MetaInfoContainer, SiemContainer
-from app.translator.core.parser import Parser
+from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
+from app.translator.core.parser import PlatformQueryParser
 from app.translator.platforms.base.spl.tokenizer import SplTokenizer
 
 
-class SplParser(Parser):
+class SplQueryParser(PlatformQueryParser):
     log_source_pattern = r"^___source_type___\s*=\s*(?:\"(?P<d_q_value>[%a-zA-Z_*:0-9\-/]+)\"|(?P<value>[%a-zA-Z_*:0-9\-/]+))(?:\s+(?:and|or)\s+|\s+)?"  # noqa: E501
     log_source_key_types = ("index", "source", "sourcetype", "sourcecategory")
 
@@ -47,19 +46,16 @@ class SplParser(Parser):
 
         return log_sources, query
 
-    def _parse_query(self, query: str) -> tuple[dict[str, list[str]], ParsedFunctions, str]:
+    def _parse_query(self, query: str) -> tuple[str, dict[str, list[str]], ParsedFunctions]:
         query = query.strip()
         log_sources, query = self._parse_log_sources(query)
         query, functions = self.platform_functions.parse(query)
-        return log_sources, functions, query
+        return query, log_sources, functions
 
-    @staticmethod
-    def _get_meta_info(source_mapping_ids: list[str], meta_info: Optional[dict]) -> MetaInfoContainer:  # noqa: ARG004
-        return MetaInfoContainer(source_mapping_ids=source_mapping_ids)
-
-    def parse(self, text: str) -> SiemContainer:
-        log_sources, functions, query = self._parse_query(text)
+    def parse(self, raw_query_container: RawQueryContainer) -> TokenizedQueryContainer:
+        query, log_sources, functions = self._parse_query(raw_query_container.query)
         tokens, source_mappings = self.get_tokens_and_source_mappings(query, log_sources)
         self.set_functions_fields_generic_names(functions=functions, source_mappings=source_mappings)
-        meta_info = self._get_meta_info([source_mapping.source_id for source_mapping in source_mappings], {})
-        return SiemContainer(query=tokens, meta_info=meta_info, functions=functions)
+        meta_info = raw_query_container.meta_info
+        meta_info.source_mapping_ids = [source_mapping.source_id for source_mapping in source_mappings]
+        return TokenizedQueryContainer(tokens=tokens, meta_info=meta_info, functions=functions)
