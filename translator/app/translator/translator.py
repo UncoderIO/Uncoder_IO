@@ -87,7 +87,7 @@ class SiemConverter:
                 status, data = self.__render_translation(query_container=raw_query_container, target=target)
             else:
                 status, data = self.__render_translation(query_container=tokenized_query_container, target=target)
-            result.append({"status": status, "result": parsed_data, "siem_type": target})
+            result.append({"status": status, "result": data, "siem_type": target})
 
         return result
 
