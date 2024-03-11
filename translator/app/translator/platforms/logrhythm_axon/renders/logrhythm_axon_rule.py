@@ -16,7 +16,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-
 import copy
 import json
 from typing import Optional
@@ -50,21 +49,6 @@ class LogRhythmAxonRuleRender(LogRhythmAxonQueryRender):
     or_token = "or"
     field_value_map = LogRhythmAxonRuleFieldValue(or_token=or_token)
 
-    def __create_mitre_threat(self, meta_info: MetaInfoContainer) -> tuple[list, list]:
-        tactics = set()
-        techniques = []
-
-        for tactic in meta_info.mitre_attack.get("tactics"):
-            tactics.add(tactic["tactic"])
-
-        for technique in meta_info.mitre_attack.get("techniques"):
-            if technique.get("tactic"):
-                for tactic in technique["tactic"]:
-                    tactics.add(tactic)
-            techniques.append(technique["technique_id"])
-
-        return sorted(tactics), sorted(techniques)
-
     def finalize_query(
         self,
         prefix: str,
@@ -91,11 +75,11 @@ class LogRhythmAxonRuleRender(LogRhythmAxonQueryRender):
         )
         if tactics := meta_info.mitre_attack.get("tactics"):
             rule["observationPipeline"]["metadataFields"]["threat.mitre_tactic"] = ", ".join(
-                f"{i['external_id']}:{i['tactic']}" for i in tactics
+                f"{i['external_id']}:{i['tactic']}" for i in sorted(tactics, key=lambda x: x["external_id"])
             )
         if techniques := meta_info.mitre_attack.get("techniques"):
             rule["observationPipeline"]["metadataFields"]["threat.mitre_technique"] = ", ".join(
-                f"{i['technique_id']}:{i['technique']}" for i in techniques
+                f"{i['technique_id']}:{i['technique']}" for i in sorted(techniques, key=lambda x: x["technique_id"])
             )
         if meta_info.fields:
             rule["observationPipeline"]["pattern"]["operations"][0]["logObserved"]["groupByFields"] = [
