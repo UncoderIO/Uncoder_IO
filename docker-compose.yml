@@ -11,8 +11,8 @@ services:
       - '4010:4010'
   translator:
     build:
-      context: './translator/'
-    container_name: translator
+      context: './uncoder-core/'
+    container_name: uncoder-core
     restart: always
     environment:
       - HOST=0.0.0.0
