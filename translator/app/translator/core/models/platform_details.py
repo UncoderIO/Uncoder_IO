@@ -4,7 +4,7 @@ from typing import Optional
 
 @dataclass
 class PlatformDetails:
-    siem_type: str = ""
+    platform_id: str = ""
     name: str = ""
     platform_name: str = ""
     group_id: Optional[str] = None

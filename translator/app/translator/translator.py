@@ -12,12 +12,12 @@ from app.translator.platforms.sigma.parsers.sigma import SigmaParser
 from app.translator.tools.decorators import handle_translation_exceptions
 
 
-class SiemConverter:
+class Translator:
     renders: RenderManager = render_manager
     parsers: ParserManager = parser_manager
 
     def __init__(self):
-        self.logger = logging.getLogger("siem_converter")
+        self.logger = logging.getLogger("translator")
 
     def __get_parser(self, source: str) -> Union[PlatformQueryParser, RootAParser, SigmaParser]:
         parser = RootAParser() if source == "roota" else self.parsers.get(source)
@@ -51,7 +51,7 @@ class SiemConverter:
 
         raw_query_container = parser.parse_raw_query(text, language=source)
         tokenized_query_container = None
-        if target and not self.__is_one_vendor_translation(raw_query_container.language, target):
+        if not (target and self.__is_one_vendor_translation(raw_query_container.language, target)):
             tokenized_query_container = parser.parse(raw_query_container)
 
         return raw_query_container, tokenized_query_container
@@ -63,7 +63,7 @@ class SiemConverter:
         render = self.__get_render(target)
         return render.generate(query_container)
 
-    def __generate_one(self, text: str, source: str, target: str) -> (bool, str):
+    def __translate_one(self, text: str, source: str, target: str) -> (bool, str):
         status, parsed_data = self.__parse_incoming_data(text=text, source=source, target=target)
         if not status:
             return status, parsed_data
@@ -72,10 +72,10 @@ class SiemConverter:
         query_container = tokenized_query_container or raw_query_container
         return self.__render_translation(query_container=query_container, target=target)
 
-    def __generate_all(self, text: str, source: str) -> list[dict]:
+    def __translate_all(self, text: str, source: str) -> list[dict]:
         status, parsed_data = self.__parse_incoming_data(text=text, source=source)
         if not status:
-            return [{"status": status, "result": parsed_data, "siem_type": source}]
+            return [{"status": status, "result": parsed_data, "platform_id": source}]
 
         raw_query_container, tokenized_query_container = parsed_data
         result = []
@@ -87,15 +87,15 @@ class SiemConverter:
                 status, data = self.__render_translation(query_container=raw_query_container, target=target)
             else:
                 status, data = self.__render_translation(query_container=tokenized_query_container, target=target)
-            result.append({"status": status, "result": data, "siem_type": target})
+            result.append({"status": status, "result": data, "platform_id": target})
 
         return result
 
-    def generate_translation(self, text: str, source: str, target: str) -> (bool, str):
-        return self.__generate_one(text=text, source=source, target=target)
+    def translate_one(self, text: str, source: str, target: str) -> (bool, str):
+        return self.__translate_one(text=text, source=source, target=target)
 
-    def generate_all_translation(self, text: str, source: str) -> list[dict]:
-        return self.__generate_all(text=text, source=source)
+    def translate_all(self, text: str, source: str) -> list[dict]:
+        return self.__translate_all(text=text, source=source)
 
     def get_all_platforms(self) -> tuple:
         return self.get_renders(), self.get_parsers()

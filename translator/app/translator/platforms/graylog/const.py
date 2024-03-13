@@ -1,7 +1,7 @@
 from app.translator.core.models.platform_details import PlatformDetails
 
 GRAYLOG_QUERY_DETAILS = {
-    "siem_type": "graylog-lucene-query",
+    "platform_id": "graylog-lucene-query",
     "name": "Graylog",
     "group_name": "Graylog",
     "platform_name": "Query",

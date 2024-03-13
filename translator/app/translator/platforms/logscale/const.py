@@ -11,14 +11,14 @@ DEFAULT_LOGSCALE_ALERT = {
 PLATFORM_DETAILS = {"group_id": "logscale-pack", "group_name": "Falcon LogScale"}
 
 LOGSCALE_QUERY_DETAILS = {
-    "siem_type": "logscale-lql-query",
+    "platform_id": "logscale-lql-query",
     "name": "Falcon LogScale Query",
     "platform_name": "Query",
     **PLATFORM_DETAILS,
 }
 
 LOGSCALE_ALERT_DETAILS = {
-    "siem_type": "logscale-lql-rule",
+    "platform_id": "logscale-lql-rule",
     "name": "Falcon LogScale Alert",
     "platform_name": "Alert",
     "first_choice": 0,

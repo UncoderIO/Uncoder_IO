@@ -20,14 +20,14 @@ class StrictPlatformFieldException(BasePlatformException):
 
 class UnsupportedPlatform(BasePlatformException):
     def __init__(self, platform: str, is_parser: bool = False):
-        converter_direction = "input" if is_parser else "output"
+        direction = "input" if is_parser else "output"
         if platform:
             message = (
-                f"The selected {converter_direction} language `{platform}` is not supported. "
+                f"The selected {direction} language `{platform}` is not supported. "
                 f"Please, select an option in the dropdown."
             )
         else:
-            message = f"Please, select an {converter_direction} language."
+            message = f"Please, select an {direction} language."
         super().__init__(message)
 
 

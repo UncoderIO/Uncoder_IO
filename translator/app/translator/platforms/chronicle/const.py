@@ -23,14 +23,14 @@ DEFAULT_CHRONICLE_SECURITY_RULE = """rule <title_place_holder> {
 PLATFORM_DETAILS = {"group_id": "chronicle-pack", "group_name": "Chronicle Security", "alt_platform_name": "UDM"}
 
 CHRONICLE_QUERY_DETAILS = {
-    "siem_type": "chronicle-yaral-query",
+    "platform_id": "chronicle-yaral-query",
     "name": "Chronicle Security Query",
     "platform_name": "Query (UDM)",
     **PLATFORM_DETAILS,
 }
 
 CHRONICLE_RULE_DETAILS = {
-    "siem_type": "chronicle-yaral-rule",
+    "platform_id": "chronicle-yaral-rule",
     "name": "Chronicle Security Rule",
     "platform_name": "Rule (YARA-L)",
     "first_choice": 0,

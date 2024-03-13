@@ -1,5 +1,5 @@
 SNOWFLAKE_QUERY_DETAILS = {
-    "siem_type": "snowflake",
+    "platform_id": "snowflake",
     "name": "Snowflake Query",
     "group_name": "Snowflake",
     "group_id": "snowflake-pack",

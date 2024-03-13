@@ -28,14 +28,14 @@ action.correlationsearch.label = <title_place_holder>
 PLATFORM_DETAILS = {"group_id": "splunk-pack", "group_name": "Splunk"}
 
 SPLUNK_QUERY_DETAILS = {
-    "siem_type": "splunk-spl-query",
+    "platform_id": "splunk-spl-query",
     "name": "Splunk Query",
     "platform_name": "Query (SPL)",
     **PLATFORM_DETAILS,
 }
 
 SPLUNK_ALERT_DETAILS = {
-    "siem_type": "splunk-spl-rule",
+    "platform_id": "splunk-spl-rule",
     "name": "Splunk Alert",
     "platform_name": "Alert (SPL)",
     "first_choice": 0,

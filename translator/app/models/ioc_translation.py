@@ -6,11 +6,11 @@ from app.models.translation import InfoMessage
 
 
 class CTIPlatform(BaseModel):
-    name: str
+    id: str
 
 
 class OneTranslationCTIData(BaseModel):
     info: Optional[InfoMessage] = None
     status: bool
     translations: Optional[list] = None
-    target_siem_type: str
+    target_platform_id: str

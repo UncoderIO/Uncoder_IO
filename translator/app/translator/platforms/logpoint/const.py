@@ -1,5 +1,5 @@
 LOGPOINT_QUERY_DETAILS = {
-    "siem_type": "logpoint",
+    "platform_id": "logpoint",
     "name": "Logpoint",
     "group_name": "Logpoint",
     "platform_name": "Query",

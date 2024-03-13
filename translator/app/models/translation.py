@@ -12,10 +12,10 @@ class OneTranslationData(BaseModel):
     info: Optional[InfoMessage] = None
     status: bool
     translation: Optional[str] = None
-    target_siem_type: str
+    target_platform_id: str
 
 
-class ConvertorPlatform(BaseModel):
+class TranslatorPlatform(BaseModel):
     name: str
     id: str
     code: str
@@ -28,7 +28,7 @@ class ConvertorPlatform(BaseModel):
     first_choice: int = 1
 
 
-class ConvertorPlatforms(BaseModel):
+class TranslatorPlatforms(BaseModel):
     renders: list
     parsers: list
 

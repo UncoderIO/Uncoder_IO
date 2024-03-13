@@ -3,7 +3,7 @@ from app.translator.core.models.platform_details import PlatformDetails
 UTF8_PAYLOAD_PATTERN = r"UTF8\(payload\)"
 
 QRADAR_QUERY_DETAILS = {
-    "siem_type": "qradar-aql-query",
+    "platform_id": "qradar-aql-query",
     "name": "QRadar Query",
     "platform_name": "Query (AQL)",
     "group_id": "qradar",

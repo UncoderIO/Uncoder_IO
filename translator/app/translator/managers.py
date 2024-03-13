@@ -1,6 +1,6 @@
 from abc import ABC
 
-from app.models.translation import ConvertorPlatform
+from app.models.translation import TranslatorPlatform
 from app.translator.core.exceptions.core import UnsupportedRootAParser
 from app.translator.platforms import __ALL_PARSERS as PARSERS
 from app.translator.platforms import __ALL_RENDERS as RENDERS
@@ -12,27 +12,27 @@ class Manager(ABC):
 
     @property
     def platforms(self) -> dict:
-        return {platform.details.siem_type: platform for platform in self.platforms_class}
+        return {platform.details.platform_id: platform for platform in self.platforms_class}
 
-    def get(self, siem: str):  # noqa: ANN201
-        if platform := self.platforms.get(siem):
+    def get(self, platform_id: str):  # noqa: ANN201
+        if platform := self.platforms.get(platform_id):
             return platform
-        raise UnsupportedRootAParser(parser=siem)
+        raise UnsupportedRootAParser(parser=platform_id)
 
     def all_platforms(self) -> list:
         return list(self.platforms)
 
     @property
-    def get_platforms_details(self) -> list[ConvertorPlatform]:
+    def get_platforms_details(self) -> list[TranslatorPlatform]:
         platforms = [
-            ConvertorPlatform(
-                id=platform.details.siem_type,
+            TranslatorPlatform(
+                id=platform.details.platform_id,
                 name=platform.details.name,
-                code=platform.details.siem_type,
+                code=platform.details.platform_id,
                 group_name=platform.details.group_name,
                 group_id=platform.details.group_id,
                 platform_name=platform.details.platform_name,
-                platform_id=platform.details.siem_type,
+                platform_id=platform.details.platform_id,
                 alt_platform_name=platform.details.alt_platform_name,
                 alt_platform=platform.details.alt_platform,
                 first_choice=platform.details.first_choice,

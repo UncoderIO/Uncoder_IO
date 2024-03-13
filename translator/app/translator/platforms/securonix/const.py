@@ -1,5 +1,5 @@
 SECURONIX_QUERY_DETAILS = {
-    "siem_type": "securonix",
+    "platform_id": "securonix",
     "name": "Securonix",
     "platform_name": "Query",
     "group_name": "Securonix",

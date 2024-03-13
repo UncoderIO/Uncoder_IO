@@ -1,5 +1,5 @@
 SUMO_LOGIC_QUERY_DETAILS = {
-    "siem_type": "sumologic",
+    "platform_id": "sumologic",
     "name": "Sumo Logic Query",
     "group_name": "Sumo Logic",
     "platform_name": "Query",

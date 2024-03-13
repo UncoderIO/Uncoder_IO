@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from app.translator.core.models.platform_details import PlatformDetails
 
 FORTI_SIEM_RULE_DETAILS = {
-    "siem_type": "fortisiem-rule",
+    "platform_id": "fortisiem-rule",
     "name": "FortiSIEM Rule",
     "platform_name": "Rule",
     "group_id": "forti_siem",

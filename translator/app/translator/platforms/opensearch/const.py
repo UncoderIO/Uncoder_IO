@@ -3,14 +3,14 @@ from app.translator.core.models.platform_details import PlatformDetails
 PLATFORM_DETAILS = {"group_id": "opensearch", "group_name": "AWS OpenSearch", "alt_platform_name": "ECS"}
 
 OPENSEARCH_LUCENE_QUERY_DETAILS = {
-    "siem_type": "opensearch-lucene-query",
+    "platform_id": "opensearch-lucene-query",
     "name": "AWS OpenSearch Query",
     "platform_name": "Query (Lucene)",
     **PLATFORM_DETAILS,
 }
 
 OPENSEARCH_RULE_DETAILS = {
-    "siem_type": "opensearch-lucene-rule",
+    "platform_id": "opensearch-lucene-rule",
     "name": "AWS OpenSearch Rule",
     "platform_name": "Rule (JSON)",
     "first_choice": 0,

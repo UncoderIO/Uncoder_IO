@@ -29,14 +29,14 @@ DEFAULT_LOGRHYTHM_AXON_RULE = {
 PLATFORM_DETAILS = {"group_id": "axon-ads", "group_name": "LogRhythm Axon"}
 
 LOGRHYTHM_AXON_QUERY_DETAILS = {
-    "siem_type": "axon-ads-query",
+    "platform_id": "axon-ads-query",
     "name": "LogRhythm Axon Query",
     "platform_name": "Query",
     **PLATFORM_DETAILS,
 }
 
 LOGRHYTHM_AXON_RULE_DETAILS = {
-    "siem_type": "axon-ads-rule",
+    "platform_id": "axon-ads-rule",
     "name": "LogRhythm Axon Rule",
     "platform_name": "Rule",
     "first_choice": 0,

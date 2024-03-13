@@ -20,14 +20,14 @@ DEFAULT_MICROSOFT_SENTINEL_RULE = {
 PLATFORM_DETAILS = {"group_id": "sentinel", "group_name": "Microsoft Sentinel"}
 
 MICROSOFT_SENTINEL_QUERY_DETAILS = {
-    "siem_type": "sentinel-kql-query",
+    "platform_id": "sentinel-kql-query",
     "name": "Microsoft Sentinel Query",
     "platform_name": "Query (Kusto)",
     **PLATFORM_DETAILS,
 }
 
 MICROSOFT_SENTINEL_RULE_DETAILS = {
-    "siem_type": "sentinel-kql-rule",
+    "platform_id": "sentinel-kql-rule",
     "name": "Microsoft Sentinel Rule",
     "platform_name": "Rule (Kusto)",
     "first_choice": 0,
@@ -35,7 +35,7 @@ MICROSOFT_SENTINEL_RULE_DETAILS = {
 }
 
 MICROSOFT_DEFENDER_DETAILS = {
-    "siem_type": "mde-kql-query",
+    "platform_id": "mde-kql-query",
     "group_name": "Microsoft Defender for Endpoint",
     "name": "Microsoft Defender for Endpoint",
     "platform_name": "Query (Kusto)",

@@ -5,16 +5,15 @@ from app.models.ioc_translation import CTIPlatform
 from app.translator.const import CTI_IOCS_PER_QUERY_LIMIT, CTI_MIN_LIMIT_QUERY
 from app.translator.core.models.iocs import IocsChunkValue
 from app.translator.core.parser_cti import CTIParser
-from app.translator.core.render_cti import RenderCTI
 from app.translator.managers import RenderCTIManager, render_cti_manager
 from app.translator.tools.decorators import handle_translation_exceptions
 
 
-class CTIConverter:
+class CTITranslator:
     renders: RenderCTIManager = render_cti_manager
 
     def __init__(self):
-        self.logger = logging.getLogger("cti_converter")
+        self.logger = logging.getLogger("cti_translator")
         self.parser = CTIParser()
 
     @handle_translation_exceptions
@@ -39,12 +38,14 @@ class CTIConverter:
 
     @handle_translation_exceptions
     def __render_translation(self, parsed_data: dict, platform_data: CTIPlatform, iocs_per_query: int) -> list[str]:
-        platform = self.renders.get(platform_data.name)
-        return self.generate(
-            data=parsed_data, platform=platform, iocs_per_query=iocs_per_query, mapping=platform.default_mapping
-        )
+        render_cti = self.renders.get(platform_data.id)
 
-    def convert(
+        chunked_iocs = self.__get_iocs_chunk(
+            chunks_size=iocs_per_query, data=parsed_data, mapping=render_cti.default_mapping
+        )
+        return render_cti.render(chunked_iocs)
+
+    def translate(
         self,
         text: str,
         platform_data: CTIPlatform,
@@ -70,7 +71,7 @@ class CTIConverter:
         return status, parsed_data
 
     @staticmethod
-    def _get_iocs_chunk(
+    def __get_iocs_chunk(
         chunks_size: int, data: dict[str, list[str]], mapping: dict[str, str]
     ) -> list[list[IocsChunkValue]]:
         result = []
@@ -81,12 +82,6 @@ class CTIConverter:
                         IocsChunkValue(generic_field=generic_field, platform_field=mapping[generic_field], value=ioc)
                     )
         return [result[i : i + chunks_size] for i in range(0, len(result), chunks_size)]
-
-    def generate(
-        self, platform: RenderCTI, iocs_per_query: int, data: dict[str, list[str]], mapping: dict[str, str]
-    ) -> list[str]:
-        chunked_iocs = self._get_iocs_chunk(chunks_size=iocs_per_query, data=data, mapping=mapping)
-        return platform.render(chunked_iocs)
 
     @classmethod
     def get_renders(cls) -> list:

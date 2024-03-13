@@ -1,5 +1,5 @@
 FIREEYE_HELIX_QUERY_DETAILS = {
-    "siem_type": "fireeye_helix",
+    "platform_id": "fireeye_helix",
     "name": "FireEye Helix",
     "group_name": "FireEye",
     "group_id": "fireeye",

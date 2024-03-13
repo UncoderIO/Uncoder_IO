@@ -20,7 +20,7 @@ class LoaderFileMappings:
                 print(err)
                 return {}
 
-    def load_siem_mappings(self, platform_dir: str) -> Generator[dict, None, None]:
+    def load_platform_mappings(self, platform_dir: str) -> Generator[dict, None, None]:
         platform_path = os.path.join(self.base_mapping_filepath, platform_dir)
         for mapping_file in os.listdir(platform_path):
             if mapping_file != COMMON_FIELD_MAPPING_FILE_NAME:

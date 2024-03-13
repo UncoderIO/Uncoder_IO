@@ -1,5 +1,5 @@
 QUALYS_QUERY_DETAILS = {
-    "siem_type": "qualys",
+    "platform_id": "qualys",
     "name": "Qualys",
     "platform_name": "IOC Query",
     "group_name": "Qualys",
