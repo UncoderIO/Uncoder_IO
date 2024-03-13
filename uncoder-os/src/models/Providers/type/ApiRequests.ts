@@ -1,18 +1,18 @@
 import { BasicIocType, HashIocType, IocParsingRulesType } from '../../../types/iocsTypes';
 
 export type TranslateAllRequest = {
-  source_siem: string,
+  source_platform_id: string,
   source_scheme?: string,
   text: string,
 }
 
 export type TranslateRequest = TranslateAllRequest & {
-  target_siem: string,
+  target_platform_id: string,
   target_scheme?: string,
 }
 
 export type PlatformForIoc = {
-  name: string,
+  id: string,
 }
 
 export type TranslateIocRequest = {

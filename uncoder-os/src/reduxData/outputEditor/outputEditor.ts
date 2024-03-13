@@ -80,8 +80,8 @@ const getTranslateRequestData = (state: RootState): TranslateRequest | undefined
 
   return {
     text,
-    source_siem: sourceSiem,
-    target_siem: platformDataItem?.code ?? '',
+    source_platform_id: sourceSiem,
+    target_platform_id: platformDataItem?.code ?? '',
     target_scheme: (platformDataItem?.alt_platform ?? undefined) !== 'regular' ? platformDataItem?.alt_platform : undefined,
   };
 };
@@ -109,7 +109,7 @@ const getTranslateIocRequestData = (state: RootState): TranslateIocRequest | und
   return {
     text,
     platform: {
-      name: platformDataItem.code,
+      id: platformDataItem.code,
     },
     iocs_per_query: iocSettings.iocPerQuery,
     include_ioc_types: iocSettings.includeIocTypes,

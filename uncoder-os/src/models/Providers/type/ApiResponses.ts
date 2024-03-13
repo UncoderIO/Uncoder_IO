@@ -12,7 +12,7 @@ export type ResultStatusContext = {
 
 export type TranslateItem = ResultStatusContext & {
   translation: string,
-  target_siem_type: string,
+  target_platform_id: string,
   target_siem_name: string
 };
 
@@ -46,7 +46,7 @@ export type ParserPlatformData = PlatformData & {
 export type PlatformsResponse = ParserPlatformData[];
 
 export type IocTranslationData = {
-  target_siem_type: string,
+  target_platform_id: string,
   translations: string[],
 }
 
