@@ -1,7 +1,7 @@
 """
 Uncoder IO Commercial Edition License
 -----------------------------------------------------------------
-Copyright (c) 2023 SOC Prime, Inc.
+Copyright (c) 2024 SOC Prime, Inc.
 
 This file is part of the Uncoder IO Commercial Edition ("CE") and is
 licensed under the Uncoder IO Non-Commercial License (the "License");
@@ -15,7 +15,6 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
-
 import re
 from typing import ClassVar, Union
 
