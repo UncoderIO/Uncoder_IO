@@ -16,7 +16,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
@@ -104,6 +103,10 @@ class LogRhythmAxonFieldValue(BaseQueryFieldValue):
         )
 
     @staticmethod
+    def __escape_backslash(value: str) -> str:
+        return value.replace("\\", "\\\\")
+
+    @staticmethod
     def __escape_value(value: Union[int, str]) -> Union[int, str]:
         return value.replace("'", "''") if isinstance(value, str) else value
 
@@ -166,7 +169,7 @@ class LogRhythmAxonFieldValue(BaseQueryFieldValue):
         if isinstance(value, str) and field == UNMAPPED_FIELD_DEFAULT_NAME:
             return self.contains_modifier(field, value)
         value = f".*{self.__escape_value(value)}" if not str(value).startswith(".*") else self.__escape_value(value)
-        return f'{field} matches "{value}$"'
+        return f'{field} matches "{self.__escape_backslash(value)}$"'
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
@@ -174,7 +177,7 @@ class LogRhythmAxonFieldValue(BaseQueryFieldValue):
         if isinstance(value, str) and field == UNMAPPED_FIELD_DEFAULT_NAME:
             return self.contains_modifier(field, value)
         value = f"{self.__escape_value(value)}.*" if not str(value).endswith(".*") else self.__escape_value(value)
-        return f'{field} matches "^{self.__escape_value(value)}"'
+        return f'{field} matches "^{self.__escape_backslash(value)}"'
 
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if field == UNMAPPED_FIELD_DEFAULT_NAME and self.__is_contain_regex_items(value):

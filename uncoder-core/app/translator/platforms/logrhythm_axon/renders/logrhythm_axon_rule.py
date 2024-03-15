@@ -61,6 +61,7 @@ class LogRhythmAxonRuleRender(LogRhythmAxonQueryRender):
         **kwargs,  # noqa: ARG002
     ) -> str:
         query = super().finalize_query(prefix=prefix, query=query, functions=functions)
+        query = query.replace('\\\\', '\\')
         rule = copy.deepcopy(DEFAULT_LOGRHYTHM_AXON_RULE)
         rule["observationPipeline"]["pattern"]["operations"][0]["logObserved"]["filter"] = query
         rule["title"] = meta_info.title
