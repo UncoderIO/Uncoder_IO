@@ -20,6 +20,7 @@ from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.tokens import LogicalOperatorType
+from app.translator.core.custom_types.values import ValueType
 from app.translator.core.exceptions.core import StrictPlatformException
 from app.translator.core.exceptions.render import BaseRenderException
 from app.translator.core.mapping import LogSourceSignature, SourceMapping
@@ -29,8 +30,8 @@ from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import TokenizedQueryContainer
 from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
 from app.translator.platforms.logrhythm_axon.const import UNMAPPED_FIELD_DEFAULT_NAME, logrhythm_axon_query_details
+from app.translator.platforms.logrhythm_axon.escape_manager import logrhythm_query_escape_manager
 from app.translator.platforms.logrhythm_axon.mapping import LogRhythmAxonMappings, logrhythm_axon_mappings
-from app.translator.platforms.microsoft.escape_manager import microsoft_escape_manager
 
 
 class LogRhythmRegexRenderException(BaseRenderException):
@@ -39,7 +40,7 @@ class LogRhythmRegexRenderException(BaseRenderException):
 
 class LogRhythmAxonFieldValue(BaseQueryFieldValue):
     details: PlatformDetails = logrhythm_axon_query_details
-    escape_manager = microsoft_escape_manager
+    escape_manager = logrhythm_query_escape_manager
 
     def __is_complex_regex(self, regex: str) -> bool:
         regex_items = ("[", "]", "(", ")", "{", "}", "+", "?", "^", "$", "\\d", "\\w", "\\s", "-")
@@ -103,10 +104,6 @@ class LogRhythmAxonFieldValue(BaseQueryFieldValue):
         )
 
     @staticmethod
-    def __escape_backslash(value: str) -> str:
-        return value.replace("\\", "\\\\")
-
-    @staticmethod
     def __escape_value(value: Union[int, str]) -> Union[int, str]:
         return value.replace("'", "''") if isinstance(value, str) else value
 
@@ -161,23 +158,31 @@ class LogRhythmAxonFieldValue(BaseQueryFieldValue):
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.contains_modifier(field=field, value=v) for v in value)})"
-        return f'{field} CONTAINS "{self.__escape_value(value)}"'
+        return f'{field} CONTAINS "{self.apply_value(value)}"'
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.endswith_modifier(field=field, value=v) for v in value)})"
         if isinstance(value, str) and field == UNMAPPED_FIELD_DEFAULT_NAME:
             return self.contains_modifier(field, value)
-        value = f".*{self.__escape_value(value)}" if not str(value).startswith(".*") else self.__escape_value(value)
-        return f'{field} matches "{self.__escape_backslash(value)}$"'
+        value = (
+            f".*{self.apply_value(value, value_type=ValueType.regex_value)}"
+            if not str(value).startswith(".*")
+            else self.apply_value(value, value_type=ValueType.regex_value)
+        )
+        return f'{field} matches "{value}$"'
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.startswith_modifier(field=field, value=v) for v in value)})"
         if isinstance(value, str) and field == UNMAPPED_FIELD_DEFAULT_NAME:
             return self.contains_modifier(field, value)
-        value = f"{self.__escape_value(value)}.*" if not str(value).endswith(".*") else self.__escape_value(value)
-        return f'{field} matches "^{self.__escape_backslash(value)}"'
+        value = (
+            f"{self.apply_value(value, value_type=ValueType.regex_value)}.*"
+            if not str(value).endswith(".*")
+            else self.apply_value(value, value_type=ValueType.regex_value)
+        )
+        return f'{field} matches "^{value}"'
 
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if field == UNMAPPED_FIELD_DEFAULT_NAME and self.__is_contain_regex_items(value):

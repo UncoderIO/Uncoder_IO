@@ -25,6 +25,7 @@ from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer
 from app.translator.platforms.logrhythm_axon.const import DEFAULT_LOGRHYTHM_AXON_RULE, logrhythm_axon_rule_details
+from app.translator.platforms.logrhythm_axon.escape_manager import logrhythm_rule_escape_manager
 from app.translator.platforms.logrhythm_axon.renders.logrhythm_axon_query import (
     LogRhythmAxonFieldValue,
     LogRhythmAxonQueryRender,
@@ -42,6 +43,7 @@ _SEVERITIES_MAP = {
 
 class LogRhythmAxonRuleFieldValue(LogRhythmAxonFieldValue):
     details: PlatformDetails = logrhythm_axon_rule_details
+    escape_manager = logrhythm_rule_escape_manager
 
 
 class LogRhythmAxonRuleRender(LogRhythmAxonQueryRender):
@@ -61,7 +63,6 @@ class LogRhythmAxonRuleRender(LogRhythmAxonQueryRender):
         **kwargs,  # noqa: ARG002
     ) -> str:
         query = super().finalize_query(prefix=prefix, query=query, functions=functions)
-        query = query.replace('\\\\', '\\')
         rule = copy.deepcopy(DEFAULT_LOGRHYTHM_AXON_RULE)
         rule["observationPipeline"]["pattern"]["operations"][0]["logObserved"]["filter"] = query
         rule["title"] = meta_info.title
