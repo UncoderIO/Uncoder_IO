@@ -1,7 +1,7 @@
 """
 Uncoder IO Community Edition License
 -----------------------------------------------------------------
-Copyright (c) 2023 SOC Prime, Inc.
+Copyright (c) 2024 SOC Prime, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
