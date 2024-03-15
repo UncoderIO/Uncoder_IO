@@ -97,23 +97,19 @@ class LogRhythmAxonFieldValue(BaseQueryFieldValue):
         return (
             "("
             + self.or_token.join(
-                " AND ".join(f'{field} CONTAINS "{self.__escape_value(value)}"' for value in value_list)
+                " AND ".join(f'{field} CONTAINS "{self.apply_value(value)}"' for value in value_list)
                 for value_list in values
             )
             + ")"
         )
 
-    @staticmethod
-    def __escape_value(value: Union[int, str]) -> Union[int, str]:
-        return value.replace("'", "''") if isinstance(value, str) else value
-
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if field == UNMAPPED_FIELD_DEFAULT_NAME:
             return self.contains_modifier(field, value)
         if isinstance(value, str):
-            return f'{field} = "{self.__escape_value(value)}"'
+            return f'{field} = "{self.apply_value(value)}"'
         if isinstance(value, list):
-            prepared_values = ", ".join(f"{self.__escape_value(v)}" for v in value)
+            prepared_values = ", ".join(f"{self.apply_value(v)}" for v in value)
             operator = "IN" if all(isinstance(v, str) for v in value) else "in"
             return f"{field} {operator} [{prepared_values}]"
         return f'{field} = "{self.apply_value(value)}"'
