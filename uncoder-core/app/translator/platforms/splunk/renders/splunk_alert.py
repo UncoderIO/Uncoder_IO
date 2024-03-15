@@ -1,7 +1,7 @@
 """
 Uncoder IO Community Edition License
 -----------------------------------------------------------------
-Copyright (c) 2023 SOC Prime, Inc.
+Copyright (c) 2024 SOC Prime, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
