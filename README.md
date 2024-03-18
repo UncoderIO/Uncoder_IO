@@ -68,6 +68,9 @@ Uncoder IO can be run on-prem without a need for an internet connection, thus su
 - Chronicle Security Query - `chronicle-yaral-query`
 - Chronicle Security Rule - `chronicle-yaral-rule`
 - Graylog Query - `graylog-lucene-query`
+- FortiSIEM Rule - `fortisiem-rule`
+- LogRhythm Axon Rule - `axon-ads-rule`
+- LogRhythm Axon Query - `axon-ads-query`
 
 
 IOC-based queries can be generated in the following formats:
@@ -100,7 +103,7 @@ The following types of IOCs are supported:
 - IP   
 
 TODO list of languages we will support shortly:
-- LogRhythm Axon  
+- ~LogRhythm Axon~ :white_check_mark:  
 - ~Graylog~ :white_check_mark:
 - Devo
 - LimaCharlie
@@ -109,7 +112,7 @@ TODO list of languages we will support shortly:
 - ArcSight
 - Databricks
 - Cribl
-- FortiSIEM
+- ~FortiSIEM~ :white_check_mark:
 - Exabeam
 - Palo Alto Cortex XSOAR
 - ~ElastAlert~ :white_check_mark: 
