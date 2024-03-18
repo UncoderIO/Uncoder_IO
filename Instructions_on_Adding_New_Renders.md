@@ -16,9 +16,9 @@ You can find the list of supported target platforms in the [platforms](https://g
 
 ## How to Add a New Render
 
-All code related to translation has to be in the directory with the corresponding platform name in `translator/app/translator/platforms`.
+All code related to translation has to be in the directory with the corresponding platform name in `uncoder-core/app/translator/platforms`.
 
-- `translator/app/translator/platforms/<platform_name>/renders` – a directory that contains platform renders for different content types (such as rules and queries translated from a source language or queries generated based on parsed IOCs).
+- `uncoder-core/app/translator/platforms/<platform_name>/renders` – a directory that contains platform renders for different content types (such as rules and queries translated from a source language or queries generated based on parsed IOCs).
 - `const.py` – a Python file that contains metainformation about the platform.
 - `escape_manager.py` – a Python file that contains classes describing the rules of escaping special characters.
 - `mapping.py` – a Python file that contains classes that describe working with mappings.
@@ -29,7 +29,7 @@ To add a new render:
 2. Describe the metainformation about the platform in the `const.py` file.
 3. Create a class that processes mappings in the `mapping.py` file.
 4. Create a class that processes special characters in the `escaping_manager.py` file.
-5. Create the `renders` directory in `translator/app/translator/platforms/<platform_name>/`.
+5. Create the `renders` directory in `uncoder-core/app/translator/platforms/<platform_name>/`.
 6. Create a file with the name that matches the name of the platform.
 7. The render is composed of two classes:  
     a. `BaseQueryRender` – the class that describes the general mechanism of rendering a query from the tokens parsed from the input query.  
@@ -37,7 +37,7 @@ To add a new render:
 
 
 ## Render Classes
-These classes should be described in the `translator/app/translator/platforms/<platform_name>/renders/<platform_name>.py` file.
+These classes should be described in the `uncoder-core/app/translator/platforms/<platform_name>/renders/<platform_name>.py` file.
 
 ### BaseQueryRender Class
 
@@ -69,7 +69,7 @@ The class has the following methods:
 - `__init__` creates a dictionary (map) named `field_value` where a processing method is connected that depends on the operator that was between the field and its value
 
 ## Mapping Classes
-These classes should be described in the `translator/app/translator/platforms/<platform_name>/mapping.py` file.
+These classes should be described in the `uncoder-core/app/translator/platforms/<platform_name>/mapping.py` file.
 
 To describe mappings, you need two classes:
 - A class that inherits the `BasePlatformMappings` class – responsible for choosing mapping
@@ -84,20 +84,20 @@ The `__init__` method describes tabels/indexes that can be applied for a log sou
 The `is_suitable` method is required. It's used to determine the mapping.
 
 ### BasePlatformMappings
-This class has one required attribute – the name of the directory from which mappings should be taken (all mappings are in `translator/app/translator/mappings/<platform_name>`). Only the directory name should be indicated.
+This class has one required attribute – the name of the directory from which mappings should be taken (all mappings are in `uncoder-core/app/translator/mappings/<platform_name>`). Only the directory name should be indicated.
 
 This class contains two required methods:
 - `prepare_log_source_signature` – a method that transforms mappings obtained from the YAML file into objects
 - `get_suitable_source_mappings` – a method that contains the conditions for checking for a suitable mapping depending on fields and tables/indexes.
 
 ## Escape Manager Class
-This class inherits the basic class `EscapeManager`. It contains a required attribute `escape_map`. Depending on the `Value` type (the values searched for in the field) you need to define special characters to be escaped. `Value` types are defined in `translator/app/translator/core/custom_types/values.py`.
+This class inherits the basic class `EscapeManager`. It contains a required attribute `escape_map`. Depending on the `Value` type (the values searched for in the field) you need to define special characters to be escaped. `Value` types are defined in `uncoder-core/app/translator/core/custom_types/values.py`.
 
 ## const.py
 The file where the metainformation about the platform and the rule templates (if any) are stored.
 
 ## Metainformation
-`siem_type` – unique platform identifier  
+`platform_id` – unique platform identifier  
 `group_name` – platform name to be displayed in the platform selection dropdown in the UI  
 `platform_name` – the name of the content type to be displayed on the tab (as well as in the sub-menu of the platform)  
 `group_id` – the unique identifier of all content types for a platform  
