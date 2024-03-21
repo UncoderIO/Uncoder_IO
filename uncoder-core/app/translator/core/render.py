@@ -45,20 +45,27 @@ class BaseQueryFieldValue(ABC):
     def __init__(self, or_token: str):
         self.field_value: dict[str, Callable[[str, DEFAULT_VALUE_TYPE], str]] = {
             OperatorType.EQ: self.equal_modifier,
+            OperatorType.NOT_EQ: self.not_equal_modifier,
             OperatorType.LT: self.less_modifier,
             OperatorType.LTE: self.less_or_equal_modifier,
             OperatorType.GT: self.greater_modifier,
             OperatorType.GTE: self.greater_or_equal_modifier,
-            OperatorType.NEQ: self.not_equal_modifier,
             OperatorType.CONTAINS: self.contains_modifier,
+            OperatorType.NOT_CONTAINS: self.not_contains_modifier,
             OperatorType.ENDSWITH: self.endswith_modifier,
+            OperatorType.NOT_ENDSWITH: self.not_endswith_modifier,
             OperatorType.STARTSWITH: self.startswith_modifier,
+            OperatorType.NOT_STARTSWITH: self.not_startswith_modifier,
             OperatorType.REGEX: self.regex_modifier,
+            OperatorType.NOT_REGEX: self.not_regex_modifier,
             OperatorType.KEYWORD: self.keywords,
         }
         self.or_token = f" {or_token} "
 
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
+        raise NotImplementedException
+
+    def not_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
         raise NotImplementedException
 
     def less_modifier(self, field: str, value: Union[int, str]) -> str:  # noqa: ARG002
@@ -73,19 +80,28 @@ class BaseQueryFieldValue(ABC):
     def greater_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:  # noqa: ARG002
         raise NotImplementedException
 
-    def not_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
+    def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
         raise NotImplementedException
 
-    def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
+    def not_contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
         raise NotImplementedException
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
         raise NotImplementedException
 
+    def not_endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
+        raise NotImplementedException
+
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
         raise NotImplementedException
 
+    def not_startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
+        raise NotImplementedException
+
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
+        raise NotImplementedException
+
+    def not_regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
         raise NotImplementedException
 
     def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002

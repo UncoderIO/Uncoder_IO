@@ -21,7 +21,6 @@ from typing import Any, ClassVar
 
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.custom_types.values import ValueType
-from app.translator.core.exceptions.parser import TokenizerGeneralException
 from app.translator.core.models.field import FieldValue
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.tokenizer import QueryTokenizer
@@ -36,7 +35,7 @@ class ChronicleQueryTokenizer(QueryTokenizer):
         "<": OperatorType.LT,
         ">=": OperatorType.GTE,
         ">": OperatorType.GT,
-        "!=": OperatorType.NEQ,
+        "!=": OperatorType.NOT_EQ,
     }
 
     field_pattern = r"(?P<field_name>[a-zA-Z0-9\._]+)"
