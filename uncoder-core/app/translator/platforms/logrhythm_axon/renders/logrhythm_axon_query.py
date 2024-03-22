@@ -170,7 +170,6 @@ class LogRhythmAxonFieldValue(BaseQueryFieldValue):
         if isinstance(value, str) and field == UNMAPPED_FIELD_DEFAULT_NAME:
             return self.contains_modifier(field, value)
         applied_value = self.apply_value(value, value_type=ValueType.regex_value)
-        value = f"{applied_value}.*"
         return f'{field} matches "^{applied_value}.*"'
 
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
