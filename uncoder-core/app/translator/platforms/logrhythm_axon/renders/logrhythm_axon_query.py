@@ -162,8 +162,7 @@ class LogRhythmAxonFieldValue(BaseQueryFieldValue):
         if isinstance(value, str) and field == UNMAPPED_FIELD_DEFAULT_NAME:
             return self.contains_modifier(field, value)
         applied_value = self.apply_value(value, value_type=ValueType.regex_value)
-        value = f".*{applied_value}" if not str(value).startswith(".*") else applied_value
-        return f'{field} matches "{value}$"'
+        return f'{field} matches ".*{applied_value}$"'
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
@@ -171,8 +170,8 @@ class LogRhythmAxonFieldValue(BaseQueryFieldValue):
         if isinstance(value, str) and field == UNMAPPED_FIELD_DEFAULT_NAME:
             return self.contains_modifier(field, value)
         applied_value = self.apply_value(value, value_type=ValueType.regex_value)
-        value = f"{applied_value}.*" if not str(value).endswith(".*") else applied_value
-        return f'{field} matches "^{value}"'
+        value = f"{applied_value}.*"
+        return f'{field} matches "^{applied_value}.*"'
 
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if field == UNMAPPED_FIELD_DEFAULT_NAME and self.__is_contain_regex_items(value):

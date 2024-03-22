@@ -6,8 +6,8 @@ from app.translator.core.models.escape_details import EscapeDetails
 
 
 class FortiSiemEscapeManager(EscapeManager):
-    escape_map: ClassVar[dict[str, EscapeDetails]] = {
-        ValueType.regex_value: EscapeDetails(pattern=r'([*\\.()\[\]|{}^$+!?"])')
+    escape_map: ClassVar[dict[str, list[EscapeDetails]]] = {
+        ValueType.regex_value: [EscapeDetails(pattern=r'([*\\.()\[\]|{}^$+!?"])')]
     }
 
 

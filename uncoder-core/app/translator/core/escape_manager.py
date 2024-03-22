@@ -7,14 +7,15 @@ from app.translator.core.models.escape_details import EscapeDetails
 
 
 class EscapeManager(ABC):
-    escape_map: ClassVar[dict[str, EscapeDetails]] = {}
+    escape_map: ClassVar[dict[str, list[EscapeDetails]]] = {}
 
     def escape(self, value: Union[str, int], value_type: str = ValueType.value) -> Union[str, int]:
         if isinstance(value, int):
             return value
         if escape_details := self.escape_map.get(value_type):
-            symbols_pattern = re.compile(escape_details.pattern)
-            value = symbols_pattern.sub(escape_details.escape_symbols, value)
+            for escape_detail in escape_details:
+                symbols_pattern = re.compile(escape_detail.pattern)
+                value = symbols_pattern.sub(escape_detail.escape_symbols, value)
         return value
 
     @staticmethod

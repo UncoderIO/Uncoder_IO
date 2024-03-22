@@ -6,15 +6,22 @@ from app.translator.core.models.escape_details import EscapeDetails
 
 
 class LogRhythmQueryEscapeManager(EscapeManager):
-    escape_map: ClassVar[dict[str, EscapeDetails]] = {
-        ValueType.value: EscapeDetails(pattern=r"'", escape_symbols=r"''"),
-        ValueType.regex_value: EscapeDetails(pattern=r"\\", escape_symbols=r"\\\\"),
+    escape_map: ClassVar[dict[str, list[EscapeDetails]]] = {
+        ValueType.value: [EscapeDetails(pattern=r"'", escape_symbols=r"''")],
+        ValueType.regex_value: [
+            EscapeDetails(pattern=r"\\", escape_symbols=r"\\\\"),
+            EscapeDetails(pattern=r"\*", escape_symbols=r"\\*"),
+            EscapeDetails(pattern=r"\\d", escape_symbols=r"\\\\d"),
+            EscapeDetails(pattern=r"\\w", escape_symbols=r"\\\\w"),
+            EscapeDetails(pattern=r"\\s", escape_symbols=r"\\\\s"),
+            EscapeDetails(pattern=r"\.", escape_symbols=r"\\."),
+        ],
     }
 
 
 class LogRhythmRuleEscapeManager(EscapeManager):
-    escape_map: ClassVar[dict[str, EscapeDetails]] = {
-        ValueType.value: EscapeDetails(pattern=r"'", escape_symbols=r"''")
+    escape_map: ClassVar[dict[str, list[EscapeDetails]]] = {
+        ValueType.value: [EscapeDetails(pattern=r"'", escape_symbols=r"''")]
     }
 
 
