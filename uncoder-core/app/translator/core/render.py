@@ -21,6 +21,7 @@ from collections.abc import Callable
 from typing import Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
+from app.translator.core.context_vars import with_meta_info_annotation_ctx_var
 from app.translator.core.custom_types.tokens import LogicalOperatorType, OperatorType
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.escape_manager import EscapeManager
@@ -195,18 +196,34 @@ class PlatformQueryRender(QueryRender):
             query = f"{query}\n\n{query_meta_info}"
         return query
 
+    def render_query(
+        self,
+        prefix: str,
+        query: str,
+        functions: str,
+        meta_info: Optional[MetaInfoContainer] = None,  # noqa: ARG002
+        source_mapping: Optional[SourceMapping] = None,  # noqa: ARG002
+        *args,  # noqa: ARG002
+        **kwargs,  # noqa: ARG002
+    ) -> str:
+        return self.query_pattern.format(prefix=prefix, query=query, functions=functions).strip()
+
     def finalize_query(
         self,
         prefix: str,
         query: str,
         functions: str,
         meta_info: Optional[MetaInfoContainer] = None,
-        source_mapping: Optional[SourceMapping] = None,  # noqa: ARG002
+        source_mapping: Optional[SourceMapping] = None,
         not_supported_functions: Optional[list] = None,
         *args,  # noqa: ARG002
         **kwargs,  # noqa: ARG002
     ) -> str:
-        query = self.query_pattern.format(prefix=prefix, query=query, functions=functions).strip()
+        query = self.render_query(
+            prefix=prefix, query=query, functions=functions, meta_info=meta_info, source_mapping=source_mapping
+        )
+        if with_meta_info_annotation_ctx_var.get() is False:
+            return query
         query = self.wrap_query_with_meta_info(meta_info=meta_info, query=query)
         if not_supported_functions:
             rendered_not_supported = self.render_not_supported_functions(not_supported_functions)

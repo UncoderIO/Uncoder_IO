@@ -16,7 +16,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-
 from typing import Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
@@ -110,23 +109,16 @@ class LogScaleQueryRender(PlatformQueryRender):
     def wrap_with_comment(self, value: str) -> str:
         return f"/* {value} */"
 
-    def finalize_query(
+    def render_query(
         self,
         prefix: str,
         query: str,
         functions: str,
-        meta_info: Optional[MetaInfoContainer] = None,
+        meta_info: Optional[MetaInfoContainer] = None,  # noqa: ARG002
         source_mapping: Optional[SourceMapping] = None,  # noqa: ARG002
-        not_supported_functions: Optional[list] = None,
         *args,  # noqa: ARG002
         **kwargs,  # noqa: ARG002
     ) -> str:
         if prefix:
-            query = self.query_pattern.format(prefix=prefix, query=query, functions=functions)
-        else:
-            query = f"{query} {functions.lstrip()}"
-        query = self.wrap_query_with_meta_info(meta_info=meta_info, query=query)
-        if not_supported_functions:
-            rendered_not_supported = self.render_not_supported_functions(not_supported_functions)
-            return query + rendered_not_supported
-        return query
+            return self.query_pattern.format(prefix=prefix, query=query, functions=functions)
+        return f"{query} {functions.lstrip()}"
