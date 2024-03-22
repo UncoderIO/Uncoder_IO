@@ -59,7 +59,7 @@ class ElastAlertRuleRender(ElasticSearchQueryRender):
         *args,  # noqa: ARG002
         **kwargs,  # noqa: ARG002
     ) -> str:
-        query = super().finalize_query(prefix=prefix, query=query, functions=functions)
+        query = super().render_query(prefix=prefix, query=query, functions=functions)
         rule = ELASTICSEARCH_ALERT.replace("<query_placeholder>", query)
         rule = rule.replace(
             "<description_place_holder>",
