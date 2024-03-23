@@ -193,47 +193,43 @@ class FortiSiemRuleRender(PlatformQueryRender):
     field_value_map = FortiSiemFieldValue(or_token=or_token)
 
     @staticmethod
-    def __replace_not_tokens(tokens: list[TOKEN_TYPE]) -> list[TOKEN_TYPE]:
+    def __is_negated_token(prev_token: TOKEN_TYPE) -> bool:
+        return isinstance(prev_token, Identifier) and prev_token.token_type == LogicalOperatorType.NOT
+
+    @staticmethod
+    def __should_negate(is_negated_token: bool = False, negation_ctx: bool = False) -> bool:
+        if is_negated_token and negation_ctx:
+            return False
+
+        return is_negated_token or negation_ctx
+
+    def __replace_not_tokens(self, tokens: list[TOKEN_TYPE]) -> list[TOKEN_TYPE]:
         not_token_indices = []
-        for index, token in enumerate(tokens[:-1]):
-            if isinstance(token, Identifier) and token.token_type == LogicalOperatorType.NOT:
-                not_token_indices.append(index)
-                next_token = tokens[index + 1]
-                if isinstance(next_token, FieldValue):
-                    token_type = next_token.operator.token_type
-                    next_token.operator.token_type = _NOT_OPERATORS_MAP_SUBSTITUTES.get(token_type) or token_type
-                elif isinstance(next_token, Identifier) and next_token.token_type == GroupType.L_PAREN:
-                    start_index = index + 2
-                    sub_parentheses_counter = 0
-                    for sub_index, sub_token in enumerate(tokens[start_index:], start=start_index):
-                        if isinstance(sub_token, Identifier):
-                            if sub_token.token_type == GroupType.L_PAREN:
-                                sub_parentheses_counter += 1
-                                continue
-                            elif sub_token.token_type == GroupType.R_PAREN:
-                                if sub_parentheses_counter > 0:
-                                    sub_parentheses_counter -= 1
-                                    continue
+        negation_ctx_stack = []
+        for index, token in enumerate(tokens[1:], start=1):
+            current_negation_ctx = negation_ctx_stack[-1] if negation_ctx_stack else False
+            prev_token = tokens[index - 1]
+            if is_negated_token := self.__is_negated_token(prev_token):
+                not_token_indices.append(index - 1)
 
-                                break
+            if isinstance(token, Identifier):
+                if token.token_type == GroupType.L_PAREN:
+                    negation_ctx_stack.append(self.__should_negate(is_negated_token, current_negation_ctx))
+                    continue
+                elif token.token_type == GroupType.R_PAREN:
+                    if negation_ctx_stack:
+                        negation_ctx_stack.pop()
+                    continue
 
-                        if sub_parentheses_counter != 0:
-                            continue
-
-                        if isinstance(sub_token, Identifier):
-                            if sub_token.token_type == LogicalOperatorType.AND:
-                                sub_token.token_type = LogicalOperatorType.OR
-                            elif sub_token.token_type == LogicalOperatorType.OR:
-                                sub_token.token_type = LogicalOperatorType.AND
-                            elif sub_token.token_type == LogicalOperatorType.NOT:
-                                not_token_indices.append(sub_index)
-                                sub_token.token_type = None
-                        elif isinstance(sub_token, FieldValue):
-                            prev_token = tokens[sub_index - 1]
-                            if isinstance(prev_token, Identifier) and prev_token.token_type is None:
-                                continue
-                            token_type = sub_token.operator.token_type
-                            sub_token.operator.token_type = _NOT_OPERATORS_MAP_SUBSTITUTES.get(token_type) or token_type
+            if self.__should_negate(is_negated_token, current_negation_ctx):
+                if isinstance(token, Identifier):
+                    if token.token_type == LogicalOperatorType.AND:
+                        token.token_type = LogicalOperatorType.OR
+                    elif token.token_type == LogicalOperatorType.OR:
+                        token.token_type = LogicalOperatorType.AND
+                elif isinstance(token, FieldValue):
+                    token_type = token.operator.token_type
+                    token.operator.token_type = _NOT_OPERATORS_MAP_SUBSTITUTES.get(token_type) or token_type
 
         for index in reversed(not_token_indices):
             tokens.pop(index)
