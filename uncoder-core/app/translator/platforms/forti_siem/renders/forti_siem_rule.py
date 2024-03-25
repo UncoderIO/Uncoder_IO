@@ -78,6 +78,8 @@ class FortiSiemFieldValue(BaseQueryFieldValue):
     details: PlatformDetails = forti_siem_rule_details
     str_value_manager = forti_siem_str_value_manager
 
+    and_token = " AND "
+
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join([self.equal_modifier(field=field, value=v) for v in value])})"
@@ -91,7 +93,7 @@ class FortiSiemFieldValue(BaseQueryFieldValue):
 
     def not_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            return f"({self.or_token.join([self.not_equal_modifier(field=field, value=v) for v in value])})"
+            return f"({self.and_token.join([self.not_equal_modifier(field=field, value=v) for v in value])})"
 
         if isinstance(value, StrValue):
             if value.has_spec_symbols:
@@ -116,7 +118,7 @@ class FortiSiemFieldValue(BaseQueryFieldValue):
 
     def not_contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            return f"({self.or_token.join([self.contains_modifier(field=field, value=v) for v in value])})"
+            return f"({self.and_token.join([self.not_contains_modifier(field=field, value=v) for v in value])})"
 
         value = self.__prepare_regex_value(value)
         return f'{field} NOT REGEXP "{value}"'
@@ -130,7 +132,7 @@ class FortiSiemFieldValue(BaseQueryFieldValue):
 
     def not_endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            return f"({self.or_token.join([self.endswith_modifier(field=field, value=v) for v in value])})"
+            return f"({self.and_token.join([self.not_endswith_modifier(field=field, value=v) for v in value])})"
 
         value = self.__prepare_regex_value(value)
         return f'{field} NOT REGEXP "{value}$"'
@@ -144,7 +146,7 @@ class FortiSiemFieldValue(BaseQueryFieldValue):
 
     def not_startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            return f"({self.or_token.join([self.startswith_modifier(field=field, value=v) for v in value])})"
+            return f"({self.and_token.join([self.not_startswith_modifier(field=field, value=v) for v in value])})"
 
         value = self.__prepare_regex_value(value)
         return f'{field} NOT REGEXP "^{value}"'
@@ -158,7 +160,7 @@ class FortiSiemFieldValue(BaseQueryFieldValue):
 
     def not_regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            return f"({self.or_token.join([self.regex_modifier(field=field, value=v) for v in value])})"
+            return f"({self.and_token.join([self.not_regex_modifier(field=field, value=v) for v in value])})"
 
         value = self.__prepare_regex_value(value)
         return f'{field} NOT REGEXP "{value}"'
