@@ -55,7 +55,7 @@ _NOT_OPERATORS_MAP_SUBSTITUTES = {
     OperatorType.CONTAINS: OperatorType.NOT_CONTAINS,
     OperatorType.STARTSWITH: OperatorType.NOT_STARTSWITH,
     OperatorType.ENDSWITH: OperatorType.NOT_ENDSWITH,
-    OperatorType.REGEX: OperatorType.NOT_REGEX
+    OperatorType.REGEX: OperatorType.NOT_REGEX,
 }
 
 _NOT_STR_FIELDS = [
@@ -203,6 +203,17 @@ class FortiSiemRuleRender(PlatformQueryRender):
 
         return is_negated_token or negation_ctx
 
+    @staticmethod
+    def __negate_token(token: TOKEN_TYPE) -> None:
+        if isinstance(token, Identifier):
+            if token.token_type == LogicalOperatorType.AND:
+                token.token_type = LogicalOperatorType.OR
+            elif token.token_type == LogicalOperatorType.OR:
+                token.token_type = LogicalOperatorType.AND
+        elif isinstance(token, FieldValue):
+            token_type = token.operator.token_type
+            token.operator.token_type = _NOT_OPERATORS_MAP_SUBSTITUTES.get(token_type) or token_type
+
     def __replace_not_tokens(self, tokens: list[TOKEN_TYPE]) -> list[TOKEN_TYPE]:
         not_token_indices = []
         negation_ctx_stack = []
@@ -216,20 +227,13 @@ class FortiSiemRuleRender(PlatformQueryRender):
                 if token.token_type == GroupType.L_PAREN:
                     negation_ctx_stack.append(self.__should_negate(is_negated_token, current_negation_ctx))
                     continue
-                elif token.token_type == GroupType.R_PAREN:
+                if token.token_type == GroupType.R_PAREN:
                     if negation_ctx_stack:
                         negation_ctx_stack.pop()
                     continue
 
             if self.__should_negate(is_negated_token, current_negation_ctx):
-                if isinstance(token, Identifier):
-                    if token.token_type == LogicalOperatorType.AND:
-                        token.token_type = LogicalOperatorType.OR
-                    elif token.token_type == LogicalOperatorType.OR:
-                        token.token_type = LogicalOperatorType.AND
-                elif isinstance(token, FieldValue):
-                    token_type = token.operator.token_type
-                    token.operator.token_type = _NOT_OPERATORS_MAP_SUBSTITUTES.get(token_type) or token_type
+                self.__negate_token(token)
 
         for index in reversed(not_token_indices):
             tokens.pop(index)
