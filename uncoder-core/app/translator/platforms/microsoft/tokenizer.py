@@ -20,9 +20,9 @@ import re
 from typing import Any, ClassVar
 
 from app.translator.core.custom_types.tokens import OperatorType
-from app.translator.core.custom_types.values import ValueType
 from app.translator.core.mixins.operator import OperatorBasedMixin
 from app.translator.core.tokenizer import QueryTokenizer
+from app.translator.platforms.microsoft.custom_types.values import MicrosoftValueType
 from app.translator.platforms.microsoft.escape_manager import microsoft_escape_manager
 from app.translator.tools.utils import get_match_group
 
@@ -44,37 +44,39 @@ class MicrosoftSentinelTokenizer(QueryTokenizer, OperatorBasedMixin):
     multi_value_operators_map: ClassVar[dict[str, str]] = {"in~": OperatorType.EQ, "in": OperatorType.EQ}
 
     field_pattern = r"(?P<field_name>[a-zA-Z\.\-_]+)"
-    bool_value_pattern = rf"(?P<{ValueType.bool_value}>true|false)\s*"
-    num_value_pattern = rf"(?P<{ValueType.number_value}>\d+(?:\.\d+)*)\s*"
-    double_quotes_value_pattern = (
-        rf'(?P<{ValueType.double_quotes_value}>@?"(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{{\}}\s]|\\\"|\\\\)*")\s*'
-    )
-    single_quotes_value_pattern = (
-        rf"(?P<{ValueType.single_quotes_value}>@?'(?:[:a-zA-Z\*0-9=+%#\-_/,\"\.$&^@!\(\)\{{\}}\s]|\\\'|\\\\)*')\s*"
-    )
-    str_value_pattern = rf"""{double_quotes_value_pattern}|{single_quotes_value_pattern}"""
+    bool_value_pattern = rf"(?P<{MicrosoftValueType.bool_value}>true|false)\s*"
+    num_value_pattern = rf"(?P<{MicrosoftValueType.number_value}>\d+(?:\.\d+)*)\s*"
+    double_quotes_value_pattern = rf'"(?P<{MicrosoftValueType.double_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{{\}}\s]|\\\"|\\\\)*)"\s*'  # noqa: E501
+    single_quotes_value_pattern = rf"'(?P<{MicrosoftValueType.single_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\"\.$&^@!\(\)\{{\}}\s]|\\\'|\\\\)*)'\s*"  # noqa: E501
+    verbatim_double_quotes_value_pattern = rf'@"(?P<{MicrosoftValueType.verbatim_double_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{{\}}\s\\]|"")*)"\s*'  # noqa: E501
+    verbatim_single_quotes_value_pattern = rf"@'(?P<{MicrosoftValueType.verbatim_single_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\"\.$&^@!\(\)\{{\}}\s\\]|'')*)'\s*"  # noqa: E501
+    str_value_pattern = rf"""{double_quotes_value_pattern}|{single_quotes_value_pattern}|{verbatim_double_quotes_value_pattern}|{verbatim_single_quotes_value_pattern}"""  # noqa: E501
     _value_pattern = rf"""{bool_value_pattern}|{num_value_pattern}|{str_value_pattern}"""
-    multi_value_pattern = rf"""\((?P<{ValueType.multi_value}>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\s]+)\)"""
+    multi_value_pattern = rf"""\((?P<{MicrosoftValueType.multi_value}>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\s]+)\)"""
     keyword_pattern = rf"\*\s+contains\s+(?:{str_value_pattern})"
 
     escape_manager = microsoft_escape_manager
 
     def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> tuple[str, Any]:  # noqa: PLR0911
-        if (num_value := get_match_group(match, group_name=ValueType.number_value)) is not None:
+        if (num_value := get_match_group(match, group_name=MicrosoftValueType.number_value)) is not None:
             return operator, num_value
 
-        if (bool_value := get_match_group(match, group_name=ValueType.bool_value)) is not None:
+        if (bool_value := get_match_group(match, group_name=MicrosoftValueType.bool_value)) is not None:
             return operator, bool_value
 
-        if (d_q_value := get_match_group(match, group_name=ValueType.double_quotes_value)) is not None:
-            if d_q_value.startswith("@"):
-                return operator, d_q_value.lstrip("@").strip('"')
-            return operator, self.escape_manager.remove_escape(d_q_value.strip('"'))
+        if (d_q_value := get_match_group(match, group_name=MicrosoftValueType.double_quotes_value)) is not None:
+            return operator, self.escape_manager.remove_escape(d_q_value)
 
-        if (s_q_value := get_match_group(match, group_name=ValueType.single_quotes_value)) is not None:
-            if s_q_value.startswith("@"):
-                return operator, s_q_value.lstrip("@").strip("'")
-            return operator, self.escape_manager.remove_escape(s_q_value.strip("'"))
+        if (s_q_value := get_match_group(match, group_name=MicrosoftValueType.single_quotes_value)) is not None:
+            return operator, self.escape_manager.remove_escape(s_q_value)
+
+        group_name = MicrosoftValueType.verbatim_double_quotes_value
+        if (v_d_q_value := get_match_group(match, group_name=group_name)) is not None:
+            return operator, v_d_q_value
+
+        group_name = MicrosoftValueType.verbatim_single_quotes_value
+        if (v_s_q_value := get_match_group(match, group_name=group_name)) is not None:
+            return operator, v_s_q_value
 
         return super().get_operator_and_value(match, operator)
 
