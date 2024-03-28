@@ -13,11 +13,15 @@ class OperatorType(CustomEnum):
     GT = ">"
     GTE = ">="
     EQ = "="
-    NEQ = "!="
+    NOT_EQ = "!="
     CONTAINS = "contains"
+    NOT_CONTAINS = "not contains"
     STARTSWITH = "startswith"
+    NOT_STARTSWITH = "not startswith"
     ENDSWITH = "endswith"
+    NOT_ENDSWITH = "not endswith"
     REGEX = "re"
+    NOT_REGEX = "not re"
     KEYWORD = "keyword"
 
 

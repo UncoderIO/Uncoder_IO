@@ -207,7 +207,7 @@ class SigmaRender(QueryRender):
             OperatorType.LTE,
             OperatorType.GT,
             OperatorType.GTE,
-            OperatorType.NEQ,
+            OperatorType.NOT_EQ,
         ):
             field_name = f"{field_name}|{data.operator.token_type}"
 

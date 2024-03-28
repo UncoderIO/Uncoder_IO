@@ -34,8 +34,8 @@ class AthenaTokenizer(QueryTokenizer):
         "<": OperatorType.LT,
         ">=": OperatorType.GTE,
         ">": OperatorType.GT,
-        "!=": OperatorType.NEQ,
-        "<>": OperatorType.NEQ,
+        "!=": OperatorType.NOT_EQ,
+        "<>": OperatorType.NOT_EQ,
         "like": OperatorType.EQ,
     }
     multi_value_operators_map: ClassVar[dict[str, str]] = {"in": OperatorType.EQ}

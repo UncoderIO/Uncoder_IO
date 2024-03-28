@@ -36,7 +36,7 @@ class LogScaleTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
         "<": OperatorType.LT,
         ">=": OperatorType.GTE,
         ">": OperatorType.GT,
-        "!=": OperatorType.NEQ,
+        "!=": OperatorType.NOT_EQ,
     }
 
     field_pattern = r"(?P<field_name>[a-zA-Z\._\-]+)"

@@ -36,7 +36,7 @@ class QradarTokenizer(QueryTokenizer):
         "<": OperatorType.LT,
         ">=": OperatorType.GTE,
         ">": OperatorType.GT,
-        "!=": OperatorType.NEQ,
+        "!=": OperatorType.NOT_EQ,
         "like": OperatorType.EQ,
         "ilike": OperatorType.EQ,
         "matches": OperatorType.REGEX,

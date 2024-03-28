@@ -36,7 +36,7 @@ class SplTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
         "<": OperatorType.LT,
         ">=": OperatorType.GTE,
         ">": OperatorType.GT,
-        "!=": OperatorType.NEQ,
+        "!=": OperatorType.NOT_EQ,
     }
     multi_value_operators_map: ClassVar[dict[str, str]] = {"in": OperatorType.EQ}
 

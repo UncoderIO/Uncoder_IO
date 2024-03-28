@@ -19,7 +19,7 @@ from typing import Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.meta_info import SeverityType
-from app.translator.core.custom_types.tokens import OperatorType
+from app.translator.core.custom_types.tokens import OperatorType, LogicalOperatorType, GroupType
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.exceptions.render import UnsupportedRenderMethod
 from app.translator.core.mapping import SourceMapping
@@ -29,6 +29,7 @@ from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, TokenizedQueryContainer
 from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
 from app.translator.core.str_value_manager import StrValue
+from app.translator.core.tokenizer import TOKEN_TYPE
 from app.translator.platforms.forti_siem.const import (
     FORTI_SIEM_RULE,
     SOURCES_EVENT_TYPES_CONTAINERS_MAP,
@@ -49,10 +50,35 @@ _SEVERITIES_MAP = {
     SeverityType.critical: "9",
 }
 
+_NOT_OPERATORS_MAP_SUBSTITUTES = {
+    OperatorType.EQ: OperatorType.NOT_EQ,
+    OperatorType.CONTAINS: OperatorType.NOT_CONTAINS,
+    OperatorType.STARTSWITH: OperatorType.NOT_STARTSWITH,
+    OperatorType.ENDSWITH: OperatorType.NOT_ENDSWITH,
+    OperatorType.REGEX: OperatorType.NOT_REGEX,
+}
+
+_NOT_STR_FIELDS = [
+    # int
+    "ruleId",
+    "procTrustLevel",
+    "destIpPort",
+    "eventAction",
+    "srcIpPort",
+    "winLogonType",
+    "msgLen",
+    "size",
+    # ip
+    "destIpAddr",
+    "srcIpAddr",
+]
+
 
 class FortiSiemFieldValue(BaseQueryFieldValue):
     details: PlatformDetails = forti_siem_rule_details
     str_value_manager = forti_siem_str_value_manager
+
+    and_token = " AND "
 
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
@@ -63,48 +89,81 @@ class FortiSiemFieldValue(BaseQueryFieldValue):
                 return self.regex_modifier(field, value)
 
             value = forti_siem_str_value_manager.from_container_to_str(value)
-        return f'{field}="{value}"'
+        return f"{field}={value}" if field in _NOT_STR_FIELDS else f'{field}="{value}"'
 
     def not_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            return f"({self.or_token.join([self.not_equal_modifier(field=field, value=v) for v in value])})"
-        return f'{field}!="{value}"'
+            return f"({self.and_token.join([self.not_equal_modifier(field=field, value=v) for v in value])})"
+
+        if isinstance(value, StrValue):
+            if value.has_spec_symbols:
+                return self.not_regex_modifier(field, value)
+
+            value = forti_siem_str_value_manager.from_container_to_str(value)
+        return f"{field}!={value}" if field in _NOT_STR_FIELDS else f'{field}!="{value}"'
+
+    @staticmethod
+    def __prepare_regex_value(value: DEFAULT_VALUE_TYPE) -> str:
+        if isinstance(value, StrValue):
+            value = forti_siem_str_value_manager.from_container_to_str(value, value_type=ValueType.regex_value)
+
+        return value
 
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join([self.contains_modifier(field=field, value=v) for v in value])})"
 
-        if isinstance(value, StrValue):
-            value = forti_siem_str_value_manager.from_container_to_str(value, value_type=ValueType.regex_value)
-
+        value = self.__prepare_regex_value(value)
         return f'{field} REGEXP "{value}"'
+
+    def not_contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+        if isinstance(value, list):
+            return f"({self.and_token.join([self.not_contains_modifier(field=field, value=v) for v in value])})"
+
+        value = self.__prepare_regex_value(value)
+        return f'{field} NOT REGEXP "{value}"'
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join([self.endswith_modifier(field=field, value=v) for v in value])})"
 
-        if isinstance(value, StrValue):
-            value = forti_siem_str_value_manager.from_container_to_str(value, value_type=ValueType.regex_value)
-
+        value = self.__prepare_regex_value(value)
         return f'{field} REGEXP "{value}$"'
+
+    def not_endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+        if isinstance(value, list):
+            return f"({self.and_token.join([self.not_endswith_modifier(field=field, value=v) for v in value])})"
+
+        value = self.__prepare_regex_value(value)
+        return f'{field} NOT REGEXP "{value}$"'
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join([self.startswith_modifier(field=field, value=v) for v in value])})"
 
-        if isinstance(value, StrValue):
-            value = forti_siem_str_value_manager.from_container_to_str(value, value_type=ValueType.regex_value)
-
+        value = self.__prepare_regex_value(value)
         return f'{field} REGEXP "^{value}"'
+
+    def not_startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+        if isinstance(value, list):
+            return f"({self.and_token.join([self.not_startswith_modifier(field=field, value=v) for v in value])})"
+
+        value = self.__prepare_regex_value(value)
+        return f'{field} NOT REGEXP "^{value}"'
 
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join([self.regex_modifier(field=field, value=v) for v in value])})"
 
-        if isinstance(value, StrValue):
-            value = forti_siem_str_value_manager.from_container_to_str(value, value_type=ValueType.regex_value)
-
+        value = self.__prepare_regex_value(value)
         return f'{field} REGEXP "{value}"'
+
+    def not_regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+        if isinstance(value, list):
+            return f"({self.and_token.join([self.not_regex_modifier(field=field, value=v) for v in value])})"
+
+        value = self.__prepare_regex_value(value)
+        return f'{field} NOT REGEXP "{value}"'
 
     def less_modifier(self, field: str, value: Union[int, str]) -> str:  # noqa: ARG002
         raise UnsupportedRenderMethod(platform_name=self.details.name, method="<")
@@ -128,12 +187,60 @@ class FortiSiemRuleRender(PlatformQueryRender):
 
     or_token = "OR"
     and_token = "AND"
-    not_token = "NOT"
+    not_token = None
 
     group_token = "(%s)"
     query_pattern = "{prefix} {query}"
 
     field_value_map = FortiSiemFieldValue(or_token=or_token)
+
+    @staticmethod
+    def __is_negated_token(prev_token: TOKEN_TYPE) -> bool:
+        return isinstance(prev_token, Identifier) and prev_token.token_type == LogicalOperatorType.NOT
+
+    @staticmethod
+    def __should_negate(is_negated_token: bool = False, negation_ctx: bool = False) -> bool:
+        if is_negated_token and negation_ctx:
+            return False
+
+        return is_negated_token or negation_ctx
+
+    @staticmethod
+    def __negate_token(token: TOKEN_TYPE) -> None:
+        if isinstance(token, Identifier):
+            if token.token_type == LogicalOperatorType.AND:
+                token.token_type = LogicalOperatorType.OR
+            elif token.token_type == LogicalOperatorType.OR:
+                token.token_type = LogicalOperatorType.AND
+        elif isinstance(token, FieldValue):
+            token_type = token.operator.token_type
+            token.operator.token_type = _NOT_OPERATORS_MAP_SUBSTITUTES.get(token_type) or token_type
+
+    def __replace_not_tokens(self, tokens: list[TOKEN_TYPE]) -> list[TOKEN_TYPE]:
+        not_token_indices = []
+        negation_ctx_stack = []
+        for index, token in enumerate(tokens[1:], start=1):
+            current_negation_ctx = negation_ctx_stack[-1] if negation_ctx_stack else False
+            prev_token = tokens[index - 1]
+            if is_negated_token := self.__is_negated_token(prev_token):
+                not_token_indices.append(index - 1)
+
+            if isinstance(token, Identifier):
+                if token.token_type == GroupType.L_PAREN:
+                    negation_ctx_stack.append(self.__should_negate(is_negated_token, current_negation_ctx))
+                    continue
+                if token.token_type == GroupType.R_PAREN:
+                    if negation_ctx_stack:
+                        negation_ctx_stack.pop()
+                    continue
+
+            if self.__should_negate(is_negated_token, current_negation_ctx):
+                self.__negate_token(token)
+
+        for index in reversed(not_token_indices):
+            tokens.pop(index)
+
+        return tokens
 
     def _generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
         queries_map = {}
@@ -150,7 +257,8 @@ class FortiSiemRuleRender(PlatformQueryRender):
                     is_event_type_set = True
                     self.__update_event_type_values(field_value, source_mapping.source_id)
 
-            result = self.generate_query(tokens=query_container.tokens, source_mapping=source_mapping)
+            tokens = self.__replace_not_tokens(query_container.tokens)
+            result = self.generate_query(tokens=tokens, source_mapping=source_mapping)
             prefix = "" if is_event_type_set else self.generate_prefix(source_mapping.log_source_signature)
             finalized_query = self.finalize_query(
                 prefix=prefix,
@@ -270,7 +378,6 @@ class FortiSiemRuleRender(PlatformQueryRender):
 
     def generate_rule_header(self, meta_info: MetaInfoContainer) -> str:
         header = 'group="PH_SYS_RULE_THREAT_HUNTING"'
-        header = concatenate_str(header, f'id="{meta_info.id}"')
         tactics_str, techniques_str = self.get_mitre_info(meta_info.mitre_attack)
         if tactics_str:
             header = concatenate_str(header, f'subFunction="{tactics_str}"')
