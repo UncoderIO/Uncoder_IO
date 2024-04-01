@@ -6,9 +6,11 @@ from app.translator.core.models.escape_details import EscapeDetails
 
 
 class LuceneEscapeManager(EscapeManager):
-    escape_map: ClassVar[dict[str, EscapeDetails]] = {
-        ValueType.value: EscapeDetails(pattern=r'([_!@#$%^&*=+()\[\]{}|;:\'",.<>?/`~\-\s\\])', escape_symbols=r"\\\1"),
-        ValueType.ip: EscapeDetails(pattern=r"([/])", escape_symbols=r"\\\1"),
+    escape_map: ClassVar[dict[str, list[EscapeDetails]]] = {
+        ValueType.value: [
+            EscapeDetails(pattern=r'([_!@#$%^&*=+()\[\]{}|;:\'",.<>?/`~\-\s\\])', escape_symbols=r"\\\1")
+        ],
+        ValueType.ip: [EscapeDetails(pattern=r"([/])", escape_symbols=r"\\\1")],
     }
 
 
