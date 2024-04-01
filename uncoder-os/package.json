@@ -67,5 +67,8 @@
     "webpack-dev-server": "^4.15.1",
     "webpack-merge": "^5.10.0",
     "worker-loader": "^3.0.8"
+  },
+  "resolutions": {
+    "@types/mime": "3.0.4"
   }
 }
