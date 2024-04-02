@@ -21,13 +21,17 @@ import re
 from app.translator.core.models.functions.base import ParsedFunctions
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.parser import PlatformQueryParser
+from app.translator.platforms.base.spl.functions import SplFunctions
 from app.translator.platforms.base.spl.tokenizer import SplTokenizer
+
+TSTATS_FUNC = "tstats"
 
 
 class SplQueryParser(PlatformQueryParser):
     log_source_pattern = r"^___source_type___\s*=\s*(?:\"(?P<d_q_value>[%a-zA-Z_*:0-9\-/]+)\"|(?P<value>[%a-zA-Z_*:0-9\-/]+))(?:\s+(?:and|or)\s+|\s+)?"  # noqa: E501
     log_source_key_types = ("index", "source", "sourcetype", "sourcecategory")
 
+    platform_functions: SplFunctions = None
     tokenizer = SplTokenizer()
 
     def _parse_log_sources(self, query: str) -> tuple[dict[str, list[str]], str]:
@@ -52,7 +56,14 @@ class SplQueryParser(PlatformQueryParser):
         query, functions = self.platform_functions.parse(query)
         return query, log_sources, functions
 
+    @staticmethod
+    def __is_tstats_query(query: str) -> bool:
+        return bool(re.match(r"\s*\|\s+tstats", query))
+
     def parse(self, raw_query_container: RawQueryContainer) -> TokenizedQueryContainer:
+        if self.__is_tstats_query(raw_query_container.query):
+            return self.platform_functions.parse_tstats_func(raw_query_container)
+
         query, log_sources, functions = self._parse_query(raw_query_container.query)
         tokens, source_mappings = self.get_tokens_and_source_mappings(query, log_sources)
         self.set_functions_fields_generic_names(functions=functions, source_mappings=source_mappings)
