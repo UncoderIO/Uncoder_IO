@@ -3,6 +3,7 @@ import re
 from app.translator.core.exceptions.functions import InvalidFunctionSignature, NotSupportedFunctionException
 from app.translator.core.functions import PlatformFunctions
 from app.translator.core.models.functions.base import ParsedFunctions
+from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
 from app.translator.platforms.base.spl.functions.const import SplFunctionType
 from app.translator.platforms.base.spl.functions.manager import SplFunctionsManager
 
@@ -39,3 +40,7 @@ class SplFunctions(PlatformFunctions):
             not_supported=[self.wrap_function_with_delimiter(func) for func in not_supported],
             invalid=invalid,
         )
+
+    @staticmethod
+    def parse_tstats_func(raw_query_container: RawQueryContainer) -> TokenizedQueryContainer:
+        raise NotSupportedFunctionException
