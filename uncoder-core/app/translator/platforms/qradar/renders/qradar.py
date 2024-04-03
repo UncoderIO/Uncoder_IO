@@ -16,13 +16,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.values import ValueType
-from app.translator.core.mapping import SourceMapping
-from app.translator.core.models.functions.base import Function
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
 from app.translator.platforms.qradar.const import qradar_query_details
@@ -127,6 +124,3 @@ class QradarQueryRender(PlatformQueryRender):
 
     def wrap_with_comment(self, value: str) -> str:
         return f"/* {value} */"
-
-    def generate_functions(self, functions: list[Function], source_mapping: SourceMapping) -> str:  # noqa: ARG002
-        return ""
