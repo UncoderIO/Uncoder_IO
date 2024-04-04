@@ -23,7 +23,6 @@ class LogRhythmQueryEscapeManager(EscapeManager):
             EscapeDetails(pattern=r"\]", escape_symbols=r"\\]"),
             EscapeDetails(pattern=r"\{", escape_symbols=r"\\{"),
             EscapeDetails(pattern=r"\}", escape_symbols=r"\\}"),
-
         ],
     }
 

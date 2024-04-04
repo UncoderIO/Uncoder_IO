@@ -27,15 +27,14 @@ class LogScaleFunctions(PlatformFunctions):
             func_name = func_name_match.group("func_name")
             func = func.strip()
             func_body = func[len(func_name) + 1 : len(func) - 1]
-            if func_parser := self.manager.get_parser(self.manager.get_generic_func_name(func_name)):
-                try:
-                    parsed.append(func_parser.parse(func_body))
-                except NotSupportedFunctionException:
-                    not_supported.append(func)
-                except InvalidFunctionSignature:
-                    invalid.append(func)
-            else:
+            try:
+                func_parser = self.manager.get_parser(self.manager.get_generic_func_name(func_name))
+                parsed.append(func_parser.parse(func_body, func))
+            except NotSupportedFunctionException:
                 not_supported.append(func)
+            except InvalidFunctionSignature:
+                invalid.append(func)
+
         return ParsedFunctions(
             not_supported=[self.wrap_function_with_delimiter(func) for func in not_supported],
             functions=parsed,
