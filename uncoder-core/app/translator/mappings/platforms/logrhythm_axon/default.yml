@@ -302,3 +302,4 @@ field_mapping:
   blocked:
     - action.message
     - action.result.reason
+  cs-ip: origin.host.ip_address.value
