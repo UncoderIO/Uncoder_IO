@@ -130,7 +130,7 @@ field_mapping:
   c-uri: object.url.complete
   c-uri-extension: object.url.type
   c-uri-query: object.url.query
-  c-uri-stem: object.url.complete
+  c-uri-stem: object.url.path
   c-useragent: action.user_agent
   cs-host:
     - target.host.name
