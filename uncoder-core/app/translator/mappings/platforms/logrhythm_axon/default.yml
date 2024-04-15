@@ -175,7 +175,7 @@ field_mapping:
   c-ip: origin.host.ip_address.value
   cs-uri: object.url.path
   cs-uri-query: object.url.query
-  cs-uri-stem: object.url.complete
+  cs-uri-stem: object.url.path
   clientip: origin.host.ip_address.value
   clientIP: origin.host.ip_address.value
   dest_domain:
