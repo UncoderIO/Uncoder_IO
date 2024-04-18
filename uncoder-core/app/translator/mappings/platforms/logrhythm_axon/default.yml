@@ -303,3 +303,7 @@ field_mapping:
     - action.message
     - action.result.reason
   cs-ip: origin.host.ip_address.value
+  SubjectLogonId: action.session.id
+  SubjectUserName: origin.account.name
+  SubjectUserSid: origin.account.id
+  SubjectDomainName: origin.account.domain
