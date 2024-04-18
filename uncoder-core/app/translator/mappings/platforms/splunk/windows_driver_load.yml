@@ -4,11 +4,11 @@ description: Text that describe current mapping
 
 log_source:
   source: [WinEventLog:Microsoft-Windows-Sysmon/Operational]
-  sourceType: [XmlWinEventLog:Microsoft-Windows-Sysmon/Operational]
+  source_type: [XmlWinEventLog:Microsoft-Windows-Sysmon/Operational]
 
 default_log_source:
   source: WinEventLog:Microsoft-Windows-Sysmon/Operational
-  sourceType: XmlWinEventLog:Microsoft-Windows-Sysmon/Operational
+  source_type: XmlWinEventLog:Microsoft-Windows-Sysmon/Operational
 
 field_mapping:
   ImageLoaded: ImageLoaded

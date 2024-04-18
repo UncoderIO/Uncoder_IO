@@ -3,10 +3,10 @@ source: azure_signinlogs
 description: Text that describe current mapping
 
 log_source:
-  sourceType: [azure:aad:*]
+  source_type: [azure:aad:*]
 
 default_log_source:
-  sourceType: azure:aad:*
+  source_type: azure:aad:*
 
 field_mapping:
   AppDisplayName: AppDisplayName

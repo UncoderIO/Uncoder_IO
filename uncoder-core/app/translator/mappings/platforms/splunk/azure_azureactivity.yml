@@ -3,10 +3,10 @@ source: azure_azureactivity
 description: Text that describe current mapping
 
 log_source:
-  sourceType: [mscs:azure:*, azure:*]
+  source_type: [mscs:azure:*, azure:*]
 
 default_log_source:
-  sourceType: mscs:azure:*
+  source_type: mscs:azure:*
 
 field_mapping:
   ActivityStatus: ActivityStatus

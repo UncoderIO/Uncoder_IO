@@ -3,7 +3,7 @@ source: gcp_gcp.audit
 description: Text that describe current mapping
 
 log_source:
-  sourceType: [google:gcp:*]
+  source_type: [google:gcp:*]
 
 default_log_source:
   index: google:gcp:*

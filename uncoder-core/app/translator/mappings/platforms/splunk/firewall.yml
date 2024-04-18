@@ -1,0 +1,17 @@
+platform: Splunk
+source: firewall
+description: Text that describe current mapping
+
+log_source:
+  source_type: [fortigate_traffic]
+  index: [fortigate]
+
+default_log_source:
+  source_type: fortigate_traffic
+  index: fortigate
+
+field_mapping:
+  src-ip: src_ip
+  src-port: src_port
+  dst-ip: dst_ip
+  dst-port: dst_port

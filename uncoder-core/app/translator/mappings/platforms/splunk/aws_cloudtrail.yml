@@ -3,10 +3,10 @@ source: aws_cloudtrail
 description: Text that describe current mapping
 
 log_source:
-  sourceType: [aws:cloudtrail]
+  source_type: [aws:cloudtrail]
 
 default_log_source:
-  sourceType: aws:cloudtrail
+  source_type: aws:cloudtrail
 
 field_mapping:
   eventSource: eventSource
