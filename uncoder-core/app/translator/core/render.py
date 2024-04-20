@@ -117,6 +117,20 @@ class BaseQueryFieldValue(ABC):
 
 
 class QueryRender(ABC):
+    comment_symbol: str = None
+    is_multi_line_comment: bool = False
+    unsupported_functions_text = "Unsupported functions were excluded from the result query:"
+
+    platform_functions: PlatformFunctions = PlatformFunctions()
+
+    def render_not_supported_functions(self, not_supported_functions: list) -> str:
+        line_template = f"{self.comment_symbol} " if self.comment_symbol and self.is_multi_line_comment else ""
+        not_supported_functions_str = "\n".join(line_template + func.lstrip() for func in not_supported_functions)
+        return "\n\n" + self.wrap_with_comment(f"{self.unsupported_functions_text}\n{not_supported_functions_str}")
+
+    def wrap_with_comment(self, value: str) -> str:
+        return f"{self.comment_symbol} {value}"
+
     @abstractmethod
     def generate(self, query_container: Union[RawQueryContainer, TokenizedQueryContainer]) -> str:
         raise NotImplementedError("Abstract method")
@@ -126,7 +140,6 @@ class PlatformQueryRender(QueryRender):
     mappings: BasePlatformMappings = None
     details: PlatformDetails = None
     is_strict_mapping = False
-    platform_functions: PlatformFunctions = PlatformFunctions()
 
     or_token = "or"
     and_token = "and"
@@ -137,10 +150,6 @@ class PlatformQueryRender(QueryRender):
     field_value_map = BaseQueryFieldValue(or_token=or_token)
 
     query_pattern = "{table} {query} {functions}"
-
-    comment_symbol: str = None
-    is_multi_line_comment: bool = False
-    unsupported_functions_text = "Unsupported functions were excluded from the result query:"
 
     def __init__(self):
         self.operator_map = {
@@ -228,14 +237,6 @@ class PlatformQueryRender(QueryRender):
             rendered_not_supported = self.render_not_supported_functions(not_supported_functions)
             return query + rendered_not_supported
         return query
-
-    def render_not_supported_functions(self, not_supported_functions: list) -> str:
-        line_template = f"{self.comment_symbol} " if self.comment_symbol and self.is_multi_line_comment else ""
-        not_supported_functions_str = "\n".join(line_template + func.lstrip() for func in not_supported_functions)
-        return "\n\n" + self.wrap_with_comment(f"{self.unsupported_functions_text}\n{not_supported_functions_str}")
-
-    def wrap_with_comment(self, value: str) -> str:
-        return f"{self.comment_symbol} {value}"
 
     @staticmethod
     def unique_queries(queries_map: dict[str, str]) -> dict[str, dict[str]]:
