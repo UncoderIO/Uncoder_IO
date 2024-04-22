@@ -3,10 +3,10 @@ source: windows_wmi_event
 description: Text that describe current mapping
 
 log_source:
-  sourceType: [XmlWinEventLog:Microsoft-Windows-WMI-Activity/Operational]
+  source_type: [XmlWinEventLog:Microsoft-Windows-WMI-Activity/Operational]
 
 default_log_source:
-  sourceType: XmlWinEventLog:Microsoft-Windows-WMI-Activity/Operational
+  source_type: XmlWinEventLog:Microsoft-Windows-WMI-Activity/Operational
 
 field_mapping:
   Destination: Destination

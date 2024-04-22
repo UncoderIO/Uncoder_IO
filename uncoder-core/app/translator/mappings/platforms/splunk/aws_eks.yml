@@ -3,10 +3,10 @@ source: aws_eks
 description: Text that describe current mapping
 
 log_source:
-  sourceType: [aws:*]
+  source_type: [aws:*]
 
 default_log_source:
-  sourceType: aws:*
+  source_type: aws:*
 
 field_mapping:
   annotations.authorization.k8s.io\/decision: annotations.authorization.k8s.io\/decision

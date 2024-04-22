@@ -2,10 +2,10 @@ platform: Splunk
 source: windows_bits_client
 
 log_source:
-  sourceType: [XmlWinEventLog:Microsoft-Windows-Bits-Client/Operational]
+  source_type: [XmlWinEventLog:Microsoft-Windows-Bits-Client/Operational]
 
 default_log_source:
-  sourceType: XmlWinEventLog:Microsoft-Windows-Bits-Client/Operational
+  source_type: XmlWinEventLog:Microsoft-Windows-Bits-Client/Operational
 
 field_mapping:
   LocalName: LocalName

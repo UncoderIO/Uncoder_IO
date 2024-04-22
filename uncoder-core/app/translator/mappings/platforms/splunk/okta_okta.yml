@@ -3,10 +3,10 @@ source: okta_okta
 description: Text that describe current mapping
 
 log_source:
-  sourceType: [OktaIM2:*]
+  source_type: [OktaIM2:*]
 
 default_log_source:
-  sourceType: OktaIM2:*
+  source_type: OktaIM2:*
 
 field_mapping:
   client.user.id: client.user.id

@@ -3,10 +3,10 @@ source: linux_auditd
 description: Text that describe current mapping
 
 log_source:
-  sourceType: [linux:audit]
+  source_type: [linux:audit]
 
 default_log_source:
-  sourceType: linux:audit
+  source_type: linux:audit
 
 field_mapping:
   a0: a0

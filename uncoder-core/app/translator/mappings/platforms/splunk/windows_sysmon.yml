@@ -3,22 +3,20 @@ source: windows_sysmon
 
 log_source:
   source: [WinEventLog:Microsoft-Windows-Sysmon/Operational]
-  sourceType: [XmlWinEventLog:Microsoft-Windows-Sysmon/Operational]
+  source_type: [XmlWinEventLog:Microsoft-Windows-Sysmon/Operational]
 
 default_log_source:
   source: WinEventLog:Microsoft-Windows-Sysmon/Operational
-  sourceType: XmlWinEventLog:Microsoft-Windows-Sysmon/Operational
+  source_type: XmlWinEventLog:Microsoft-Windows-Sysmon/Operational
 
 field_mapping:
   CommandLine: CommandLine
-  Image: Image
   ParentImage: ParentImage
   EventID: EventCode
   CallTrace: CallTrace
   Company: Company
   CurrentDirectory: CurrentDirectory
   Description: Description
-  DestinationHostname: DestinationHostname
   DestinationIp: DestinationIp
   DestinationIsIpv6: DestinationIsIpv6
   DestinationPort: DestinationPort
@@ -36,7 +34,6 @@ field_mapping:
   SourcePort: SourcePort
   SourcePortName: SourcePortName
   TargetFilename: TargetFilename
-  User: User
   OriginalFileName: OriginalFileName
   Signed: Signed
   Signature: Signature
@@ -48,15 +45,19 @@ field_mapping:
   QueryStatus: QueryStatus
   IsExecutable: IsExecutable
   PipeName: PipeName
-  ImageLoaded: ImageLoaded
-  ImagePath: ImagePath
   Imphash: Imphash
   SourceImage: SourceImage
   StartModule: StartModule
   TargetImage: TargetImage
-  Device: Device
-  ProcessID: ProcessID
   FileVersion: FileVersion
   StartAddress: StartAddress
   StartFunction: StartFunction
   EventType: EventType
+  Image: process_name
+  ProcessID: process_guid
+  ImageLoaded: process
+  timestamp: _time
+  ImagePath: process_path
+  User: user_id
+  DestinationHostname: dest
+  Device: Computer
