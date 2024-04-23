@@ -111,10 +111,10 @@ class MicrosoftSentinelFieldValue(BaseQueryFieldValue):
         return f"* contains @'{self.__escape_value(value)}'"
 
     def is_empty(self, field: str, value: Union[str, int]) -> str:
-        return f"isempty({value})"
+        return f"isempty({self.apply_value(value)})"
 
     def is_not_empty(self, field: str, value: Union[str, int]) -> str:
-        return f"isnotempty({value})"
+        return f"isnotempty({self.apply_value(value)})"
 
 
 class MicrosoftSentinelQueryRender(PlatformQueryRender):
