@@ -59,8 +59,8 @@ class BaseQueryFieldValue(ABC):
             OperatorType.REGEX: self.regex_modifier,
             OperatorType.NOT_REGEX: self.not_regex_modifier,
             OperatorType.KEYWORD: self.keywords,
-            OperatorType.IS_EMPTY: self.is_empty,
-            OperatorType.IS_NOT_EMPTY: self.is_not_empty,
+            OperatorType.IS_EMPTY: self.is_none,
+            OperatorType.IS_NOT_EMPTY: self.is_not_none,
         }
         self.or_token = f" {or_token} "
 
@@ -109,10 +109,10 @@ class BaseQueryFieldValue(ABC):
     def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
         raise NotImplementedException
 
-    def is_empty(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
+    def is_none(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
         raise NotImplementedException
 
-    def is_not_empty(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
+    def is_not_none(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
         raise NotImplementedException
 
     def apply_value(self, value: Union[str, int], value_type: str = ValueType.value) -> Union[str, int]:
