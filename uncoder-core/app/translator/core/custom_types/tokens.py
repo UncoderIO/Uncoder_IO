@@ -23,8 +23,8 @@ class OperatorType(CustomEnum):
     REGEX = "re"
     NOT_REGEX = "not re"
     KEYWORD = "keyword"
-    IS_NONE = "is_none"
-    IS_NOT_NONE = "is_not_none"
+    IS_NONE = "is none"
+    IS_NOT_NONE = "is not none"
 
 
 class GroupType(CustomEnum):
