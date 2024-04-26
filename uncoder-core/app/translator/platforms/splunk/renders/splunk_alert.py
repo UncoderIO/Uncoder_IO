@@ -22,6 +22,7 @@ from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer
+from app.translator.managers import render_manager
 from app.translator.platforms.splunk.const import DEFAULT_SPLUNK_ALERT, splunk_alert_details
 from app.translator.platforms.splunk.renders.splunk import SplunkFieldValue, SplunkQueryRender
 from app.translator.tools.utils import get_rule_description_str
@@ -34,6 +35,7 @@ class SplunkAlertFieldValue(SplunkFieldValue):
     details: PlatformDetails = splunk_alert_details
 
 
+@render_manager.register
 class SplunkAlertRender(SplunkQueryRender):
     details: PlatformDetails = splunk_alert_details
     or_token = "OR"

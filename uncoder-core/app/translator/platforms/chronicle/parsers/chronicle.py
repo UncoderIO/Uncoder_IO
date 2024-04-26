@@ -20,11 +20,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.parser import PlatformQueryParser
+from app.translator.managers import parser_manager
 from app.translator.platforms.chronicle.const import chronicle_query_details
 from app.translator.platforms.chronicle.mapping import ChronicleMappings, chronicle_mappings
 from app.translator.platforms.chronicle.tokenizer import ChronicleQueryTokenizer
 
 
+@parser_manager.register_roota_parser
 class ChronicleQueryParser(PlatformQueryParser):
     mappings: ChronicleMappings = chronicle_mappings
     tokenizer: ChronicleQueryTokenizer = ChronicleQueryTokenizer()

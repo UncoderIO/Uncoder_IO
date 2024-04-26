@@ -24,6 +24,7 @@ from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer
+from app.translator.managers import render_manager
 from app.translator.platforms.chronicle.const import DEFAULT_CHRONICLE_SECURITY_RULE, chronicle_rule_details
 from app.translator.platforms.chronicle.renders.chronicle import ChronicleFieldValue, ChronicleQueryRender
 
@@ -80,6 +81,7 @@ class ChronicleRuleFieldValue(ChronicleFieldValue):
         return f"re.regex({self.apply_field(field)}, `{self.apply_asterisk_value(value)}`)"
 
 
+@render_manager.register
 class ChronicleSecurityRuleRender(ChronicleQueryRender):
     details: PlatformDetails = chronicle_rule_details
     or_token = "or"

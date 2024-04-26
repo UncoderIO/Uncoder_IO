@@ -13,21 +13,21 @@ from app.translator.tools.decorators import handle_translation_exceptions
 
 
 class Translator:
-    renders: RenderManager = render_manager
-    parsers: ParserManager = parser_manager
+    render_manager: RenderManager = render_manager
+    parser_manager: ParserManager = parser_manager
 
     def __init__(self):
         self.logger = logging.getLogger("translator")
 
     def __get_parser(self, source: str) -> Union[PlatformQueryParser, RootAParser, SigmaParser]:
-        parser = RootAParser() if source == "roota" else self.parsers.get(source)
+        parser = self.parser_manager.get(source)
         if not parser:
             raise UnsupportedPlatform(platform=source, is_parser=True)
 
         return parser
 
     def __get_render(self, target: str) -> QueryRender:
-        if not (render := self.renders.get(target)):
+        if not (render := self.render_manager.get(target)):
             raise UnsupportedPlatform(platform=target)
 
         return render
@@ -79,7 +79,7 @@ class Translator:
 
         raw_query_container, tokenized_query_container = parsed_data
         result = []
-        for target in self.renders.all_platforms():
+        for target in self.render_manager.all_platforms():
             if target == source:
                 continue
 
@@ -101,7 +101,7 @@ class Translator:
         return self.get_renders(), self.get_parsers()
 
     def get_parsers(self) -> list:
-        return self.parsers.get_platforms_details
+        return self.parser_manager.get_platforms_details
 
     def get_renders(self) -> list:
-        return self.renders.get_platforms_details
+        return self.render_manager.get_platforms_details

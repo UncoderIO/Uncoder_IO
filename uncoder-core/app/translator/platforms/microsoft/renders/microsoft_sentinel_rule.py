@@ -24,6 +24,7 @@ from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer
+from app.translator.managers import render_manager
 from app.translator.platforms.microsoft.const import DEFAULT_MICROSOFT_SENTINEL_RULE, microsoft_sentinel_rule_details
 from app.translator.platforms.microsoft.renders.microsoft_sentinel import (
     MicrosoftSentinelFieldValue,
@@ -44,6 +45,7 @@ class MicrosoftSentinelRuleFieldValue(MicrosoftSentinelFieldValue):
     details: PlatformDetails = microsoft_sentinel_rule_details
 
 
+@render_manager.register
 class MicrosoftSentinelRuleRender(MicrosoftSentinelQueryRender):
     details: PlatformDetails = microsoft_sentinel_rule_details
     or_token = "or"

@@ -19,10 +19,12 @@ limitations under the License.
 
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
+from app.translator.managers import render_cti_manager
 from app.translator.platforms.opensearch.const import opensearch_query_details
 from app.translator.platforms.opensearch.mappings.opensearch_cti import DEFAULT_OPENSEARCH_MAPPING
 
 
+@render_cti_manager.register
 class OpenSearchCTI(RenderCTI):
     details: PlatformDetails = opensearch_query_details
 

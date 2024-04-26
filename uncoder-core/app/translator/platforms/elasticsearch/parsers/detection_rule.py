@@ -16,13 +16,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
 
+
 from app.translator.core.mixins.rule import JsonRuleMixin
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer
+from app.translator.managers import parser_manager
 from app.translator.platforms.elasticsearch.const import elasticsearch_rule_details
 from app.translator.platforms.elasticsearch.parsers.elasticsearch import ElasticSearchQueryParser
 
 
+@parser_manager.register
 class ElasticSearchRuleParser(ElasticSearchQueryParser, JsonRuleMixin):
     details: PlatformDetails = elasticsearch_rule_details
 

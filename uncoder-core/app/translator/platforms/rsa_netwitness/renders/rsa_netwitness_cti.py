@@ -19,10 +19,12 @@ limitations under the License.
 
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
+from app.translator.managers import render_cti_manager
 from app.translator.platforms.rsa_netwitness.const import RSA_NETWITNESS_QUERY_DETAILS
 from app.translator.platforms.rsa_netwitness.mappings.rsa_netwitness_cti import DEFAULT_RSA_NETWITNESS_MAPPING
 
 
+@render_cti_manager.register
 class RSANetwitnessCTI(RenderCTI):
     details: PlatformDetails = PlatformDetails(**RSA_NETWITNESS_QUERY_DETAILS)
 

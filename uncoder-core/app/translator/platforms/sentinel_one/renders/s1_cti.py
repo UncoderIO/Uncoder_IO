@@ -19,10 +19,12 @@ limitations under the License.
 
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
+from app.translator.managers import render_cti_manager
 from app.translator.platforms.sentinel_one.const import SENTINEL_ONE_EVENTS_QUERY_DETAILS
 from app.translator.platforms.sentinel_one.mappings.s1_cti import DEFAULT_S1EVENTS_MAPPING
 
 
+@render_cti_manager.register
 class S1EventsCTI(RenderCTI):
     details: PlatformDetails = PlatformDetails(**SENTINEL_ONE_EVENTS_QUERY_DETAILS)
 

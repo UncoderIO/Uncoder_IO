@@ -23,6 +23,7 @@ from app.translator.core.exceptions.render import UnsupportedRenderMethod
 from app.translator.core.mapping import LogSourceSignature
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
+from app.translator.managers import render_manager
 from app.translator.platforms.athena.const import athena_details
 from app.translator.platforms.athena.mapping import AthenaMappings, athena_mappings
 
@@ -76,6 +77,7 @@ class AthenaFieldValue(BaseQueryFieldValue):
         raise UnsupportedRenderMethod(platform_name=self.details.name, method="Keywords")
 
 
+@render_manager.register
 class AthenaQueryRender(PlatformQueryRender):
     details: PlatformDetails = athena_details
     mappings: AthenaMappings = athena_mappings

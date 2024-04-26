@@ -22,12 +22,14 @@ from typing import Union
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.parser import PlatformQueryParser
+from app.translator.managers import parser_manager
 from app.translator.platforms.qradar.const import NUM_VALUE_PATTERN, SINGLE_QUOTES_VALUE_PATTERN, qradar_query_details
 from app.translator.platforms.qradar.mapping import QradarMappings, qradar_mappings
 from app.translator.platforms.qradar.tokenizer import QradarTokenizer
 from app.translator.tools.utils import get_match_group
 
 
+@parser_manager.register_roota_parser
 class QradarQueryParser(PlatformQueryParser):
     details: PlatformDetails = qradar_query_details
     tokenizer = QradarTokenizer()

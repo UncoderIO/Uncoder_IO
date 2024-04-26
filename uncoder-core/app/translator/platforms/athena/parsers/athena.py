@@ -22,11 +22,13 @@ from typing import Optional
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.parser import PlatformQueryParser
+from app.translator.managers import parser_manager
 from app.translator.platforms.athena.const import athena_details
 from app.translator.platforms.athena.mapping import AthenaMappings, athena_mappings
 from app.translator.platforms.athena.tokenizer import AthenaTokenizer
 
 
+@parser_manager.register_roota_parser
 class AthenaQueryParser(PlatformQueryParser):
     details: PlatformDetails = athena_details
     mappings: AthenaMappings = athena_mappings

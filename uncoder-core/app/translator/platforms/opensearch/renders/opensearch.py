@@ -16,13 +16,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.str_value_manager import StrValue
+from app.translator.managers import render_manager
 from app.translator.platforms.base.lucene.renders.lucene import LuceneFieldValue, LuceneQueryRender
 from app.translator.platforms.opensearch.const import opensearch_query_details
 from app.translator.platforms.opensearch.mapping import OpenSearchMappings, opensearch_mappings
@@ -95,6 +95,7 @@ class OpenSearchFieldValue(LuceneFieldValue):
         return f'"*{self._pre_process_value(field, value)}*"'
 
 
+@render_manager.register
 class OpenSearchQueryRender(LuceneQueryRender):
     details: PlatformDetails = opensearch_query_details
     mappings: OpenSearchMappings = opensearch_mappings

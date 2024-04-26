@@ -26,11 +26,13 @@ from app.translator.core.models.field import FieldValue, Field
 from app.translator.core.models.query_container import MetaInfoContainer, TokenizedQueryContainer
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.tokenizer import QueryTokenizer
+from app.translator.managers import parser_manager
 from app.translator.platforms.sigma.const import SIGMA_RULE_DETAILS
 from app.translator.platforms.sigma.mapping import SigmaMappings, sigma_mappings
 from app.translator.platforms.sigma.tokenizer import SigmaConditionTokenizer, SigmaTokenizer
 
 
+@parser_manager.register_parser
 class SigmaParser(YamlRuleMixin):
     details: PlatformDetails = PlatformDetails(**SIGMA_RULE_DETAILS)
     condition_tokenizer = SigmaConditionTokenizer()

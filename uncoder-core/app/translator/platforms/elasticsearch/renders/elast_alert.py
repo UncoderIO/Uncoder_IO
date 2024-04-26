@@ -22,6 +22,7 @@ from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer
+from app.translator.managers import render_manager
 from app.translator.platforms.elasticsearch.const import ELASTICSEARCH_ALERT, elastalert_details
 from app.translator.platforms.elasticsearch.mapping import ElasticSearchMappings, elasticsearch_mappings
 from app.translator.platforms.elasticsearch.renders.elasticsearch import (
@@ -38,6 +39,7 @@ class ElasticAlertRuleFieldValue(ElasticSearchFieldValue):
     details: PlatformDetails = elastalert_details
 
 
+@render_manager.register
 class ElastAlertRuleRender(ElasticSearchQueryRender):
     details: PlatformDetails = elastalert_details
     mappings: ElasticSearchMappings = elasticsearch_mappings

@@ -30,6 +30,7 @@ from app.translator.core.models.query_container import MetaInfoContainer, Tokeni
 from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
 from app.translator.core.str_value_manager import StrValue
 from app.translator.core.tokenizer import TOKEN_TYPE
+from app.translator.managers import render_manager
 from app.translator.platforms.forti_siem.const import (
     FORTI_SIEM_RULE,
     SOURCES_EVENT_TYPES_CONTAINERS_MAP,
@@ -181,6 +182,7 @@ class FortiSiemFieldValue(BaseQueryFieldValue):
         raise UnsupportedRenderMethod(platform_name=self.details.name, method="Keywords")
 
 
+@render_manager.register
 class FortiSiemRuleRender(PlatformQueryRender):
     details: PlatformDetails = forti_siem_rule_details
     mappings: FortiSiemMappings = forti_siem_mappings

@@ -19,10 +19,12 @@ limitations under the License.
 
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
+from app.translator.managers import render_cti_manager
 from app.translator.platforms.fireeye_helix.const import FIREEYE_HELIX_QUERY_DETAILS
 from app.translator.platforms.fireeye_helix.mappings.fireeye_helix import DEFAULT_FIREEYE_HELIX_MAPPING
 
 
+@render_cti_manager.register
 class FireeyeHelixCTI(RenderCTI):
     details: PlatformDetails = PlatformDetails(**FIREEYE_HELIX_QUERY_DETAILS)
 

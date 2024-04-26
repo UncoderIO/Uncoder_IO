@@ -1,3 +1,4 @@
+from app.translator.platforms.arcsight.renders.arcsight_cti import ArcsightKeyword
 from app.translator.platforms.athena.parsers.athena import AthenaQueryParser
 from app.translator.platforms.athena.renders.athena import AthenaQueryRender
 from app.translator.platforms.athena.renders.athena_cti import AthenaCTI
@@ -59,74 +60,3 @@ from app.translator.platforms.splunk.renders.splunk import SplunkQueryRender
 from app.translator.platforms.splunk.renders.splunk_alert import SplunkAlertRender
 from app.translator.platforms.splunk.renders.splunk_cti import SplunkCTI
 from app.translator.platforms.sumo_logic.renders.sumologic_cti import SumologicCTI
-
-__ALL_RENDERS = (
-    SigmaRender(),
-    MicrosoftSentinelQueryRender(),
-    MicrosoftSentinelRuleRender(),
-    MicrosoftDefenderQueryRender(),
-    QradarQueryRender(),
-    CrowdStrikeQueryRender(),
-    SplunkQueryRender(),
-    SplunkAlertRender(),
-    ChronicleQueryRender(),
-    ChronicleSecurityRuleRender(),
-    AthenaQueryRender(),
-    ElasticSearchQueryRender(),
-    LogRhythmAxonQueryRender(),
-    LogRhythmAxonRuleRender(),
-    LogScaleQueryRender(),
-    LogScaleAlertRender(),
-    ElasticSearchRuleRender(),
-    ElastAlertRuleRender(),
-    KibanaRuleRender(),
-    XPackWatcherRuleRender(),
-    OpenSearchQueryRender(),
-    OpenSearchRuleRender(),
-    GraylogQueryRender(),
-    FortiSiemRuleRender(),
-)
-
-__ALL_PARSERS = (
-    AthenaQueryParser(),
-    ChronicleQueryParser(),
-    ChronicleRuleParser(),
-    SplunkQueryParser(),
-    SplunkAlertParser(),
-    SigmaParser(),
-    QradarQueryParser(),
-    MicrosoftSentinelQueryParser(),
-    MicrosoftSentinelRuleParser(),
-    MicrosoftDefenderQueryParser(),
-    CrowdStrikeQueryParser(),
-    LogScaleQueryParser(),
-    LogScaleAlertParser(),
-    ElasticSearchQueryParser(),
-    ElasticSearchRuleParser(),
-    OpenSearchQueryParser(),
-    GraylogQueryParser(),
-)
-
-
-__ALL_RENDERS_CTI = (
-    MicrosoftSentinelCTI(),
-    MicrosoftDefenderCTI(),
-    QRadarCTI(),
-    SplunkCTI(),
-    ChronicleQueryCTI(),
-    CrowdStrikeCTI(),
-    SumologicCTI(),
-    ElasticsearchCTI(),
-    LogScaleCTI(),
-    OpenSearchCTI(),
-    FireeyeHelixCTI(),
-    CarbonBlackCTI(),
-    GraylogCTI(),
-    LogpointCTI(),
-    QualysCTI(),
-    RSANetwitnessCTI(),
-    S1EventsCTI(),
-    SecuronixCTI(),
-    SnowflakeCTI(),
-    AthenaCTI(),
-)

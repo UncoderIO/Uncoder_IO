@@ -16,16 +16,19 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
 
+
 from app.translator.core.models.functions.base import ParsedFunctions
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.parser import PlatformQueryParser
+from app.translator.managers import parser_manager
 from app.translator.platforms.microsoft.const import microsoft_sentinel_query_details
 from app.translator.platforms.microsoft.functions import MicrosoftFunctions, microsoft_sentinel_functions
 from app.translator.platforms.microsoft.mapping import MicrosoftSentinelMappings, microsoft_sentinel_mappings
 from app.translator.platforms.microsoft.tokenizer import MicrosoftSentinelTokenizer
 
 
+@parser_manager.register_roota_parser
 class MicrosoftSentinelQueryParser(PlatformQueryParser):
     platform_functions: MicrosoftFunctions = microsoft_sentinel_functions
     mappings: MicrosoftSentinelMappings = microsoft_sentinel_mappings

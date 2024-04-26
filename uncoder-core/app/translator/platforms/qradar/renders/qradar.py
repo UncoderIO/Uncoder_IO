@@ -22,6 +22,7 @@ from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
+from app.translator.managers import render_manager
 from app.translator.platforms.qradar.const import qradar_query_details
 from app.translator.platforms.qradar.escape_manager import qradar_escape_manager
 from app.translator.platforms.qradar.mapping import QradarLogSourceSignature, QradarMappings, qradar_mappings
@@ -106,6 +107,7 @@ class QradarFieldValue(BaseQueryFieldValue):
         return f"UTF8(payload) ILIKE '%{self.apply_value(value)}%'"
 
 
+@render_manager.register
 class QradarQueryRender(PlatformQueryRender):
     details: PlatformDetails = qradar_query_details
     mappings: QradarMappings = qradar_mappings

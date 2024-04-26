@@ -29,6 +29,7 @@ from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import TokenizedQueryContainer
 from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
+from app.translator.managers import render_manager
 from app.translator.platforms.logrhythm_axon.const import UNMAPPED_FIELD_DEFAULT_NAME, logrhythm_axon_query_details
 from app.translator.platforms.logrhythm_axon.escape_manager import logrhythm_query_escape_manager
 from app.translator.platforms.logrhythm_axon.mapping import LogRhythmAxonMappings, logrhythm_axon_mappings
@@ -187,6 +188,7 @@ class LogRhythmAxonFieldValue(BaseQueryFieldValue):
         return f'{field} matches "{value}"'
 
 
+@render_manager.register
 class LogRhythmAxonQueryRender(PlatformQueryRender):
     details: PlatformDetails = logrhythm_axon_query_details
 

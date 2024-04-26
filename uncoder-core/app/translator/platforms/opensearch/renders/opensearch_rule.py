@@ -26,6 +26,7 @@ from app.translator.core.models.field import FieldValue, Keyword
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer, TokenizedQueryContainer
+from app.translator.managers import render_manager
 from app.translator.platforms.opensearch.const import OPENSEARCH_RULE, opensearch_rule_details
 from app.translator.platforms.opensearch.mapping import OpenSearchMappings, opensearch_mappings
 from app.translator.platforms.opensearch.renders.opensearch import OpenSearchFieldValue, OpenSearchQueryRender
@@ -38,6 +39,7 @@ class OpenSearchRuleFieldValue(OpenSearchFieldValue):
     details: PlatformDetails = opensearch_rule_details
 
 
+@render_manager.register
 class OpenSearchRuleRender(OpenSearchQueryRender):
     details: PlatformDetails = opensearch_rule_details
     mappings: OpenSearchMappings = opensearch_mappings
