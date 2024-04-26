@@ -199,7 +199,7 @@ class LogRhythmAxonQueryRender(PlatformQueryRender):
 
     mappings: LogRhythmAxonMappings = logrhythm_axon_mappings
     comment_symbol = "//"
-    is_multi_line_comment = True
+    is_single_line_comment = True
     is_strict_mapping = True
 
     def generate_prefix(self, log_source_signature: LogSourceSignature) -> str:

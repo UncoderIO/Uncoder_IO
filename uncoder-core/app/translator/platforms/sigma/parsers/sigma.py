@@ -23,20 +23,23 @@ from typing import Union
 from app.translator.core.exceptions.core import SigmaRuleValidationException
 from app.translator.core.mixins.rule import YamlRuleMixin
 from app.translator.core.models.field import FieldValue, Field
-from app.translator.core.models.query_container import MetaInfoContainer, TokenizedQueryContainer
+from app.translator.core.models.query_container import MetaInfoContainer, TokenizedQueryContainer, RawQueryContainer
 from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.core.parser import QueryParser
 from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.platforms.sigma.const import SIGMA_RULE_DETAILS
 from app.translator.platforms.sigma.mapping import SigmaMappings, sigma_mappings
 from app.translator.platforms.sigma.tokenizer import SigmaConditionTokenizer, SigmaTokenizer
 
 
-class SigmaParser(YamlRuleMixin):
+class SigmaParser(QueryParser, YamlRuleMixin):
     details: PlatformDetails = PlatformDetails(**SIGMA_RULE_DETAILS)
     condition_tokenizer = SigmaConditionTokenizer()
     tokenizer: SigmaTokenizer = SigmaTokenizer()
     mappings: SigmaMappings = sigma_mappings
     mandatory_fields = {"title", "description", "logsource", "detection"}
+
+    wrapped_with_comment_pattern = r"#.*(?:\n|$)"
 
     @staticmethod
     def __parse_false_positives(false_positives: Union[str, list[str], None]) -> list:
@@ -73,8 +76,11 @@ class SigmaParser(YamlRuleMixin):
         if missing_fields := self.mandatory_fields.difference(set(rule.keys())):
             raise SigmaRuleValidationException(missing_fields=list(missing_fields))
 
-    def parse(self, text: str) -> TokenizedQueryContainer:
-        sigma_rule = self.load_rule(text=text)
+    def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
+        return RawQueryContainer(query=text, language=language)
+
+    def parse(self, raw_query_container: RawQueryContainer) -> TokenizedQueryContainer:
+        sigma_rule = self.load_rule(text=raw_query_container.query)
         self.__validate_rule(rule=sigma_rule)
         log_sources = {
             key: [value]

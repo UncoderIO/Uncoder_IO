@@ -133,7 +133,7 @@ class LuceneQueryRender(PlatformQueryRender):
     query_pattern = "{query} {functions}"
 
     comment_symbol = "//"
-    is_multi_line_comment = True
+    is_single_line_comment = True
 
     def generate_prefix(self, log_source_signature: LuceneLogSourceSignature) -> str:  # noqa: ARG002
         return ""

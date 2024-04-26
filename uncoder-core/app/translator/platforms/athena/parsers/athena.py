@@ -34,6 +34,8 @@ class AthenaQueryParser(PlatformQueryParser):
     query_delimiter_pattern = r"\sFROM\s\S*\sWHERE\s"
     table_pattern = r"\sFROM\s(?P<table>[a-zA-Z\.\-\*]+)\sWHERE\s"
 
+    wrapped_with_comment_pattern = r"--.*(?:\n|$)"
+
     def _parse_query(self, query: str) -> tuple[str, dict[str, Optional[str]]]:
         log_source = {"table": None}
         if re.search(self.query_delimiter_pattern, query, flags=re.IGNORECASE):

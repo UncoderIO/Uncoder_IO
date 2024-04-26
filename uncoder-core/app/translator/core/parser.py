@@ -15,7 +15,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
-
+import re
 from abc import ABC, abstractmethod
 from typing import Union
 
@@ -30,6 +30,11 @@ from app.translator.core.tokenizer import TOKEN_TYPE, QueryTokenizer
 
 
 class QueryParser(ABC):
+    wrapped_with_comment_pattern: str = None
+
+    def remove_comments(self, text: str) -> str:
+        return re.sub(self.wrapped_with_comment_pattern, "\n", text).strip()
+
     def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
         return RawQueryContainer(query=text, language=language)
 

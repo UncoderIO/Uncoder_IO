@@ -59,6 +59,8 @@ class BaseQueryFieldValue(ABC):
             OperatorType.REGEX: self.regex_modifier,
             OperatorType.NOT_REGEX: self.not_regex_modifier,
             OperatorType.KEYWORD: self.keywords,
+            OperatorType.IS_NONE: self.is_none,
+            OperatorType.IS_NOT_NONE: self.is_not_none,
         }
         self.or_token = f" {or_token} "
 
@@ -107,6 +109,12 @@ class BaseQueryFieldValue(ABC):
     def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
         raise NotImplementedException
 
+    def is_none(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
+        raise NotImplementedException
+
+    def is_not_none(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
+        raise NotImplementedException
+
     def apply_value(self, value: Union[str, int], value_type: str = ValueType.value) -> Union[str, int]:
         return self.escape_manager.escape(value, value_type)
 
@@ -118,13 +126,13 @@ class BaseQueryFieldValue(ABC):
 
 class QueryRender(ABC):
     comment_symbol: str = None
-    is_multi_line_comment: bool = False
+    is_single_line_comment: bool = False
     unsupported_functions_text = "Unsupported functions were excluded from the result query:"
 
     platform_functions: PlatformFunctions = PlatformFunctions()
 
     def render_not_supported_functions(self, not_supported_functions: list) -> str:
-        line_template = f"{self.comment_symbol} " if self.comment_symbol and self.is_multi_line_comment else ""
+        line_template = f"{self.comment_symbol} " if self.comment_symbol and self.is_single_line_comment else ""
         not_supported_functions_str = "\n".join(line_template + func.lstrip() for func in not_supported_functions)
         return "\n\n" + self.wrap_with_comment(f"{self.unsupported_functions_text}\n{not_supported_functions_str}")
 
