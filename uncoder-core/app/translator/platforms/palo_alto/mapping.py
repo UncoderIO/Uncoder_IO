@@ -23,8 +23,9 @@ class CortexXSIAMMappings(BasePlatformMappings):
         default_log_source = mapping["default_log_source"]
         return CortexXSIAMLogSourceSignature(preset=preset, dataset=dataset, default_source=default_log_source)
 
-    def get_suitable_source_mappings(self, field_names: list[str], preset: Optional[str], dataset: Optional[str]
-                                     ) -> list[SourceMapping]:
+    def get_suitable_source_mappings(
+        self, field_names: list[str], preset: Optional[str], dataset: Optional[str]
+    ) -> list[SourceMapping]:
         suitable_source_mappings = []
         for source_mapping in self._source_mappings.values():
             if source_mapping.source_id == DEFAULT_MAPPING_NAME:
