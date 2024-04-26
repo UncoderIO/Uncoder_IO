@@ -41,6 +41,7 @@ from app.translator.platforms.microsoft.renders.microsoft_sentinel_cti import Mi
 from app.translator.platforms.microsoft.renders.microsoft_sentinel_rule import MicrosoftSentinelRuleRender
 from app.translator.platforms.opensearch.parsers.opensearch import OpenSearchQueryParser
 from app.translator.platforms.opensearch.renders.opensearch import OpenSearchQueryRender
+from app.translator.platforms.palo_alto.renders.cortex_xsiam import CortexXQLQueryRender
 from app.translator.platforms.opensearch.renders.opensearch_cti import OpenSearchCTI
 from app.translator.platforms.opensearch.renders.opensearch_rule import OpenSearchRuleRender
 from app.translator.platforms.qradar.parsers.qradar import QradarQueryParser
@@ -85,6 +86,7 @@ __ALL_RENDERS = (
     OpenSearchRuleRender(),
     GraylogQueryRender(),
     FortiSiemRuleRender(),
+    CortexXQLQueryRender(),
 )
 
 __ALL_PARSERS = (

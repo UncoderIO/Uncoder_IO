@@ -1,0 +1,6 @@
+platform: Palo Alto XSIAM
+source: default
+
+
+default_log_source:
+  datamodel: datamodel
