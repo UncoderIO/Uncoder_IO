@@ -44,6 +44,7 @@ from app.translator.platforms.opensearch.parsers.opensearch import OpenSearchQue
 from app.translator.platforms.opensearch.renders.opensearch import OpenSearchQueryRender
 from app.translator.platforms.opensearch.renders.opensearch_cti import OpenSearchCTI
 from app.translator.platforms.opensearch.renders.opensearch_rule import OpenSearchRuleRender
+from app.translator.platforms.palo_alto.renders.cortex_xsiam import CortexXQLQueryRender
 from app.translator.platforms.qradar.parsers.qradar import QradarQueryParser
 from app.translator.platforms.qradar.renders.qradar import QradarQueryRender
 from app.translator.platforms.qradar.renders.qradar_cti import QRadarCTI
