@@ -16,7 +16,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
@@ -78,6 +77,11 @@ class MicrosoftSentinelFieldValue(BaseQueryFieldValue):
             return f"({self.or_token.join(self.contains_modifier(field=field, value=v) for v in value)})"
         return f"{field} contains @'{self.__escape_value(value)}'"
 
+    def not_contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+        if isinstance(value, list):
+            return f"({self.or_token.join(self.not_contains_modifier(field=field, value=v) for v in value)})"
+        return f"{field} !contains @'{self.__escape_value(value)}'"
+
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.endswith_modifier(field=field, value=v) for v in value)})"
@@ -96,10 +100,21 @@ class MicrosoftSentinelFieldValue(BaseQueryFieldValue):
             return f"({self.or_token.join(self.__regex_modifier(field=field, value=v) for v in value)})"
         return f"({self.__regex_modifier(field=field, value=value)})"
 
+    def not_regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+        if isinstance(value, list):
+            return f"not ({self.or_token.join(self.__regex_modifier(field=field, value=v) for v in value)})"
+        return f"not ({self.__regex_modifier(field=field, value=value)})"
+
     def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.keywords(field=field, value=v) for v in value)})"
         return f"* contains @'{self.__escape_value(value)}'"
+
+    def is_none(self, field: str, value: Union[str, int]) -> str:
+        return f"isempty({self.apply_value(value)})"
+
+    def is_not_none(self, field: str, value: Union[str, int]) -> str:
+        return f"isnotempty({self.apply_value(value)})"
 
 
 class MicrosoftSentinelQueryRender(PlatformQueryRender):
