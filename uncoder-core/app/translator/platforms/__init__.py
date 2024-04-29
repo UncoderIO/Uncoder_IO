@@ -1,4 +1,3 @@
-from app.translator.platforms.arcsight.renders.arcsight_cti import ArcsightKeyword
 from app.translator.platforms.athena.parsers.athena import AthenaQueryParser
 from app.translator.platforms.athena.renders.athena import AthenaQueryRender
 from app.translator.platforms.athena.renders.athena_cti import AthenaCTI
@@ -116,7 +115,6 @@ __ALL_RENDERS_CTI = (
     MicrosoftDefenderCTI(),
     QRadarCTI(),
     SplunkCTI(),
-    ArcsightKeyword(),
     ChronicleQueryCTI(),
     CrowdStrikeCTI(),
     SumologicCTI(),
