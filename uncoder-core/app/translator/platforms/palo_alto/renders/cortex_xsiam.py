@@ -23,6 +23,7 @@ from app.translator.core.exceptions.render import UnsupportedRenderMethod
 from app.translator.core.mapping import LogSourceSignature
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
+from app.translator.managers import render_manager
 from app.translator.platforms.palo_alto.const import cortex_xql_query_details
 from app.translator.platforms.palo_alto.escape_manager import cortex_xql_escape_manager
 from app.translator.platforms.palo_alto.mapping import cortex_xsiam_mappings, CortexXSIAMMappings
@@ -91,6 +92,7 @@ class CortexXSIAMFieldValue(BaseQueryFieldValue):
         raise UnsupportedRenderMethod(platform_name=self.details.name, method="Keywords")
 
 
+@render_manager.register
 class CortexXQLQueryRender(PlatformQueryRender):
     details: PlatformDetails = cortex_xql_query_details
     mappings: CortexXSIAMMappings = cortex_xsiam_mappings
