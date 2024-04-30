@@ -9,5 +9,5 @@ if TYPE_CHECKING:
 
 
 class MicrosoftFunctionsManager(PlatformFunctionsManager):
-    def init_search_func_render(self, platform_render: MicrosoftSentinelQueryRender) -> None:
+    def post_init_configure(self, platform_render: MicrosoftSentinelQueryRender) -> None:
         pass
