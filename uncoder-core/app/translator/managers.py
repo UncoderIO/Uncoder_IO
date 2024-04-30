@@ -77,7 +77,7 @@ class ParserManager(Manager):
                 alt_platform=platform.details.alt_platform,
                 first_choice=platform.details.first_choice,
             )
-            for platform in self.main_platforms.values()
+            for platform in self.platforms.values()
         ]
         return sorted(platforms, key=lambda platform: platform.group_name)
 
