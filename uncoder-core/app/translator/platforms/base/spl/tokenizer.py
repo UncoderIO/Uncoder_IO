@@ -25,6 +25,11 @@ from app.translator.core.mixins.logic import ANDLogicOperatorMixin
 from app.translator.core.models.field import FieldValue, Keyword
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.tokenizer import QueryTokenizer
+from app.translator.platforms.base.spl.const import DOUBLE_QUOTES_VALUE_PATTERN as D_Q_V_PATTERN
+from app.translator.platforms.base.spl.const import FIELD_PATTERN
+from app.translator.platforms.base.spl.const import NO_QUOTES_VALUES_PATTERN as NO_Q_V_PATTERN
+from app.translator.platforms.base.spl.const import NUM_VALUE_PATTERN as N_V_PATTERN
+from app.translator.platforms.base.spl.const import SINGLE_QUOTES_VALUE_PATTERN as S_Q_V_PATTERN
 from app.translator.platforms.base.spl.escape_manager import spl_escape_manager
 from app.translator.tools.utils import get_match_group
 
@@ -40,13 +45,11 @@ class SplTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
     }
     multi_value_operators_map: ClassVar[dict[str, str]] = {"in": OperatorType.EQ}
 
-    field_pattern = r"(?P<field_name>[a-zA-Z0-9\.\-_\{\}]+)"
-    num_value_pattern = rf"(?P<{ValueType.number_value}>\d+(?:\.\d+)*)(?=$|\s|\))"
-    double_quotes_value_pattern = rf'"(?P<{ValueType.double_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,;`\?~‘○×\'\.<>$&^@!\]\[\(\)\{{\}}\s]|\\\"|\\)*)"\s*'  # noqa: E501, RUF001
-    single_quotes_value_pattern = (
-        rf"'(?P<{ValueType.single_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,;\"\.<>$&^@!\(\)\{{\}}\s]|\\\'|\\)*)'\s*"
-    )
-    no_quotes_value_pattern = rf"(?P<{ValueType.no_quotes_value}>(?:[:a-zA-Z\*0-9+%#\-_/,\.$&^@!]|\\\s|\\=|\\!=|\\<|\\<=|\\>|\\>=|\\\\)+)(?=$|\s|\))"  # noqa: E501
+    field_pattern = FIELD_PATTERN.replace("___group_name___", "field_name")
+    num_value_pattern = rf"{N_V_PATTERN.replace('___group_name___', ValueType.number_value)}(?=$|\s|\))"
+    double_quotes_value_pattern = rf"{D_Q_V_PATTERN.replace('___group_name___', ValueType.double_quotes_value)}\s*"
+    single_quotes_value_pattern = rf"{S_Q_V_PATTERN.replace('___group_name___', ValueType.single_quotes_value)}\s*"
+    no_quotes_value_pattern = rf"{NO_Q_V_PATTERN.replace('___group_name___', ValueType.no_quotes_value)}(?=$|\s|\))"
     _value_pattern = (
         rf"{num_value_pattern}|{no_quotes_value_pattern}|{double_quotes_value_pattern}|{single_quotes_value_pattern}"
     )

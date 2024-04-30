@@ -31,6 +31,8 @@ from app.translator.core.exceptions.parser import (
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.field import Field, FieldValue, Keyword
 from app.translator.core.models.functions.base import Function
+from app.translator.core.models.functions.eval import EvalArg
+from app.translator.core.models.functions.rename import RenameArg
 from app.translator.core.models.functions.sort import SortArg
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.str_value_manager import StrValue, StrValueManager
@@ -323,6 +325,11 @@ class QueryTokenizer(BaseTokenizer):
                 result.extend(self.get_field_tokens_from_func_args(args=arg.by_clauses))
             elif isinstance(arg, SortArg):
                 result.append(arg.field)
+            elif isinstance(arg, RenameArg):
+                result.append(arg.field_)
+            elif isinstance(arg, EvalArg):
+                result.append(arg.field_)
+                result.extend(self.get_field_tokens_from_func_args(args=arg.expression))
         return result
 
     @staticmethod

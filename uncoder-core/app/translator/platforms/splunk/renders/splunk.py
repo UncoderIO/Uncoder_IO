@@ -40,4 +40,4 @@ class SplunkQueryRender(SplQueryRender):
 
     def __init__(self):
         super().__init__()
-        self.platform_functions.manager.init_search_func_render(self)
+        self.platform_functions.manager.post_init_configure(self)

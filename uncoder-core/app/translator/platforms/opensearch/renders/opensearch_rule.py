@@ -50,7 +50,10 @@ class OpenSearchRuleRender(OpenSearchQueryRender):
 
     field_value_map = OpenSearchRuleFieldValue(or_token=or_token)
     query_pattern = "{prefix} {query} {functions}"
-    fields: dict = {}
+
+    def __init__(self):
+        super().__init__()
+        self.fields = {}
 
     def finalize_query(
         self,
