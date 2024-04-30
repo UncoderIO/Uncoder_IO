@@ -24,7 +24,7 @@ from app.translator.platforms.splunk.functions import SplunkFunctions, splunk_fu
 from app.translator.platforms.splunk.mapping import SplunkMappings, splunk_mappings
 
 
-@parser_manager.register_roota_parser
+@parser_manager.register_supported_by_roota
 class SplunkQueryParser(SplQueryParser):
     details: PlatformDetails = splunk_query_details
 

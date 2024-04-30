@@ -32,7 +32,7 @@ from app.translator.platforms.sigma.mapping import SigmaMappings, sigma_mappings
 from app.translator.platforms.sigma.tokenizer import SigmaConditionTokenizer, SigmaTokenizer
 
 
-@parser_manager.register_parser
+@parser_manager.register_main
 class SigmaParser(YamlRuleMixin):
     details: PlatformDetails = PlatformDetails(**SIGMA_RULE_DETAILS)
     condition_tokenizer = SigmaConditionTokenizer()

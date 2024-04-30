@@ -28,7 +28,7 @@ from app.translator.platforms.microsoft.mapping import MicrosoftSentinelMappings
 from app.translator.platforms.microsoft.tokenizer import MicrosoftSentinelTokenizer
 
 
-@parser_manager.register_roota_parser
+@parser_manager.register_supported_by_roota
 class MicrosoftSentinelQueryParser(PlatformQueryParser):
     platform_functions: MicrosoftFunctions = microsoft_sentinel_functions
     mappings: MicrosoftSentinelMappings = microsoft_sentinel_mappings

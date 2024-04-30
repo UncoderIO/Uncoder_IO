@@ -28,7 +28,7 @@ from app.translator.platforms.logscale.mapping import LogScaleMappings, logscale
 from app.translator.platforms.logscale.tokenizer import LogScaleTokenizer
 
 
-@parser_manager.register_roota_parser
+@parser_manager.register_supported_by_roota
 class LogScaleQueryParser(PlatformQueryParser):
     details: PlatformDetails = logscale_query_details
     platform_functions: LogScaleFunctions = log_scale_functions

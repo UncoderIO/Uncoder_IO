@@ -26,7 +26,7 @@ from app.translator.platforms.chronicle.mapping import ChronicleMappings, chroni
 from app.translator.platforms.chronicle.tokenizer import ChronicleQueryTokenizer
 
 
-@parser_manager.register_roota_parser
+@parser_manager.register_supported_by_roota
 class ChronicleQueryParser(PlatformQueryParser):
     mappings: ChronicleMappings = chronicle_mappings
     tokenizer: ChronicleQueryTokenizer = ChronicleQueryTokenizer()

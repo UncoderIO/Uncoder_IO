@@ -23,7 +23,7 @@ from app.translator.platforms.opensearch.const import opensearch_query_details
 from app.translator.platforms.opensearch.mapping import OpenSearchMappings, opensearch_mappings
 
 
-@parser_manager.register_roota_parser
+@parser_manager.register_supported_by_roota
 class OpenSearchQueryParser(LuceneQueryParser):
     details: PlatformDetails = opensearch_query_details
     mappings: OpenSearchMappings = opensearch_mappings

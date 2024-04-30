@@ -29,7 +29,7 @@ from app.translator.platforms.qradar.tokenizer import QradarTokenizer
 from app.translator.tools.utils import get_match_group
 
 
-@parser_manager.register_roota_parser
+@parser_manager.register_supported_by_roota
 class QradarQueryParser(PlatformQueryParser):
     details: PlatformDetails = qradar_query_details
     tokenizer = QradarTokenizer()

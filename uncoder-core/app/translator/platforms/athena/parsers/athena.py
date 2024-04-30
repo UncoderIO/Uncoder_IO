@@ -28,7 +28,7 @@ from app.translator.platforms.athena.mapping import AthenaMappings, athena_mappi
 from app.translator.platforms.athena.tokenizer import AthenaTokenizer
 
 
-@parser_manager.register_roota_parser
+@parser_manager.register_supported_by_roota
 class AthenaQueryParser(PlatformQueryParser):
     details: PlatformDetails = athena_details
     mappings: AthenaMappings = athena_mappings

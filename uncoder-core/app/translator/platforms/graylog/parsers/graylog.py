@@ -23,7 +23,7 @@ from app.translator.platforms.graylog.const import graylog_details
 from app.translator.platforms.graylog.mapping import GraylogMappings, graylog_mappings
 
 
-@parser_manager.register_roota_parser
+@parser_manager.register_supported_by_roota
 class GraylogQueryParser(LuceneQueryParser):
     details: PlatformDetails = graylog_details
     mappings: GraylogMappings = graylog_mappings

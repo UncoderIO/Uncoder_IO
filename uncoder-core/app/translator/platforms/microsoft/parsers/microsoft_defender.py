@@ -24,7 +24,7 @@ from app.translator.platforms.microsoft.mapping import MicrosoftDefenderMappings
 from app.translator.platforms.microsoft.parsers.microsoft_sentinel import MicrosoftSentinelQueryParser
 
 
-@parser_manager.register_roota_parser
+@parser_manager.register_supported_by_roota
 class MicrosoftDefenderQueryParser(MicrosoftSentinelQueryParser):
     mappings: MicrosoftDefenderMappings = microsoft_defender_mappings
     details: PlatformDetails = microsoft_defender_details

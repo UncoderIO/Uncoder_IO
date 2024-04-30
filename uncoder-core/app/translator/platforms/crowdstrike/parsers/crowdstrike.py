@@ -23,7 +23,7 @@ from app.translator.platforms.crowdstrike.functions import CrowdStrikeFunctions,
 from app.translator.platforms.crowdstrike.mapping import CrowdstrikeMappings, crowdstrike_mappings
 
 
-@parser_manager.register_roota_parser
+@parser_manager.register_supported_by_roota
 class CrowdStrikeQueryParser(SplQueryParser):
     details: PlatformDetails = crowdstrike_query_details
 

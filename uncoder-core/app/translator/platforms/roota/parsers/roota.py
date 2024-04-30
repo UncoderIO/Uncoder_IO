@@ -27,7 +27,7 @@ from app.translator.managers import parser_manager
 from app.translator.platforms.roota.const import ROOTA_RULE_DETAILS
 
 
-@parser_manager.register_parser
+@parser_manager.register_main
 class RootAParser(QueryParser, YamlRuleMixin):
     parser_manager = parser_manager
     details: PlatformDetails = PlatformDetails(**ROOTA_RULE_DETAILS)
@@ -65,7 +65,7 @@ class RootAParser(QueryParser, YamlRuleMixin):
         )
 
     def __get_parser_class(self, parser: str) -> PlatformQueryParser:
-        parser_class = self.parser_manager.get_roota_parser(parser)
+        parser_class = self.parser_manager.get_supported_by_roota(parser)
         if parser_class:
             return parser_class
         raise UnsupportedRootAParser(parser=parser)

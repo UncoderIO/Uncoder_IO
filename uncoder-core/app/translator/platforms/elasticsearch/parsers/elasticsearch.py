@@ -23,7 +23,7 @@ from app.translator.platforms.elasticsearch.const import elasticsearch_lucene_qu
 from app.translator.platforms.elasticsearch.mapping import ElasticSearchMappings, elasticsearch_mappings
 
 
-@parser_manager.register_roota_parser
+@parser_manager.register_supported_by_roota
 class ElasticSearchQueryParser(LuceneQueryParser):
     details: PlatformDetails = elasticsearch_lucene_query_details
     mappings: ElasticSearchMappings = elasticsearch_mappings
