@@ -18,24 +18,55 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
 from __future__ import annotations
 
+import re
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from functools import cached_property
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from app.translator.core.exceptions.functions import InvalidFunctionSignature, NotSupportedFunctionException
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.field import Field
 from app.translator.core.models.functions.base import Function, ParsedFunctions, RenderedFunctions
-from app.translator.core.tokenizer import BaseTokenizer
 from settings import INIT_FUNCTIONS
 
 if TYPE_CHECKING:
     from app.translator.core.render import PlatformQueryRender
 
 
-class FunctionParser(ABC):
-    tokenizer: BaseTokenizer = None
+@dataclass
+class FunctionMatchContainer:
+    name: str
+    match: re.Match
 
+
+class BaseFunctionParser(ABC):
+    @abstractmethod
+    def parse(self, *args, **kwargs) -> Function:
+        raise NotImplementedError
+
+    def tokenize_body(self, func_body: str) -> list[Any]:
+        tokenized = []
+        while func_body:
+            identifier, func_body = self._get_next_token(func_body=func_body)
+            tokenized.append(identifier)
+        return tokenized
+
+    def _get_next_token(self, func_body: str) -> tuple[Any, str]:
+        raise NotImplementedError
+
+
+class FunctionParser(BaseFunctionParser):
+    @abstractmethod
+    def parse(self, func_name: str, match: re.Match) -> Function:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_func_match(self, higher_order_func_body: str) -> Optional[FunctionMatchContainer]:
+        raise NotImplementedError
+
+
+class HigherOrderFunctionParser(BaseFunctionParser):  # for highest level functions e.g. | stats, | search, | sort, etc.
     @abstractmethod
     def parse(self, func_body: str, raw: str) -> Function:
         raise NotImplementedError
@@ -67,18 +98,18 @@ class FunctionRender(ABC):
 
 class PlatformFunctionsManager:
     def __init__(self):
-        self._parsers_map: dict[str, FunctionParser] = {}
+        self._parsers_map: dict[str, HigherOrderFunctionParser] = {}
         self._renders_map: dict[str, FunctionRender] = {}
         self._names_map: dict[str, str] = {}
 
-    def init_search_func_render(self, platform_render: PlatformQueryRender) -> None:
+    def post_init_configure(self, platform_render: PlatformQueryRender) -> None:
         raise NotImplementedError
 
     @cached_property
     def _inverted_names_map(self) -> dict[str, str]:
         return {value: key for key, value in self._names_map.items()}
 
-    def get_parser(self, generic_func_name: str) -> FunctionParser:
+    def get_parser(self, generic_func_name: str) -> HigherOrderFunctionParser:
         if INIT_FUNCTIONS and (parser := self._parsers_map.get(generic_func_name)):
             return parser
 
