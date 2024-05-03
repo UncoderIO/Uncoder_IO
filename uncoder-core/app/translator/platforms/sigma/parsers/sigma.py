@@ -49,6 +49,7 @@ class SigmaParser(YamlRuleMixin):
             rule: dict,
             source_mapping_ids: list[str],
             parsed_logsources: dict,
+            fields_tokens: list[Field],
             sigma_fields_tokens: Union[list[Field], None] = None
     ) -> MetaInfoContainer:
         return MetaInfoContainer(
@@ -57,7 +58,8 @@ class SigmaParser(YamlRuleMixin):
             description=rule.get("description"),
             author=rule.get("author"),
             date=rule.get("date"),
-            fields=sigma_fields_tokens,
+            output_table_fields=sigma_fields_tokens,
+            query_fields=fields_tokens,
             references=rule.get("references", []),
             license_=rule.get("license"),
             mitre_attack=self.parse_mitre_attack(rule.get("tags", [])),
@@ -97,6 +99,7 @@ class SigmaParser(YamlRuleMixin):
                 rule=sigma_rule,
                 source_mapping_ids=[source_mapping.source_id for source_mapping in source_mappings],
                 sigma_fields_tokens=sigma_fields_tokens,
-                parsed_logsources=log_sources
+                parsed_logsources=log_sources,
+                fields_tokens=field_tokens
             )
         )
