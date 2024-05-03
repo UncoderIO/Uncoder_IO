@@ -22,7 +22,9 @@ class SigmaLogSourceSignature(LogSourceSignature):
         product_match = set(product or []).issubset(self.products)
         category_match = set(category or []).issubset(self.categories)
         service_match = set(service or []).issubset(self.services)
-        return product_match and category_match and service_match
+        if not product and not service:
+            return category_match
+        return product_match and service_match or product_match and category_match
 
     def __str__(self) -> str:
         raise NotImplementedError
