@@ -22,8 +22,9 @@ from typing import Union
 from app.translator.core.exceptions.parser import TokenizerGeneralException
 from app.translator.core.functions import PlatformFunctions
 from app.translator.core.mapping import BasePlatformMappings, SourceMapping
-from app.translator.core.models.field import FieldValue
+from app.translator.core.models.field import FieldValue, Field, FieldValue, Keyword
 from app.translator.core.models.functions.base import ParsedFunctions
+from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.tokenizer import TOKEN_TYPE, QueryTokenizer
@@ -44,13 +45,16 @@ class PlatformQueryParser(QueryParser, ABC):
     details: PlatformDetails = None
     platform_functions: PlatformFunctions = None
 
+    def get_fields_tokens(self, tokens: list[Union[FieldValue, Keyword, Identifier]]) -> list[Field]:
+        return [token.field for token in self.tokenizer.filter_tokens(tokens, FieldValue)]
+
     def get_tokens_and_source_mappings(
         self, query: str, log_sources: dict[str, Union[str, list[str]]]
     ) -> tuple[list[TOKEN_TYPE], list[SourceMapping]]:
         if not query:
             raise TokenizerGeneralException("Can't translate empty query. Please provide more details")
         tokens = self.tokenizer.tokenize(query=query)
-        field_tokens = [token.field for token in self.tokenizer.filter_tokens(tokens, FieldValue)]
+        field_tokens = self.get_fields_tokens(tokens=tokens)
         field_names = [field.source_name for field in field_tokens]
         source_mappings = self.mappings.get_suitable_source_mappings(field_names=field_names, **log_sources)
         self.tokenizer.set_field_tokens_generic_names_map(field_tokens, source_mappings, self.mappings.default_mapping)

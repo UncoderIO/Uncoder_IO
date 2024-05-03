@@ -1,0 +1,14 @@
+platform: Sigma
+source: linux_file_event
+
+log_source:
+  product: [linux]
+  category: [file_event, file_access, file_create, file_delete, file_rename, file_change]
+
+default_log_source:
+  product: linux
+  category: file_event
+
+field_mapping:
+  Image: Image
+  TargetFilename: TargetFilename

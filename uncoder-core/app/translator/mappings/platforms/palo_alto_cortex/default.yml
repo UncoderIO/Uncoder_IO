@@ -4,3 +4,17 @@ source: default
 
 default_log_source:
   datamodel: datamodel
+
+
+field_mapping:
+  CommandLine: xdm.target.process.command_line
+  Image:
+    - xdm.target.process.name
+    - xdm.source.process.name
+  ParentCommandLine: xdm.source.process.command_line
+  ParentImage: xdm.source.process.name
+  User: xdm.source.user.username
+  TargetFilename: xdm.target.file.filename
+  TargetImage: xdm.target.process.name
+  SourceImage: xdm.source.process.name
+  EventID: action_evtlog_event_id

@@ -25,7 +25,7 @@ from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
 from app.translator.platforms.palo_alto.const import cortex_xql_query_details
 from app.translator.platforms.palo_alto.escape_manager import cortex_xql_escape_manager
-from app.translator.platforms.palo_alto.mapping import cortex_xsiam_mappings, CortexXSIAMMappings
+from app.translator.platforms.palo_alto.mapping import CortexXSIAMMappings, cortex_xsiam_mappings
 
 
 class CortexXSIAMFieldValue(BaseQueryFieldValue):
@@ -35,22 +35,22 @@ class CortexXSIAMFieldValue(BaseQueryFieldValue):
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             values = ", ".join(f'"{v}"' for v in value)
-            return f'{field} in ("{values}")'
-        elif isinstance(value, int):
-            return f'{field} = {value}'
+            return f'{field} in ({values})'
+        if isinstance(value, int):
+            return f"{field} = {value}"
         return f'{field} = "{value}"'
 
     def less_modifier(self, field: str, value: Union[int, str]) -> str:
-        return f'{field} < {value}'
+        return f"{field} < {value}"
 
     def less_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
-        return f'{field} <= {value}'
+        return f"{field} <= {value}"
 
     def greater_modifier(self, field: str, value: Union[int, str]) -> str:
-        return f'{field} > {value}'
+        return f"{field} > {value}"
 
     def greater_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
-        return f'{field} >= {value}'
+        return f"{field} >= {value}"
 
     def not_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
@@ -64,7 +64,9 @@ class CortexXSIAMFieldValue(BaseQueryFieldValue):
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            return f"({self.or_token.join(self.endswith_modifier(field=field, value=self.apply_value(v)) for v in value)})"
+            return (
+                f"({self.or_token.join(self.endswith_modifier(field=field, value=self.apply_value(v)) for v in value)})"
+            )
         return f'{field} ~= ".*{self.apply_value(value)}"'
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
@@ -77,15 +79,15 @@ class CortexXSIAMFieldValue(BaseQueryFieldValue):
             return f"({self.or_token.join(self.regex_modifier(field=field, value=self.apply_value(v)) for v in value)})"
         return f'{field} ~= "{self.apply_value(value)}"'
 
-    def is_none(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
+    def is_none(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.is_none(field=field, value=v) for v in value)})"
-        return f'{field} = null'
+        return f"{field} = null"
 
-    def is_not_none(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
+    def is_not_none(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.is_not_none(field=field, value=v) for v in value)})"
-        return f'{field} != null'
+        return f"{field} != null"
 
     def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
         raise UnsupportedRenderMethod(platform_name=self.details.name, method="Keywords")
@@ -94,6 +96,10 @@ class CortexXSIAMFieldValue(BaseQueryFieldValue):
 class CortexXQLQueryRender(PlatformQueryRender):
     details: PlatformDetails = cortex_xql_query_details
     mappings: CortexXSIAMMappings = cortex_xsiam_mappings
+    is_strict_mapping = True
+    raw_log_field_pattern = (
+        '| alter {field} = regextract(to_json_string(action_evtlog_data_fields)->{field}{{}}, ""(.*)"")'
+    )
 
     or_token = "or"
     and_token = "and"
@@ -105,6 +111,6 @@ class CortexXQLQueryRender(PlatformQueryRender):
     is_multi_line_comment = False
 
     def generate_prefix(self, log_source_signature: LogSourceSignature) -> str:
-        preset = f"preset = {log_source_signature.preset}" if log_source_signature.preset else None
-        dataset = f"dataset = {log_source_signature.dataset}" if log_source_signature.dataset else None
+        preset = f"preset = {log_source_signature._default_source.get('preset')}" if log_source_signature._default_source.get('preset') else None
+        dataset = f"dataset = {log_source_signature._default_source.get('dataset')}" if log_source_signature._default_source.get('dataset') else None
         return preset or dataset or "datamodel"

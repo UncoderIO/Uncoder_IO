@@ -1,0 +1,24 @@
+platform: Palo Alto XSIAM
+source: windows_application
+
+default_log_source:
+  dataset: microsoft_windows_raw
+
+field_mapping:
+  EventID: action_evtlog_event_id
+
+raw_log_fields:
+  - src_ip
+  - source
+  - additional_information
+  - EventData
+  - Channel
+  - statement
+  - Faulting application path
+  - object_name
+  - class_type
+  - action_id
+  - Provider_Name
+  - Data
+  - Message
+  - Level

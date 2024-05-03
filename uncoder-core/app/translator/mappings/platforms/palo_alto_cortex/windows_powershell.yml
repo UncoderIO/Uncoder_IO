@@ -1,0 +1,19 @@
+platform: Palo Alto XSIAM
+source: windows_powershell
+
+
+default_log_source:
+  dataset: microsoft_windows_raw
+
+field_mapping:
+  EventID: action_evtlog_event_id
+
+
+raw_log_fields:
+  - CommandLine
+  - ScriptBlockText
+  - Payload
+  - HostApplication
+  - ContextInfo
+  - HostName
+  - EngineVersion
