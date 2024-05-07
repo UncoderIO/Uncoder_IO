@@ -110,10 +110,10 @@ class MicrosoftSentinelFieldValue(BaseQueryFieldValue):
             return f"({self.or_token.join(self.keywords(field=field, value=v) for v in value)})"
         return f"* contains @'{self.__escape_value(value)}'"
 
-    def is_none(self, field: str, value: Union[str, int]) -> str:
+    def is_none(self, field: str, value: Union[str, int]) -> str:  # noqa: ARG002
         return f"isempty({self.apply_value(value)})"
 
-    def is_not_none(self, field: str, value: Union[str, int]) -> str:
+    def is_not_none(self, field: str, value: Union[str, int]) -> str:  # noqa: ARG002
         return f"isnotempty({self.apply_value(value)})"
 
 

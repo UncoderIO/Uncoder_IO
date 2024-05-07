@@ -300,8 +300,9 @@ class PlatformQueryRender(QueryRender):
         for source_mapping in source_mappings:
             prefix = self.generate_prefix(source_mapping.log_source_signature)
             if source_mapping.raw_log_fields:
-                defined_raw_log_fields = self.generate_raw_log_fields(fields=query_container.meta_info.query_fields,
-                                                                      source_mapping=source_mapping)
+                defined_raw_log_fields = self.generate_raw_log_fields(
+                    fields=query_container.meta_info.query_fields, source_mapping=source_mapping
+                )
                 prefix += f"\n{defined_raw_log_fields}\n"
             result = self.generate_query(tokens=query_container.tokens, source_mapping=source_mapping)
             rendered_functions = self.generate_functions(query_container.functions.functions, source_mapping)
