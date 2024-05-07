@@ -35,7 +35,7 @@ class CortexXSIAMFieldValue(BaseQueryFieldValue):
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             values = ", ".join(f'"{v}"' for v in value)
-            return f'{field} in ({values})'
+            return f"{field} in ({values})"
         if isinstance(value, int):
             return f"{field} = {value}"
         return f'{field} = "{value}"'
@@ -111,6 +111,14 @@ class CortexXQLQueryRender(PlatformQueryRender):
     is_multi_line_comment = False
 
     def generate_prefix(self, log_source_signature: LogSourceSignature) -> str:
-        preset = f"preset = {log_source_signature._default_source.get('preset')}" if log_source_signature._default_source.get('preset') else None
-        dataset = f"dataset = {log_source_signature._default_source.get('dataset')}" if log_source_signature._default_source.get('dataset') else None
+        preset = (
+            f"preset = {log_source_signature._default_source.get('preset')}"
+            if log_source_signature._default_source.get("preset")
+            else None
+        )
+        dataset = (
+            f"dataset = {log_source_signature._default_source.get('dataset')}"
+            if log_source_signature._default_source.get("dataset")
+            else None
+        )
         return preset or dataset or "datamodel"

@@ -186,6 +186,12 @@ class LogRhythmAxonFieldValue(BaseQueryFieldValue):
             return self.contains_modifier(field, value)
         return f'{field} matches "{value}"'
 
+    def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
+        if isinstance(value, list):
+            rendered_keywords = [f'{UNMAPPED_FIELD_DEFAULT_NAME} CONTAINS "{v}"' for v in value]
+            return f"({self.or_token.join(rendered_keywords)})"
+        return f'{UNMAPPED_FIELD_DEFAULT_NAME} CONTAINS "{value}"'
+
 
 class LogRhythmAxonQueryRender(PlatformQueryRender):
     details: PlatformDetails = logrhythm_axon_query_details
