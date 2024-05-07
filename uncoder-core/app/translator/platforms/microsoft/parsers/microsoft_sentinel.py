@@ -33,7 +33,7 @@ class MicrosoftSentinelQueryParser(PlatformQueryParser):
     tokenizer = MicrosoftSentinelTokenizer()
     details: PlatformDetails = microsoft_sentinel_query_details
 
-    wrapped_with_comment_pattern = r"//.*(?:\n|$)"
+    wrapped_with_comment_pattern = r"^\s*//.*(?:\n|$)"
 
     def _parse_query(self, query: str) -> tuple[str, dict[str, list[str]], ParsedFunctions]:
         table, query, functions = self.platform_functions.parse(query)

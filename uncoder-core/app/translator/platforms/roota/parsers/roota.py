@@ -38,7 +38,7 @@ class RootAParser(QueryParser, YamlRuleMixin):
         "license",
     }
 
-    wrapped_with_comment_pattern = r"#.*(?:\n|$)"
+    wrapped_with_comment_pattern = r"^\s*#.*(?:\n|$)"
 
     def __parse_meta_info(self, rule: dict) -> MetaInfoContainer:
         mitre_attack = rule.get("mitre-attack") or []

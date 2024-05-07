@@ -33,7 +33,7 @@ class LogScaleQueryParser(PlatformQueryParser):
     tokenizer = LogScaleTokenizer()
     mappings: LogScaleMappings = logscale_mappings
 
-    wrapped_with_comment_pattern = r"/\*(?:|\n|.)*\*/"
+    wrapped_with_comment_pattern = r"^\s*/\*(?:|\n|.)*\*/"
 
     def _parse_query(self, query: str) -> tuple[str, ParsedFunctions]:
         functions, query = self.platform_functions.parse(query)

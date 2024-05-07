@@ -34,7 +34,7 @@ class SplQueryParser(PlatformQueryParser):
     platform_functions: SplFunctions = None
     tokenizer = SplTokenizer()
 
-    wrapped_with_comment_pattern = r"```(?:|\n|.)*```"
+    wrapped_with_comment_pattern = r"^\s*```(?:|\n|.)*```"
 
     def _parse_log_sources(self, query: str) -> tuple[dict[str, list[str]], str]:
         log_sources = {}

@@ -30,7 +30,7 @@ class ChronicleQueryParser(PlatformQueryParser):
     tokenizer: ChronicleQueryTokenizer = ChronicleQueryTokenizer()
     details: PlatformDetails = chronicle_query_details
 
-    wrapped_with_comment_pattern = r"//.*(?:\n|$)"
+    wrapped_with_comment_pattern = r"^\s*//.*(?:\n|$)"
 
     def parse(self, raw_query_container: RawQueryContainer) -> TokenizedQueryContainer:
         tokens, source_mappings = self.get_tokens_and_source_mappings(raw_query_container.query, {})

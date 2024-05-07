@@ -39,7 +39,7 @@ class SigmaParser(QueryParser, YamlRuleMixin):
     mappings: SigmaMappings = sigma_mappings
     mandatory_fields = {"title", "description", "logsource", "detection"}
 
-    wrapped_with_comment_pattern = r"#.*(?:\n|$)"
+    wrapped_with_comment_pattern = r"^\s*#.*(?:\n|$)"
 
     @staticmethod
     def __parse_false_positives(false_positives: Union[str, list[str], None]) -> list:
