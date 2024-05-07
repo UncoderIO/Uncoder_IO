@@ -98,7 +98,7 @@ class CortexXQLQueryRender(PlatformQueryRender):
     mappings: CortexXSIAMMappings = cortex_xsiam_mappings
     is_strict_mapping = True
     raw_log_field_pattern = (
-        '| alter {field} = regextract(to_json_string(action_evtlog_data_fields)->{field}{{}}, ""(.*)"")'
+        '| alter {field} = regextract(to_json_string(action_evtlog_data_fields)->{field}{{}}, "\\"(.*)\\"")'
     )
 
     or_token = "or"
