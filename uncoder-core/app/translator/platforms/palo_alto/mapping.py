@@ -1,6 +1,12 @@
 from typing import Optional
 
-from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
+from app.translator.core.mapping import (
+    DEFAULT_MAPPING_NAME,
+    BasePlatformMappings,
+    FieldsMapping,
+    LogSourceSignature,
+    SourceMapping,
+)
 
 
 class CortexXSIAMLogSourceSignature(LogSourceSignature):
@@ -17,6 +23,11 @@ class CortexXSIAMLogSourceSignature(LogSourceSignature):
 
 
 class CortexXSIAMMappings(BasePlatformMappings):
+    skip_load_default_mappings: bool = False
+
+    def update_default_source_mapping(self, default_mapping: SourceMapping, fields_mapping: FieldsMapping) -> None:
+        ...
+
     def prepare_log_source_signature(self, mapping: dict) -> CortexXSIAMLogSourceSignature:
         preset = mapping.get("log_source", {}).get("preset")
         dataset = mapping.get("log_source", {}).get("dataset")

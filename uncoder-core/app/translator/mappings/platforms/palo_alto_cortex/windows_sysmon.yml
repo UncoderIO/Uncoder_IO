@@ -1,0 +1,60 @@
+platform: Palo Alto XSIAM
+source: windows_sysmon
+
+
+default_log_source:
+  dataset: microsoft_windows_raw
+
+field_mapping:
+  EventID: action_evtlog_event_id
+
+raw_log_fields:
+  - CommandLine
+  - Image
+  - ParentImage
+  - CallTrace
+  - Company
+  - CurrentDirectory
+  - Description
+  - DestinationHostname
+  - DestinationIp
+  - DestinationIsIpv6
+  - DestinationPort
+  - DestinationPortName
+  - Hashes
+  - Initiated
+  - IntegrityLevel
+  - ParentCommandLine
+  - Product
+  - Protocol
+  - RuleName
+  - SourceHostname
+  - SourceIp
+  - SourceIsIpv6
+  - SourcePort
+  - SourcePortName
+  - TargetFilename
+  - User
+  - OriginalFileName
+  - Signed
+  - Signature
+  - SignatureStatus
+  - TargetObject
+  - Details
+  - QueryName
+  - QueryResults
+  - QueryStatus
+  - IsExecutable
+  - PipeName
+  - ImageLoaded
+  - ImagePath
+  - Imphash
+  - SourceImage
+  - StartModule
+  - TargetImage
+  - Device
+  - ProcessID
+  - FileVersion
+  - StartAddress
+  - StartFunction
+  - EventType

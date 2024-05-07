@@ -34,6 +34,8 @@ class ChronicleQueryParser(PlatformQueryParser):
 
     def parse(self, raw_query_container: RawQueryContainer) -> TokenizedQueryContainer:
         tokens, source_mappings = self.get_tokens_and_source_mappings(raw_query_container.query, {})
+        fields_tokens = self.get_fields_tokens(tokens=tokens)
         meta_info = raw_query_container.meta_info
+        meta_info.query_fields = fields_tokens
         meta_info.source_mapping_ids = [source_mapping.source_id for source_mapping in source_mappings]
         return TokenizedQueryContainer(tokens=tokens, meta_info=meta_info)

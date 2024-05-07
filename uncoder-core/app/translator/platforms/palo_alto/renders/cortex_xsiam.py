@@ -38,7 +38,7 @@ class CortexXSIAMFieldValue(BaseQueryFieldValue):
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             values = ", ".join(f'"{v}"' for v in value)
-            return f'{field} in ("{values}")'
+            return f"{field} in ({values})"
         if isinstance(value, int):
             return f"{field} = {value}"
         return f'{field} = "{value}"'
@@ -100,6 +100,10 @@ class CortexXSIAMFieldValue(BaseQueryFieldValue):
 class CortexXQLQueryRender(PlatformQueryRender):
     details: PlatformDetails = cortex_xql_query_details
     mappings: CortexXSIAMMappings = cortex_xsiam_mappings
+    is_strict_mapping = True
+    raw_log_field_pattern = (
+        '| alter {field} = regextract(to_json_string(action_evtlog_data_fields)->{field}{{}}, ""(.*)"")'
+    )
 
     or_token = "or"
     and_token = "and"
@@ -111,6 +115,14 @@ class CortexXQLQueryRender(PlatformQueryRender):
     is_single_line_comment = False
 
     def generate_prefix(self, log_source_signature: CortexXSIAMLogSourceSignature) -> str:
-        preset = f"preset = {log_source_signature.preset}" if log_source_signature.preset else None
-        dataset = f"dataset = {log_source_signature.dataset}" if log_source_signature.dataset else None
+        preset = (
+            f"preset = {log_source_signature._default_source.get('preset')}"
+            if log_source_signature._default_source.get("preset")
+            else None
+        )
+        dataset = (
+            f"dataset = {log_source_signature._default_source.get('dataset')}"
+            if log_source_signature._default_source.get("dataset")
+            else None
+        )
         return preset or dataset or "datamodel"

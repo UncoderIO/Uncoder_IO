@@ -68,7 +68,9 @@ class SplQueryParser(PlatformQueryParser):
 
         query, log_sources, functions = self._parse_query(raw_query_container.query)
         tokens, source_mappings = self.get_tokens_and_source_mappings(query, log_sources)
+        fields_tokens = self.get_fields_tokens(tokens=tokens)
         self.set_functions_fields_generic_names(functions=functions, source_mappings=source_mappings)
         meta_info = raw_query_container.meta_info
+        meta_info.query_fields = fields_tokens
         meta_info.source_mapping_ids = [source_mapping.source_id for source_mapping in source_mappings]
         return TokenizedQueryContainer(tokens=tokens, meta_info=meta_info, functions=functions)

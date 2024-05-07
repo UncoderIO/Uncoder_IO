@@ -16,7 +16,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-
 from typing import Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
@@ -105,7 +104,7 @@ class LogScaleQueryRender(PlatformQueryRender):
 
     def __init__(self):
         super().__init__()
-        self.platform_functions.manager.init_search_func_render(self)
+        self.platform_functions.manager.post_init_configure(self)
 
     def wrap_with_comment(self, value: str) -> str:
         return f"/* {value} */"
