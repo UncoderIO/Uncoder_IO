@@ -34,7 +34,7 @@ class QueryParser(ABC):
     wrapped_with_comment_pattern: str = None
 
     def remove_comments(self, text: str) -> str:
-        return re.sub(self.wrapped_with_comment_pattern, "\n", text).strip()
+        return re.sub(self.wrapped_with_comment_pattern, "\n", text, flags=re.MULTILINE).strip()
 
     def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
         return RawQueryContainer(query=text, language=language)
