@@ -16,6 +16,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
 
+
 from app.translator.core.models.functions.base import ParsedFunctions
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
@@ -31,6 +32,8 @@ class LogScaleQueryParser(PlatformQueryParser):
     platform_functions: LogScaleFunctions = log_scale_functions
     tokenizer = LogScaleTokenizer()
     mappings: LogScaleMappings = logscale_mappings
+
+    wrapped_with_comment_pattern = r"^\s*/\*(?:|\n|.)*\*/"
 
     def _parse_query(self, query: str) -> tuple[str, ParsedFunctions]:
         functions, query = self.platform_functions.parse(query)

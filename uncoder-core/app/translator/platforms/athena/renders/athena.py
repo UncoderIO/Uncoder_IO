@@ -87,7 +87,7 @@ class AthenaQueryRender(PlatformQueryRender):
     field_value_map = AthenaFieldValue(or_token=or_token)
     query_pattern = "{prefix} WHERE {query} {functions}"
     comment_symbol = "--"
-    is_multi_line_comment = True
+    is_single_line_comment = True
 
     def generate_prefix(self, log_source_signature: LogSourceSignature) -> str:
         table = str(log_source_signature) if str(log_source_signature) else "eventlog"

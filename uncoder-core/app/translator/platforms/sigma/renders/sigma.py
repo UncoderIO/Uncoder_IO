@@ -46,7 +46,7 @@ class SigmaRender(QueryRender):
     keyword_num = 0
 
     comment_symbol = "#"
-    is_multi_line_comment = True
+    is_single_line_comment = True
 
     mappings: SigmaMappings = sigma_mappings
     details: PlatformDetails = PlatformDetails(**SIGMA_RULE_DETAILS)

@@ -15,7 +15,6 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
-
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.platforms.base.spl.parsers.spl import SplQueryParser
 from app.translator.platforms.crowdstrike.const import crowdstrike_query_details
@@ -31,3 +30,5 @@ class CrowdStrikeQueryParser(SplQueryParser):
 
     mappings: CrowdstrikeMappings = crowdstrike_mappings
     platform_functions: CrowdStrikeFunctions = crowd_strike_functions
+
+    wrapped_with_comment_pattern = r"^\s*`(?:|\n|.)*`"

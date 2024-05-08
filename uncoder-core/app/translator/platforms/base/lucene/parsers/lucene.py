@@ -29,6 +29,8 @@ class LuceneQueryParser(PlatformQueryParser):
     log_source_pattern = r"___source_type___\s*(?:[:=])\s*(?:\"?(?P<d_q_value>[%a-zA-Z_*:0-9\-/]+)\"|(?P<value>[%a-zA-Z_*:0-9\-/]+))(?:\s+(?:and|or)\s+|\s+)?"  # noqa: E501
     log_source_key_types = ("index", "event\.category")
 
+    wrapped_with_comment_pattern = r"^\s*//.*(?:\n|$)"
+
     def _parse_query(self, query: str) -> tuple[str, dict[str, list[str]]]:
         log_sources = {}
         for source_type in self.log_source_key_types:

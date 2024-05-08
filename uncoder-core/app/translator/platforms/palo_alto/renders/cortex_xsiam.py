@@ -20,12 +20,15 @@ from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.exceptions.render import UnsupportedRenderMethod
-from app.translator.core.mapping import LogSourceSignature
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
 from app.translator.platforms.palo_alto.const import cortex_xql_query_details
 from app.translator.platforms.palo_alto.escape_manager import cortex_xql_escape_manager
-from app.translator.platforms.palo_alto.mapping import CortexXSIAMMappings, cortex_xsiam_mappings
+from app.translator.platforms.palo_alto.mapping import (
+    CortexXSIAMLogSourceSignature,
+    CortexXSIAMMappings,
+    cortex_xsiam_mappings,
+)
 
 
 class CortexXSIAMFieldValue(BaseQueryFieldValue):
@@ -71,7 +74,8 @@ class CortexXSIAMFieldValue(BaseQueryFieldValue):
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            return f"({self.or_token.join(self.startswith_modifier(field=field, value=self.apply_value(v)) for v in value)})"
+            clause = self.or_token.join(self.startswith_modifier(field=field, value=self.apply_value(v)) for v in value)
+            return f"({clause})"
         return f'{field} ~= "{self.apply_value(value)}.*"'
 
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
@@ -108,9 +112,9 @@ class CortexXQLQueryRender(PlatformQueryRender):
     field_value_map = CortexXSIAMFieldValue(or_token=or_token)
     query_pattern = "{prefix} | filter {query} {functions}"
     comment_symbol = "//"
-    is_multi_line_comment = False
+    is_single_line_comment = False
 
-    def generate_prefix(self, log_source_signature: LogSourceSignature) -> str:
+    def generate_prefix(self, log_source_signature: CortexXSIAMLogSourceSignature) -> str:
         preset = (
             f"preset = {log_source_signature._default_source.get('preset')}"
             if log_source_signature._default_source.get("preset")

@@ -15,14 +15,14 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
-
+import re
 from abc import ABC, abstractmethod
 from typing import Union
 
 from app.translator.core.exceptions.parser import TokenizerGeneralException
 from app.translator.core.functions import PlatformFunctions
 from app.translator.core.mapping import BasePlatformMappings, SourceMapping
-from app.translator.core.models.field import FieldValue, Field, FieldValue, Keyword
+from app.translator.core.models.field import Field, FieldValue, Keyword
 from app.translator.core.models.functions.base import ParsedFunctions
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.platform_details import PlatformDetails
@@ -31,6 +31,11 @@ from app.translator.core.tokenizer import TOKEN_TYPE, QueryTokenizer
 
 
 class QueryParser(ABC):
+    wrapped_with_comment_pattern: str = None
+
+    def remove_comments(self, text: str) -> str:
+        return re.sub(self.wrapped_with_comment_pattern, "\n", text, flags=re.MULTILINE).strip()
+
     def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
         return RawQueryContainer(query=text, language=language)
 

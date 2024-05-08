@@ -126,13 +126,13 @@ class BaseQueryFieldValue(ABC):
 
 class QueryRender(ABC):
     comment_symbol: str = None
-    is_multi_line_comment: bool = False
+    is_single_line_comment: bool = False
     unsupported_functions_text = "Unsupported functions were excluded from the result query:"
 
     platform_functions: PlatformFunctions = PlatformFunctions()
 
     def render_not_supported_functions(self, not_supported_functions: list) -> str:
-        line_template = f"{self.comment_symbol} " if self.comment_symbol and self.is_multi_line_comment else ""
+        line_template = f"{self.comment_symbol} " if self.comment_symbol and self.is_single_line_comment else ""
         not_supported_functions_str = "\n".join(line_template + func.lstrip() for func in not_supported_functions)
         return "\n\n" + self.wrap_with_comment(f"{self.unsupported_functions_text}\n{not_supported_functions_str}")
 

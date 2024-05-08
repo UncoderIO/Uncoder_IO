@@ -49,6 +49,8 @@ class QradarQueryParser(PlatformQueryParser):
 
     table_pattern = r"\sFROM\s(?P<table>[a-zA-Z\.\-\*]+)\sWHERE\s"
 
+    wrapped_with_comment_pattern = r"^\s*/\*(?:|\n|.)*\*/"
+
     def __clean_query(self, query: str) -> str:
         for func_name in self.log_source_functions:
             pattern = self.log_source_function_pattern.replace("___func_name___", func_name)

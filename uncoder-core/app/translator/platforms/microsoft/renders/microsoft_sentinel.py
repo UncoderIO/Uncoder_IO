@@ -130,7 +130,7 @@ class MicrosoftSentinelQueryRender(PlatformQueryRender):
 
     mappings: MicrosoftSentinelMappings = microsoft_sentinel_mappings
     comment_symbol = "//"
-    is_multi_line_comment = True
+    is_single_line_comment = True
 
     def __init__(self):
         super().__init__()

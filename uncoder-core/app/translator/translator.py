@@ -44,11 +44,9 @@ class Translator:
     @handle_translation_exceptions
     def __parse_incoming_data(
         self, text: str, source: str, target: Optional[str] = None
-    ) -> tuple[Optional[RawQueryContainer], Optional[TokenizedQueryContainer]]:
+    ) -> tuple[RawQueryContainer, Optional[TokenizedQueryContainer]]:
         parser = self.__get_parser(source)
-        if isinstance(parser, SigmaParser):
-            return None, parser.parse(text)
-
+        text = parser.remove_comments(text)
         raw_query_container = parser.parse_raw_query(text, language=source)
         tokenized_query_container = None
         if not (target and self.__is_one_vendor_translation(raw_query_container.language, target)):
