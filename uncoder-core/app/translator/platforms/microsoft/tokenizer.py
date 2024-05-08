@@ -46,14 +46,14 @@ class MicrosoftSentinelTokenizer(QueryTokenizer, OperatorBasedMixin):
     field_pattern = r"(?P<field_name>[a-zA-Z\.\-_]+)"
     bool_value_pattern = rf"(?P<{MicrosoftValueType.bool_value}>true|false)\s*"
     num_value_pattern = rf"(?P<{MicrosoftValueType.number_value}>\d+(?:\.\d+)*)\s*"
-    double_quotes_value_pattern = rf'"(?P<{MicrosoftValueType.double_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{{\}}\[\]№;<>?`~\s]|\\\"|\\\\)*)"\s*'  # noqa: E501
-    single_quotes_value_pattern = rf"'(?P<{MicrosoftValueType.single_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\"\.$&^@!\(\)\{{\}}\[\]№;<>?`~\s]|\\\'|\\\\)*)'\s*"  # noqa: E501
-    verbatim_double_quotes_value_pattern = rf'@"(?P<{MicrosoftValueType.verbatim_double_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{{\}}\[\]№;<>?`~\s\\]|"")*)"\s*'  # noqa: E501
-    verbatim_single_quotes_value_pattern = rf"@'(?P<{MicrosoftValueType.verbatim_single_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\"\.$&^@!\(\)\{{\}}\[\]№;<>?`~\s\\]|'')*)'\s*"  # noqa: E501
+    double_quotes_value_pattern = rf'"(?P<{MicrosoftValueType.double_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{{\}}\[\];<>?`~\s]|\\\"|\\\\)*)"\s*'  # noqa: E501
+    single_quotes_value_pattern = rf"'(?P<{MicrosoftValueType.single_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\"\.$&^@!\(\)\{{\}}\[\];<>?`~\s]|\\\'|\\\\)*)'\s*"  # noqa: E501
+    verbatim_double_quotes_value_pattern = rf'@"(?P<{MicrosoftValueType.verbatim_double_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{{\}}\[\];<>?`~\s\\]|"")*)"\s*'  # noqa: E501
+    verbatim_single_quotes_value_pattern = rf"@'(?P<{MicrosoftValueType.verbatim_single_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\"\.$&^@!\(\)\{{\}}\[\];<>?`~\s\\]|'')*)'\s*"  # noqa: E501
     str_value_pattern = rf"""{double_quotes_value_pattern}|{single_quotes_value_pattern}|{verbatim_double_quotes_value_pattern}|{verbatim_single_quotes_value_pattern}"""  # noqa: E501
     _value_pattern = rf"""{bool_value_pattern}|{num_value_pattern}|{str_value_pattern}"""
     multi_value_pattern = (
-        rf"""\((?P<{MicrosoftValueType.multi_value}>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\[\]№;<>?`~\s]+)\)"""
+        rf"""\((?P<{MicrosoftValueType.multi_value}>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\[\];<>?`~\s]+)\)"""
     )
     keyword_pattern = rf"\*\s+contains\s+(?:{str_value_pattern})"
 
