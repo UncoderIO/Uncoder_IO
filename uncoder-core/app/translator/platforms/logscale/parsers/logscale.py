@@ -35,6 +35,8 @@ class LogScaleQueryParser(PlatformQueryParser):
     tokenizer = LogScaleTokenizer()
     mappings: LogScaleMappings = logscale_mappings
 
+    wrapped_with_comment_pattern = r"^\s*/\*(?:|\n|.)*\*/"
+
     def _parse_query(self, query: str) -> tuple[str, ParsedFunctions]:
         functions, query = self.platform_functions.parse(query)
         return query, functions
@@ -42,7 +44,9 @@ class LogScaleQueryParser(PlatformQueryParser):
     def parse(self, raw_query_container: RawQueryContainer) -> TokenizedQueryContainer:
         query, functions = self._parse_query(query=raw_query_container.query)
         tokens, source_mappings = self.get_tokens_and_source_mappings(query, {})
+        fields_tokens = self.get_fields_tokens(tokens=tokens)
         self.set_functions_fields_generic_names(functions=functions, source_mappings=source_mappings)
         meta_info = raw_query_container.meta_info
+        meta_info.query_fields = fields_tokens
         meta_info.source_mapping_ids = [source_mapping.source_id for source_mapping in source_mappings]
         return TokenizedQueryContainer(tokens=tokens, meta_info=meta_info, functions=functions)

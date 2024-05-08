@@ -72,17 +72,24 @@ class SourceMapping:
         source_id: str,
         log_source_signature: _LogSourceSignatureType = None,
         fields_mapping: Optional[FieldsMapping] = None,
+        raw_log_fields: Optional[list] = None,
     ):
         self.source_id = source_id
         self.log_source_signature = log_source_signature
         self.fields_mapping = fields_mapping or FieldsMapping([])
+        self.raw_log_fields = raw_log_fields
 
 
 class BasePlatformMappings:
+    skip_load_default_mappings: bool = True
+
     def __init__(self, platform_dir: str):
         self._loader = LoaderFileMappings()
         self._platform_dir = platform_dir
         self._source_mappings = self.prepare_mapping()
+
+    def update_default_source_mapping(self, default_mapping: SourceMapping, fields_mapping: FieldsMapping) -> None:
+        default_mapping.fields_mapping.update(fields_mapping)
 
     def prepare_mapping(self) -> dict[str, SourceMapping]:
         source_mappings = {}
@@ -91,15 +98,23 @@ class BasePlatformMappings:
             log_source_signature = self.prepare_log_source_signature(mapping=mapping_dict)
             if (source_id := mapping_dict["source"]) == DEFAULT_MAPPING_NAME:
                 default_mapping.log_source_signature = log_source_signature
-                continue
+                if self.skip_load_default_mappings:
+                    continue
 
-            fields_mapping = self.prepare_fields_mapping(field_mapping=mapping_dict.get("field_mapping", {}))
-            default_mapping.fields_mapping.update(fields_mapping)
+            field_mappings_dict = mapping_dict.get("field_mapping", {})
+            raw_log_fields = mapping_dict.get("raw_log_fields", [])
+            field_mappings_dict.update({field: field for field in raw_log_fields})
+            fields_mapping = self.prepare_fields_mapping(field_mapping=field_mappings_dict)
+            self.update_default_source_mapping(default_mapping=default_mapping, fields_mapping=fields_mapping)
             source_mappings[source_id] = SourceMapping(
-                source_id=source_id, log_source_signature=log_source_signature, fields_mapping=fields_mapping
+                source_id=source_id,
+                log_source_signature=log_source_signature,
+                fields_mapping=fields_mapping,
+                raw_log_fields=raw_log_fields,
             )
 
-        source_mappings[DEFAULT_MAPPING_NAME] = default_mapping
+        if self.skip_load_default_mappings:
+            source_mappings[DEFAULT_MAPPING_NAME] = default_mapping
 
         return source_mappings
 

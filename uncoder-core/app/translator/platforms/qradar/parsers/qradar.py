@@ -51,6 +51,8 @@ class QradarQueryParser(PlatformQueryParser):
 
     table_pattern = r"\sFROM\s(?P<table>[a-zA-Z\.\-\*]+)\sWHERE\s"
 
+    wrapped_with_comment_pattern = r"^\s*/\*(?:|\n|.)*\*/"
+
     def __clean_query(self, query: str) -> str:
         for func_name in self.log_source_functions:
             pattern = self.log_source_function_pattern.replace("___func_name___", func_name)
@@ -111,6 +113,8 @@ class QradarQueryParser(PlatformQueryParser):
     def parse(self, raw_query_container: RawQueryContainer) -> TokenizedQueryContainer:
         query, log_sources = self._parse_query(raw_query_container.query)
         tokens, source_mappings = self.get_tokens_and_source_mappings(query, log_sources)
+        fields_tokens = self.get_fields_tokens(tokens=tokens)
         meta_info = raw_query_container.meta_info
+        meta_info.query_fields = fields_tokens
         meta_info.source_mapping_ids = [source_mapping.source_id for source_mapping in source_mappings]
         return TokenizedQueryContainer(tokens=tokens, meta_info=meta_info)

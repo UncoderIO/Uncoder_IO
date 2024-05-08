@@ -48,7 +48,7 @@ class SigmaRender(QueryRender):
     keyword_num = 0
 
     comment_symbol = "#"
-    is_multi_line_comment = True
+    is_single_line_comment = True
 
     mappings: SigmaMappings = sigma_mappings
     details: PlatformDetails = PlatformDetails(**SIGMA_RULE_DETAILS)
@@ -303,7 +303,7 @@ class SigmaRender(QueryRender):
             "references": meta_info.references,
             "tags": meta_info.tags,
             "logsource": log_source_signature.log_sources,
-            "fields": [],
+            "fields": meta_info.output_table_fields or [],
             "detection": self.generate_detection(prepared_data_structure, source_mapping=source_mapping),
             "level": meta_info.severity or SeverityType.low,
             "falsepositives": "",

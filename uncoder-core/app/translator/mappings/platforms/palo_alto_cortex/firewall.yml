@@ -20,16 +20,16 @@ field_mapping:
   SourceIp:
     - action_local_ip
     - action_remote_ip
-  dst_ip:
+  dst-ip:
     - action_local_ip
     - action_remote_ip
-  dst_port:
+  dst-port:
     - action_local_port
     - action_remote_port
-  src_ip:
+  src-ip:
     - action_local_ip
     - action_remote_ip
-  src_port:
+  src-port:
     - action_local_port
     - action_remote_port
   Protocol: action_network_protocol

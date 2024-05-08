@@ -187,6 +187,12 @@ class LogRhythmAxonFieldValue(BaseQueryFieldValue):
             return self.contains_modifier(field, value)
         return f'{field} matches "{value}"'
 
+    def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
+        if isinstance(value, list):
+            rendered_keywords = [f'{UNMAPPED_FIELD_DEFAULT_NAME} CONTAINS "{v}"' for v in value]
+            return f"({self.or_token.join(rendered_keywords)})"
+        return f'{UNMAPPED_FIELD_DEFAULT_NAME} CONTAINS "{value}"'
+
 
 @render_manager.register
 class LogRhythmAxonQueryRender(PlatformQueryRender):
@@ -201,7 +207,7 @@ class LogRhythmAxonQueryRender(PlatformQueryRender):
 
     mappings: LogRhythmAxonMappings = logrhythm_axon_mappings
     comment_symbol = "//"
-    is_multi_line_comment = True
+    is_single_line_comment = True
     is_strict_mapping = True
 
     def generate_prefix(self, log_source_signature: LogSourceSignature) -> str:

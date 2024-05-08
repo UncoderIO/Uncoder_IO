@@ -59,6 +59,8 @@ class BaseQueryFieldValue(ABC):
             OperatorType.REGEX: self.regex_modifier,
             OperatorType.NOT_REGEX: self.not_regex_modifier,
             OperatorType.KEYWORD: self.keywords,
+            OperatorType.IS_NONE: self.is_none,
+            OperatorType.IS_NOT_NONE: self.is_not_none,
         }
         self.or_token = f" {or_token} "
 
@@ -107,6 +109,12 @@ class BaseQueryFieldValue(ABC):
     def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
         raise NotImplementedException
 
+    def is_none(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
+        raise NotImplementedException
+
+    def is_not_none(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
+        raise NotImplementedException
+
     def apply_value(self, value: Union[str, int], value_type: str = ValueType.value) -> Union[str, int]:
         return self.escape_manager.escape(value, value_type)
 
@@ -118,13 +126,13 @@ class BaseQueryFieldValue(ABC):
 
 class QueryRender(ABC):
     comment_symbol: str = None
-    is_multi_line_comment: bool = False
+    is_single_line_comment: bool = False
     unsupported_functions_text = "Unsupported functions were excluded from the result query:"
 
     platform_functions: PlatformFunctions = PlatformFunctions()
 
     def render_not_supported_functions(self, not_supported_functions: list) -> str:
-        line_template = f"{self.comment_symbol} " if self.comment_symbol and self.is_multi_line_comment else ""
+        line_template = f"{self.comment_symbol} " if self.comment_symbol and self.is_single_line_comment else ""
         not_supported_functions_str = "\n".join(line_template + func.lstrip() for func in not_supported_functions)
         return "\n\n" + self.wrap_with_comment(f"{self.unsupported_functions_text}\n{not_supported_functions_str}")
 
@@ -139,7 +147,7 @@ class QueryRender(ABC):
 class PlatformQueryRender(QueryRender):
     mappings: BasePlatformMappings = None
     details: PlatformDetails = None
-    is_strict_mapping = False
+    is_strict_mapping: bool = False
 
     or_token = "or"
     and_token = "and"
@@ -150,6 +158,7 @@ class PlatformQueryRender(QueryRender):
     field_value_map = BaseQueryFieldValue(or_token=or_token)
 
     query_pattern = "{table} {query} {functions}"
+    raw_log_field_pattern: str = None
 
     def __init__(self):
         self.operator_map = {
@@ -272,12 +281,29 @@ class PlatformQueryRender(QueryRender):
             prefix="", query=query_container.query, functions="", meta_info=query_container.meta_info
         )
 
+    def generate_raw_log_fields(self, fields: list[Field], source_mapping: SourceMapping) -> str:
+        defined_raw_log_fields = []
+        for field in fields:
+            mapped_field = source_mapping.fields_mapping.get_platform_field_name(generic_field_name=field.source_name)
+            if not mapped_field and self.is_strict_mapping:
+                raise StrictPlatformException(field_name=field.source_name, platform_name=self.details.name)
+            if mapped_field not in source_mapping.raw_log_fields:
+                continue
+            field_prefix = self.raw_log_field_pattern.format(field=mapped_field)
+            defined_raw_log_fields.append(field_prefix)
+        return "\n".join(defined_raw_log_fields)
+
     def _generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
         queries_map = {}
         source_mappings = self._get_source_mappings(query_container.meta_info.source_mapping_ids)
 
         for source_mapping in source_mappings:
             prefix = self.generate_prefix(source_mapping.log_source_signature)
+            if source_mapping.raw_log_fields:
+                defined_raw_log_fields = self.generate_raw_log_fields(
+                    fields=query_container.meta_info.query_fields, source_mapping=source_mapping
+                )
+                prefix += f"\n{defined_raw_log_fields}\n"
             result = self.generate_query(tokens=query_container.tokens, source_mapping=source_mapping)
             rendered_functions = self.generate_functions(query_container.functions.functions, source_mapping)
             not_supported_functions = query_container.functions.not_supported + rendered_functions.not_supported

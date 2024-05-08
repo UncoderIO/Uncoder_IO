@@ -23,8 +23,9 @@ from typing import Union
 from app.translator.core.exceptions.core import SigmaRuleValidationException
 from app.translator.core.mixins.rule import YamlRuleMixin
 from app.translator.core.models.field import FieldValue, Field
-from app.translator.core.models.query_container import MetaInfoContainer, TokenizedQueryContainer
+from app.translator.core.models.query_container import MetaInfoContainer, TokenizedQueryContainer, RawQueryContainer
 from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.core.parser import QueryParser
 from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.managers import parser_manager
 from app.translator.platforms.sigma.const import SIGMA_RULE_DETAILS
@@ -33,12 +34,14 @@ from app.translator.platforms.sigma.tokenizer import SigmaConditionTokenizer, Si
 
 
 @parser_manager.register_main
-class SigmaParser(YamlRuleMixin):
+class SigmaParser(QueryParser, YamlRuleMixin):
     details: PlatformDetails = PlatformDetails(**SIGMA_RULE_DETAILS)
     condition_tokenizer = SigmaConditionTokenizer()
     tokenizer: SigmaTokenizer = SigmaTokenizer()
     mappings: SigmaMappings = sigma_mappings
     mandatory_fields = {"title", "description", "logsource", "detection"}
+
+    wrapped_with_comment_pattern = r"^\s*#.*(?:\n|$)"
 
     @staticmethod
     def __parse_false_positives(false_positives: Union[str, list[str], None]) -> list:
@@ -51,6 +54,7 @@ class SigmaParser(YamlRuleMixin):
             rule: dict,
             source_mapping_ids: list[str],
             parsed_logsources: dict,
+            fields_tokens: list[Field],
             sigma_fields_tokens: Union[list[Field], None] = None
     ) -> MetaInfoContainer:
         return MetaInfoContainer(
@@ -59,7 +63,8 @@ class SigmaParser(YamlRuleMixin):
             description=rule.get("description"),
             author=rule.get("author"),
             date=rule.get("date"),
-            fields=sigma_fields_tokens,
+            output_table_fields=sigma_fields_tokens,
+            query_fields=fields_tokens,
             references=rule.get("references", []),
             license_=rule.get("license"),
             mitre_attack=self.parse_mitre_attack(rule.get("tags", [])),
@@ -75,8 +80,11 @@ class SigmaParser(YamlRuleMixin):
         if missing_fields := self.mandatory_fields.difference(set(rule.keys())):
             raise SigmaRuleValidationException(missing_fields=list(missing_fields))
 
-    def parse(self, text: str) -> TokenizedQueryContainer:
-        sigma_rule = self.load_rule(text=text)
+    def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
+        return RawQueryContainer(query=text, language=language)
+
+    def parse(self, raw_query_container: RawQueryContainer) -> TokenizedQueryContainer:
+        sigma_rule = self.load_rule(text=raw_query_container.query)
         self.__validate_rule(rule=sigma_rule)
         log_sources = {
             key: [value]
@@ -99,6 +107,7 @@ class SigmaParser(YamlRuleMixin):
                 rule=sigma_rule,
                 source_mapping_ids=[source_mapping.source_id for source_mapping in source_mappings],
                 sigma_fields_tokens=sigma_fields_tokens,
-                parsed_logsources=log_sources
+                parsed_logsources=log_sources,
+                fields_tokens=field_tokens
             )
         )

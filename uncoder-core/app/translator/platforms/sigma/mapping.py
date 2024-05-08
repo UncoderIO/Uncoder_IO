@@ -19,10 +19,12 @@ class SigmaLogSourceSignature(LogSourceSignature):
     def is_suitable(
         self, service: Optional[list[str]], product: Optional[list[str]], category: Optional[list[str]]
     ) -> bool:
-        product_match = set(product or []).issubset(self.products)
-        category_match = set(category or []).issubset(self.categories)
-        service_match = set(service or []).issubset(self.services)
-        return product_match and category_match and service_match
+        product_match = set(product or []).issubset(self.products) if product else False
+        category_match = set(category or []).issubset(self.categories) if category else False
+        service_match = set(service or []).issubset(self.services) if service else False
+        if not product and not service:
+            return category_match
+        return product_match and service_match or product_match and category_match
 
     def __str__(self) -> str:
         raise NotImplementedError
@@ -52,8 +54,7 @@ class SigmaMappings(BasePlatformMappings):
 
             source_signature: SigmaLogSourceSignature = source_mapping.log_source_signature
             if source_signature.is_suitable(product=product, service=service, category=category):
-                if source_mapping.fields_mapping.is_suitable(field_names):
-                    suitable_source_mappings.append(source_mapping)
+                suitable_source_mappings.append(source_mapping)
 
         return suitable_source_mappings or [self._source_mappings[DEFAULT_MAPPING_NAME]]
 

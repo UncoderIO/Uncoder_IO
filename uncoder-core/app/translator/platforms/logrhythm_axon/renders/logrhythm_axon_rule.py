@@ -86,9 +86,9 @@ class LogRhythmAxonRuleRender(LogRhythmAxonQueryRender):
             rule["observationPipeline"]["metadataFields"]["threat.mitre_technique"] = ", ".join(
                 f"{i['technique_id']}:{i['technique']}" for i in sorted(techniques, key=lambda x: x["technique_id"])
             )
-        if meta_info.fields:
+        if meta_info.output_table_fields:
             rule["observationPipeline"]["pattern"]["operations"][0]["logObserved"]["groupByFields"] = [
-                self.map_field(field, source_mapping)[0] for field in meta_info.fields
+                self.map_field(field, source_mapping)[0] for field in meta_info.output_table_fields
             ]
 
         json_rule = json.dumps(rule, indent=4, sort_keys=False)

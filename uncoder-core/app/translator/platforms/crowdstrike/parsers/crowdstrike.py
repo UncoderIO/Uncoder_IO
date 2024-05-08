@@ -32,3 +32,5 @@ class CrowdStrikeQueryParser(SplQueryParser):
 
     mappings: CrowdstrikeMappings = crowdstrike_mappings
     platform_functions: CrowdStrikeFunctions = crowd_strike_functions
+
+    wrapped_with_comment_pattern = r"^\s*`(?:|\n|.)*`"

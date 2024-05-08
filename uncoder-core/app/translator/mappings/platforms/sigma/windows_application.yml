@@ -1,0 +1,27 @@
+platform: Sigma
+source: windows_application
+
+log_source:
+  product: [windows]
+  service: [application]
+
+default_log_source:
+  product: windows
+  service: application
+
+field_mapping:
+  EventID: EventID
+  src_ip: src_ip
+  source: source
+  additional_information: additional_information
+  EventData: EventData
+  Channel: Channel
+  statement: statement
+  Faulting application path: Faulting application path
+  object_name: object_name
+  class_type: class_type
+  action_id: action_id
+  Provider_Name: Provider_Name
+  Data: Data
+  Message: Message
+  Level: Level
