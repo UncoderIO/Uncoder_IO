@@ -9,5 +9,5 @@ if TYPE_CHECKING:
 
 
 class LogScaleFunctionsManager(PlatformFunctionsManager):
-    def init_search_func_render(self, platform_render: LogScaleQueryRender) -> None:
+    def post_init_configure(self, platform_render: LogScaleQueryRender) -> None:
         pass

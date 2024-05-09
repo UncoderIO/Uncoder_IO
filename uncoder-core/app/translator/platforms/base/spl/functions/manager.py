@@ -9,5 +9,5 @@ if TYPE_CHECKING:
 
 
 class SplFunctionsManager(PlatformFunctionsManager):
-    def init_search_func_render(self, platform_render: SplQueryRender) -> None:
+    def post_init_configure(self, platform_render: SplQueryRender) -> None:
         pass
