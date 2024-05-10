@@ -20,13 +20,17 @@ from typing import ClassVar
 
 from app.translator.core.exceptions.core import RootARuleValidationException, UnsupportedRootAParser
 from app.translator.core.mixins.rule import YamlRuleMixin
+from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.parser import PlatformQueryParser, QueryParser
 from app.translator.managers import parser_manager
+from app.translator.platforms.roota.const import ROOTA_RULE_DETAILS
 
 
+@parser_manager.register_main
 class RootAParser(QueryParser, YamlRuleMixin):
-    parsers = parser_manager
+    parser_manager = parser_manager
+    details: PlatformDetails = PlatformDetails(**ROOTA_RULE_DETAILS)
     mandatory_fields: ClassVar[set[str]] = {
         "name",
         "details",
@@ -63,7 +67,7 @@ class RootAParser(QueryParser, YamlRuleMixin):
         )
 
     def __get_parser_class(self, parser: str) -> PlatformQueryParser:
-        parser_class = self.parsers.get(parser)
+        parser_class = self.parser_manager.get_supported_by_roota(parser)
         if parser_class:
             return parser_class
         raise UnsupportedRootAParser(parser=parser)

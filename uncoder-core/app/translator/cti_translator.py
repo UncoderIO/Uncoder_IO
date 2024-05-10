@@ -10,7 +10,7 @@ from app.translator.tools.decorators import handle_translation_exceptions
 
 
 class CTITranslator:
-    renders: RenderCTIManager = render_cti_manager
+    render_manager: RenderCTIManager = render_cti_manager
 
     def __init__(self):
         self.logger = logging.getLogger("cti_translator")
@@ -38,7 +38,7 @@ class CTITranslator:
 
     @handle_translation_exceptions
     def __render_translation(self, parsed_data: dict, platform_data: CTIPlatform, iocs_per_query: int) -> list[str]:
-        render_cti = self.renders.get(platform_data.id)
+        render_cti = self.render_manager.get(platform_data.id)
 
         chunked_iocs = self.__get_iocs_chunk(
             chunks_size=iocs_per_query, data=parsed_data, mapping=render_cti.default_mapping
@@ -85,4 +85,4 @@ class CTITranslator:
 
     @classmethod
     def get_renders(cls) -> list:
-        return cls.renders.get_platforms_details
+        return cls.render_manager.get_platforms_details

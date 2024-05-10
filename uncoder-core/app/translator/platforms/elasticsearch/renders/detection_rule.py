@@ -25,6 +25,7 @@ from app.translator.core.mapping import SourceMapping
 from app.translator.core.mitre import MitreConfig
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer
+from app.translator.managers import render_manager
 from app.translator.platforms.elasticsearch.const import ELASTICSEARCH_DETECTION_RULE, elasticsearch_rule_details
 from app.translator.platforms.elasticsearch.mapping import ElasticSearchMappings, elasticsearch_mappings
 from app.translator.platforms.elasticsearch.renders.elasticsearch import (
@@ -39,6 +40,7 @@ class ElasticSearchRuleFieldValue(ElasticSearchFieldValue):
     details: PlatformDetails = elasticsearch_rule_details
 
 
+@render_manager.register
 class ElasticSearchRuleRender(ElasticSearchQueryRender):
     details: PlatformDetails = elasticsearch_rule_details
     mappings: ElasticSearchMappings = elasticsearch_mappings

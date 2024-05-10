@@ -23,6 +23,7 @@ from typing import Optional
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer
+from app.translator.managers import render_manager
 from app.translator.platforms.elasticsearch.const import XPACK_WATCHER_RULE, xpack_watcher_details
 from app.translator.platforms.elasticsearch.mapping import ElasticSearchMappings, elasticsearch_mappings
 from app.translator.platforms.elasticsearch.renders.elasticsearch import (
@@ -38,6 +39,7 @@ class XpackWatcherRuleFieldValue(ElasticSearchFieldValue):
     details: PlatformDetails = xpack_watcher_details
 
 
+@render_manager.register
 class XPackWatcherRuleRender(ElasticSearchQueryRender):
     details: PlatformDetails = xpack_watcher_details
     mappings: ElasticSearchMappings = elasticsearch_mappings

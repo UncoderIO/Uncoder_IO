@@ -20,10 +20,12 @@ import re
 
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer
+from app.translator.managers import parser_manager
 from app.translator.platforms.splunk.const import splunk_alert_details
 from app.translator.platforms.splunk.parsers.splunk import SplunkQueryParser
 
 
+@parser_manager.register
 class SplunkAlertParser(SplunkQueryParser):
     details: PlatformDetails = splunk_alert_details
 

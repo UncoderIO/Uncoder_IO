@@ -23,6 +23,7 @@ from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer
 from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
+from app.translator.managers import render_manager
 from app.translator.platforms.logscale.const import logscale_query_details
 from app.translator.platforms.logscale.escape_manager import logscale_escape_manager
 from app.translator.platforms.logscale.functions import LogScaleFunctions, log_scale_functions
@@ -90,6 +91,7 @@ class LogScaleFieldValue(BaseQueryFieldValue):
         return f"/{self.apply_value(value)}/i"
 
 
+@render_manager.register
 class LogScaleQueryRender(PlatformQueryRender):
     details: PlatformDetails = logscale_query_details
     mappings: LogScaleMappings = logscale_mappings

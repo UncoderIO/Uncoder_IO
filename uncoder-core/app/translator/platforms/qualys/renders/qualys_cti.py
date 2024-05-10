@@ -16,10 +16,12 @@ limitations under the License.
 
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
+from app.translator.managers import render_cti_manager
 from app.translator.platforms.qualys.const import QUALYS_QUERY_DETAILS
 from app.translator.platforms.qualys.mappings.qualys_cti import DEFAULT_QUALYS_MAPPING
 
 
+@render_cti_manager.register
 class QualysCTI(RenderCTI):
     details: PlatformDetails = PlatformDetails(**QUALYS_QUERY_DETAILS)
 

@@ -18,6 +18,7 @@ limitations under the License.
 """
 
 from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.managers import render_manager
 from app.translator.platforms.base.lucene.renders.lucene import LuceneFieldValue, LuceneQueryRender
 from app.translator.platforms.graylog.const import graylog_details
 from app.translator.platforms.graylog.mapping import GraylogMappings, graylog_mappings
@@ -27,6 +28,7 @@ class GraylogFieldValue(LuceneFieldValue):
     details: PlatformDetails = graylog_details
 
 
+@render_manager.register
 class GraylogQueryRender(LuceneQueryRender):
     details: PlatformDetails = graylog_details
     mappings: GraylogMappings = graylog_mappings

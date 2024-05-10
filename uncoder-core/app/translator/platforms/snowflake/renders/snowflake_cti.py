@@ -19,10 +19,12 @@ limitations under the License.
 
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
+from app.translator.managers import render_cti_manager
 from app.translator.platforms.snowflake.const import SNOWFLAKE_QUERY_DETAILS
 from app.translator.platforms.snowflake.mappings.snowflake_cti import DEFAULT_SNOWFLAKE_MAPPING
 
 
+@render_cti_manager.register
 class SnowflakeCTI(RenderCTI):
     details: PlatformDetails = PlatformDetails(**SNOWFLAKE_QUERY_DETAILS)
 

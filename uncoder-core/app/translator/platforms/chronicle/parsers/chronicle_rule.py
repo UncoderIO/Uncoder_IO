@@ -21,12 +21,14 @@ import re
 from app.translator.core.exceptions.parser import TokenizerGeneralException
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer
+from app.translator.managers import parser_manager
 from app.translator.platforms.chronicle.const import chronicle_rule_details
 from app.translator.platforms.chronicle.mapping import ChronicleMappings, chronicle_mappings
 from app.translator.platforms.chronicle.parsers.chronicle import ChronicleQueryParser
 from app.translator.platforms.chronicle.tokenizer import ChronicleRuleTokenizer
 
 
+@parser_manager.register
 class ChronicleRuleParser(ChronicleQueryParser):
     details: PlatformDetails = chronicle_rule_details
     rule_name_pattern = "rule\s(?P<rule_name>[a-z0-9_]+)\s{"

@@ -19,10 +19,12 @@ limitations under the License.
 
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
+from app.translator.managers import render_cti_manager
 from app.translator.platforms.logscale.const import logscale_query_details
 from app.translator.platforms.logscale.mappings.logscale_cti import DEFAULT_LOGSCALE_MAPPING
 
 
+@render_cti_manager.register
 class LogScaleCTI(RenderCTI):
     details: PlatformDetails = logscale_query_details
 

@@ -19,10 +19,12 @@ limitations under the License.
 
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
+from app.translator.managers import render_cti_manager
 from app.translator.platforms.qradar.const import qradar_query_details
 from app.translator.platforms.qradar.mappings.qradar_cti import DEFAULT_QRADAR_MAPPING
 
 
+@render_cti_manager.register
 class QRadarCTI(RenderCTI):
     details: PlatformDetails = qradar_query_details
 

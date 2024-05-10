@@ -19,10 +19,12 @@ limitations under the License.
 
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
+from app.translator.managers import render_cti_manager
 from app.translator.platforms.logpoint.const import LOGPOINT_QUERY_DETAILS
 from app.translator.platforms.logpoint.mappings.logpoint_cti import DEFAULT_LOGPOINT_MAPPING
 
 
+@render_cti_manager.register
 class LogpointCTI(RenderCTI):
     details: PlatformDetails = PlatformDetails(**LOGPOINT_QUERY_DETAILS)
 

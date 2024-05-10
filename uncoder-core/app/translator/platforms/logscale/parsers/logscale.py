@@ -21,12 +21,14 @@ from app.translator.core.models.functions.base import ParsedFunctions
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.parser import PlatformQueryParser
+from app.translator.managers import parser_manager
 from app.translator.platforms.logscale.const import logscale_query_details
 from app.translator.platforms.logscale.functions import LogScaleFunctions, log_scale_functions
 from app.translator.platforms.logscale.mapping import LogScaleMappings, logscale_mappings
 from app.translator.platforms.logscale.tokenizer import LogScaleTokenizer
 
 
+@parser_manager.register_supported_by_roota
 class LogScaleQueryParser(PlatformQueryParser):
     details: PlatformDetails = logscale_query_details
     platform_functions: LogScaleFunctions = log_scale_functions

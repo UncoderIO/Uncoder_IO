@@ -18,6 +18,7 @@ limitations under the License.
 """
 
 from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.managers import render_manager
 from app.translator.platforms.base.lucene.renders.lucene import LuceneFieldValue, LuceneQueryRender
 from app.translator.platforms.elasticsearch.const import elasticsearch_lucene_query_details
 from app.translator.platforms.elasticsearch.mapping import ElasticSearchMappings, elasticsearch_mappings
@@ -27,6 +28,7 @@ class ElasticSearchFieldValue(LuceneFieldValue):
     details: PlatformDetails = elasticsearch_lucene_query_details
 
 
+@render_manager.register
 class ElasticSearchQueryRender(LuceneQueryRender):
     details: PlatformDetails = elasticsearch_lucene_query_details
     mappings: ElasticSearchMappings = elasticsearch_mappings
