@@ -1,0 +1,30 @@
+platform: Hunters
+source: okta_okta
+description: Text that describe current mapping
+
+default_log_source:
+  table: table_name
+
+field_mapping:
+  client.user.id: client.user.id
+  source.user.id: source.user.id
+  User: User
+  alternateId: alternateId
+  client.user.full_name: client.user.full_name
+  source.user.full_name: source.user.full_name
+  related.user: related.user
+  client.ip: client.ip
+  source.ip: source.ip
+  user_agent.original: user_agent.original
+  userAgent.os: userAgent.os
+  userAgent.browser: userAgent.browser
+  client.zone: client.zone
+  client.device: client.device
+  client.id: client.id
+  event.action: event.action
+  outcome.reason: outcome.reason
+  event.outcome: event.outcome
+  client.as.number: client.as.number
+  client.as.organization.name: client.as.organization.name
+  client.domain: client.domain
+  source.domain: source.domain

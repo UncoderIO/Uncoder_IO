@@ -1,0 +1,10 @@
+platform: Hunters
+source: windows_ldap_debug
+description: Text that describe current mapping
+
+default_log_source:
+  table: table_name
+
+field_mapping:
+  EventID: EventID
+  SearchFilter: SearchFilter

@@ -1,0 +1,13 @@
+platform: Hunters
+source: gcp_pubsub
+description: Text that describe current mapping
+
+default_log_source:
+  table: table_name
+
+field_mapping:
+  data.protoPayload.methodName: data.protoPayload.methodName
+  data.protoPayload.request.function.timeout: data.protoPayload.request.function.timeout
+  data.protoPayload.serviceData.policyDelta.bindingDeltas{}.action: data.protoPayload.serviceData.policyDelta.bindingDeltas{}.action
+  data.protoPayload.serviceData.policyDelta.bindingDeltas{}.member: data.protoPayload.serviceData.policyDelta.bindingDeltas{}.member
+  data.resource.type: data.resource.type

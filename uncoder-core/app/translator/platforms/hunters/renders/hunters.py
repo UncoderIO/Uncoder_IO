@@ -18,23 +18,21 @@ limitations under the License.
 """
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.managers import render_manager
-from app.translator.platforms.athena.const import athena_details
-from app.translator.platforms.athena.mapping import AthenaMappings, athena_mappings
 from app.translator.platforms.base.sql.renders.sql import SqlFieldValue, SqlQueryRender
+from app.translator.platforms.hunters.const import hunters_details
+from app.translator.platforms.hunters.mapping import HuntersMappings, hunters_mappings
 
 
-class AthenaFieldValue(SqlFieldValue):
-    details: PlatformDetails = athena_details
+class HuntersFieldValue(SqlFieldValue):
+    details: PlatformDetails = hunters_details
 
 
 @render_manager.register
-class AthenaQueryRender(SqlQueryRender):
-    details: PlatformDetails = athena_details
-    mappings: AthenaMappings = athena_mappings
+class HuntersQueryRender(SqlQueryRender):
+    details: PlatformDetails = hunters_details
+    mappings: HuntersMappings = hunters_mappings
 
     or_token = "OR"
 
-    field_value_map = AthenaFieldValue(or_token=or_token)
+    field_value_map = HuntersFieldValue(or_token=or_token)
     query_pattern = "{prefix} WHERE {query} {functions}"
-    comment_symbol = "--"
-    is_single_line_comment = True

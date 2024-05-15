@@ -1,0 +1,12 @@
+platform: Hunters
+source: firewall
+description: Text that describe current mapping
+
+default_log_source:
+  table: table_name
+
+field_mapping:
+  src-ip: src-ip
+  src-port: src-port
+  dst-ip: dst-ip
+  dst-port: dst-port
