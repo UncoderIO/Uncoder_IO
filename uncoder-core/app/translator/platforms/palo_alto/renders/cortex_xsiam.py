@@ -19,6 +19,7 @@ limitations under the License.
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
+from app.translator.core.custom_types.values import ValueType
 from app.translator.core.exceptions.render import UnsupportedRenderMethod
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
@@ -38,11 +39,11 @@ class CortexXSIAMFieldValue(BaseQueryFieldValue):
 
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            values = ", ".join(f'"{v}"' for v in value)
+            values = ", ".join(f'"{self.apply_value(v)}"' for v in value)
             return f"{field} in ({values})"
         if isinstance(value, int):
             return f"{field} = {value}"
-        return f'{field} = "{value}"'
+        return f'{field} = "{self.apply_value(value)}"'
 
     def less_modifier(self, field: str, value: Union[int, str]) -> str:
         return f"{field} < {value}"
@@ -59,30 +60,30 @@ class CortexXSIAMFieldValue(BaseQueryFieldValue):
     def not_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join([self.not_equal_modifier(field=field, value=v) for v in value])})"
-        return f'{field} != "{value}"'
+        return f'{field} != "{self.apply_value(value)}"'
 
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.contains_modifier(field=field, value=v) for v in value)})"
-        return f'{field} contains "{value}"'
+        return f'{field} contains "{self.apply_value(value)}"'
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return (
-                f"({self.or_token.join(self.endswith_modifier(field=field, value=self.apply_value(v)) for v in value)})"
+                f"({self.or_token.join(self.endswith_modifier(field=field, value=v) for v in value)})"
             )
-        return f'{field} ~= ".*{self.apply_value(value)}"'
+        return f'{field} ~= ".*{self.apply_value(value, value_type=ValueType.regex_value)}"'
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            clause = self.or_token.join(self.startswith_modifier(field=field, value=self.apply_value(v)) for v in value)
+            clause = self.or_token.join(self.startswith_modifier(field=field, value=v) for v in value)
             return f"({clause})"
-        return f'{field} ~= "{self.apply_value(value)}.*"'
+        return f'{field} ~= "{self.apply_value(value, value_type=ValueType.regex_value)}.*"'
 
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            return f"({self.or_token.join(self.regex_modifier(field=field, value=self.apply_value(v)) for v in value)})"
-        return f'{field} ~= "{self.apply_value(value)}"'
+            return f"({self.or_token.join(self.regex_modifier(field=field, value=v) for v in value)})"
+        return f'{field} ~= "{self.apply_value(value, value_type=ValueType.regex_value)}"'
 
     def is_none(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
