@@ -1,0 +1,22 @@
+platform: Hunters
+source: aws_eks
+description: Text that describe current mapping
+
+default_log_source:
+  table: table_name
+
+field_mapping:
+  annotations.authorization.k8s.io\/decision: annotations.authorization.k8s.io\/decision
+  annotations.podsecuritypolicy.policy.k8s.io\/admit-policy: annotations.podsecuritypolicy.policy.k8s.io\/admit-policy
+  aws_node_type: aws_node_type
+  objectRef.namespace: objectRef.namespace
+  objectRef.resource: objectRef.resource
+  objectRef.subresource: objectRef.subresource
+  requestObject.rules.resources: requestObject.rules.resources
+  requestObject.rules.verbs: requestObject.rules.verbs
+  requestObject.spec.containers.image: requestObject.spec.containers.image
+  requestURI: requestURI
+  stage: stage
+  user.groups: user.groups
+  user.username: user.username
+  verb: verb

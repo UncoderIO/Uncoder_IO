@@ -1,0 +1,18 @@
+platform: Hunters
+source: windows_process_creation
+description: Text that describe current mapping
+
+default_log_source:
+  table: table_name
+
+field_mapping:
+  CommandLine: CommandLine
+  CurrentDirectory: CurrentDirectory
+  Hashes: Hashes
+  Image: Image
+  IntegrityLevel: IntegrityLevel
+  ParentCommandLine: ParentCommandLine
+  ParentImage: ParentImage
+  ParentUser: ParentUser
+  Product: Product
+  User: User

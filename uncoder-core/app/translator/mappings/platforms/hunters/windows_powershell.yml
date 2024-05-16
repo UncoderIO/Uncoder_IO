@@ -1,0 +1,16 @@
+platform: Hunters
+source: windows_powershell
+description: Text that describe current mapping
+
+default_log_source:
+  table: table_name
+
+field_mapping:
+  EventID: EventID
+  CommandLine: CommandLine
+  ScriptBlockText: ScriptBlockText
+  Payload: Payload
+  HostApplication: HostApplication
+  ContextInfo: ContextInfo
+  HostName: HostName
+  EngineVersion: EngineVersion

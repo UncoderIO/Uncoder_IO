@@ -1,0 +1,10 @@
+platform: Hunters
+source: azure_aadnoninteractiveusersigninlogs
+description: Text that describe current mapping
+
+default_log_source:
+  table: table_name
+
+field_mapping:
+  UserAgent: UserAgent
+  Type: Type

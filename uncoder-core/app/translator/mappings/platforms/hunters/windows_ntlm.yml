@@ -1,0 +1,12 @@
+platform: Hunters
+source: windows_ntlm
+description: Text that describe current mapping
+
+default_log_source:
+  table: table_name
+
+field_mapping:
+  ProcessName: ProcessName
+  TargetName: TargetName
+  WorkstationName: WorkstationName
+  EventID: EventID
