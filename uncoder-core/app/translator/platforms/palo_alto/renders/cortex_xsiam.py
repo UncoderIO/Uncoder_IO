@@ -38,11 +38,11 @@ class CortexXSIAMFieldValue(BaseQueryFieldValue):
 
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            values = ", ".join(f'"{v}"' for v in value)
+            values = ", ".join(f'"{self.apply_value(v)}"' for v in value)
             return f"{field} in ({values})"
         if isinstance(value, int):
             return f"{field} = {value}"
-        return f'{field} = "{value}"'
+        return f'{field} = "{self.apply_value(value)}"'
 
     def less_modifier(self, field: str, value: Union[int, str]) -> str:
         return f"{field} < {value}"
