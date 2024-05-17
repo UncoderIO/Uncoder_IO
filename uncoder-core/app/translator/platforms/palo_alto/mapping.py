@@ -20,7 +20,7 @@ class CortexXSIAMLogSourceSignature(LogSourceSignature):
 
     def __prepare_log_source_for_render(self, logsource: Union[str, list[str]], model: str = "datamodel") -> str:
         if isinstance(logsource, list):
-            return f"{model} in ({', '.join([source for source in logsource])})"
+            return f"{model} in ({', '.join(source for source in logsource)})"
         return f"{model} = {logsource}"
 
     def __str__(self) -> str:

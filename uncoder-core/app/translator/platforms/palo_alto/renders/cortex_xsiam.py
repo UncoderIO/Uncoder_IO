@@ -69,9 +69,7 @@ class CortexXSIAMFieldValue(BaseQueryFieldValue):
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            return (
-                f"({self.or_token.join(self.endswith_modifier(field=field, value=v) for v in value)})"
-            )
+            return f"({self.or_token.join(self.endswith_modifier(field=field, value=v) for v in value)})"
         return f'{field} ~= ".*{self.apply_value(value, value_type=ValueType.regex_value)}"'
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
