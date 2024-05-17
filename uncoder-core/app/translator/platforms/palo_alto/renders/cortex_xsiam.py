@@ -118,14 +118,4 @@ class CortexXQLQueryRender(PlatformQueryRender):
     is_single_line_comment = False
 
     def generate_prefix(self, log_source_signature: CortexXSIAMLogSourceSignature) -> str:
-        preset = (
-            f"preset = {log_source_signature._default_source.get('preset')}"
-            if log_source_signature._default_source.get("preset")
-            else None
-        )
-        dataset = (
-            f"dataset = {log_source_signature._default_source.get('dataset')}"
-            if log_source_signature._default_source.get("dataset")
-            else None
-        )
-        return preset or dataset or "datamodel"
+        return str(log_source_signature)
