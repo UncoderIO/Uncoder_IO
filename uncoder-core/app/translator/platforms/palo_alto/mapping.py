@@ -27,7 +27,7 @@ class CortexXSIAMLogSourceSignature(LogSourceSignature):
         if preset_data := self._default_source.get("preset"):
             return self.__prepare_log_source_for_render(logsource=preset_data, model="preset")
         if dataset_data := self._default_source.get("dataset"):
-            return self.__prepare_log_source_for_render(logsource=dataset_data, model="preset")
+            return self.__prepare_log_source_for_render(logsource=dataset_data, model="dataset")
         return "datamodel"
 
 
