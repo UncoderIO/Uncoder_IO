@@ -69,9 +69,7 @@ class CortexXSIAMFieldValue(BaseQueryFieldValue):
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
-            return (
-                f"({self.or_token.join(self.endswith_modifier(field=field, value=v) for v in value)})"
-            )
+            return f"({self.or_token.join(self.endswith_modifier(field=field, value=v) for v in value)})"
         return f'{field} ~= ".*{self.apply_value(value, value_type=ValueType.regex_value)}"'
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
@@ -118,14 +116,4 @@ class CortexXQLQueryRender(PlatformQueryRender):
     is_single_line_comment = False
 
     def generate_prefix(self, log_source_signature: CortexXSIAMLogSourceSignature) -> str:
-        preset = (
-            f"preset = {log_source_signature._default_source.get('preset')}"
-            if log_source_signature._default_source.get("preset")
-            else None
-        )
-        dataset = (
-            f"dataset = {log_source_signature._default_source.get('dataset')}"
-            if log_source_signature._default_source.get("dataset")
-            else None
-        )
-        return preset or dataset or "datamodel"
+        return str(log_source_signature)

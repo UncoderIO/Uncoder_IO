@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from app.translator.core.mapping import (
     DEFAULT_MAPPING_NAME,
@@ -18,8 +18,17 @@ class CortexXSIAMLogSourceSignature(LogSourceSignature):
     def is_suitable(self, preset: str, dataset: str) -> bool:
         return preset == self.preset or dataset == self.dataset
 
+    def __prepare_log_source_for_render(self, logsource: Union[str, list[str]], model: str = "datamodel") -> str:
+        if isinstance(logsource, list):
+            return f"{model} in ({', '.join(source for source in logsource)})"
+        return f"{model} = {logsource}"
+
     def __str__(self) -> str:
-        return self._default_source.get("preset") or self._default_source.get("dataset")
+        if preset_data := self._default_source.get("preset"):
+            return self.__prepare_log_source_for_render(logsource=preset_data, model="preset")
+        if dataset_data := self._default_source.get("dataset"):
+            return self.__prepare_log_source_for_render(logsource=dataset_data, model="dataset")
+        return "datamodel"
 
 
 class CortexXSIAMMappings(BasePlatformMappings):
