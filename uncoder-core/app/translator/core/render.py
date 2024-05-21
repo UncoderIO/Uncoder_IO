@@ -126,6 +126,7 @@ class BaseQueryFieldValue(ABC):
 
 class QueryRender(ABC):
     comment_symbol: str = None
+    details: PlatformDetails = None
     is_single_line_comment: bool = False
     unsupported_functions_text = "Unsupported functions were excluded from the result query:"
 
@@ -146,7 +147,6 @@ class QueryRender(ABC):
 
 class PlatformQueryRender(QueryRender):
     mappings: BasePlatformMappings = None
-    details: PlatformDetails = None
     is_strict_mapping: bool = False
 
     or_token = "or"
@@ -299,23 +299,27 @@ class PlatformQueryRender(QueryRender):
 
         for source_mapping in source_mappings:
             prefix = self.generate_prefix(source_mapping.log_source_signature)
-            if source_mapping.raw_log_fields:
-                defined_raw_log_fields = self.generate_raw_log_fields(
-                    fields=query_container.meta_info.query_fields, source_mapping=source_mapping
+            try:
+                if source_mapping.raw_log_fields:
+                    defined_raw_log_fields = self.generate_raw_log_fields(
+                        fields=query_container.meta_info.query_fields, source_mapping=source_mapping
+                    )
+                    prefix += f"\n{defined_raw_log_fields}\n"
+                result = self.generate_query(tokens=query_container.tokens, source_mapping=source_mapping)
+            except StrictPlatformException:
+                continue
+            else:
+                rendered_functions = self.generate_functions(query_container.functions.functions, source_mapping)
+                not_supported_functions = query_container.functions.not_supported + rendered_functions.not_supported
+                finalized_query = self.finalize_query(
+                    prefix=prefix,
+                    query=result,
+                    functions=rendered_functions.rendered,
+                    not_supported_functions=not_supported_functions,
+                    meta_info=query_container.meta_info,
+                    source_mapping=source_mapping,
                 )
-                prefix += f"\n{defined_raw_log_fields}\n"
-            result = self.generate_query(tokens=query_container.tokens, source_mapping=source_mapping)
-            rendered_functions = self.generate_functions(query_container.functions.functions, source_mapping)
-            not_supported_functions = query_container.functions.not_supported + rendered_functions.not_supported
-            finalized_query = self.finalize_query(
-                prefix=prefix,
-                query=result,
-                functions=rendered_functions.rendered,
-                not_supported_functions=not_supported_functions,
-                meta_info=query_container.meta_info,
-                source_mapping=source_mapping,
-            )
-            queries_map[source_mapping.source_id] = finalized_query
+                queries_map[source_mapping.source_id] = finalized_query
 
         return self.finalize(queries_map)
 
