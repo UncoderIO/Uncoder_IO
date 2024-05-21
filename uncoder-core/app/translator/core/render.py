@@ -295,6 +295,7 @@ class PlatformQueryRender(QueryRender):
 
     def _generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
         queries_map = {}
+        errors = []
         source_mappings = self._get_source_mappings(query_container.meta_info.source_mapping_ids)
 
         for source_mapping in source_mappings:
@@ -306,7 +307,8 @@ class PlatformQueryRender(QueryRender):
                     )
                     prefix += f"\n{defined_raw_log_fields}\n"
                 result = self.generate_query(tokens=query_container.tokens, source_mapping=source_mapping)
-            except StrictPlatformException:
+            except StrictPlatformException as err:
+                errors.append(err)
                 continue
             else:
                 rendered_functions = self.generate_functions(query_container.functions.functions, source_mapping)
@@ -320,7 +322,8 @@ class PlatformQueryRender(QueryRender):
                     source_mapping=source_mapping,
                 )
                 queries_map[source_mapping.source_id] = finalized_query
-
+        if not queries_map and errors:
+            raise errors[0]
         return self.finalize(queries_map)
 
     def generate(self, query_container: Union[RawQueryContainer, TokenizedQueryContainer]) -> str:
