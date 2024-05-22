@@ -10,7 +10,7 @@ class XQLEscapeManager(EscapeManager):
         ValueType.regex_value: [
             EscapeDetails(pattern=r'([_!@#$%^&*=+()\[\]{}|;:\'",.<>?/`~\-\s\\])', escape_symbols=r"\\\1")
         ],
-        ValueType.value: [EscapeDetails(pattern=r"([\\])", escape_symbols=r"\\\1")],
+        ValueType.value: [EscapeDetails(pattern=r"([\*\"\\])", escape_symbols=r"\\\1")],
     }
 
 
