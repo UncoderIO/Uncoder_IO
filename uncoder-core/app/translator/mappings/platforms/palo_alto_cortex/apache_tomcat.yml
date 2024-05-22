@@ -1,0 +1,13 @@
+platform: Palo Alto XSIAM
+source: apache_tomcat
+
+
+default_log_source:
+  dataset: apache_tomcat_raw
+
+field_mapping:
+  c-uri: xdm.network.http.url
+  c-useragent: User_agent
+  cs-method: xdm.network.http.method
+  cs-bytes: xdm.target.sent_bytes
+  sc-status: xdm.network.http.response_code
