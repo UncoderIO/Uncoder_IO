@@ -1,8 +1,10 @@
 import json
+from typing import Union
 
+import xmltodict
 import yaml
 
-from app.translator.core.exceptions.core import InvalidJSONStructure, InvalidYamlStructure
+from app.translator.core.exceptions.core import InvalidJSONStructure, InvalidXMLStructure, InvalidYamlStructure
 from app.translator.core.mitre import MitreConfig
 
 
@@ -36,5 +38,13 @@ class YamlRuleMixin:
                     result["techniques"].append(technique)
             elif tactic := self.mitre_config.get_tactic(tag):
                 result["tactics"].append(tactic)
-
         return result
+
+
+class XMLRuleMixin:
+    @staticmethod
+    def load_rule(text: Union[str, bytes]) -> dict:
+        try:
+            return xmltodict.parse(text)
+        except Exception as err:
+            raise InvalidXMLStructure(error=str(err)) from err

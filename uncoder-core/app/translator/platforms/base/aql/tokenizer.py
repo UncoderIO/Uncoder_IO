@@ -15,7 +15,6 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
-
 import re
 from typing import Any, ClassVar, Union
 
@@ -24,12 +23,12 @@ from app.translator.core.custom_types.values import ValueType
 from app.translator.core.models.field import FieldValue, Keyword
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.tokenizer import QueryTokenizer
-from app.translator.platforms.qradar.const import NUM_VALUE_PATTERN, SINGLE_QUOTES_VALUE_PATTERN, UTF8_PAYLOAD_PATTERN
-from app.translator.platforms.qradar.escape_manager import qradar_escape_manager
+from app.translator.platforms.base.aql.const import NUM_VALUE_PATTERN, SINGLE_QUOTES_VALUE_PATTERN, UTF8_PAYLOAD_PATTERN
+from app.translator.platforms.base.aql.escape_manager import aql_escape_manager
 from app.translator.tools.utils import get_match_group
 
 
-class QradarTokenizer(QueryTokenizer):
+class AQLTokenizer(QueryTokenizer):
     single_value_operators_map: ClassVar[dict[str, str]] = {
         "=": OperatorType.EQ,
         "<=": OperatorType.LTE,
@@ -49,7 +48,7 @@ class QradarTokenizer(QueryTokenizer):
     _value_pattern = rf"{NUM_VALUE_PATTERN}|{bool_value_pattern}|{SINGLE_QUOTES_VALUE_PATTERN}"
     multi_value_pattern = rf"""\((?P<{ValueType.multi_value}>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\s]*)\)"""
     keyword_pattern = rf"{UTF8_PAYLOAD_PATTERN}\s+(?:like|LIKE|ilike|ILIKE)\s+{SINGLE_QUOTES_VALUE_PATTERN}"
-    escape_manager = qradar_escape_manager
+    escape_manager = aql_escape_manager
 
     wildcard_symbol = "%"
 

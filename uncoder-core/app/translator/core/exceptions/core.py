@@ -77,3 +77,7 @@ class InvalidYamlStructure(InvalidRuleStructure):
 
 class InvalidJSONStructure(InvalidRuleStructure):
     rule_type: str = "JSON"
+
+
+class InvalidXMLStructure(InvalidRuleStructure):
+    rule_type: str = "XML"

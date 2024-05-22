@@ -32,9 +32,13 @@ from app.translator.core.tokenizer import TOKEN_TYPE, QueryTokenizer
 
 class QueryParser(ABC):
     wrapped_with_comment_pattern: str = None
+    details: PlatformDetails = None
 
     def remove_comments(self, text: str) -> str:
-        return re.sub(self.wrapped_with_comment_pattern, "\n", text, flags=re.MULTILINE).strip()
+        if self.wrapped_with_comment_pattern:
+            return re.sub(self.wrapped_with_comment_pattern, "\n", text, flags=re.MULTILINE).strip()
+
+        return text
 
     def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
         return RawQueryContainer(query=text, language=language)
@@ -47,7 +51,6 @@ class QueryParser(ABC):
 class PlatformQueryParser(QueryParser, ABC):
     mappings: BasePlatformMappings = None
     tokenizer: QueryTokenizer = None
-    details: PlatformDetails = None
     platform_functions: PlatformFunctions = None
 
     def get_fields_tokens(self, tokens: list[Union[FieldValue, Keyword, Identifier]]) -> list[Field]:

@@ -1,3 +1,3 @@
-from app.translator.platforms.athena.parsers.athena import AthenaQueryParser
-from app.translator.platforms.athena.renders.athena import AthenaQueryRender
-from app.translator.platforms.athena.renders.athena_cti import AthenaCTI
+from app.translator.platforms.athena.parsers.athena import AthenaQueryParser  # noqa: F401
+from app.translator.platforms.athena.renders.athena import AthenaQueryRender  # noqa: F401
+from app.translator.platforms.athena.renders.athena_cti import AthenaCTI  # noqa: F401
