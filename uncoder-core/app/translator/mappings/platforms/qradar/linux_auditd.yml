@@ -14,7 +14,7 @@ field_mapping:
   a2: Command
   a3: Command
   exe: Process Path
-  Process CommandLine: Command
+  CommandLine: Command
   Image: Process Path
   username: username
   LogonId: Logon ID
