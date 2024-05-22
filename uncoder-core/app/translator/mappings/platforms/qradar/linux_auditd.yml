@@ -16,6 +16,6 @@ field_mapping:
   exe: Process Path
   CommandLine: Command
   Image: Process Path
-  username: username
+  User: username
   LogonId: Logon ID
   ParentImage: Parent Process Path
