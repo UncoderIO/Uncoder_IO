@@ -19,6 +19,7 @@ limitations under the License.
 
 
 from app.translator.core.models.iocs import IocsChunkValue
+from app.translator.core.models.platform_details import PlatformDetails
 
 
 class RenderCTI:
@@ -31,6 +32,7 @@ class RenderCTI:
     final_result_for_many: str = "union * | where ({result})\n"
     final_result_for_one: str = "union * | where {result}\n"
     default_mapping = None
+    details: PlatformDetails = None
 
     def create_field_value(self, field: str, value: str, generic_field: str) -> str:  # noqa: ARG002
         return self.field_value_template.format(key=field, value=value)
