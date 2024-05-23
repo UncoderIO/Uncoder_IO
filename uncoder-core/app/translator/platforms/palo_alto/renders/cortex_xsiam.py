@@ -96,7 +96,11 @@ class CortexXSIAMFieldValue(BaseQueryFieldValue):
         return f"{field} != null"
 
     def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
-        raise UnsupportedRenderMethod(platform_name=self.details.name, method="Keywords")
+        if isinstance(value, list):
+            return f"({self.or_token.join(self.contains_modifier(field=field, value=v) for v in value)})"
+        if value.endswith("\\"):
+            return f'_raw_log ~= ".*{self.apply_value(value, value_type=ValueType.regex_value)}.*"'
+        return f'_raw_log contains "{self.apply_value(value)}"'
 
 
 @render_manager.register
