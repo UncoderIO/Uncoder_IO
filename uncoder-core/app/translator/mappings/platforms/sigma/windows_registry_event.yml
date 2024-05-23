@@ -1,0 +1,31 @@
+platform: Sigma
+source: windows_registry_event
+
+log_source:
+  product: [windows]
+  category: [registry_event, registry_set]
+
+default_log_source:
+  product: windows
+  category: registry_event
+
+field_mapping:
+  TargetObject: TargetObject
+  Image: Image
+  Details: Details
+  EventType: EventType
+  CommandLine: CommandLine
+  LogonId: LogonId
+  Product: Product
+  Company: Company
+  IntegrityLevel: IntegrityLevel
+  CurrentDirectory: CurrentDirectory
+  ProcessId: ProcessId
+  ParentProcessId: ParentProcessId
+  ParentCommandLine: ParentCommandLine
+  ParentImage: ParentImage
+  ParentUser: ParentUser
+  ParentIntegrityLevel: ParentIntegrityLevel
+  ParentLogonId: ParentLogonId
+  ParentProduct: ParentProduct
+  ParentCompany: ParentCompany

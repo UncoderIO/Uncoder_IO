@@ -22,6 +22,7 @@ from typing import Union
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.parser import PlatformQueryParser
 from app.translator.platforms.base.aql.const import NUM_VALUE_PATTERN, SINGLE_QUOTES_VALUE_PATTERN
+from app.translator.platforms.base.aql.log_source_map import LOG_SOURCE_FUNCTIONS_MAP
 from app.translator.platforms.base.aql.mapping import AQLMappings, aql_mappings
 from app.translator.platforms.base.aql.tokenizer import AQLTokenizer
 from app.translator.tools.utils import get_match_group
@@ -31,10 +32,10 @@ class AQLQueryParser(PlatformQueryParser):
     tokenizer = AQLTokenizer()
     mappings: AQLMappings = aql_mappings
 
-    log_source_functions = ("LOGSOURCENAME", "LOGSOURCEGROUPNAME", "LOGSOURCETYPENAME", "CATEGORYNAME")
+    log_source_functions = ("LOGSOURCENAME", "LOGSOURCEGROUPNAME")
     log_source_function_pattern = r"\(?(?P<key>___func_name___\([a-zA-Z]+\))(?:\s+like\s+|\s+ilike\s+|\s*=\s*)'(?P<value>[%a-zA-Z\s]+)'\s*\)?\s+(?:and|or)?\s"  # noqa: E501
 
-    log_source_key_types = ("devicetype", "category", "qid", "qideventcategory")
+    log_source_key_types = ("devicetype", "category", "qid", "qideventcategory", *LOG_SOURCE_FUNCTIONS_MAP.keys())
     log_source_pattern = rf"___source_type___(?:\s+like\s+|\s+ilike\s+|\s*=\s*)(?:{SINGLE_QUOTES_VALUE_PATTERN}|{NUM_VALUE_PATTERN})(?:\s+(?:and|or)\s+|\s+)?"  # noqa: E501
     num_value_pattern = r"[0-9]+"
     multi_num_log_source_pattern = (
@@ -67,6 +68,11 @@ class AQLQueryParser(PlatformQueryParser):
         query = query[:pos_start] + query[pos_end:]
         return query, re.findall(pattern, value)
 
+    def __map_log_source_value(self, logsource_key: str, value: Union[str, int]) -> tuple[str, Union[int, str]]:
+        if log_source_map := LOG_SOURCE_FUNCTIONS_MAP.get(logsource_key):
+            return log_source_map.name, log_source_map.id_map.get(value, value)
+        return logsource_key, value
+
     def __parse_log_sources(self, query: str) -> tuple[dict[str, Union[list[str], list[int]]], str]:
         log_sources = {}
 
@@ -80,6 +86,7 @@ class AQLQueryParser(PlatformQueryParser):
                 num_value = get_match_group(search, group_name="num_value")
                 str_value = get_match_group(search, group_name="s_q_value")
                 value = num_value and int(num_value) or str_value
+                log_source_key, value = self.__map_log_source_value(log_source_key, value)
                 log_sources.setdefault(log_source_key, []).append(value)
                 pos_start = search.start()
                 pos_end = search.end()
