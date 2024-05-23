@@ -4,7 +4,8 @@ description: Text that describe current mapping
 
 log_source:
   product: [windows]
-  service: [powershell, ps_classic_provider_start, ps_classic_script, ps_classic_start, ps_module, ps_script]
+  service: [powershell]
+  category: [ps_classic_provider_start, ps_classic_script, ps_classic_start, ps_module, ps_script]
 
 default_log_source:
   product: windows
