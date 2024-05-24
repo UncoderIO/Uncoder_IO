@@ -1,6 +1,6 @@
 from typing import Optional, Union
 
-from app.translator.core.custom_types.tokens import OperatorType
+from app.translator.core.custom_types.tokens import OperatorType, STR_SEARCH_OPERATORS
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, SourceMapping
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.str_value_manager import StrValue
@@ -13,6 +13,9 @@ class Field:
 
     def get_generic_field_name(self, source_id: str) -> Optional[str]:
         return self.__generic_names_map.get(source_id)
+
+    def add_generic_names_map(self, generic_names_map: dict) -> None:
+        self.__generic_names_map = generic_names_map
 
     def set_generic_names_map(self, source_mappings: list[SourceMapping], default_mapping: SourceMapping) -> None:
         generic_names_map = {
@@ -46,7 +49,7 @@ class FieldValue:
         if value and isinstance(value, (list, tuple)):
             for v in value:
                 self.__add_value(v)
-        elif value and isinstance(value, str) and value.isnumeric():
+        elif value and isinstance(value, str) and value.isnumeric() and self.operator.token_type not in STR_SEARCH_OPERATORS:
             self.values.append(int(value))
         elif value is not None and isinstance(value, (int, str)):
             self.values.append(value)
