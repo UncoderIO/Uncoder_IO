@@ -16,7 +16,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-from typing import Callable, List, Optional, Union
+from typing import Callable, Optional, Union
+
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.str_value_manager import StrValue
@@ -29,24 +30,33 @@ class QradarFieldValue(AQLFieldValue):
     details: PlatformDetails = qradar_query_details
 
     def _has_wildcards(self, value: str) -> bool:
-        return any(item in value for item in ('%', '_'))
+        return any(item in value for item in ("%", "_"))
 
-    def _render_qradar_modifiers(self, field: str, values: List[Union[int, str, StrValue]], modifier_func: Callable, prefix: Optional[str] = '', suffix: Optional[str] = '') -> str:
+    def _render_qradar_modifiers(
+        self,
+        field: str,
+        values: list[Union[int, str, StrValue]],
+        modifier_func: Callable,
+        prefix: Optional[str] = "",
+        suffix: Optional[str] = "",
+    ) -> str:
         """
-            Renders values for a list of inputs, applying the appropriate modifier or regex function.
-            
-            Args:
-                field - str: The database field to modify.
-                values - List[Union[int, str, StrValue]]: The list of values to process.
-                modifier_fun - Callable: The function to call for non-regex modifications.
-                prefix - Optional[str]: The prefix to add to each value for regex. Defaults to ''.
-                suffix - Optional[str]: The suffix to add to each value for regex. Defaults to ''.
-            
-            Returns:
-                str: The rendered query part.
+        Renders values for a list of inputs, applying the appropriate modifier or regex function.
+
+        Args:
+            field - str: The database field to modify.
+            values - List[Union[int, str, StrValue]]: The list of values to process.
+            modifier_fun - Callable: The function to call for non-regex modifications.
+            prefix - Optional[str]: The prefix to add to each value for regex. Defaults to ''.
+            suffix - Optional[str]: The suffix to add to each value for regex. Defaults to ''.
+
+        Returns:
+            str: The rendered query part.
         """
         rendered_values = [
-            self.regex_modifier(field, f"{prefix}{v}{suffix}") if self._has_wildcards(str(v)) else modifier_func(field, v)
+            self.regex_modifier(field, f"{prefix}{v}{suffix}")
+            if self._has_wildcards(str(v))
+            else modifier_func(field, v)
             for v in values
         ]
         return f"({self.or_token.join(rendered_values)})"
@@ -75,7 +85,6 @@ class QradarFieldValue(AQLFieldValue):
 
 @render_manager.register
 class QradarQueryRender(AQLQueryRender):
-
     or_token = "OR"
 
     field_value_map = QradarFieldValue(or_token=or_token)

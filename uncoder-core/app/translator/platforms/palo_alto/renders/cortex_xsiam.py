@@ -20,7 +20,6 @@ from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.values import ValueType
-from app.translator.core.exceptions.render import UnsupportedRenderMethod
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
 from app.translator.managers import render_manager
@@ -95,7 +94,7 @@ class CortexXSIAMFieldValue(BaseQueryFieldValue):
             return f"({self.or_token.join(self.is_not_none(field=field, value=v) for v in value)})"
         return f"{field} != null"
 
-    def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
+    def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.contains_modifier(field=field, value=v) for v in value)})"
         if value.endswith("\\"):

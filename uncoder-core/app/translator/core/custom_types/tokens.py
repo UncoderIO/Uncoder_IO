@@ -33,6 +33,12 @@ class GroupType(CustomEnum):
 
 
 STR_SEARCH_OPERATORS = (
-    OperatorType.CONTAINS, OperatorType.NOT_CONTAINS, OperatorType.ENDSWITH, OperatorType.NOT_ENDSWITH,
-    OperatorType.STARTSWITH, OperatorType.NOT_STARTSWITH, OperatorType.REGEX, OperatorType.NOT_REGEX
+    OperatorType.CONTAINS,
+    OperatorType.NOT_CONTAINS,
+    OperatorType.ENDSWITH,
+    OperatorType.NOT_ENDSWITH,
+    OperatorType.STARTSWITH,
+    OperatorType.NOT_STARTSWITH,
+    OperatorType.REGEX,
+    OperatorType.NOT_REGEX,
 )

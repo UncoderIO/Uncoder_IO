@@ -28,11 +28,12 @@ class AQLLogSourceSignature(LogSourceSignature):
         device_type_match = set(devicetype).issubset(self.device_types) if devicetype else None
         category_match = set(category).issubset(self.categories) if category else None
         qid_match = set(qid).issubset(self.qids) if qid else None
-        qid_event_category_match = set(qideventcategory).issubset(self.qid_event_categories) if qideventcategory else None
+        qid_event_category_match = (
+            set(qideventcategory).issubset(self.qid_event_categories) if qideventcategory else None
+        )
         return all(
-            condition for condition in (
-                device_type_match, category_match,
-                qid_match, qid_event_category_match)
+            condition
+            for condition in (device_type_match, category_match, qid_match, qid_event_category_match)
             if condition is not None
         )
 
