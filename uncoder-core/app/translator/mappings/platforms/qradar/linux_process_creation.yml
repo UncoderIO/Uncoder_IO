@@ -15,3 +15,5 @@ field_mapping:
   Image: Process Path
   ParentCommandLine: Parent Command
   ParentImage: Parent Process Path
+  User: username
+  LogonId: Logon ID
