@@ -17,4 +17,4 @@ field_mapping:
   TargetFilename: xdm.target.file.filename
   TargetImage: xdm.target.process.name
   SourceImage: xdm.source.process.name
-  EventID: action_evtlog_event_id
+  EventID: xdm.event.id

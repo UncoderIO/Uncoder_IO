@@ -7,6 +7,7 @@ default_log_source:
 
 field_mapping:
   EventID: action_evtlog_event_id
+  OriginalFileName: actor_process_file_original_name
 
 raw_log_fields:
   - CommandLine
@@ -35,7 +36,7 @@ raw_log_fields:
   - SourcePortName
   - TargetFilename
   - User
-  - OriginalFileName
+  #- OriginalFileName
   - Signed
   - Signature
   - SignatureStatus
