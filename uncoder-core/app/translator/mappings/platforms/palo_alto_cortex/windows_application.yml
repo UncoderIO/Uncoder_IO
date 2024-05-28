@@ -6,6 +6,7 @@ default_log_source:
 
 field_mapping:
   EventID: action_evtlog_event_id
+  Provider_Name: provider_name
 
 raw_log_fields:
   - src_ip
@@ -18,7 +19,6 @@ raw_log_fields:
   - object_name
   - class_type
   - action_id
-  - Provider_Name
   - Data
   - Message
   - Level
