@@ -2,9 +2,26 @@ platform: Qradar
 source: default
 description: Text that describe current mapping
 
-log_source:
-  devicetype:
-    - 12
 
 default_log_source:
   devicetype: 12
+
+
+field_mapping:
+  icmp.type: IcmpType
+  dst-port:
+    - DstPort
+    - DestinationPort
+  dst-hostname: DstHost
+  src-port: SourcePort
+  src-ip:
+   - sourceip
+   - source_ip
+   - SourceIP
+  dst-ip:
+    - DestinationIP
+    - destinationip
+    - destination_ip
+  User: userName
+  CommandLine: Command
+  Protocol: IPProtocol
