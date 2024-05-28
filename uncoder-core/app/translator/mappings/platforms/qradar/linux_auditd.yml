@@ -1,6 +1,6 @@
 platform: Qradar
 source: linux_auditd
-description: Text that describe current mapping
+description: Auditd field mappings to QRadar default CEPs.
 
 log_source:
   devicetype: [11]
@@ -9,8 +9,13 @@ default_log_source:
   devicetype: 11
 
 field_mapping:
-  a0:  a0
-  a1: a1
-  a2: a2
-  a3: a3
-  exe: exe
+  a0: Command
+  a1: Command
+  a2: Command
+  a3: Command
+  exe: Process Path
+  CommandLine: Command
+  Image: Process Path
+  User: username
+  LogonId: Logon ID
+  ParentImage: Parent Process Path
