@@ -27,3 +27,4 @@ field_mapping:
   ParentCompany: actor_process_signature_vendor
   md5: action_process_image_md5
   sha256: action_process_image_sha256
+  OriginalFileName: actor_process_file_original_name
