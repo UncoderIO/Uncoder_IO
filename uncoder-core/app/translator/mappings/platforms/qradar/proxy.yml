@@ -9,8 +9,10 @@ default_log_source:
   devicetype: 46
 
 field_mapping:
-  c-uri: URL
-  c-useragent: c-useragent
+  c-uri: 
+    - URL
+    - XForceCategoryByURL
+  c-useragent: User Agent
   cs-method: cs-method
   cs-bytes: Bytes Sent
   cs-cookie-vars: cs-cookie-vars

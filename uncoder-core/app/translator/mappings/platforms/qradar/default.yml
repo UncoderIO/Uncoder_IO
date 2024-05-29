@@ -13,6 +13,7 @@ field_mapping:
     - DstPort
     - DestinationPort
   dst-hostname: DstHost
+  src-hostname: SrcHost
   src-port: SourcePort
   src-ip:
    - sourceip
@@ -25,3 +26,6 @@ field_mapping:
   User: userName
   CommandLine: Command
   Protocol: IPProtocol
+  Application: 
+    - Application
+    - application

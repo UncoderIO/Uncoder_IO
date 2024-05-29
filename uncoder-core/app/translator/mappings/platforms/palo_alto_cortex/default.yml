@@ -41,5 +41,6 @@ field_mapping:
   dst-hostname: xdm.target.host.hostname
   icmp.type: xdm.network.icmp.type
   icmp.code: xdm.network.icmp.code
-  URL: xdm.target.url
-  QueryName: xdm.target.url
+  c-uri: xdm.network.http.url
+  c-uri-query: xdm.network.http.url
+  QueryName: xdm.network.dns.dns_question.name

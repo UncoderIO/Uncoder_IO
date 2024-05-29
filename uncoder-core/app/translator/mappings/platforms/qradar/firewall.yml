@@ -9,7 +9,24 @@ default_log_source:
   devicetype: 4
 
 field_mapping:
-  src-ip: sourceip
-  src-port: sourceport
-  dst-ip: destinationip
-  dst-port: sestinationport
+  src-ip:
+    - sourceip
+    - SrcHost
+    - LocalHost
+    - Source
+    - NetworkView
+  src-port:
+    - sourceport
+    - SrcPort
+    - LocalPort
+  dst-ip:
+    - destinationip
+    - DstHost
+    - RemoteHost
+    - Destination
+  dst-port:
+    - destinationport
+    - DstPort
+    - RemotePort
+  Protocol: IPProtocol
+  Application: Application
