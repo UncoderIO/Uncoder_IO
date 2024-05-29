@@ -9,7 +9,7 @@ default_log_source:
   devicetype: 185
 
 field_mapping:
-  dns-query: dns-query
+  dns-query: URL
   parent-domain: parent-domain
   dns-answer: dns-answer
-  dns-record: dns-record
+  dns-record: URL
