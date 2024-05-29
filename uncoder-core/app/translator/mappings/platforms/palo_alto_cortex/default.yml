@@ -44,3 +44,4 @@ field_mapping:
   c-uri: xdm.network.http.url
   c-uri-query: xdm.network.http.url
   QueryName: xdm.network.dns.dns_question.name
+  Application: xdm.network.application_protocol
