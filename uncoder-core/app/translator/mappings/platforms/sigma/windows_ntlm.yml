@@ -1,6 +1,6 @@
 platform: Sigma
 source: windows_ntlm
-description: Text that describe current mapping
+
 
 log_source:
   product: [windows]

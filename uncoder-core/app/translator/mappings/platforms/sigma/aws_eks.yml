@@ -1,6 +1,6 @@
 platform: Sigma
 source: aws_eks
-description: Text that describe current mapping
+
 
 log_source:
   product: [aws]

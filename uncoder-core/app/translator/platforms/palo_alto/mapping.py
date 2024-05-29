@@ -23,11 +23,19 @@ class CortexXSIAMLogSourceSignature(LogSourceSignature):
             return f"{model} in ({', '.join(source for source in logsource)})"
         return f"{model} = {logsource}"
 
+    @property
+    def __datamodel_scheme(self):
+        if datamodel := self._default_source.get("datamodel"):
+            return f"{datamodel} "
+        return ""
+
     def __str__(self) -> str:
         if preset_data := self._default_source.get("preset"):
-            return self.__prepare_log_source_for_render(logsource=preset_data, model="preset")
+            preset = self.__prepare_log_source_for_render(logsource=preset_data, model="preset")
+            return f"{self.__datamodel_scheme}{preset}"
         if dataset_data := self._default_source.get("dataset"):
-            return self.__prepare_log_source_for_render(logsource=dataset_data, model="dataset")
+            dataset = self.__prepare_log_source_for_render(logsource=dataset_data, model="dataset")
+            return f"{self.__datamodel_scheme}{dataset}"
         return "datamodel"
 
 

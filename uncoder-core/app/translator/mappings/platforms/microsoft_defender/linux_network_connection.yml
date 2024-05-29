@@ -1,6 +1,6 @@
 platform: Microsoft Defender
 source: linux_network_connection
-description: Text that describe current mapping
+
 
 log_source:
   table: [DeviceNetworkEvents]

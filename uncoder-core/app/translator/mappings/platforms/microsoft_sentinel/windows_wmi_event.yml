@@ -1,6 +1,6 @@
 platform: Microsoft Sentinel
 source: windows_wmi_event
-description: Text that describe current mapping
+
 
 log_source:
   table: [Event]

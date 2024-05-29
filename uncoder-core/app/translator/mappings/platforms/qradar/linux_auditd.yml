@@ -1,6 +1,6 @@
 platform: Qradar
 source: linux_auditd
-description: Text that describe current mapping
+
 
 log_source:
   devicetype: [11]

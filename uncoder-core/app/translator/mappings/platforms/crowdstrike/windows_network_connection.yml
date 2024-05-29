@@ -1,6 +1,6 @@
 platform: Crowdstrike
 source: windows_network_connection
-description: Text that describe current mapping
+
 
 log_source:
   event_simpleName: [NetworkConnectIP4]

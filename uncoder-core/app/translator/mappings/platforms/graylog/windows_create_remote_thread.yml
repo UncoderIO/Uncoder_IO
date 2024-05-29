@@ -1,6 +1,6 @@
 platform: Graylog
 source: windows_create_remote_thread
-description: Text that describe current mapping
+
 
 field_mapping:
   SourceImage: winlog.event_data.SourceImage

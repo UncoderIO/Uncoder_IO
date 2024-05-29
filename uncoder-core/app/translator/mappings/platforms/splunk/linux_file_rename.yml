@@ -1,6 +1,6 @@
 platform: Splunk
 source: linux_file_rename
-description: Text that describe current mapping
+
 
 log_source:
   index: [linux]

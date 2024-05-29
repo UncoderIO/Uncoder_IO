@@ -1,6 +1,6 @@
 platform: OpenSearch
 source: gcp_gcp.audit
-description: Text that describe current mapping
+
 
 log_source:
   index: [logs-*]

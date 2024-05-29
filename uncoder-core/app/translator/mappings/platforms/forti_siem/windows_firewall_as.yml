@@ -1,6 +1,6 @@
 platform: FortiSiem
 source: windows_firewall_as
-description: Text that describe current mapping
+
 
 log_source:
   eventType:

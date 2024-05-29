@@ -1,6 +1,6 @@
 platform: Qradar
 source: default
-description: Text that describe current mapping
+
 
 
 default_log_source:
@@ -26,6 +26,16 @@ field_mapping:
   User: userName
   CommandLine: Command
   Protocol: IPProtocol
-  Application: 
+  Application:
     - Application
     - application
+  SourceHostName: HostCount-source
+  DestinationHostname: HostCount-destination
+  src-packets:
+    - PacketRatio-src
+    - src-packets
+  dst-packets:
+    - PacketRatio-dst
+    - dst-packets
+  src-bytes: src-bytes
+  dst-bytes: dst-bytes

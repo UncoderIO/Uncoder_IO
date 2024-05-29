@@ -1,6 +1,6 @@
 platform: FortiSiem
 source: windows_powershell_classic
-description: Text that describe current mapping
+
 
 log_source:
   eventType:

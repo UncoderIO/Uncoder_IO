@@ -1,6 +1,6 @@
 platform: Splunk
 source: aws_eks
-description: Text that describe current mapping
+
 
 log_source:
   source_type: [aws:*]

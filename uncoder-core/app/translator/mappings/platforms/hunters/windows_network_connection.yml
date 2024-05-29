@@ -1,6 +1,6 @@
 platform: Hunters
 source: windows_network_connection
-description: Text that describe current mapping
+
 
 default_log_source:
   table: table_name

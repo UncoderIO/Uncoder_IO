@@ -1,6 +1,6 @@
 platform: Microsoft Sentinel
 source: macos_process_creation
-description: Text that describe current mapping
+
 
 log_source:
   table: [DeviceProcessEvents]

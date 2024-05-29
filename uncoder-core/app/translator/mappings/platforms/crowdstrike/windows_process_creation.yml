@@ -1,6 +1,6 @@
 platform: Crowdstrike
 source: windows_process_creation
-description: Text that describe current mapping
+
 
 log_source:
   event_simpleName: [ProcessRollup2]

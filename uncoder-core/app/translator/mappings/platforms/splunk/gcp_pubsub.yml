@@ -1,6 +1,6 @@
 platform: Splunk
 source: gcp_pubsub
-description: Text that describe current mapping
+
 
 log_source:
   source_type: [google:gcp:*]

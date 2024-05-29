@@ -1,6 +1,6 @@
 platform: Graylog
 source: azure_aadnoninteractiveusersigninlogs
-description: Text that describe current mapping
+
 
 field_mapping:
   UserAgent: UserAgent

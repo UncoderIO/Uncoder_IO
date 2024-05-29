@@ -1,6 +1,6 @@
 platform: Graylog
 source: windows_wmi_event
-description: Text that describe current mapping
+
 
 field_mapping:
   Destination: winlog.event_data.Destination

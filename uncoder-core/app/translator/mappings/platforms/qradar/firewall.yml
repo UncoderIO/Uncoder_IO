@@ -1,6 +1,6 @@
 platform: Qradar
 source: firewall
-description: Text that describe current mapping
+
 
 log_source:
   devicetype: [4, 5, 6, 41, 49, 73, 82, 104, 120, 194, 206, 278, 296, 307, 331, 340, 455, 456]

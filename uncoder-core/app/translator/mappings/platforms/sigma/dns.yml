@@ -1,6 +1,6 @@
 platform: Sigma
 source: dns
-description: Text that describe current mapping
+
 
 log_source:
   category: [dns]

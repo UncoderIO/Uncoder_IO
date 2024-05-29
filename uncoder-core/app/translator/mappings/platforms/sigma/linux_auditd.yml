@@ -1,6 +1,6 @@
 platform: Sigma
 source: linux_auditd
-description: Text that describe current mapping
+
 
 log_source:
   product: [linux]

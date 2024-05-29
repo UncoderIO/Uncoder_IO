@@ -1,6 +1,6 @@
 platform: LogScale
 source: azure_m365
-description: Text that describe current mapping
+
 
 
 field_mapping:

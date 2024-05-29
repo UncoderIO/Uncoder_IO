@@ -1,6 +1,6 @@
 platform: Graylog
 source: azure_BehaviorAnalytics
-description: Text that describe current mapping
+
 
 field_mapping:
   ActionType: ActionType

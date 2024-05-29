@@ -1,6 +1,6 @@
 platform: ElasticSearch
 source: macos_dns_query
-description: Text that describe current mapping
+
 
 log_source:
   index: [winlogbeat-*, logs-*]

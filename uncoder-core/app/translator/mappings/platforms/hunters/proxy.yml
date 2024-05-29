@@ -1,6 +1,6 @@
 platform: Hunters
 source: proxy
-description: Text that describe current mapping
+
 
 default_log_source:
   table: table_name

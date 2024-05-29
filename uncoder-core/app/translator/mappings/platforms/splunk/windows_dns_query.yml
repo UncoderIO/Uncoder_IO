@@ -1,6 +1,6 @@
 platform: Splunk
 source: windows_dns_query
-description: Text that describe current mapping
+
 
 log_source:
   source: [WinEventLog:Microsoft-Windows-Sysmon/Operational]

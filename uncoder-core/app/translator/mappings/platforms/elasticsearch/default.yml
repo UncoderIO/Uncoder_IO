@@ -1,6 +1,6 @@
 platform: ElasticSearch
 source: default
-description: Text that describe current mapping
+
 
 default_log_source:
   index: "*"

@@ -1,6 +1,6 @@
 platform: Graylog
 source: webserver
-description: Text that describe current mapping
+
 
 field_mapping:
   c-uri: url.original

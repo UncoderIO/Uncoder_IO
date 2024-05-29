@@ -1,6 +1,6 @@
 platform: LogRhythm Axon
 source: default
-description: Text that describe current mapping
+
 
 field_mapping:
   EventID: vendor_information.id

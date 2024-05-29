@@ -1,6 +1,6 @@
 platform: Splunk
 source: windows_file_change
-description: Text that describe current mapping
+
 
 log_source:
   source: [WinEventLog:Microsoft-Windows-Sysmon/Operational]

@@ -1,6 +1,6 @@
 platform: Graylog
 source: windows_file_event
-description: Text that describe current mapping
+
 
 field_mapping:
   CreationUtcTime: winlog.event_data.CreationUtcTime

@@ -1,6 +1,6 @@
 platform: Microsoft Sentinel
 source: azure_signinlogs
-description: Text that describe current mapping
+
 
 log_source:
   table: [SigninLogs]

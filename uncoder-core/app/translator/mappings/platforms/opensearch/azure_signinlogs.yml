@@ -1,6 +1,6 @@
 platform: OpenSearch
 source: azure_signinlogs
-description: Text that describe current mapping
+
 
 log_source:
   index: [logs-*]

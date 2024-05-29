@@ -1,6 +1,6 @@
 platform: Qradar
 source: windows_process_creation
-description: Text that describe current mapping
+
 
 log_source:
   devicetype: [12]

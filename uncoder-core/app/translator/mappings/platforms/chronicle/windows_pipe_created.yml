@@ -1,6 +1,6 @@
 platform: Chronicle
 source: windows_pipe_created
-description: Text that describe current mapping
+
 
 field_mapping:
   PipeName: target.resource.name

@@ -1,6 +1,6 @@
 platform: Crowdstrike
 source: linux_dns_query
-description: Text that describe current mapping
+
 
 log_source:
   event_simpleName: [DnsRequest]

@@ -1,0 +1,27 @@
+platform: Sigma
+source: windows_system
+
+
+log_source:
+  product: [windows]
+  service: [system]
+
+default_log_source:
+  product: windows
+  service: system
+
+field_mapping:
+  EventID: EventID
+  AccountName: AccountName
+  ImagePath: ImagePath
+  ServiceName: ServiceName
+  ServiceType: ServiceType
+  StartType: StartType
+  Provider_Name: Provider_Name
+  Origin: Origin
+  HiveName: HiveName
+  Caption: Caption
+  param1: param1
+  param2: param2
+  Channel: Channel
+  DeviceName: DeviceName
