@@ -1,0 +1,6 @@
+{
+    "yaml.schemas": {
+        "file:///Users/py/.vscode/extensions/atlassian.atlascode-3.0.10/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml",
+        "https://raw.githubusercontent.com/SigmaHQ/sigma-specification/main/sigma-schema.json": "file:///Users/py/_work/git/Uncoder_IO/uncoder-core/app/translator/mappings/platforms/sigma/apache_httpd.yml"
+    }
+}

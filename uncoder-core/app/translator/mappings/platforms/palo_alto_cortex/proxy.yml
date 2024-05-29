@@ -1,8 +1,8 @@
 platform: Palo Alto XSIAM
-source: webserver
+source: proxy
 
 default_log_source:
-  dataset: [apache_tomcat_raw, nginx_nginx_raw, apache_tomcat_raw]
+  datamodel: datamodel
 
 field_mapping:
   c-uri: xdm.network.http.url

@@ -1,10 +1,10 @@
 platform: Palo Alto XSIAM
-source: slack_slack_raw
+source: okta_okta
 
 
 default_log_source:
   #datamodel: datamodel
-  dataset: slack_slack_raw
+  dataset: okta_okta_raw
 
 field_mapping:
-  c-action: xdm.event.operation
+  eventType: xdm.event.type

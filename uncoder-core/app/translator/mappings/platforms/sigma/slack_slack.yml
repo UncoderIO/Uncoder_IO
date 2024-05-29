@@ -1,0 +1,14 @@
+platform: Sigma
+source: slack_slack
+description: Text that describe current mapping
+
+log_source:
+  product: [slack]
+  service: [slack]
+
+default_log_source:
+  product: slack
+  service: slack
+
+field_mapping:
+  c-action: c-action
