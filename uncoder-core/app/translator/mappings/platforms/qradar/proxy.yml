@@ -1,6 +1,6 @@
 platform: Qradar
 source: proxy
-description: Text that describe current mapping
+
 
 log_source:
   devicetype: [46, 103, 154, 191, 206, 200]

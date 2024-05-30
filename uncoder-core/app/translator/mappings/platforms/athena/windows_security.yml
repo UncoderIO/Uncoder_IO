@@ -1,6 +1,6 @@
 platform: Athena
 source: windows_security
-description: Text that describe current mapping
+
 
 default_log_source:
   table: eventlog

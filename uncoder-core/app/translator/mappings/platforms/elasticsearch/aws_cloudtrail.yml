@@ -1,6 +1,6 @@
 platform: ElasticSearch
 source: aws_cloudtrail
-description: Text that describe current mapping
+
 
 log_source:
   index: [logs-*]

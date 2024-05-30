@@ -1,6 +1,6 @@
 platform: Qradar
 source: azure_m365
-description: Text that describe current mapping
+
 
 log_source:
   devicetype: [397]

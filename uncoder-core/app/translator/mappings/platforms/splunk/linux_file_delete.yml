@@ -1,6 +1,6 @@
 platform: Splunk
 source: linux_file_delete
-description: Text that describe current mapping
+
 
 log_source:
   index: [linux]

@@ -1,6 +1,6 @@
 platform: ElasticSearch
 source: windows_network_connection
-description: Text that describe current mapping
+
 
 log_source:
   index: [winlogbeat-*, logs-*]

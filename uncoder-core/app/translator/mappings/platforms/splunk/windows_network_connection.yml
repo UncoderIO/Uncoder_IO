@@ -1,6 +1,6 @@
 platform: Splunk
 source: windows_network_connection
-description: Text that describe current mapping
+
 
 log_source:
   source: [WinEventLog:Microsoft-Windows-Sysmon/Operational]

@@ -1,6 +1,6 @@
 platform: Splunk
 source: windows_ntlm
-description: Text that describe current mapping
+
 
 log_source:
   source_type: [XmlWinEventLog:Microsoft-Windows-NTLM/Operational]

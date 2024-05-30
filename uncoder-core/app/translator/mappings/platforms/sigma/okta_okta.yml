@@ -1,6 +1,6 @@
 platform: Sigma
 source: okta_okta
-description: Text that describe current mapping
+
 
 log_source:
   product: [okta]

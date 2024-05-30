@@ -1,6 +1,6 @@
 platform: LogScale
 source: azure_AzureDiagnostics
-description: Text that describe current mapping
+
 
 
 field_mapping:

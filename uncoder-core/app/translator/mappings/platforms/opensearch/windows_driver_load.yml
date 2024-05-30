@@ -1,6 +1,6 @@
 platform: OpenSearch
 source: windows_driver_load
-description: Text that describe current mapping
+
 
 log_source:
   index: [winlogbeat-*, logs-*]

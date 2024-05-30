@@ -1,6 +1,6 @@
 platform: ElasticSearch
 source: proxy
-description: Text that describe current mapping
+
 
 log_source:
   index: [logs-*]

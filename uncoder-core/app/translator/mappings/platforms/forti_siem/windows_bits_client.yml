@@ -1,6 +1,6 @@
 platform: FortiSiem
 source: windows_bits_client
-description: Text that describe current mapping
+
 
 log_source:
   eventType:

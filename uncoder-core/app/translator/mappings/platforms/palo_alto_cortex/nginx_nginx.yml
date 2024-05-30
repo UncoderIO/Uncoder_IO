@@ -3,6 +3,7 @@ source: nginx_nginx
 
 
 default_log_source:
+  datamodel: datamodel
   dataset: nginx_nginx_raw
 
 field_mapping:

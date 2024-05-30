@@ -3,6 +3,7 @@ source: apache_tomcat
 
 
 default_log_source:
+  datamodel: datamodel
   dataset: apache_tomcat_raw
 
 field_mapping:

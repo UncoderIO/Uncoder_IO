@@ -1,6 +1,6 @@
 platform: Qradar
 source: webserver
-description: Text that describe current mapping
+
 
 log_source:
   devicetype: [10, 13, 239, 439]

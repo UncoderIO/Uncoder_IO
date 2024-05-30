@@ -3,6 +3,7 @@ source: apache_httpd
 
 
 default_log_source:
+  datamodel: datamodel
   dataset: apache_httpd_raw
 
 field_mapping:

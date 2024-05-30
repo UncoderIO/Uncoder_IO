@@ -1,6 +1,6 @@
 platform: Splunk
 source: windows_process_creation
-description: Text that describe current mapping
+
 
 log_source:
   source: [WinEventLog:Microsoft-Windows-Sysmon/Operational, WinEventLog:Security]

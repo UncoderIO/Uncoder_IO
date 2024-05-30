@@ -1,6 +1,6 @@
 platform: OpenSearch
 source: azure_azureactivity
-description: Text that describe current mapping
+
 
 log_source:
   index: [logs-*]

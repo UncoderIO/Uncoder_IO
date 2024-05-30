@@ -1,6 +1,6 @@
 platform: Microsoft Sentinel
 source: aws_cloudtrail
-description: Text that describe current mapping
+
 
 log_source:
   table: [AWSCloudTrail]

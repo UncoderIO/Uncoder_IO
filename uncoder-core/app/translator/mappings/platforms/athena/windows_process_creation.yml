@@ -1,6 +1,6 @@
 platform: Athena
 source: windows_process_creation
-description: Text that describe current mapping
+
 
 default_log_source:
   table: eventlog

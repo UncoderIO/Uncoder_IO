@@ -1,6 +1,6 @@
 platform: Graylog
 source: gcp_gcp.audit
-description: Text that describe current mapping
+
 
 field_mapping:
   backupConfiguration.enabled: backupConfiguration.enabled

@@ -1,6 +1,6 @@
 platform: OpenSearch
 source: azure_azuread
-description: Text that describe current mapping
+
 
 log_source:
   index: [logs-*]

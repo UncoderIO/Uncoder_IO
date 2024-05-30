@@ -1,0 +1,19 @@
+platform: Sigma
+source: apache_tomcat
+
+log_source:
+  product: [apache]
+  service: [tomcat]
+
+default_log_source:
+  product: apache
+  service: tomcat
+
+field_mapping:
+  c-uri: c-uri
+  c-useragent: c-useragent
+  cs-method: cs-method
+  cs-bytes: cs-bytes
+  c-uri-query: c-uri-query
+  cs-referrer: cs-referrer
+  sc-status: sc-status

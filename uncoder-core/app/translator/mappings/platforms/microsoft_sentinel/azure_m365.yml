@@ -1,6 +1,6 @@
 platform: Microsoft Sentinel
 source: azure_m365
-description: Text that describe current mapping
+
 
 log_source:
   table: [OfficeActivity]

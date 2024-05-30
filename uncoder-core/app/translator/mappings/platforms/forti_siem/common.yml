@@ -109,7 +109,7 @@ field_mapping:
   SearchFilter: queryFilter
   Address: remoteAddress
   Origin: origLocation
-  PasswordLastSet: passwordLastSet  # Data type
+  PasswordLastSet: passwordLastSet  # Dara type
   TargetServerName: targetName
   ServerName: serverName
   DeviceName: hostName

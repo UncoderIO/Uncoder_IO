@@ -1,6 +1,6 @@
 platform: Splunk
 source: windows_security
-description: Text that describe current mapping
+
 
 log_source:
   source: [WinEventLog:Security]

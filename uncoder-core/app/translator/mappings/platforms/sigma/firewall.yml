@@ -1,6 +1,6 @@
 platform: Sigma
 source: firewall
-description: Text that describe current mapping
+
 
 log_source:
   category: [firewall]

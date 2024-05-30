@@ -1,6 +1,6 @@
 platform: Crowdstrike
 source: windows_image_load
-description: Text that describe current mapping
+
 
 log_source:
   event_simpleName: [LoadImage]

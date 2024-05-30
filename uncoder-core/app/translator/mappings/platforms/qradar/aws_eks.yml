@@ -1,6 +1,6 @@
 platform: Qradar
 source: aws_eks
-description: Text that describe current mapping
+
 
 log_source:
   devicetype: [382]

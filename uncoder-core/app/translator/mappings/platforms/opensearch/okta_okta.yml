@@ -1,6 +1,6 @@
 platform: OpenSearch
 source: okta_okta
-description: Text that describe current mapping
+
 
 log_source:
   index: [logs-*]

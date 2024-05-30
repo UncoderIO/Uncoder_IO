@@ -1,6 +1,6 @@
 platform: Qradar
 source: macos_file_event
-description: Text that describe current mapping
+
 
 log_source:
   devicetype: [102]

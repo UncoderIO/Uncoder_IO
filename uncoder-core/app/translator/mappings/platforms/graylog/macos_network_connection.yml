@@ -1,6 +1,6 @@
 platform: Graylog
 source: macos_network_connection
-description: Text that describe current mapping
+
 
 field_mapping:
   Image: process.executable

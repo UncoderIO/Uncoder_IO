@@ -1,6 +1,6 @@
 platform: Athena
 source: windows_image_load
-description: Text that describe current mapping
+
 
 default_log_source:
   table: eventlog

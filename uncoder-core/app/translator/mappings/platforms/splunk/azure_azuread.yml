@@ -1,6 +1,6 @@
 platform: Splunk
 source: azure_azuread
-description: Text that describe current mapping
+
 
 log_source:
   source_type: [azure:aad:*]

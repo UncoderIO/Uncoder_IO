@@ -1,6 +1,6 @@
 platform: LogScale
 source: aws_eks
-description: Text that describe current mapping
+
 
 
 field_mapping:

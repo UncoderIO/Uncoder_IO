@@ -1,6 +1,6 @@
 platform: Graylog
 source: okta_okta
-description: Text that describe current mapping
+
 
 field_mapping:
   client.user.id: okta.actor.id
