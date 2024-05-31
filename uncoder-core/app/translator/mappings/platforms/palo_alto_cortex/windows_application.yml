@@ -2,7 +2,7 @@ platform: Palo Alto XSIAM
 source: windows_application
 
 default_log_source:
-  dataset: microsoft_windows_raw
+  preset: xdr_event_log
 
 field_mapping:
   EventID: action_evtlog_event_id
