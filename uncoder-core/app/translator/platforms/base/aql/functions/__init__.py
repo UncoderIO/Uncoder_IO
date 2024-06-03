@@ -27,7 +27,7 @@ from app.translator.core.models.functions.base import Function, ParsedFunctions
 from app.translator.core.models.functions.sort import SortLimitFunction
 from app.translator.platforms.base.aql.const import TABLE_PATTERN
 from app.translator.platforms.base.aql.functions.const import func_aliases_ctx_var, AGGREGATION_FUNCTIONS_MAP
-from app.translator.platforms.base.aql.functions.custom_types.functions import AQLFunctionType
+from app.translator.platforms.base.aql.functions.const import AQLFunctionType
 from app.translator.platforms.base.aql.functions.manager import AQLFunctionsManager
 
 
