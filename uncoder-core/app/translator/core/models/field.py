@@ -1,9 +1,14 @@
 from typing import Optional, Union
 
-from app.translator.core.custom_types.tokens import OperatorType, STR_SEARCH_OPERATORS
+from app.translator.core.custom_types.tokens import STR_SEARCH_OPERATORS, OperatorType
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, SourceMapping
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.str_value_manager import StrValue
+
+
+class Alias:
+    def __init__(self, name: str):
+        self.name = name
 
 
 class Field:
@@ -33,8 +38,18 @@ class Field:
 
 
 class FieldValue:
-    def __init__(self, source_name: str, operator: Identifier, value: Union[int, str, StrValue, list, tuple]):
+    def __init__(
+        self,
+        source_name: str,
+        operator: Identifier,
+        value: Union[int, str, StrValue, list, tuple],
+        is_alias: bool = False,
+    ):
         self.field = Field(source_name=source_name)
+        self.alias = None
+        if is_alias:
+            self.alias = Alias(name=source_name)
+
         self.operator = operator
         self.values = []
         self.__add_value(value)
@@ -49,13 +64,21 @@ class FieldValue:
         if value and isinstance(value, (list, tuple)):
             for v in value:
                 self.__add_value(v)
-        elif value and isinstance(value, str) and value.isnumeric() and self.operator.token_type not in STR_SEARCH_OPERATORS:
+        elif (
+            value
+            and isinstance(value, str)
+            and value.isnumeric()
+            and self.operator.token_type not in STR_SEARCH_OPERATORS
+        ):
             self.values.append(int(value))
         elif value is not None and isinstance(value, (int, str)):
             self.values.append(value)
 
     def __repr__(self):
-        return f"{self.field.source_name} {self.operator.token_type} {self.values}"
+        if self.field:
+            return f"{self.field.source_name} {self.operator.token_type} {self.values}"
+
+        return f"{self.alias.name} {self.operator.token_type} {self.values}"
 
 
 class Keyword:

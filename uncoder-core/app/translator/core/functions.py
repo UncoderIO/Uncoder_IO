@@ -100,7 +100,10 @@ class PlatformFunctionsManager:
     def __init__(self):
         self._parsers_map: dict[str, HigherOrderFunctionParser] = {}
         self._renders_map: dict[str, FunctionRender] = {}
+        self._in_query_renders_map: dict[str, FunctionRender] = {}
         self._names_map: dict[str, str] = {}
+        self._order_to_render: dict[str, int] = {}
+        self._render_to_prefix_functions: list[str] = []
 
     def post_init_configure(self, platform_render: PlatformQueryRender) -> None:
         raise NotImplementedError
@@ -121,6 +124,12 @@ class PlatformFunctionsManager:
 
         raise NotSupportedFunctionException
 
+    def get_in_query_render(self, generic_func_name: str) -> FunctionRender:
+        if INIT_FUNCTIONS and (render := self._in_query_renders_map.get(generic_func_name)):
+            return render
+
+        raise NotSupportedFunctionException
+
     def get_generic_func_name(self, platform_func_name: str) -> Optional[str]:
         if INIT_FUNCTIONS and (generic_func_name := self._names_map.get(platform_func_name)):
             return generic_func_name
@@ -130,6 +139,20 @@ class PlatformFunctionsManager:
     def get_platform_func_name(self, generic_func_name: str) -> Optional[str]:
         if INIT_FUNCTIONS:
             return self._inverted_names_map.get(generic_func_name)
+
+    @property
+    def order_to_render(self) -> dict[str, int]:
+        if INIT_FUNCTIONS:
+            return self._order_to_render
+
+        return {}
+
+    @property
+    def render_to_prefix_functions(self) -> list[str]:
+        if INIT_FUNCTIONS:
+            return self._render_to_prefix_functions
+
+        return []
 
 
 class PlatformFunctions:
@@ -158,18 +181,27 @@ class PlatformFunctions:
             invalid=invalid,
         )
 
+    def _sort_functions_to_render(self, functions: list[Function]) -> list[Function]:
+        return sorted(functions, key=lambda func: self.manager.order_to_render.get(func.name, 0))
+
     def render(self, functions: list[Function], source_mapping: SourceMapping) -> RenderedFunctions:
         rendered = ""
+        rendered_prefix = ""
         not_supported = []
+        functions = self._sort_functions_to_render(functions)
         for func in functions:
             try:
                 func_render = self.manager.get_render(func.name)
-                rendered += self.wrap_function_with_delimiter(func_render.render(func, source_mapping))
+                _rendered = func_render.render(func, source_mapping)
+                if func.name in self.manager.render_to_prefix_functions:
+                    rendered_prefix += _rendered
+                else:
+                    rendered += self.wrap_function_with_delimiter(_rendered)
             except NotSupportedFunctionException:
                 not_supported.append(func.raw)
 
         not_supported = [self.wrap_function_with_delimiter(func.strip()) for func in not_supported]
-        return RenderedFunctions(rendered=rendered, not_supported=not_supported)
+        return RenderedFunctions(rendered_prefix=rendered_prefix, rendered=rendered, not_supported=not_supported)
 
     def wrap_function_with_delimiter(self, func: str) -> str:
         return f" {self.function_delimiter} {func}"

@@ -138,5 +138,5 @@ class MicrosoftSentinelQueryRender(PlatformQueryRender):
         super().__init__()
         self.platform_functions.manager.post_init_configure(self)
 
-    def generate_prefix(self, log_source_signature: LogSourceSignature) -> str:
+    def generate_prefix(self, log_source_signature: LogSourceSignature, functions_prefix: str = "") -> str:  # noqa: ARG002
         return str(log_source_signature)

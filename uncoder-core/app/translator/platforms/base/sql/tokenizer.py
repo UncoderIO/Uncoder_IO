@@ -17,7 +17,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 import re
-from typing import Any, ClassVar, Union
+from typing import Any, ClassVar, Optional, Union
 
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.custom_types.values import ValueType
@@ -52,20 +52,22 @@ class SqlTokenizer(QueryTokenizer):
     wildcard_symbol = "%"
 
     @staticmethod
-    def should_process_value_wildcards(operator: str) -> bool:
-        return operator.lower() in ("like",)
+    def should_process_value_wildcards(operator: Optional[str]) -> bool:
+        return operator and operator.lower() in ("like",)
 
-    def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> tuple[str, Any]:
+    def get_operator_and_value(
+        self, match: re.Match, mapped_operator: str = OperatorType.EQ, operator: Optional[str] = None
+    ) -> tuple[str, Any]:
         if (num_value := get_match_group(match, group_name=ValueType.number_value)) is not None:
-            return operator, num_value
+            return mapped_operator, num_value
 
         if (bool_value := get_match_group(match, group_name=ValueType.bool_value)) is not None:
-            return operator, bool_value
+            return mapped_operator, bool_value
 
         if (s_q_value := get_match_group(match, group_name=ValueType.single_quotes_value)) is not None:
-            return operator, s_q_value
+            return mapped_operator, s_q_value
 
-        return super().get_operator_and_value(match, operator)
+        return super().get_operator_and_value(match, mapped_operator, operator)
 
     @staticmethod
     def create_field_value(field_name: str, operator: Identifier, value: Union[str, list]) -> FieldValue:

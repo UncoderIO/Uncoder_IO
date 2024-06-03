@@ -210,7 +210,7 @@ class LogRhythmAxonQueryRender(PlatformQueryRender):
     is_single_line_comment = True
     is_strict_mapping = True
 
-    def generate_prefix(self, log_source_signature: LogSourceSignature) -> str:
+    def generate_prefix(self, log_source_signature: LogSourceSignature, functions_prefix: str = "") -> str:  # noqa: ARG002
         return str(log_source_signature)
 
     def apply_token(self, token: Union[FieldValue, Keyword, Identifier], source_mapping: SourceMapping) -> str:
@@ -238,12 +238,7 @@ class LogRhythmAxonQueryRender(PlatformQueryRender):
                 field=mapped_fields[0], operator=token.operator, value=token.value
             )
 
-        if isinstance(token, Keyword):
-            return self.field_value_map.apply_field_value(field=None, operator=token.operator, value=token.value)
-        if token.token_type in LogicalOperatorType:
-            return self.operator_map.get(token.token_type)
-
-        return token.token_type
+        return super().apply_token(token, source_mapping)
 
     def _generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
         queries_map = {}

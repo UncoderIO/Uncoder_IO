@@ -16,13 +16,16 @@ field_mapping:
   src-hostname: SrcHost
   src-port: SourcePort
   src-ip:
-   - sourceip
-   - source_ip
-   - SourceIP
+    - sourceip
+    - source_ip
+    - SourceIP
+    - sourceIP
   dst-ip:
     - DestinationIP
     - destinationip
     - destination_ip
+    - destinationIP
+    - destinationaddress
   User: userName
   CommandLine: Command
   Protocol: IPProtocol

@@ -19,18 +19,22 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 import re
 from typing import Union
 
+from app.translator.core.exceptions.parser import TokenizerGeneralException
+from app.translator.core.models.functions.base import ParsedFunctions
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.parser import PlatformQueryParser
-from app.translator.platforms.base.aql.const import NUM_VALUE_PATTERN, SINGLE_QUOTES_VALUE_PATTERN
+from app.translator.platforms.base.aql.const import NUM_VALUE_PATTERN, SINGLE_QUOTES_VALUE_PATTERN, TABLE_GROUP_PATTERN
+from app.translator.platforms.base.aql.functions import AQLFunctions, aql_functions
 from app.translator.platforms.base.aql.log_source_map import LOG_SOURCE_FUNCTIONS_MAP
 from app.translator.platforms.base.aql.mapping import AQLMappings, aql_mappings
-from app.translator.platforms.base.aql.tokenizer import AQLTokenizer
+from app.translator.platforms.base.aql.tokenizer import AQLTokenizer, aql_tokenizer
 from app.translator.tools.utils import get_match_group
 
 
 class AQLQueryParser(PlatformQueryParser):
-    tokenizer = AQLTokenizer()
+    tokenizer: AQLTokenizer = aql_tokenizer
     mappings: AQLMappings = aql_mappings
+    platform_functions: AQLFunctions = aql_functions
 
     log_source_functions = ("LOGSOURCENAME", "LOGSOURCEGROUPNAME")
     log_source_function_pattern = r"\(?(?P<key>___func_name___\([a-zA-Z]+\))(?:\s+like\s+|\s+ilike\s+|\s*=\s*)'(?P<value>[%a-zA-Z\s]+)'\s*\)?\s+(?:and|or)?\s"  # noqa: E501
@@ -46,8 +50,6 @@ class AQLQueryParser(PlatformQueryParser):
         rf"""___source_type___\s+in\s+\((?P<value>(?:{str_value_pattern}(?:\s*,\s*)?)+)\)(?:\s+(?:and|or)\s+|\s+)?"""
     )
 
-    table_pattern = r"\sFROM\s(?P<table>[a-zA-Z\.\-\*]+)\sWHERE\s"
-
     def __clean_query(self, query: str) -> str:
         for func_name in self.log_source_functions:
             pattern = self.log_source_function_pattern.replace("___func_name___", func_name)
@@ -59,26 +61,26 @@ class AQLQueryParser(PlatformQueryParser):
         return query
 
     @staticmethod
-    def __parse_multi_value_log_source(
-        match: re.Match, query: str, pattern: str
-    ) -> tuple[str, Union[list[str], list[int]]]:
+    def __parse_multi_value_log_source(match: re.Match, query: str, pattern: str) -> tuple[str, list[str]]:
         value = match.group("value")
         pos_start = match.start()
         pos_end = match.end()
         query = query[:pos_start] + query[pos_end:]
         return query, re.findall(pattern, value)
 
-    def __map_log_source_value(self, logsource_key: str, value: Union[str, int]) -> tuple[str, Union[int, str]]:
+    @staticmethod
+    def __map_log_source_value(logsource_key: str, value: Union[str, int]) -> tuple[str, Union[int, str]]:
         if log_source_map := LOG_SOURCE_FUNCTIONS_MAP.get(logsource_key):
             return log_source_map.name, log_source_map.id_map.get(value, value)
         return logsource_key, value
 
+    @staticmethod
+    def __check_table(query: str) -> None:
+        if not re.search(TABLE_GROUP_PATTERN, query, flags=re.IGNORECASE):
+            raise TokenizerGeneralException
+
     def __parse_log_sources(self, query: str) -> tuple[dict[str, Union[list[str], list[int]]], str]:
         log_sources = {}
-
-        if search := re.search(self.table_pattern, query, flags=re.IGNORECASE):
-            pos_end = search.end()
-            query = query[pos_end:]
 
         for log_source_key in self.log_source_key_types:
             pattern = self.log_source_pattern.replace("___source_type___", log_source_key)
@@ -105,16 +107,19 @@ class AQLQueryParser(PlatformQueryParser):
 
         return log_sources, query
 
-    def _parse_query(self, text: str) -> tuple[str, dict[str, Union[list[str], list[int]]]]:
+    def _parse_query(self, text: str) -> tuple[str, dict[str, Union[list[str], list[int]]], ParsedFunctions]:
         query = self.__clean_query(text)
+        self.__check_table(query)
+        query, functions = self.platform_functions.parse(query)
         log_sources, query = self.__parse_log_sources(query)
-        return query, log_sources
+        return query, log_sources, functions
 
     def parse(self, raw_query_container: RawQueryContainer) -> TokenizedQueryContainer:
-        query, log_sources = self._parse_query(raw_query_container.query)
+        query, log_sources, functions = self._parse_query(raw_query_container.query)
         tokens, source_mappings = self.get_tokens_and_source_mappings(query, log_sources)
         fields_tokens = self.get_fields_tokens(tokens=tokens)
+        self.set_functions_fields_generic_names(functions=functions, source_mappings=source_mappings)
         meta_info = raw_query_container.meta_info
         meta_info.query_fields = fields_tokens
         meta_info.source_mapping_ids = [source_mapping.source_id for source_mapping in source_mappings]
-        return TokenizedQueryContainer(tokens=tokens, meta_info=meta_info)
+        return TokenizedQueryContainer(tokens=tokens, meta_info=meta_info, functions=functions)

@@ -82,6 +82,7 @@ class SourceMapping:
 
 class BasePlatformMappings:
     skip_load_default_mappings: bool = True
+    extend_default_mapping_with_all_fields: bool = False
 
     def __init__(self, platform_dir: str):
         self._loader = LoaderFileMappings()
@@ -115,6 +116,9 @@ class BasePlatformMappings:
 
         if self.skip_load_default_mappings:
             source_mappings[DEFAULT_MAPPING_NAME] = default_mapping
+
+        if self.extend_default_mapping_with_all_fields:
+            source_mappings[DEFAULT_MAPPING_NAME].fields_mapping.update(default_mapping.fields_mapping)
 
         return source_mappings
 

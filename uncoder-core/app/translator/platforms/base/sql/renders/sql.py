@@ -80,6 +80,6 @@ class SqlQueryRender(PlatformQueryRender):
     comment_symbol = "--"
     is_single_line_comment = True
 
-    def generate_prefix(self, log_source_signature: LogSourceSignature) -> str:
+    def generate_prefix(self, log_source_signature: LogSourceSignature, functions_prefix: str = "") -> str:  # noqa: ARG002
         table = str(log_source_signature) if str(log_source_signature) else "eventlog"
         return f"SELECT * FROM {table}"

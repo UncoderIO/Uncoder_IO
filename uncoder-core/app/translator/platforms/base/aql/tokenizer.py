@@ -16,15 +16,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
 import re
-from typing import Any, ClassVar, Union
+from typing import ClassVar, Optional, Union
 
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.models.field import FieldValue, Keyword
 from app.translator.core.models.identifier import Identifier
+from app.translator.core.str_value_manager import StrValue
 from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.platforms.base.aql.const import NUM_VALUE_PATTERN, SINGLE_QUOTES_VALUE_PATTERN, UTF8_PAYLOAD_PATTERN
-from app.translator.platforms.base.aql.escape_manager import aql_escape_manager
+from app.translator.platforms.base.aql.str_value_manager import aql_str_value_manager
 from app.translator.tools.utils import get_match_group
 
 
@@ -48,25 +49,33 @@ class AQLTokenizer(QueryTokenizer):
     _value_pattern = rf"{NUM_VALUE_PATTERN}|{bool_value_pattern}|{SINGLE_QUOTES_VALUE_PATTERN}"
     multi_value_pattern = rf"""\((?P<{ValueType.multi_value}>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\s]*)\)"""
     keyword_pattern = rf"{UTF8_PAYLOAD_PATTERN}\s+(?:like|LIKE|ilike|ILIKE)\s+{SINGLE_QUOTES_VALUE_PATTERN}"
-    escape_manager = aql_escape_manager
 
     wildcard_symbol = "%"
+    str_value_manager = aql_str_value_manager
 
     @staticmethod
-    def should_process_value_wildcards(operator: str) -> bool:
-        return operator.lower() in ("like", "ilike")
+    def should_process_value_wildcards(operator: Optional[str]) -> bool:
+        return operator and operator.lower() in ("like", "ilike")
 
-    def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> tuple[str, Any]:
+    def get_operator_and_value(
+        self, match: re.Match, mapped_operator: str = OperatorType.EQ, operator: Optional[str] = None
+    ) -> tuple[str, StrValue]:
         if (num_value := get_match_group(match, group_name=ValueType.number_value)) is not None:
-            return operator, num_value
+            return mapped_operator, StrValue(num_value, split_value=[num_value])
 
         if (bool_value := get_match_group(match, group_name=ValueType.bool_value)) is not None:
-            return operator, self.escape_manager.remove_escape(bool_value)
+            return mapped_operator, StrValue(bool_value, split_value=[bool_value])
 
         if (s_q_value := get_match_group(match, group_name=ValueType.single_quotes_value)) is not None:
-            return operator, self.escape_manager.remove_escape(s_q_value)
+            if mapped_operator == OperatorType.REGEX:
+                return mapped_operator, self.str_value_manager.from_re_str_to_container(s_q_value)
 
-        return super().get_operator_and_value(match, operator)
+            if self.should_process_value_wildcards(operator):
+                return mapped_operator, self.str_value_manager.from_str_to_container(s_q_value)
+
+            return mapped_operator, self.str_value_manager.from_str_to_container(s_q_value)
+
+        return super().get_operator_and_value(match, mapped_operator, operator)
 
     def escape_field_name(self, field_name: str) -> str:
         return field_name.replace('"', r"\"").replace(" ", r"\ ")
@@ -82,3 +91,6 @@ class AQLTokenizer(QueryTokenizer):
         keyword = Keyword(value=value.strip(self.wildcard_symbol))
         pos = keyword_search.end()
         return keyword, query[pos:]
+
+
+aql_tokenizer = AQLTokenizer()

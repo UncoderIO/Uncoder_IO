@@ -16,7 +16,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
 import re
-from typing import ClassVar, Union
+from typing import ClassVar, Optional, Union
 
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.custom_types.values import ValueType
@@ -76,26 +76,28 @@ class LuceneTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
     def clean_multi_value(value: str) -> str:
         return value.strip('"') if value.startswith('"') and value.endswith('"') else value
 
-    def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> tuple[str, StrValue]:  # noqa: PLR0911
+    def get_operator_and_value(  # noqa: PLR0911
+        self, match: re.Match, mapped_operator: str = OperatorType.EQ, operator: Optional[str] = None
+    ) -> tuple[str, StrValue]:
         if (num_value := get_match_group(match, group_name=ValueType.number_value)) is not None:
-            return operator, StrValue(num_value)
+            return mapped_operator, StrValue(num_value, split_value=[num_value])
 
         if (re_value := get_match_group(match, group_name=ValueType.regex_value)) is not None:
             return OperatorType.REGEX, lucene_str_value_manager.from_re_str_to_container(re_value)
 
         if (n_q_value := get_match_group(match, group_name=ValueType.no_quotes_value)) is not None:
-            return operator, lucene_str_value_manager.from_str_to_container(n_q_value)
+            return mapped_operator, lucene_str_value_manager.from_str_to_container(n_q_value)
 
         if (d_q_value := get_match_group(match, group_name=ValueType.double_quotes_value)) is not None:
-            return operator, lucene_str_value_manager.from_str_to_container(d_q_value)
+            return mapped_operator, lucene_str_value_manager.from_str_to_container(d_q_value)
 
         if (gte_value := get_match_group(match, group_name=ValueType.greater_than_or_equal)) is not None:
-            return OperatorType.GTE, StrValue(gte_value)
+            return OperatorType.GTE, StrValue(gte_value, split_value=[gte_value])
 
         if (lte_value := get_match_group(match, group_name=ValueType.less_than_or_equal)) is not None:
-            return OperatorType.LTE, StrValue(lte_value)
+            return OperatorType.LTE, StrValue(lte_value, split_value=[lte_value])
 
-        return super().get_operator_and_value(match, operator)
+        return super().get_operator_and_value(match, mapped_operator, operator)
 
     def group_values_by_operator(self, values: list[str], operator: str) -> dict[str, list[StrValue]]:
         mapped_operator = self.map_operator(operator)

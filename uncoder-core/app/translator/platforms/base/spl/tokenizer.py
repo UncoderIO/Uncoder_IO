@@ -17,7 +17,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 import re
-from typing import Any, ClassVar, Union
+from typing import Any, ClassVar, Optional, Union
 
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.custom_types.values import ValueType
@@ -60,20 +60,22 @@ class SplTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
 
     escape_manager = spl_escape_manager
 
-    def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> tuple[str, Any]:
+    def get_operator_and_value(
+        self, match: re.Match, mapped_operator: str = OperatorType.EQ, operator: Optional[str] = None
+    ) -> tuple[str, Any]:
         if (num_value := get_match_group(match, group_name=ValueType.number_value)) is not None:
-            return operator, num_value
+            return mapped_operator, num_value
 
         if (no_q_value := get_match_group(match, group_name=ValueType.no_quotes_value)) is not None:
-            return operator, no_q_value
+            return mapped_operator, no_q_value
 
         if (d_q_value := get_match_group(match, group_name=ValueType.double_quotes_value)) is not None:
-            return operator, self.escape_manager.remove_escape(d_q_value)
+            return mapped_operator, self.escape_manager.remove_escape(d_q_value)
 
         if (s_q_value := get_match_group(match, group_name=ValueType.single_quotes_value)) is not None:
-            return operator, self.escape_manager.remove_escape(s_q_value)
+            return mapped_operator, self.escape_manager.remove_escape(s_q_value)
 
-        return super().get_operator_and_value(match)
+        return super().get_operator_and_value(match, mapped_operator, operator)
 
     def tokenize(self, query: str) -> list[Union[FieldValue, Keyword, Identifier]]:
         tokens = super().tokenize(query=query)

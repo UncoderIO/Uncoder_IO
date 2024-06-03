@@ -18,7 +18,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
 import re
 from abc import ABC, abstractmethod
-from typing import Any, ClassVar, Union
+from typing import Any, ClassVar, Optional, Union
 
 from app.translator.core.custom_types.tokens import GroupType, LogicalOperatorType, OperatorType
 from app.translator.core.custom_types.values import ValueType
@@ -32,13 +32,14 @@ from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.field import Field, FieldValue, Keyword
 from app.translator.core.models.functions.base import Function
 from app.translator.core.models.functions.eval import EvalArg
+from app.translator.core.models.functions.group_by import GroupByFunction
 from app.translator.core.models.functions.rename import RenameArg
 from app.translator.core.models.functions.sort import SortArg
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.str_value_manager import StrValue, StrValueManager
 from app.translator.tools.utils import get_match_group
 
-TOKEN_TYPE = Union[FieldValue, Keyword, Identifier]
+TOKEN_TYPE = Union[FieldValue, Keyword, Identifier, Field]
 
 
 class BaseTokenizer(ABC):
@@ -112,8 +113,13 @@ class QueryTokenizer(BaseTokenizer):
         operator = operator_search.group("operator")
         return operator.strip(" ")
 
-    def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> tuple[str, Any]:
-        return operator, get_match_group(match, group_name=ValueType.value)
+    def get_operator_and_value(
+        self,
+        match: re.Match,
+        mapped_operator: str = OperatorType.EQ,
+        operator: Optional[str] = None,  # noqa: ARG002
+    ) -> tuple[str, Any]:
+        return mapped_operator, get_match_group(match, group_name=ValueType.value)
 
     @staticmethod
     def clean_multi_value(value: str) -> str:
@@ -125,7 +131,7 @@ class QueryTokenizer(BaseTokenizer):
 
     def search_single_value(self, query: str, operator: str, field_name: str) -> tuple[str, str, Union[str, StrValue]]:
         field_value_match = self._get_field_value_match(query, operator, field_name, self.value_pattern)
-        mapped_operator, value = self.get_operator_and_value(field_value_match, self.map_operator(operator))
+        mapped_operator, value = self.get_operator_and_value(field_value_match, self.map_operator(operator), operator)
         if self.should_process_value_wildcards(operator):
             mapped_operator, value = self.process_value_wildcards(value, mapped_operator)
 
@@ -177,7 +183,7 @@ class QueryTokenizer(BaseTokenizer):
         return field_value_pattern.replace("___value___", value_pattern)
 
     @staticmethod
-    def should_process_value_wildcards(operator: str) -> bool:  # noqa: ARG004
+    def should_process_value_wildcards(operator: Optional[str]) -> bool:  # noqa: ARG004
         return True
 
     def process_value_wildcards(
@@ -313,7 +319,7 @@ class QueryTokenizer(BaseTokenizer):
 
     @staticmethod
     def filter_tokens(
-        tokens: list[TOKEN_TYPE], token_type: Union[type[FieldValue], type[Keyword], type[Identifier]]
+        tokens: list[TOKEN_TYPE], token_type: Union[type[FieldValue], type[Field], type[Keyword], type[Identifier]]
     ) -> list[TOKEN_TYPE]:
         return [token for token in tokens if isinstance(token, token_type)]
 
@@ -325,16 +331,21 @@ class QueryTokenizer(BaseTokenizer):
             if isinstance(arg, Field):
                 result.append(arg)
             elif isinstance(arg, FieldValue):
-                result.append(arg.field)
-            elif isinstance(arg, Function):
+                if not arg.alias or arg.alias.name != arg.field.source_name:
+                    result.append(arg.field)
+            elif isinstance(arg, GroupByFunction):
                 result.extend(self.get_field_tokens_from_func_args(args=arg.args))
                 result.extend(self.get_field_tokens_from_func_args(args=arg.by_clauses))
-            elif isinstance(arg, SortArg):
+                result.extend(self.get_field_tokens_from_func_args(args=[arg.filter_]))
+            elif isinstance(arg, Function):
+                result.extend(self.get_field_tokens_from_func_args(args=arg.args))
+            elif isinstance(arg, SortArg) and isinstance(arg.field, Field):
                 result.append(arg.field)
             elif isinstance(arg, RenameArg):
                 result.append(arg.field_)
             elif isinstance(arg, EvalArg):
-                result.append(arg.field_)
+                if isinstance(arg.field_, Field):
+                    result.append(arg.field_)
                 result.extend(self.get_field_tokens_from_func_args(args=arg.expression))
         return result
 
