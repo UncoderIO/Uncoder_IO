@@ -1,91 +1,96 @@
-from typing import Optional
+"""
+Uncoder IO Commercial Edition License
+-----------------------------------------------------------------
+Copyright (c) 2024 SOC Prime, Inc.
 
-from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
+This file is part of the Uncoder IO Commercial Edition ("CE") and is
+licensed under the Uncoder IO Non-Commercial License (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
+    https://github.com/UncoderIO/UncoderIO/blob/main/LICENSE
 
-class AQLLogSourceSignature(LogSourceSignature):
-    def __init__(
-        self,
-        device_types: Optional[list[int]],
-        categories: Optional[list[int]],
-        qids: Optional[list[int]],
-        qid_event_categories: Optional[list[int]],
-        default_source: dict,
-    ):
-        self.device_types = set(device_types or [])
-        self.categories = set(categories or [])
-        self.qids = set(qids or [])
-        self.qid_event_categories = set(qid_event_categories or [])
-        self._default_source = default_source or {}
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-----------------------------------------------------------------
+"""
+import re
+from typing import ClassVar, Optional, Union
 
-    def is_suitable(
-        self,
-        devicetype: Optional[list[int]],
-        category: Optional[list[int]],
-        qid: Optional[list[int]],
-        qideventcategory: Optional[list[int]],
-    ) -> bool:
-        device_type_match = set(devicetype).issubset(self.device_types) if devicetype else None
-        category_match = set(category).issubset(self.categories) if category else None
-        qid_match = set(qid).issubset(self.qids) if qid else None
-        qid_event_category_match = set(qideventcategory).issubset(self.qid_event_categories) if qideventcategory else None
-        return all(
-            condition for condition in (
-                device_type_match, category_match,
-                qid_match, qid_event_category_match)
-            if condition is not None
-        )
-
-    def __str__(self) -> str:
-        return self._default_source.get("table", "events")
-
-    @property
-    def extra_condition(self) -> str:
-        default_source = self._default_source
-        return " AND ".join((f"{key}={value}" for key, value in default_source.items() if key != "table" and value))
+from app.translator.core.custom_types.tokens import OperatorType
+from app.translator.core.custom_types.values import ValueType
+from app.translator.core.models.field import FieldValue, Keyword
+from app.translator.core.models.identifier import Identifier
+from app.translator.core.str_value_manager import StrValue
+from app.translator.core.tokenizer import QueryTokenizer
+from app.translator.platforms.base.aql.const import NUM_VALUE_PATTERN, SINGLE_QUOTES_VALUE_PATTERN, UTF8_PAYLOAD_PATTERN
+from app.translator.platforms.base.aql.str_value_manager import aql_str_value_manager
+from app.translator.tools.utils import get_match_group
 
 
-class AQLMappings(BasePlatformMappings):
-    def prepare_log_source_signature(self, mapping: dict) -> AQLLogSourceSignature:
-        log_source = mapping.get("log_source", {})
-        default_log_source = mapping["default_log_source"]
-        return AQLLogSourceSignature(
-            device_types=log_source.get("devicetype"),
-            categories=log_source.get("category"),
-            qids=log_source.get("qid"),
-            qid_event_categories=log_source.get("qideventcategory"),
-            default_source=default_log_source,
-        )
+class AQLTokenizer(QueryTokenizer):
+    single_value_operators_map: ClassVar[dict[str, str]] = {
+        "=": OperatorType.EQ,
+        "<=": OperatorType.LTE,
+        "<": OperatorType.LT,
+        ">=": OperatorType.GTE,
+        ">": OperatorType.GT,
+        "!=": OperatorType.NOT_EQ,
+        "like": OperatorType.EQ,
+        "ilike": OperatorType.EQ,
+        "matches": OperatorType.REGEX,
+        "imatches": OperatorType.REGEX,
+    }
+    multi_value_operators_map: ClassVar[dict[str, str]] = {"in": OperatorType.EQ}
 
-    def get_suitable_source_mappings(
-        self,
-        field_names: list[str],
-        devicetype: Optional[list[int]] = None,
-        category: Optional[list[int]] = None,
-        qid: Optional[list[int]] = None,
-        qideventcategory: Optional[list[int]] = None,
-    ) -> list[SourceMapping]:
-        suitable_source_mappings = []
-        for source_mapping in self._source_mappings.values():
-            if source_mapping.source_id == DEFAULT_MAPPING_NAME:
-                continue
+    field_pattern = r'(?P<field_name>"[a-zA-Z\._\-\s]+"|[a-zA-Z\._\-]+)'
+    bool_value_pattern = rf"(?P<{ValueType.bool_value}>true|false)\s*"
+    _value_pattern = rf"{NUM_VALUE_PATTERN}|{bool_value_pattern}|{SINGLE_QUOTES_VALUE_PATTERN}"
+    multi_value_pattern = rf"""\((?P<{ValueType.multi_value}>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\s]*)\)"""
+    keyword_pattern = rf"{UTF8_PAYLOAD_PATTERN}\s+(?:like|LIKE|ilike|ILIKE)\s+{SINGLE_QUOTES_VALUE_PATTERN}"
 
-            log_source_signature: AQLLogSourceSignature = source_mapping.log_source_signature
-            if log_source_signature.is_suitable(devicetype, category, qid, qideventcategory):
-                if source_mapping.fields_mapping.is_suitable(field_names):
-                    suitable_source_mappings.append(source_mapping)
+    wildcard_symbol = "%"
+    str_value_manager = aql_str_value_manager
 
-        if not suitable_source_mappings:
-            for source_mapping in self._source_mappings.values():
-                if source_mapping.source_id == DEFAULT_MAPPING_NAME:
-                    continue
-                if source_mapping.fields_mapping.is_suitable(field_names):
-                    suitable_source_mappings.append(source_mapping)
+    @staticmethod
+    def should_process_value_wildcards(operator: Optional[str]) -> bool:
+        return operator and operator.lower() in ("like", "ilike")
 
-        if not suitable_source_mappings:
-            suitable_source_mappings = [self._source_mappings[DEFAULT_MAPPING_NAME]]
+    def get_operator_and_value(
+        self, match: re.Match, mapped_operator: str = OperatorType.EQ, operator: Optional[str] = None
+    ) -> tuple[str, StrValue]:
+        if (num_value := get_match_group(match, group_name=ValueType.number_value)) is not None:
+            return mapped_operator, StrValue(num_value, split_value=[num_value])
 
-        return suitable_source_mappings
+        if (bool_value := get_match_group(match, group_name=ValueType.bool_value)) is not None:
+            return mapped_operator, StrValue(bool_value, split_value=[bool_value])
+
+        if (s_q_value := get_match_group(match, group_name=ValueType.single_quotes_value)) is not None:
+            if mapped_operator == OperatorType.REGEX:
+                return mapped_operator, self.str_value_manager.from_re_str_to_container(s_q_value)
+
+            if self.should_process_value_wildcards(operator):
+                return mapped_operator, self.str_value_manager.from_str_to_container(s_q_value)
+
+            return mapped_operator, self.str_value_manager.from_str_to_container(s_q_value)
+
+        return super().get_operator_and_value(match, mapped_operator, operator)
+
+    def escape_field_name(self, field_name: str) -> str:
+        return field_name.replace('"', r"\"").replace(" ", r"\ ")
+
+    @staticmethod
+    def create_field_value(field_name: str, operator: Identifier, value: Union[str, list]) -> FieldValue:
+        field_name = field_name.strip('"')
+        return FieldValue(source_name=field_name, operator=operator, value=value)
+
+    def search_keyword(self, query: str) -> tuple[Keyword, str]:
+        keyword_search = re.search(self.keyword_pattern, query)
+        _, value = self.get_operator_and_value(keyword_search)
+        keyword = Keyword(value=value.strip(self.wildcard_symbol))
+        pos = keyword_search.end()
+        return keyword, query[pos:]
 
 
-aql_mappings = AQLMappings(platform_dir="qradar")
+aql_tokenizer = AQLTokenizer()

@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-from typing import Union
+from typing import Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.values import ValueType
@@ -30,36 +30,12 @@ class LuceneFieldValue(BaseQueryFieldValue):
     str_value_manager = lucene_str_value_manager
 
     @staticmethod
-    def __get_value_type(field_name: str, value_type: str = ValueType.value) -> str:
+    def _get_value_type(field_name: str, value: Union[int, str, StrValue], value_type: Optional[str] = None) -> str:  # noqa: ARG004
         is_ip_field = field_name and (field_name.endswith(".ip") or field_name.endswith(".address"))
         if is_ip_field and value_type != ValueType.regex_value:
             return ValueType.ip
 
         return ValueType.value
-
-    def _pre_process_values_list(
-        self, field: str, values: list[Union[int, str, StrValue]], value_type: str = ValueType.value
-    ) -> list[str]:
-        value_type = self.__get_value_type(field, value_type)
-        processed = []
-        for val in values:
-            if isinstance(val, StrValue):
-                processed.append(self.str_value_manager.from_container_to_str(val, value_type))
-            elif isinstance(val, str):
-                processed.append(self.str_value_manager.escape_manager.escape(val, value_type))
-            else:
-                processed.append(str(val))
-        return processed
-
-    def _pre_process_value(
-        self, field: str, value: Union[int, str, StrValue], value_type: str = ValueType.value
-    ) -> Union[int, str]:
-        value_type = self.__get_value_type(field, value_type)
-        if isinstance(value, StrValue):
-            return self.str_value_manager.from_container_to_str(value, value_type)
-        if isinstance(value, str):
-            return self.str_value_manager.escape_manager.escape(value, value_type)
-        return value
 
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
@@ -135,5 +111,5 @@ class LuceneQueryRender(PlatformQueryRender):
     comment_symbol = "//"
     is_single_line_comment = True
 
-    def generate_prefix(self, log_source_signature: LuceneLogSourceSignature) -> str:  # noqa: ARG002
+    def generate_prefix(self, log_source_signature: LuceneLogSourceSignature, functions_prefix: str = "") -> str:  # noqa: ARG002
         return ""

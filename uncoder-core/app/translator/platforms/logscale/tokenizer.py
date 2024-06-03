@@ -17,7 +17,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 import re
-from typing import Any, ClassVar, Union
+from typing import Any, ClassVar, Optional, Union
 
 from app.translator.core.custom_types.tokens import LogicalOperatorType, OperatorType
 from app.translator.core.custom_types.values import ValueType
@@ -50,17 +50,19 @@ class LogScaleTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
     escape_manager = logscale_escape_manager
     wildcard_symbol = "*"
 
-    def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> tuple[str, Any]:
+    def get_operator_and_value(
+        self, match: re.Match, mapped_operator: str = OperatorType.EQ, operator: Optional[str] = None
+    ) -> tuple[str, Any]:
         if (num_value := get_match_group(match, group_name=ValueType.number_value)) is not None:
-            return operator, num_value
+            return mapped_operator, num_value
 
         if (d_q_value := get_match_group(match, group_name=ValueType.double_quotes_value)) is not None:
-            return operator, d_q_value
+            return mapped_operator, d_q_value
 
         if (re_value := get_match_group(match, group_name=ValueType.regex_value)) is not None:
             return OperatorType.REGEX, re_value
 
-        return super().get_operator_and_value(match, operator)
+        return super().get_operator_and_value(match, mapped_operator, operator)
 
     def _get_next_token(self, query: str) -> (list, str):
         query = query.strip("\n").strip(" ").strip("\n")

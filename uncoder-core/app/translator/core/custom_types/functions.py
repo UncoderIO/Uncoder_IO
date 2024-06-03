@@ -5,16 +5,29 @@ class FunctionType(CustomEnum):
     avg = "avg"
     count = "count"
     distinct_count = "distinct_count"
-    earliest = "earliest"
-    eval = "eval"
-    fields = "fields"
-    latest = "latest"
     max = "max"
     min = "min"
+    sum = "sum"
+
+    divide = "divide"
+
+    earliest = "earliest"
+    latest = "latest"
+
+    lower = "lower"
+    upper = "upper"
+
+    compare_boolean = "compare_boolean"
+
+    ipv4_is_in_range = "ipv4_is_in_range"
+
+    bin = "bin"
+    eval = "eval"
+    fields = "fields"
     rename = "rename"
     search = "search"
-    sort = "sort"
+    sort_limit = "sort_limit"
     stats = "stats"
-    sum = "sum"
     table = "table"
+    timeframe = "timeframe"
     values = "values"

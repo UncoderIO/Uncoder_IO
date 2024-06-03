@@ -1,7 +1,8 @@
 from dataclasses import dataclass
+from typing import Union
 
 from app.translator.core.custom_types.functions import FunctionType
-from app.translator.core.models.field import Field
+from app.translator.core.models.field import Alias, Field
 from app.translator.core.models.functions.base import Function
 from app.translator.tools.custom_enum import CustomEnum
 
@@ -13,12 +14,13 @@ class SortOrder(CustomEnum):
 
 @dataclass
 class SortArg:
-    field: Field = None
+    field: Union[Alias, Field] = None
+    function: Function = None
     sort_order: str = SortOrder.asc
 
 
 @dataclass
-class SortFunction(Function):
-    name: str = FunctionType.sort
+class SortLimitFunction(Function):
+    name: str = FunctionType.sort_limit
     args: list[SortArg] = None
     limit: str = None

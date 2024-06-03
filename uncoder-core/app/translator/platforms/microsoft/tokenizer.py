@@ -17,7 +17,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 import re
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Optional
 
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.mixins.operator import OperatorBasedMixin
@@ -59,28 +59,30 @@ class MicrosoftSentinelTokenizer(QueryTokenizer, OperatorBasedMixin):
 
     escape_manager = microsoft_escape_manager
 
-    def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> tuple[str, Any]:  # noqa: PLR0911
+    def get_operator_and_value(  # noqa: PLR0911
+        self, match: re.Match, mapped_operator: str = OperatorType.EQ, operator: Optional[str] = None
+    ) -> tuple[str, Any]:
         if (num_value := get_match_group(match, group_name=MicrosoftValueType.number_value)) is not None:
-            return operator, num_value
+            return mapped_operator, num_value
 
         if (bool_value := get_match_group(match, group_name=MicrosoftValueType.bool_value)) is not None:
-            return operator, bool_value
+            return mapped_operator, bool_value
 
         if (d_q_value := get_match_group(match, group_name=MicrosoftValueType.double_quotes_value)) is not None:
-            return operator, self.escape_manager.remove_escape(d_q_value)
+            return mapped_operator, self.escape_manager.remove_escape(d_q_value)
 
         if (s_q_value := get_match_group(match, group_name=MicrosoftValueType.single_quotes_value)) is not None:
-            return operator, self.escape_manager.remove_escape(s_q_value)
+            return mapped_operator, self.escape_manager.remove_escape(s_q_value)
 
         group_name = MicrosoftValueType.verbatim_double_quotes_value
         if (v_d_q_value := get_match_group(match, group_name=group_name)) is not None:
-            return operator, v_d_q_value
+            return mapped_operator, v_d_q_value
 
         group_name = MicrosoftValueType.verbatim_single_quotes_value
         if (v_s_q_value := get_match_group(match, group_name=group_name)) is not None:
-            return operator, v_s_q_value
+            return mapped_operator, v_s_q_value
 
-        return super().get_operator_and_value(match, operator)
+        return super().get_operator_and_value(match, mapped_operator, operator)
 
     def clean_multi_value(self, value: str) -> str:
         value = value.strip(" ")

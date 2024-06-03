@@ -9,7 +9,7 @@ from app.translator.core.mapping import (
 )
 
 
-class CortexXSIAMLogSourceSignature(LogSourceSignature):
+class CortexXQLLogSourceSignature(LogSourceSignature):
     def __init__(self, preset: Optional[list[str]], dataset: Optional[list[str]], default_source: dict):
         self.preset = preset
         self.dataset = dataset
@@ -18,13 +18,14 @@ class CortexXSIAMLogSourceSignature(LogSourceSignature):
     def is_suitable(self, preset: str, dataset: str) -> bool:
         return preset == self.preset or dataset == self.dataset
 
-    def __prepare_log_source_for_render(self, logsource: Union[str, list[str]], model: str = "datamodel") -> str:
+    @staticmethod
+    def __prepare_log_source_for_render(logsource: Union[str, list[str]], model: str = "datamodel") -> str:
         if isinstance(logsource, list):
             return f"{model} in ({', '.join(source for source in logsource)})"
         return f"{model} = {logsource}"
 
     @property
-    def __datamodel_scheme(self):
+    def __datamodel_scheme(self) -> str:
         if datamodel := self._default_source.get("datamodel"):
             return f"{datamodel} "
         return ""
@@ -39,17 +40,17 @@ class CortexXSIAMLogSourceSignature(LogSourceSignature):
         return "datamodel"
 
 
-class CortexXSIAMMappings(BasePlatformMappings):
+class CortexXQLMappings(BasePlatformMappings):
     skip_load_default_mappings: bool = False
 
     def update_default_source_mapping(self, default_mapping: SourceMapping, fields_mapping: FieldsMapping) -> None:
         ...
 
-    def prepare_log_source_signature(self, mapping: dict) -> CortexXSIAMLogSourceSignature:
+    def prepare_log_source_signature(self, mapping: dict) -> CortexXQLLogSourceSignature:
         preset = mapping.get("log_source", {}).get("preset")
         dataset = mapping.get("log_source", {}).get("dataset")
         default_log_source = mapping["default_log_source"]
-        return CortexXSIAMLogSourceSignature(preset=preset, dataset=dataset, default_source=default_log_source)
+        return CortexXQLLogSourceSignature(preset=preset, dataset=dataset, default_source=default_log_source)
 
     def get_suitable_source_mappings(
         self, field_names: list[str], preset: Optional[str], dataset: Optional[str]
@@ -59,7 +60,7 @@ class CortexXSIAMMappings(BasePlatformMappings):
             if source_mapping.source_id == DEFAULT_MAPPING_NAME:
                 continue
 
-            log_source_signature: CortexXSIAMLogSourceSignature = source_mapping.log_source_signature
+            log_source_signature: CortexXQLLogSourceSignature = source_mapping.log_source_signature
             if (preset or dataset) and log_source_signature.is_suitable(preset=preset, dataset=dataset):
                 if source_mapping.fields_mapping.is_suitable(field_names):
                     suitable_source_mappings.append(source_mapping)
@@ -72,4 +73,4 @@ class CortexXSIAMMappings(BasePlatformMappings):
         return suitable_source_mappings
 
 
-cortex_xsiam_mappings = CortexXSIAMMappings(platform_dir="palo_alto_cortex")
+cortex_xql_mappings = CortexXQLMappings(platform_dir="palo_alto_cortex")

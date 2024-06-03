@@ -33,7 +33,7 @@ from app.translator.core.models.functions.base import Function, RenderedFunction
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer, TokenizedQueryContainer
-from app.translator.core.str_value_manager import StrValueManager
+from app.translator.core.str_value_manager import StrValue, StrValueManager
 from app.translator.core.tokenizer import TOKEN_TYPE
 
 
@@ -63,6 +63,40 @@ class BaseQueryFieldValue(ABC):
             OperatorType.IS_NOT_NONE: self.is_not_none,
         }
         self.or_token = f" {or_token} "
+
+    @staticmethod
+    def _get_value_type(field_name: str, value: Union[int, str, StrValue], value_type: Optional[str] = None) -> str:  # noqa: ARG004
+        return value_type or ValueType.value
+
+    @staticmethod
+    def _wrap_str_value(value: str) -> str:
+        return value
+
+    def _pre_process_value(
+        self, field: str, value: Union[int, str, StrValue], value_type: str = ValueType.value, wrap_str: bool = False
+    ) -> Union[int, str]:
+        value_type = self._get_value_type(field, value, value_type)
+        if isinstance(value, StrValue):
+            value = self.str_value_manager.from_container_to_str(value, value_type)
+            return self._wrap_str_value(value) if wrap_str else value
+        if isinstance(value, str):
+            value = self.str_value_manager.escape_manager.escape(value, value_type)
+            return self._wrap_str_value(value) if wrap_str else value
+        return value
+
+    def _pre_process_values_list(
+        self, field: str, values: list[Union[int, str, StrValue]], value_type: str = ValueType.value
+    ) -> list[str]:
+        processed = []
+        for val in values:
+            value_type = self._get_value_type(field, val, value_type)
+            if isinstance(val, StrValue):
+                processed.append(self.str_value_manager.from_container_to_str(val, value_type))
+            elif isinstance(val, str):
+                processed.append(self.str_value_manager.escape_manager.escape(val, value_type))
+            else:
+                processed.append(str(val))
+        return processed
 
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
         raise NotImplementedException
@@ -167,7 +201,7 @@ class PlatformQueryRender(QueryRender):
             LogicalOperatorType.NOT: f" {self.not_token} ",
         }
 
-    def generate_prefix(self, log_source_signature: LogSourceSignature) -> str:
+    def generate_prefix(self, log_source_signature: LogSourceSignature, functions_prefix: str = "") -> str:  # noqa: ARG002
         if str(log_source_signature):
             return f"{log_source_signature!s} {self.and_token}"
         return ""
@@ -189,21 +223,29 @@ class PlatformQueryRender(QueryRender):
 
     def apply_token(self, token: Union[FieldValue, Keyword, Identifier], source_mapping: SourceMapping) -> str:
         if isinstance(token, FieldValue):
-            mapped_fields = self.map_field(token.field, source_mapping)
-            if len(mapped_fields) > 1:
-                return self.group_token % self.operator_map[LogicalOperatorType.OR].join(
-                    [
-                        self.field_value_map.apply_field_value(field=field, operator=token.operator, value=token.value)
-                        for field in mapped_fields
-                    ]
-                )
+            if token.alias:
+                field_name = token.alias.name
+            else:
+                mapped_fields = self.map_field(token.field, source_mapping)
+                if len(mapped_fields) > 1:
+                    return self.group_token % self.operator_map[LogicalOperatorType.OR].join(
+                        [
+                            self.field_value_map.apply_field_value(
+                                field=field, operator=token.operator, value=token.value
+                            )
+                            for field in mapped_fields
+                        ]
+                    )
 
-            return self.field_value_map.apply_field_value(
-                field=mapped_fields[0], operator=token.operator, value=token.value
-            )
+                field_name = mapped_fields[0]
 
+            return self.field_value_map.apply_field_value(field=field_name, operator=token.operator, value=token.value)
+
+        if isinstance(token, Function):
+            func_render = self.platform_functions.manager.get_in_query_render(token.name)
+            return func_render.render(token, source_mapping)
         if isinstance(token, Keyword):
-            return self.field_value_map.apply_field_value(field=None, operator=token.operator, value=token.value)
+            return self.field_value_map.apply_field_value(field="", operator=token.operator, value=token.value)
         if token.token_type in LogicalOperatorType:
             return self.operator_map.get(token.token_type)
 
@@ -285,13 +327,18 @@ class PlatformQueryRender(QueryRender):
         defined_raw_log_fields = []
         for field in fields:
             mapped_field = source_mapping.fields_mapping.get_platform_field_name(generic_field_name=field.source_name)
+            if not mapped_field:
+                generic_field_name = field.get_generic_field_name(source_mapping.source_id)
+                mapped_field = source_mapping.fields_mapping.get_platform_field_name(
+                    generic_field_name=generic_field_name
+                )
             if not mapped_field and self.is_strict_mapping:
                 raise StrictPlatformException(field_name=field.source_name, platform_name=self.details.name)
             if mapped_field not in source_mapping.raw_log_fields:
                 continue
             field_prefix = self.raw_log_field_pattern.format(field=mapped_field)
             defined_raw_log_fields.append(field_prefix)
-        return "\n".join(defined_raw_log_fields)
+        return "\n".join(set(defined_raw_log_fields))
 
     def _generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
         queries_map = {}
@@ -299,7 +346,8 @@ class PlatformQueryRender(QueryRender):
         source_mappings = self._get_source_mappings(query_container.meta_info.source_mapping_ids)
 
         for source_mapping in source_mappings:
-            prefix = self.generate_prefix(source_mapping.log_source_signature)
+            rendered_functions = self.generate_functions(query_container.functions.functions, source_mapping)
+            prefix = self.generate_prefix(source_mapping.log_source_signature, rendered_functions.rendered_prefix)
             try:
                 if source_mapping.raw_log_fields:
                     defined_raw_log_fields = self.generate_raw_log_fields(
@@ -311,7 +359,6 @@ class PlatformQueryRender(QueryRender):
                 errors.append(err)
                 continue
             else:
-                rendered_functions = self.generate_functions(query_container.functions.functions, source_mapping)
                 not_supported_functions = query_container.functions.not_supported + rendered_functions.not_supported
                 finalized_query = self.finalize_query(
                     prefix=prefix,

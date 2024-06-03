@@ -17,7 +17,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 import re
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Optional
 
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.custom_types.values import ValueType
@@ -50,20 +50,22 @@ class ChronicleQueryTokenizer(QueryTokenizer):
 
     wildcard_symbol = ".*"
 
-    def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> tuple[str, Any]:
+    def get_operator_and_value(
+        self, match: re.Match, mapped_operator: str = OperatorType.EQ, operator: Optional[str] = None
+    ) -> tuple[str, Any]:
         if (num_value := get_match_group(match, group_name=ValueType.number_value)) is not None:
-            return operator, num_value
+            return mapped_operator, num_value
 
         if (bool_value := get_match_group(match, group_name=ValueType.bool_value)) is not None:
-            return operator, bool_value
+            return mapped_operator, bool_value
 
         if (d_q_value := get_match_group(match, group_name=ValueType.double_quotes_value)) is not None:
-            return operator, self.escape_manager.remove_escape(d_q_value)
+            return mapped_operator, self.escape_manager.remove_escape(d_q_value)
 
         if (re_value := get_match_group(match, group_name=ValueType.regex_value)) is not None:
             return OperatorType.REGEX, re_value
 
-        return super().get_operator_and_value(match, operator)
+        return super().get_operator_and_value(match, mapped_operator, operator)
 
     def escape_field_name(self, field_name: str) -> str:
         symbols_to_check = [".", "_", "$"]
@@ -88,7 +90,7 @@ class ChronicleRuleTokenizer(ChronicleQueryTokenizer):
     def search_field_value(self, query: str) -> tuple[FieldValue, str]:
         if regex_field_value_search := re.match(self.regex_field_value_pattern, query):
             field = regex_field_value_search.group("field")
-            operator, value = self.get_operator_and_value(regex_field_value_search, operator=OperatorType.REGEX)
+            operator, value = self.get_operator_and_value(regex_field_value_search, mapped_operator=OperatorType.REGEX)
             operator, value = self.process_value_wildcards(value=value, operator=OperatorType.REGEX)
             pos = regex_field_value_search.end()
             query = query[pos:]
@@ -99,14 +101,16 @@ class ChronicleRuleTokenizer(ChronicleQueryTokenizer):
 
         return super().search_field_value(query=query)
 
-    def get_operator_and_value(self, match: re.Match, operator: str = OperatorType.EQ) -> tuple[str, Any]:
+    def get_operator_and_value(
+        self, match: re.Match, mapped_operator: str = OperatorType.EQ, operator: Optional[str] = None
+    ) -> tuple[str, Any]:
         if (d_q_value := get_match_group(match, group_name=ValueType.double_quotes_value)) is not None:
-            return operator, self.escape_manager.remove_escape(d_q_value)
+            return mapped_operator, self.escape_manager.remove_escape(d_q_value)
 
         if (b_q_value := get_match_group(match, group_name=ValueType.back_quotes_value)) is not None:
-            return operator, self.escape_manager.remove_escape(b_q_value)
+            return mapped_operator, self.escape_manager.remove_escape(b_q_value)
 
-        return super().get_operator_and_value(match, operator)
+        return super().get_operator_and_value(match, mapped_operator, operator)
 
     def _check_field_value_match(self, query: str, white_space_pattern: str = r"\s+") -> bool:
         if re.match(self.regex_field_value_pattern, query, re.IGNORECASE):
