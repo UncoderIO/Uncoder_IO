@@ -85,13 +85,14 @@ class ElasticSearchRuleRender(ElasticSearchQueryRender):
         query: str,
         functions: str,
         meta_info: Optional[MetaInfoContainer] = None,
-        source_mapping: Optional[SourceMapping] = None,  # noqa: ARG002
+        source_mapping: Optional[SourceMapping] = None,
         not_supported_functions: Optional[list] = None,
         *args,  # noqa: ARG002
         **kwargs,  # noqa: ARG002
     ) -> str:
         query = super().finalize_query(prefix=prefix, query=query, functions=functions)
         rule = copy.deepcopy(ELASTICSEARCH_DETECTION_RULE)
+        index = source_mapping.log_source_signature.default_source.get("index")
         rule.update(
             {
                 "query": query,
@@ -105,6 +106,7 @@ class ElasticSearchRuleRender(ElasticSearchQueryRender):
                 "tags": meta_info.tags,
                 "threat": self.__create_mitre_threat(meta_info.mitre_attack),
                 "false_positives": meta_info.false_positives,
+                "index": [index] if index else [],
             }
         )
         rule_str = json.dumps(rule, indent=4, sort_keys=False, ensure_ascii=False)
