@@ -1,0 +1,23 @@
+platform: Sigma
+source: windows_process_access
+
+
+log_source:
+  product: [windows]
+  category: [process_access]
+
+default_log_source:
+  product: windows
+  category: process_access
+
+field_mapping:
+  SourceProcessGUID: SourceProcessGUID
+  SourceProcessId: SourceProcessId
+  SourceThreadId: SourceThreadId
+  SourceImage: SourceImage
+  TargetProcessGUID: TargetProcessGUID
+  TargerProcessId: TargerProcessId
+  TargetImage: TargetImage
+  GrantedAccess: GrantedAccess
+  CallTrace: CallTrace
+  User: User

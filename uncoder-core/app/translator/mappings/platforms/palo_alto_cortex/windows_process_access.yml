@@ -1,0 +1,19 @@
+platform: Palo Alto XSIAM
+source: windows_process_access
+
+default_log_source:
+  preset: xdr_event_log
+
+field_mapping:
+  User: action_process_username
+
+raw_log_fields:
+  - SourceProcessGUID
+  - SourceProcessId
+  - SourceThreadId
+  - SourceImage
+  - TargetProcessGUID
+  - TargerProcessId
+  - TargetImage
+  - GrantedAccess
+  - CallTrace
