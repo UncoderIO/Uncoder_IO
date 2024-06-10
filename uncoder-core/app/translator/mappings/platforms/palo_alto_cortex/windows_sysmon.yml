@@ -8,6 +8,7 @@ default_log_source:
 field_mapping:
   EventID: action_evtlog_event_id
   OriginalFileName: actor_process_file_original_name
+  Description: action_evtlog_description
 
 raw_log_fields:
   - CommandLine
@@ -16,7 +17,6 @@ raw_log_fields:
   - CallTrace
   - Company
   - CurrentDirectory
-  - Description
   - DestinationHostname
   - DestinationIp
   - DestinationIsIpv6
