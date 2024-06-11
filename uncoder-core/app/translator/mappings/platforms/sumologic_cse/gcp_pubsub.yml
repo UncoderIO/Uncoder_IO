@@ -1,0 +1,11 @@
+platform: Sumo Logic CSE
+source: gcp_pubsub
+description: Text that describe current mapping
+
+log_source:
+  metadata_vendor: [Google]
+  metadata_product: [Google Cloud Platform]
+
+default_log_source:
+  metadata_vendor: Google
+  metadata_product: Google Cloud Platform

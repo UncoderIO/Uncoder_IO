@@ -1,0 +1,9 @@
+platform: Sumo Logic CSE
+source: aws_eks
+description: Text that describe current mapping
+
+log_source:
+  metadata_vendor: [Amazon AWS]
+
+default_log_source:
+  metadata_vendor: Linux

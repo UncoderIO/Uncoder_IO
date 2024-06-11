@@ -1,0 +1,13 @@
+platform: Sumo Logic CSE
+source: windows_file_event
+description: Text that describe current mapping
+
+log_source:
+  metadata_vendor: [Microsoft]
+  metadata_product: [Windows]
+
+default_log_source:
+  CreationUtcTime: timestamp
+  Image: baseImage
+  TargetFilename: file_path
+  User: user_username

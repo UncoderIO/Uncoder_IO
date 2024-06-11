@@ -1,0 +1,20 @@
+platform: Sumo Logic CSE
+source: aws_cloudtrail
+description: Text that describe current mapping
+
+log_source:
+  metadata_vendor: [Amazon AWS]
+  metadata_product: [CloudTrail]
+
+default_log_source:
+  metadata_vendor: Amazon AWS
+  metadata_product: CloudTrail
+
+field_mapping:
+  eventSource: application
+  eventName: action
+  eventType: timestamp
+  responseElements.ConsoleLogin: ssuccess
+  userAgent: http_userAgent
+  userIdentity.principalId: user_userId
+  userIdentity.sessionContext.sessionIssuer.type: user_username

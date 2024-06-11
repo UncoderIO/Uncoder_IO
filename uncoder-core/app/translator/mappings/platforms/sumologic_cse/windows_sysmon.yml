@@ -1,0 +1,33 @@
+platform: Sumo Logic CSE
+source: windows_sysmon
+description: Text that describe current mapping
+
+log_source:
+  metadata_vendor: [Microsoft]
+  metadata_product: [Windows]
+
+default_log_source:
+  metadata_vendor: Microsoft
+  metadata_product: Windows
+
+field_mapping:
+  CommandLine: commandLine
+  Image: baseImage
+  ParentImage: parentBaseImage
+  Company: device_hostname
+  Description: description
+  DestinationHostname: dstDevice_hostname
+  DestinationIp: dstDevice_ip
+  DestinationPort: dstPort
+  Hashes: file_hash
+  ParentCommandLine: parentCommandLine
+  SourceHostname: srcDevice_hostname
+  SourceIp: srcDevicce_ip
+  SourcePort: srcPort
+  TargetFilename: file_path
+  User: user_username
+  Details: details
+  QueryName: dns_query
+  QueryStatus: success
+  Imphash: file_hash_imphash
+  ProcessID: pid

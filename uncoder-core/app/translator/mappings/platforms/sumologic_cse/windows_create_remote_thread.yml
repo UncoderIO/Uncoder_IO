@@ -1,0 +1,9 @@
+platform: Sumo Logic CSE
+source: windows_create_remote_thread
+description: Text that describe current mapping
+
+
+field_mapping:
+  cs-method: http_method
+  cs-referrer: http_reeferer
+  sc-status: http_response_statusCode

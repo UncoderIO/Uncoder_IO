@@ -1,0 +1,16 @@
+platform: Sumo Logic CSE
+source: gcp_gcp.audit
+description: Text that describe current mapping
+
+log_source:
+  metadata_vendor: [Google]
+  metadata_product: [Google Cloud Platform]
+
+default_log_source:
+  metadata_vendor: Google
+  metadata_product: Google Cloud Platform
+
+field_mapping:
+  protoPayload.methodName: action
+  protoPayload.serviceName: application
+  serviceName: cloud_service

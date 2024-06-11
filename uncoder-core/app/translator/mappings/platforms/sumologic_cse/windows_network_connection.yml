@@ -1,0 +1,14 @@
+platform: Sumo Logic CSE
+source: windows_network_connection
+description: Text that describe current mapping
+
+log_source:
+  metadata_vendor: [Microsoft]
+  metadata_product: [Windows]
+
+default_log_source:
+  metadata_vendor: Microsoft
+  metadata_product: Windows
+
+field_mapping:
+  SourceHostname: srcDevice_hostname

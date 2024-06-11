@@ -1,0 +1,18 @@
+platform: Sumo Logic CSE
+source: linux_network_connection
+description: Text that describe current mapping
+
+log_source:
+  metadata_vendor: [Linux]
+
+default_log_source:
+  metadata_vendor: Linux
+
+field_mapping:
+  Image: file_path
+  DestinationHostname: device_hostname
+  DestinationIp: dst_ip
+  DestinationPort: dst_port
+  SourceHostname: srcDevice_hostname
+  SourceIp: src_ip
+  SourcePort: src_port

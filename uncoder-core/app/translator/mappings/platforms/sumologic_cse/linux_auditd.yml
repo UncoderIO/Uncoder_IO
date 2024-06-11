@@ -1,0 +1,12 @@
+platform: Sumo Logic CSE
+source: linux_auditd
+description: Text that describe current mapping
+
+log_source:
+  metadata_vendor: [Linux]
+
+default_log_source:
+  metadata_vendor: Linux
+
+default_log_source:
+  exe: file_path

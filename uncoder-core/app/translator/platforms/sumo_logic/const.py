@@ -45,23 +45,6 @@ SEVERITY_MAP = {
     'critical': 5
 }
 
-ALLOWED_CATEGORIES = [
-    "Threat Intelligence",
-    "Initial Access",
-    "Execution",
-    "Persistence",
-    "Privilege Escalation",
-    "Defense Evasion",
-    "Credential Access",
-    "Discovery",
-    "Lateral Movement",
-    "Collection",
-    "Command and Control",
-    "Exfiltration",
-    "Impact"
-]
-
-
 
 sumologic_search_query_details = PlatformDetails(**SUMOLOGIC_SEARCH_QUERY_DETAILS)
 sumologic_cse_query_details = PlatformDetails(**SUMOLOGIC_CSE_QUERY_DETAILS)

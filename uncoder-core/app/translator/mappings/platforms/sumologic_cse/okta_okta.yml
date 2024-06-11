@@ -1,0 +1,15 @@
+platform: Sumo Logic CSE
+source: okta_okta
+description: Text that describe current mapping
+
+log_source:
+  metadata_vendor: [Okta]
+
+default_log_source:
+  metadata_vendor: Okta
+
+default_log_source:
+  client.user.id: user_userId
+  client.ip: device_ip
+  user_agent.original: http_userAgent
+  source.domain: user_authDomain

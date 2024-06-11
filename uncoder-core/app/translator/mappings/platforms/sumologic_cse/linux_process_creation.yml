@@ -1,0 +1,15 @@
+platform: Sumo Logic CSE
+source: linux_process_creation
+description: Text that describe current mapping
+
+log_source:
+  metadata_vendor: [Linux]
+
+default_log_source:
+  metadata_vendor: Linux
+
+field_mapping:
+  CommandLine: commandLine
+  Image: baseImage
+  ParentCommandLine: parentCommandLine
+  ParentImage: parentBaseImage

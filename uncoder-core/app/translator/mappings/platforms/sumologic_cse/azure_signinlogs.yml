@@ -1,0 +1,18 @@
+platform: Sumo Logic CSE
+source: azure_signinlogs
+description: Text that describe current mapping
+
+log_source:
+  metadata_vendor: [Microsoft]
+  metadata_product: [Azure]
+
+default_log_source:
+  AppDisplayName: application
+  AuthenticationRequirement: mfa
+  Category: logonType
+  ResourceIdentity: resource
+  ResultDescription: description
+  ResultType: normalizedCause
+  Status.errorCode: errorCode
+  Status.failureReason: errorText
+  UserPrincipalName: user_username

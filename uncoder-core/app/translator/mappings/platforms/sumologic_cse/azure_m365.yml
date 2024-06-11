@@ -1,0 +1,11 @@
+platform: Sumo Logic CSE
+source: azure_m365
+description: Text that describe current mapping
+
+log_source:
+  metadata_vendor: [Microsoft]
+  metadata_product: [Azure]
+
+default_log_source:
+  metadata_vendor: Microsoft
+  metadata_product: Azure

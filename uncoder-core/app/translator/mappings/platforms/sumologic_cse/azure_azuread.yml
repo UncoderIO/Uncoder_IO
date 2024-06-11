@@ -1,0 +1,15 @@
+platform: Sumo Logic CSE
+source: azure_azuread
+description: Text that describe current mapping
+
+log_source:
+  metadata_vendor: [Microsoft]
+  metadata_product: [Azure]
+
+default_log_source:
+  metadata_vendor: Microsoft
+  metadata_product: Azure
+
+field_mapping:
+  LoggedByService: cloud_service
+  OperationName: description

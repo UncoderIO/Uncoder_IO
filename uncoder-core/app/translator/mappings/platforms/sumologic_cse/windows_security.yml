@@ -1,0 +1,48 @@
+platform: Sumo Logic CSE
+source: windows_security
+description: Text that describe current mapping
+
+log_source:
+  metadata_vendor: [Microsoft]
+  metadata_product: [Windows]
+
+default_log_source:
+  metadata_vendor: Microsoft
+  metadata_product: Windows
+
+
+field_mapping:
+  ParentImage: parentBaseImage
+  ComputerName: device_hostname
+  FileName: file_basename
+  IpAddress: srcDevice_ip
+  IpPort: srcPort
+  LogonProcessName: application
+  LogonType: logonType
+  ProcessId: processUid
+  NewProcessName: baseImage
+  ObjectName: file_path
+  CommandLine: commandLine
+  SubStatus: action
+  SessionName: resource
+  TaskName: application
+  SourcePort: srcPort
+  OperationType: action
+  DestPort: dstPort
+  ServiceStartType: moduleType
+  DestAddress: dstDevice_ip
+  RelativeTargetName: file_basename
+  ProcessName: baseImage
+  Properties: changeType
+  ShareName: resource
+  SubjectDomainName: user_authDomain
+  SubjectUserName: user_username
+  SubjectUserSid: user_userId
+  SourceAddress: srcDevice_ip
+  TargetDomainName: targetUser_authDomain
+  TargetSid: targetUser_userId
+  TargetUserName: targetUser_username
+  ObjectServer: application
+  TargetUserSid: targetUser_userId
+  TicketEncryptionType: resource
+  WorkstationName: srcDevice_hostname

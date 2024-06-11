@@ -1,0 +1,20 @@
+platform: Sumo Logic CSE
+source: linux_sysmon
+description: Text that describe current mapping
+
+log_source:
+  metadata_vendor: [Linux]
+
+default_log_source:
+  metadata_vendor: Linux
+
+field_mapping:
+  annotations.authorization.k8s.io\/decision: annotations.authorization.k8s.io/decision
+  objectRef.namespace: objectref.namespace
+  objectRef.resource: objectref.resource
+  objectRef.subresource: objectref.subresource
+  requestURI: requesturi
+  stage: stage
+  user.groups: user.groups
+  user.username: user.username
+  verb: verb
