@@ -189,11 +189,6 @@ XPACK_WATCHER_RULE = {
 }
 
 ESQL_RULE = {
-    "id": "49f252d0-8b18-4c70-8440-919f6b20c258",
-    "updated_at": "2024-06-10T10:24:30.349Z",
-    "updated_by": "elastic",
-    "created_at": "2024-06-10T10:24:30.349Z",
-    "created_by": "elastic",
     "name": "",
     "tags": [],
     "interval": "5m",
