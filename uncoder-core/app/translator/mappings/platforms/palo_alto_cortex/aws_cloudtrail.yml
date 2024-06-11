@@ -1,0 +1,34 @@
+platform: Palo Alto XSIAM
+source: aws_cloudtrail
+
+
+default_log_source:
+  dataset: amazon_aws_raw
+
+field_mapping:
+  eventSource: eventSource
+  eventName: eventName
+  errorCode: errorCode
+  errorMessage: errorMessage
+  eventType: eventType
+  requestParameters: requestParameters
+  responseElements: responseElements
+  status: status
+  terminatingRuleId: terminatingRuleId
+  userAgent: userAgent
+  
+
+raw_log_fields:
+  - additionalEventData.MFAUsed
+  - requestParameters.ipPermissions.items.ipRanges.items.cidrIP
+  - requestParameters.ipPermissions.items.ipRanges.items.fromPort
+  - requestParameters.attribute
+  - requestParameters.userData
+  - responseElements.ConsoleLogin
+  - responseElements.pendingModifiedValues.masterUserPassword
+  - responseElements.publiclyAccessible
+  - userIdentity.arn
+  - userIdentity.principalId
+  - userIdentity.sessionContext.sessionIssuer.type
+  - userIdentity.type
+  - userIdentity.userName

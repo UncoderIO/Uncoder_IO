@@ -1,0 +1,25 @@
+platform: Palo Alto XSIAM
+source: aws_eks
+
+
+default_log_source:
+  dataset: amazon_aws_raw
+
+field_mapping:
+  aws_node_type: aws_node_type
+  requestURI: requestURI
+  stage: stage
+  verb: verb
+  
+
+raw_log_fields:
+  - annotations.authorization.k8s.io\/decision
+  - annotations.podsecuritypolicy.policy.k8s.io\/admit-policy
+  - objectRef.namespace
+  - objectRef.resource
+  - objectRef.subresource
+  - requestObject.rules.resources
+  - requestObject.rules.verbs
+  - requestObject.spec.containers.image
+  - user.groups
+  - user.username

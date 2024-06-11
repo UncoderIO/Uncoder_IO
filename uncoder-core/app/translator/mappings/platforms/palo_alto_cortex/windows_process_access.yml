@@ -5,7 +5,7 @@ default_log_source:
   preset: xdr_event_log
 
 field_mapping:
-  User: action_process_username
+  SourceUser: action_process_username
 
 raw_log_fields:
   - SourceProcessGUID
