@@ -1,0 +1,16 @@
+platform: Sigma
+source: windows_pipe_created
+
+
+log_source:
+  product: [windows]
+  category: [pipe_created]
+
+default_log_source:
+  product: windows
+  category: pipe_created
+
+field_mapping:
+  EventID: action_evtlog_event_id
+  PipeName: PipeName
+  Image: Image
