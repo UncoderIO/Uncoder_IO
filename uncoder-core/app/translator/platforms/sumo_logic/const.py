@@ -26,16 +26,42 @@ SUMOLOGIC_SEARCH_QUERY_DETAILS = {
 SUMOLOGIC_CSE_QUERY_DETAILS = {
     "platform_id": "sumologic-cse-query",
     "name": "Sumo Logic CSE",
-    "platform_name": "Query",
+    "platform_name": "CSE Query",
     **PLATFORM_DETAILS
 }
 
 SUMOLOGIC_CSE_RULE_DETAILS = {
     "platform_id": "sumologic-cse-rule",
     "name": "Sumo Logic CSE Rule",
-    "platform_name": "Query",
+    "platform_name": "CSE Rule",
     **PLATFORM_DETAILS
 }
+
+SEVERITY_MAP = {
+    'informational': 1,
+    'low': 2,
+    'medium': 3,
+    'high': 4,
+    'critical': 5
+}
+
+ALLOWED_CATEGORIES = [
+    "Threat Intelligence",
+    "Initial Access",
+    "Execution",
+    "Persistence",
+    "Privilege Escalation",
+    "Defense Evasion",
+    "Credential Access",
+    "Discovery",
+    "Lateral Movement",
+    "Collection",
+    "Command and Control",
+    "Exfiltration",
+    "Impact"
+]
+
+
 
 sumologic_search_query_details = PlatformDetails(**SUMOLOGIC_SEARCH_QUERY_DETAILS)
 sumologic_cse_query_details = PlatformDetails(**SUMOLOGIC_CSE_QUERY_DETAILS)
