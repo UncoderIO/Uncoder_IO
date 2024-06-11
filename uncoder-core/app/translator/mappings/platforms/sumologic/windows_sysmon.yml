@@ -1,0 +1,61 @@
+platform: Sumo Logic
+source: windows_sysmon
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [windows]
+  _sourceName: [Microsoft-Windows-Sysmon/Operational]
+
+default_log_source:
+  _sourceCategory: windows
+  _sourceName: Microsoft-Windows-Sysmon/Operational
+
+field_mapping:
+  CommandLine: CommandLine
+  Image: Image
+  ParentImage: ParentImage
+  EventID: EventID
+  CallTrace: CallTrace
+  Company: Company
+  CurrentDirectory: CurrentDirectory
+  Description: Description
+  DestinationHostname: DestinationHostname
+  DestinationIp: DestinationIp
+  DestinationIsIpv6: DestinationIsIpv6
+  DestinationPort: DestinationPort
+  DestinationPortName: DestinationPortName
+  Hashes: Hashes
+  Initiated: Initiated
+  IntegrityLevel: IntegrityLevel
+  ParentCommandLine: ParentCommandLine
+  Product: Product
+  Protocol: Protocol
+  RuleName: RuleName
+  SourceHostname: SourceHostname
+  SourceIp: SourceIp
+  SourceIsIpv6: SourceIsIpv6
+  SourcePort: SourcePort
+  SourcePortName: SourcePortName
+  TargetFilename: TargetFilename
+  User: User
+  OriginalFileName: OriginalFileName
+  Signed: Signed
+  Signature: Signature
+  SignatureStatus: SignatureStatus
+  TargetObject: TargetObject
+  Details: Details
+  QueryName: QueryName
+  QueryResults: QueryResults
+  QueryStatus: QueryStatus
+  IsExecutable: IsExecutable
+  PipeName: PipeName
+  ImageLoaded: ImageLoaded
+  SourceImage: SourceImage
+  StartModule: StartModule
+  TargetImage: TargetImage
+  Device: Device
+  ProcessID: ProcessID
+  FileVersion: FileVersion
+  StartAddress: StartAddress
+  StartFunction: StartFunction
+  EventType: EventType

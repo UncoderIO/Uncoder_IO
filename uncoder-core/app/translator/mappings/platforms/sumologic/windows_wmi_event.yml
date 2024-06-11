@@ -1,0 +1,15 @@
+platform: Sumo Logic
+source: windows_wmi_event
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [windows]
+  _sourceName: [Microsoft-Windows-WMI-Activity/Operational]
+
+default_log_source:
+  _sourceCategory: windows
+  _sourceName: Microsoft-Windows-WMI-Activity/Operational
+
+field_mapping:
+  Destination: Destination
+  EventID: EventID

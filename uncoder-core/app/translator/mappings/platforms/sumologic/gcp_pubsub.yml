@@ -1,0 +1,15 @@
+platform: Sumo Logic
+source: gcp_pubsub
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [gcp]
+
+default_log_source:
+  _sourceCategory: gcp
+
+field_mapping:
+  data.protoPayload.methodName: message.data.protopayload.methodname
+  data.protoPayload.serviceData.policyDelta.bindingDeltas{}.action: message.data.protopayload.servicedata.policydelta.bindingdeltas.action
+  data.protoPayload.serviceData.policyDelta.bindingDeltas{}.member: message.data.protopayload.servicedata.policydelta.bindingdeltas{}.member
+  data.resource.type: message.data.resource.type

@@ -1,0 +1,24 @@
+platform: Sumologic Query
+source: zeek_http
+description: Text that describe current mapping
+
+field_mapping:
+  uri: uri
+  resp_mime_types: resp_mime_types
+  c-uri: uri
+  user_agent: user_agent
+  host: host
+  status_code: status_code
+  id.orig_h: id.orig_h
+  sc-status: status_code
+  http.method: method
+  src_ip: orig_h
+  client_header_names: client_header_names
+  method: method
+  id.resp_h: id.resp_h
+  response_body_len: response_body_len
+  id.orig_p: id.orig_p
+  mime_types: mime_types
+  mime_type: mime_type
+  dst_ip: resp_h
+  request_body_len: request_body_len

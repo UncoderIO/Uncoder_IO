@@ -1,0 +1,20 @@
+platform: Sumo Logic
+source: aws_eks
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [eks]
+
+default_log_source:
+  _sourceCategory: eks
+
+field_mapping:
+  annotations.authorization.k8s.io\/decision: annotations.authorization.k8s.io/decision
+  objectRef.namespace: objectref.namespace
+  objectRef.resource: objectref.resource
+  objectRef.subresource: objectref.subresource
+  requestURI: requesturi
+  stage: stage
+  user.groups: user.groups
+  user.username: user.username
+  verb: verb

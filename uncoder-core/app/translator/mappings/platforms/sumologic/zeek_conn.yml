@@ -1,0 +1,10 @@
+platform: Sumo Logic
+source: zeek_conn
+description: Text that describe current mapping
+
+field_mapping:
+  dst_port: resp_p
+  src_ip: orig_h
+  orig_bytes: orig_bytes
+  src_port: orig_p
+  service: service

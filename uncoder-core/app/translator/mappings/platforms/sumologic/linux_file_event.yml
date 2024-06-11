@@ -1,0 +1,13 @@
+platform: Sumo Logic
+source: linux_file_event
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [linux]
+
+default_log_source:
+  _sourceCategory: linux
+
+field_mapping:
+  Image: Image
+  TargetFilename: TargetFilename

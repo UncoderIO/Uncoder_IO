@@ -1,0 +1,29 @@
+platform: Sumo Logic
+source: azure_signinlogs
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [azure]
+
+default_log_source:
+  _sourceCategory: azure
+
+
+field_mapping:
+  AppId: appId
+  AuthenticationRequirement: authenticationRequirement
+  Category: category
+  ConditionalAccessStatus: conditionalAccessStatus
+  DeviceDetail: deviceDetail
+  IsInteractive: isInteractive
+  NetworkLocationDetails: networkLocationDetails
+  ResourceDisplayName: esourceDisplayName
+  ResourceIdentity: resourceId
+  ResultDescription: resultDescription
+  ResultType: resultType
+  Status.errorCode: errorCode
+  Status: status
+  Status.failureReason: failureReason
+  TokenIssuerType: tokenIssuerType
+  UserAgent: userAgent
+  UserPrincipalName: userPrincipalName

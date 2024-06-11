@@ -1,0 +1,6 @@
+platform: Sumo Logic
+source: zeek_dnp3
+description: Text that describe current mapping
+
+field_mapping:
+  id.orig_h: id.orig_h

@@ -1,0 +1,6 @@
+platform: Sumo Logic
+source: windows_firewall-as
+description: Text that describe current mapping
+
+field_mapping:
+  EventID: EventID

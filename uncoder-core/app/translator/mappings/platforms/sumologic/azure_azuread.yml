@@ -1,0 +1,23 @@
+platform: Sumo Logic
+source: azure_azuread
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [azure]
+
+default_log_source:
+  _sourceCategory: azure
+
+
+field_mapping:
+  ActivityDisplayName: activityDisplayName
+  Category: category
+  LoggedByService: loggedByService
+  OperationName: operationName
+  TargetResources: targetResources
+  AADOperationType: operationType
+  InitiatedBy: initiatedBy
+  ResultReason: resultReason
+  Status: status
+  Status.errorCode: errorCode
+  UserAgent: userAgent

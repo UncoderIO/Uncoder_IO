@@ -1,0 +1,6 @@
+platform: Sumo Logic
+source: windows_smbclient-security
+description: Text that describe current mapping
+
+field_mapping:
+  EventID: EventID

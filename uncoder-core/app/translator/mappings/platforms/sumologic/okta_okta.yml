@@ -1,0 +1,23 @@
+platform: Sumo Logic
+source: okta_okta
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [okta]
+
+default_log_source:
+  _sourceCategory: okta
+
+field_mapping:
+  alternateId: alternateId
+  client.ip: ipAddress
+  user_agent.original: rawUserAgent
+  userAgent.os: os
+  userAgent.browser: browser
+  client.zone: zone
+  client.device: device
+  client.id: id
+  outcome.reason: outcome.reason
+  client.as.number: asNumber
+  client.as.organization.name: asOrg
+  client.domain: domain

@@ -1,0 +1,33 @@
+platform: Sumo Logic
+source: aws_cloudtrail
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [aws]
+  _sourceName: [cloudtrail]
+
+default_log_source:
+  _sourceCategory: aws
+
+field_mapping:
+  eventSource: eventsource
+  eventName: eventname
+  AdditionalEventData: additionaleventdata
+  additionalEventData.MFAUsed: additionaleventdata.mfaused
+  errorCode: errorcode
+  errorMessage: errormessage
+  eventType: eventtype
+  requestParameters: requestparameters
+  requestParameters.ipPermissions.items.ipRanges.items.cidrIP: requestparameters.ippermissions.items.ipranges.items.cidrIp
+  responseElements: responseelements
+  responseElements.ConsoleLogin: responseelements.consolelogin
+  responseElements.pendingModifiedValues.masterUserPassword: responseelements.pendingmodifiedvalues.masteruserpassword
+  responseElements.publiclyAccessible: responseelements.publiclyaccessible
+  status: status
+  terminatingRuleId: terminatingruleId
+  userAgent: useragent
+  userIdentity.arn: arnuserIdentity.arn
+  userIdentity.principalId: userIdentity.principalId
+  userIdentity.sessionContext.sessionIssuer.type: userIdentity.sessioncontext.sessionIssuer.type
+  userIdentity.type: userIdentity.type
+  userIdentity.userName: userIdentity.username

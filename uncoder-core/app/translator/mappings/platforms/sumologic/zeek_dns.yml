@@ -1,0 +1,12 @@
+platform: Sumologic Query
+source: zeek_dns
+description: Text that describe current mapping
+
+field_mapping:
+  query: query
+  dst_ip: resp_h
+  id.resp_p: id.resp_p
+  qtype_name: qtype_name
+  rejected: rejected
+  rcode_name: rcode_name
+  answers: answers

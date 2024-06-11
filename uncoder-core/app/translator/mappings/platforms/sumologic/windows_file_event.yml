@@ -1,0 +1,17 @@
+platform: Sumo Logic
+source: windows_file_event
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [windows]
+  _sourceName: [Microsoft-Windows-Sysmon/Operational]
+
+default_log_source:
+  _sourceCategory: windows
+
+field_mapping:
+  CreationUtcTime: CreationUtcTime
+  Image: Image
+  PreviousCreationUtcTime: PreviousCreationUtcTime
+  TargetFilename: TargetFilename
+  User: User

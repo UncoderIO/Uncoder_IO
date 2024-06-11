@@ -1,0 +1,21 @@
+platform: Sumo Logic
+source: windows_powershell
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [windows]
+  _sourceName: [Microsoft-Windows-Powershell]
+
+default_log_source:
+  _sourceCategory: windows
+  _sourceName: Microsoft-Windows-Powershell
+
+field_mapping:
+  EventID: EventID
+  ScriptBlockText: ScriptBlockText
+  Payload: Payload
+  HostApplication: HostApplication
+  ContextInfo: ContextInfo
+  HostName: HostName
+  EngineVersion: EngineVersion
+  HostVersion: HostVersion

@@ -1,0 +1,15 @@
+platform: Sumo Logic
+source: macos_process_creation
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [macos]
+
+default_log_source:
+  _sourceCategory: macos
+
+field_mapping:
+  CommandLine: CommandLine
+  Image: Image
+  ParentCommandLine: ParentCommandLine
+  ParentImage: ParentImage

@@ -1,0 +1,13 @@
+platform: Sumo Logic
+source: windows_bits_client
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [windows]
+  _sourceName: [Microsoft-Windows-Bits-Client/Operational]
+
+default_log_source:
+  _sourceCategory: windows
+
+field_mapping:
+  EventID: EventID

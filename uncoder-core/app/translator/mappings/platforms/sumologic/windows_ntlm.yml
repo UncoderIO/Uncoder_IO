@@ -1,0 +1,10 @@
+platform: Sumo Logic
+source: windows_ntlm
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [windows]
+  _sourceName: [Microsoft-Windows-NTLM/Operational]
+
+default_log_source:
+  _sourceCategory: [windows]

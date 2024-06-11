@@ -1,0 +1,13 @@
+platform: Sumo Logic
+source: azure_IntuneAuditLogs
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [azure]
+
+default_log_source:
+  _sourceCategory: azure
+
+
+field_mapping:
+  OperationName: operationName

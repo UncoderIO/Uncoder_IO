@@ -1,0 +1,15 @@
+platform: Sumo Logic
+source: azure_auditlogs
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [azure]
+
+default_log_source:
+  _sourceCategory: azure
+
+field_mapping:
+  Category: Category
+  LoggedByService: loggedByService
+  OperationName: OperationName
+  TargetResources: TargetResources

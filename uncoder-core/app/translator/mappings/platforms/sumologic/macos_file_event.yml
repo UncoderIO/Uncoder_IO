@@ -1,0 +1,16 @@
+platform: Sumo Logic
+source: macos_file_event
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [macos]
+
+default_log_source:
+  _sourceCategory: macos
+
+field_mapping:
+  Image: Image
+  TargetFilename: TargetFilename
+  User: User
+  QueryName: QueryName
+  QueryResults: QueryResults

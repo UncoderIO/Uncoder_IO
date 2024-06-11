@@ -1,0 +1,18 @@
+platform: Sumo Logic
+source: windows_registry_event
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [windows]
+  _sourceName: [Microsoft-Windows-Sysmon/Operational]
+
+default_log_source:
+  _sourceCategory: windows
+  _sourceName: Microsoft-Windows-Sysmon/Operational
+
+field_mapping:
+  TargetObject: ObjectName
+  Image: ProcessName
+  Details: NewValueType
+  EventType: OperationType
+  User: SubjectUserName

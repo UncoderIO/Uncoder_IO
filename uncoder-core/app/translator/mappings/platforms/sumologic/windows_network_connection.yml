@@ -1,0 +1,17 @@
+platform: Sumo Logic
+source: windows_network_connection
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [windows]
+  _sourceName: [Microsoft-Windows-Sysmon/Operational]
+
+default_log_source:
+  _sourceCategory: windows
+
+field_mapping:
+  Image: Application
+  DestinationIp: DestAddress
+  DestinationPort: DestPort
+  SourceIp: SourceAddress
+  SourcePort: SourcePort

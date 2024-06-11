@@ -1,0 +1,6 @@
+platform: Sumo Logic
+source: zeek_zeek
+description: Text that describe current mapping
+
+field_mapping:
+  notice.user_agent: user_agent

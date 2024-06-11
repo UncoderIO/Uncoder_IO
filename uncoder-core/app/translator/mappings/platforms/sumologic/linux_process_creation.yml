@@ -1,0 +1,15 @@
+platform: Sumo Logic
+source: linux_process_creation
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [linux]
+
+default_log_source:
+  _sourceCategory: linux
+
+field_mapping:
+  CommandLine: CommandLine
+  Image: Image
+  ParentCommandLine: ParentCommandLine
+  ParentImage: ParentImage

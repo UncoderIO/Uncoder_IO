@@ -1,0 +1,15 @@
+platform: Sumo Logic
+source: dns
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [dns]
+
+default_log_source:
+  _sourceCategory: dns
+
+field_mapping:
+  dns-query: dns-query
+  parent-domain: parent-domain
+  dns-answer: dns-answer
+  dns-record: dns-record

@@ -1,0 +1,16 @@
+platform: Sumo Logic
+source: gcp_gcp.audit
+description: Text that describe current mapping
+
+log_source:
+  _sourceCategory: [gcp]
+
+default_log_source:
+  _sourceCategory: gcp
+
+field_mapping:
+  message: message
+  protoPayload.methodName: message.data.protoPayload.methodName
+  protoPayload.request.canIpForward: message.data.protopayload.request.canIpforward
+  protoPayload.serviceName: message.data.protopayload.servicename
+

@@ -1,0 +1,7 @@
+platform: Sumo Logic
+source: windows_msexchange-management
+description: Text that describe current mapping
+
+
+field_mapping:
+  EventID: EventID

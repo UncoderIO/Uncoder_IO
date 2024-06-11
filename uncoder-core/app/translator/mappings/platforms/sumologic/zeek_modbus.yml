@@ -1,0 +1,6 @@
+platform: Sumo Logic
+source: zeek_modbus
+description: Text that describe current mapping
+
+field_mapping:
+  src_ip: orig_h
