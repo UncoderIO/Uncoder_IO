@@ -21,6 +21,7 @@ from collections.abc import Callable
 from typing import Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
+from app.translator.core.context_vars import return_only_first_query_ctx_var
 from app.translator.core.custom_types.tokens import LogicalOperatorType, OperatorType
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.escape_manager import EscapeManager
@@ -35,7 +36,6 @@ from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.str_value_manager import StrValue, StrValueManager
 from app.translator.core.tokenizer import TOKEN_TYPE
-from app.translator.core.context_vars import return_only_first_query_ctx_var
 
 
 class BaseQueryFieldValue(ABC):
