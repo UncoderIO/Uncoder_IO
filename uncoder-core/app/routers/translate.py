@@ -15,6 +15,7 @@ translator = Translator()
 def translate_one(
     source_platform_id: str = Body(..., embed=True),
     target_platform_id: str = Body(..., embed=True),
+    text: str = Body(..., embed=True),
     return_only_first_query: bool = False,
 ) -> OneTranslationData:
     return_only_first_query_ctx_var.set(return_only_first_query)
