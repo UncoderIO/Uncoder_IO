@@ -35,6 +35,7 @@ from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.str_value_manager import StrValue, StrValueManager
 from app.translator.core.tokenizer import TOKEN_TYPE
+from app.translator.core.context_vars import return_only_first_query_ctx_var
 
 
 class BaseQueryFieldValue(ABC):
@@ -283,6 +284,7 @@ class PlatformQueryRender(QueryRender):
         **kwargs,  # noqa: ARG002
     ) -> str:
         query = self.query_pattern.format(prefix=prefix, query=query, functions=functions).strip()
+
         query = self.wrap_query_with_meta_info(meta_info=meta_info, query=query)
         if not_supported_functions:
             rendered_not_supported = self.render_not_supported_functions(not_supported_functions)
@@ -368,6 +370,8 @@ class PlatformQueryRender(QueryRender):
                     meta_info=query_container.meta_info,
                     source_mapping=source_mapping,
                 )
+                if return_only_first_query_ctx_var.get() is True:
+                    return finalized_query
                 queries_map[source_mapping.source_id] = finalized_query
         if not queries_map and errors:
             raise errors[0]

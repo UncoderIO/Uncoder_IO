@@ -18,6 +18,7 @@ import re
 from typing import Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
+from app.translator.core.context_vars import return_only_first_query_ctx_var
 from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.custom_types.tokens import GroupType, LogicalOperatorType, OperatorType
 from app.translator.core.custom_types.values import ValueType
@@ -273,6 +274,8 @@ class FortiSiemRuleRender(PlatformQueryRender):
                 source_mapping=source_mapping,
                 fields=mapped_fields_set,
             )
+            if return_only_first_query_ctx_var.get() is True:
+                return finalized_query
             queries_map[source_mapping.source_id] = finalized_query
 
         return self.finalize(queries_map)
