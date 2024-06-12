@@ -62,7 +62,9 @@ field_mapping:
   ServiceAccount: ServiceAccount
   AttributeValue: AttributeValue
   SessionName: SessionName
-  TaskName: TaskName
+  TaskName: 
+    - TaskName
+    - Task Name
   ObjectDN: ObjectDN
   TemplateContent: TemplateContent
   NewTemplateContent: NewTemplateContent
