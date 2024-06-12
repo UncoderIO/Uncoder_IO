@@ -29,4 +29,5 @@ field_mapping:
     - DstPort
     - RemotePort
   Protocol: IPProtocol
+  application: Application
   Application: Application

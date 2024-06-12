@@ -32,8 +32,13 @@ field_mapping:
   Application:
     - Application
     - application
-  SourceHostName: HostCount-source
-  DestinationHostname: HostCount-destination
+  SourceHostName: 
+    - HostCount-source
+    - identityHostName
+    - sourceAssetName
+  DestinationHostname: 
+    - HostCount-destination
+    - Recipient Host
   src-packets:
     - PacketRatio-src
     - src-packets
@@ -42,3 +47,4 @@ field_mapping:
     - dst-packets
   src-bytes: src-bytes
   dst-bytes: dst-bytes
+  ExternalSeverity: External Severity

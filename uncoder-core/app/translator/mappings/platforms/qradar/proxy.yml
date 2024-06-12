@@ -13,15 +13,23 @@ field_mapping:
     - URL
     - XForceCategoryByURL
   c-useragent: User Agent
-  cs-method: cs-method
+  cs-method: HTTP Method
   cs-bytes: Bytes Sent
-  cs-cookie-vars: cs-cookie-vars
+  #cs-cookie-vars: cs-cookie-vars
   c-uri-extension: URL
-  c-uri-query: URL
-  cs-cookie: cs-cookie
-  cs-host: cs-host
-  cs-referrer: URL Referrer
-  cs-version: cs-version
-  r-dns:  r-dns
-  sc-status: sc-status
-  post-body: post-body
+  c-uri-query: 
+    - URL
+    - URL Path
+  #cs-cookie: cs-cookie
+  cs-host: 
+    - UrlHost
+    - URL Host
+  cs-referrer: 
+    - URL Referrer
+    - Referrer URL
+  cs-version: HTTP Version
+  r-dns:
+    - UrlHost
+    - URL Host
+  sc-status: HTTP Response Code
+  #post-body: post-body
