@@ -8,5 +8,5 @@ field_mapping:
   EventID: action_evtlog_event_id
 
 raw_log_fields:
-  - PipeName
-  - Image
+  PipeName: regex
+  Image: regex

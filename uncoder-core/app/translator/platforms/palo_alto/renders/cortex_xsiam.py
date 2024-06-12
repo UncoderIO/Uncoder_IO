@@ -136,9 +136,11 @@ class CortexXQLQueryRender(PlatformQueryRender):
     details: PlatformDetails = cortex_xql_query_details
     mappings: CortexXQLMappings = cortex_xql_mappings
     is_strict_mapping = True
-    raw_log_field_pattern = (
-        '| alter {field} = regextract(to_json_string(action_evtlog_data_fields)->{field}{{}}, "\\"(.*)\\"")'
-    )
+    raw_log_field_pattern_map = {
+        'regex': '| alter {field} = regextract(to_json_string(action_evtlog_data_fields)->{field}{{}}, "\\"(.*)\\"")',
+        'object': '| alter {field_name} = json_extract_scalar({field_object} , "$.{field_path}")',
+        'list': '| alter {field_name} = arraystring(json_extract_array({field_object} , "$.{field_path}")," ")'
+    }
     platform_functions: CortexXQLFunctions = cortex_xql_functions
 
     or_token = "or"
@@ -153,6 +155,18 @@ class CortexXQLQueryRender(PlatformQueryRender):
     def __init__(self):
         super().__init__()
         self.platform_functions.manager.post_init_configure(self)
+
+    def process_raw_log_field(self, field: str, field_type: str) -> Optional[str]:
+        raw_log_field_pattern = self.raw_log_field_pattern_map.get(field_type)
+        if raw_log_field_pattern is None:
+            return
+        if field_type == "regex":
+            field = field.replace(".", r"\.")
+            return raw_log_field_pattern.format(field=field)
+        if field_type in ("object", "list") and "." in field:
+            field_object, field_path = field.split(".", 1)
+            field_name = field.replace(".", "_")
+            return raw_log_field_pattern.format(field_name=field_name, field_object=field_object, field_path=field_path)
 
     def generate_prefix(self, log_source_signature: CortexXQLLogSourceSignature, functions_prefix: str = "") -> str:
         functions_prefix = f"{functions_prefix} | " if functions_prefix else ""

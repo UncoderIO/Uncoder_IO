@@ -10,14 +10,14 @@ field_mapping:
   ImagePath: actor_process_image_path
 
 raw_log_fields:
-  - AccountName
-  - ServiceName
-  - ServiceType
-  - StartType
-  - Origin
-  - HiveName
-  - Caption
-  - param1
-  - param2
-  - Channel
-  - DeviceName
+  AccountName: regex
+  ServiceName: regex
+  ServiceType: regex
+  StartType: regex
+  Origin: regex
+  HiveName: regex
+  Caption: regex
+  param1: regex
+  param2: regex
+  Channel: regex
+  DeviceName: regex
