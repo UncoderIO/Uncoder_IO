@@ -1,0 +1,34 @@
+platform: Palo Alto XSIAM
+source: azure_azuread
+
+
+default_log_source:
+  dataset: msft_azure_raw
+
+field_mapping:
+  ActivityDisplayName: properties.activityDisplayName
+  Category: properties.category
+  LoggedByService: properties.loggedByService
+  Result: properties.result
+  OperationName: properties.operationName
+  TargetResources: properties.targetResources
+  AADOperationType: properties.AADOperationType
+  InitiatedBy: properties.initiatedBy
+  ResultReason: properties.resultReason
+  Status: properties.status
+  #Status.errorCode: properties.status_errorCode
+  UserAgent: properties.userAgent
+
+raw_log_fields:
+  - properties.activityDisplayName
+  - properties.category
+  - properties.loggedByService
+  - properties.result
+  - properties.operationName
+  - properties.targetResources
+  - properties.AADOperationType
+  - properties.initiatedBy
+  - properties.resultReason
+  - properties.status
+  - properties.status_errorCode
+  - properties.userAgent

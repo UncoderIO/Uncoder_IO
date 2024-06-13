@@ -28,3 +28,4 @@ field_mapping:
   ParentLogonId: causality_actor_process_logon_id
   ParentProduct: causality_actor_process_signature_product
   ParentCompany: causality_actor_process_signature_vendor
+  Signed: actor_process_signature_status #Signature status of the process: Signed = 1 SignedInvalid = 2 Unsigned = 3 FailedToObtain = 4 WeakHash = 5, where the MD5 is used as the hash algorithm. Unsupported = 6, which means the signature was not calculated. InvalidCVE2020_0601 = 7, which means the executable is malicious and is trying to exploit the windows vulnerability CVE2020-0601. Deleted = 8, which means that the file was deleted by the time the agent tried to calculate the signature.

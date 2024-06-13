@@ -32,3 +32,4 @@ raw_log_fields:
   - userIdentity.sessionContext.sessionIssuer.type
   - userIdentity.type
   - userIdentity.userName
+  - requestParameters.sourceConfiguration.imageRepository

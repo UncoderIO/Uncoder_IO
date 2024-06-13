@@ -1,0 +1,14 @@
+platform: Palo Alto XSIAM
+source: linux_auditd
+
+
+default_log_source:
+  dataset: linux_linux_raw
+  datamodel: datamodel
+
+field_mapping:
+  #aws_node_type: aws_node_type
+  
+
+#raw_log_fields:
+#  - aaa
