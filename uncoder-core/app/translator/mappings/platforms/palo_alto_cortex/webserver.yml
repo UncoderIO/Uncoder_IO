@@ -12,3 +12,5 @@ field_mapping:
   c-uri-query: xdm.network.http.url
   cs-referrer: xdm.network.http.referrer
   sc-status: xdm.network.http.response_code
+  cs-uri-stem: xdm.network.http.url
+  cs-uri-query: xdm.network.http.url

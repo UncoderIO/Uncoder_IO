@@ -146,3 +146,5 @@ raw_log_fields:
   ParentProcessName: regex
   ExceptionCode: regex
   Service: regex
+  SamAccountName: regex
+  ImpersonationLevel: regex

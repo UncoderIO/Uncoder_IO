@@ -8,3 +8,4 @@ default_log_source:
 
 field_mapping:
   eventType: xdm.event.type
+  eventtype: xdm.event.type
