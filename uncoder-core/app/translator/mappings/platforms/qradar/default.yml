@@ -27,7 +27,7 @@ field_mapping:
     - destination_ip
     - destinationIP
     - destinationaddress
-  User: 
+  User:
     - userName
     - EventUserName
   CommandLine: Command
@@ -35,13 +35,14 @@ field_mapping:
   Application:
     - Application
     - application
-  SourceHostName: 
+  SourceHostName:
     - HostCount-source
     - identityHostName
     - sourceAssetName
-  DestinationHostname: 
+  DestinationHostname:
     - HostCount-destination
     - Recipient Host
+    - DestinationHostName
   src-packets:
     - PacketRatio-src
     - src-packets
@@ -51,11 +52,14 @@ field_mapping:
   src-bytes: src-bytes
   dst-bytes: dst-bytes
   ExternalSeverity: External Severity
-  SourceMAC: 
+  SourceMAC:
     - SourceMAC
     - MAC
   DestinationMAC: DestinationMAC
-  SourceOS: 
+  SourceOS:
     - SourceOS
     - OS
   DestinationOS: DestinationOS
+  TargetUserName: DestinationUserName
+  SourceUserName: SourceUserName
+  url_category: XForceCategoryByURL
