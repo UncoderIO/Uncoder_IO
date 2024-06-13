@@ -13,4 +13,4 @@ field_mapping:
 raw_log_fields:
  properties.userAgent: object
  properties.type: object
- properties.authenticationProcessingDetails: object
+ properties.authenticationProcessingDetails: list

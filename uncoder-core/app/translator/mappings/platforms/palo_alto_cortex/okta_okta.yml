@@ -8,3 +8,9 @@ default_log_source:
 
 field_mapping:
   eventType: xdm.event.type
+  eventtype: xdm.event.type
+
+
+#raw_log_fields:
+#  debugContext.debugData.requestUri: object
+#  legacyeventtype
