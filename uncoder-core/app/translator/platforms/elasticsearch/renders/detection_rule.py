@@ -92,7 +92,7 @@ class ElasticSearchRuleRender(ElasticSearchQueryRender):
     ) -> str:
         query = super().finalize_query(prefix=prefix, query=query, functions=functions)
         rule = copy.deepcopy(ELASTICSEARCH_DETECTION_RULE)
-        index = source_mapping.log_source_signature.default_source.get("index")
+        index = source_mapping.log_source_signature.default_source.get("index") if source_mapping else None
         rule.update(
             {
                 "query": query,
