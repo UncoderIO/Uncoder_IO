@@ -55,4 +55,4 @@ field_mapping:
 
 
 raw_log_fields:
-  - Initiated
+  Initiated: regex

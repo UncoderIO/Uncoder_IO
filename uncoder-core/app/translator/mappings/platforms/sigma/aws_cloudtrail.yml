@@ -13,7 +13,7 @@ default_log_source:
 field_mapping:
   eventSource: eventSource
   eventName: eventName
-  AdditionalEventData: additionalEventData.MFAUsed
+  AdditionalEventData.MFAUsed: additionalEventData.MFAUsed
   errorCode: errorCode
   errorMessage: errorMessage
   eventType: eventType

@@ -9,16 +9,16 @@ field_mapping:
   Provider_Name: provider_name
 
 raw_log_fields:
-  - src_ip
-  - source
-  - additional_information
-  - EventData
-  - Channel
-  - statement
-  - Faulting application path
-  - object_name
-  - class_type
-  - action_id
-  - Data
-  - Message
-  - Level
+  src_ip: regex
+  source: regex
+  additional_information: regex
+  EventData: regex
+  Channel: regex
+  statement: regex
+  Faulting application path: regex
+  object_name: regex
+  class_type: regex
+  action_id: regex
+  Data: regex
+  Message: regex
+  Level: regex
