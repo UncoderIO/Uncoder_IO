@@ -20,3 +20,4 @@ field_mapping:
   #cs-version: cs-version
   r-dns:  xdm.network.http.domain
   post-body: xdm.network.http.http_header.value
+  url_category: xdm.network.http.url_category

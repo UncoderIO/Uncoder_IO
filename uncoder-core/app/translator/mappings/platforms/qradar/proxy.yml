@@ -17,14 +17,14 @@ field_mapping:
   cs-bytes: Bytes Sent
   #cs-cookie-vars: cs-cookie-vars
   c-uri-extension: URL
-  c-uri-query: 
+  c-uri-query:
     - URL
     - URL Path
   #cs-cookie: cs-cookie
-  cs-host: 
+  cs-host:
     - UrlHost
     - URL Host
-  cs-referrer: 
+  cs-referrer:
     - URL Referrer
     - Referrer URL
   cs-version: HTTP Version
@@ -33,3 +33,4 @@ field_mapping:
     - URL Host
   sc-status: HTTP Response Code
   #post-body: post-body
+  url_category: XForceCategoryByURL
