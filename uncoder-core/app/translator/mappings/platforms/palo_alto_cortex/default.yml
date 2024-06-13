@@ -118,3 +118,7 @@ field_mapping:
   SubjectAccountName: xdm.source.user.username
   ComputerName: xdm.source.host.hostname
   ExternalSeverity: xdm.alert.severity
+  SourceMAC: xdm.source.host.mac_addresses
+  DestinationMAC: xdm.target.host.mac_addresses
+  SourceOS: xdm.source.host.os
+  DestinationOS: xdm.target.host.os

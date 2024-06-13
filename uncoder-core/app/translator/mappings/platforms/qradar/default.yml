@@ -9,6 +9,7 @@ default_log_source:
 
 field_mapping:
   icmp.type: IcmpType
+  icmp.code: IcmpCode
   dst-port:
     - DstPort
     - DestinationPort
@@ -26,7 +27,9 @@ field_mapping:
     - destination_ip
     - destinationIP
     - destinationaddress
-  User: userName
+  User: 
+    - userName
+    - EventUserName
   CommandLine: Command
   Protocol: IPProtocol
   Application:
@@ -48,3 +51,11 @@ field_mapping:
   src-bytes: src-bytes
   dst-bytes: dst-bytes
   ExternalSeverity: External Severity
+  SourceMAC: 
+    - SourceMAC
+    - MAC
+  DestinationMAC: DestinationMAC
+  SourceOS: 
+    - SourceOS
+    - OS
+  DestinationOS: DestinationOS
