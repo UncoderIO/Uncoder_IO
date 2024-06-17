@@ -58,3 +58,4 @@ raw_log_fields:
   StartAddress: regex
   StartFunction: regex
   EventType: regex
+  GrantedAccess: regex

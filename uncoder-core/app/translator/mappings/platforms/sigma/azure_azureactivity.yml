@@ -4,7 +4,7 @@ source: azure_azureactivity
 
 log_source:
   product: [azure]
-  service: [azureactivity]
+  service: [azureactivity, activitylogs]
 
 default_log_source:
   product: azure

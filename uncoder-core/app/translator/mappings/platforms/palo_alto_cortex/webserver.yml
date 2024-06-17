@@ -14,3 +14,6 @@ field_mapping:
   sc-status: xdm.network.http.response_code
   cs-uri-stem: xdm.network.http.url
   cs-uri-query: xdm.network.http.url
+  c-uri-path: xdm.network.http.url
+  uri_path: xdm.network.http.url
+  cs-uri: xdm.network.http.url
