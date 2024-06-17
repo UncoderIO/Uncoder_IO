@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-from typing import Optional, Union
+from typing import ClassVar, Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.values import ValueType
@@ -136,12 +136,12 @@ class CortexXQLQueryRender(PlatformQueryRender):
     details: PlatformDetails = cortex_xql_query_details
     mappings: CortexXQLMappings = cortex_xql_mappings
     is_strict_mapping = True
-    raw_log_field_pattern_map = {
-        'regex': '| alter {field} = regextract(to_json_string(action_evtlog_data_fields)->{field}{{}}, "\\"(.*)\\"")',
-        'object': '| alter {field_name} = json_extract_scalar({field_object} , "$.{field_path}")',
-        'list': '| alter {field_name} = arraystring(json_extract_array({field_object} , "$.{field_path}")," ")'
+    raw_log_field_pattern_map: ClassVar[dict[str, str]] = {
+        "regex": '| alter {field} = regextract(to_json_string(action_evtlog_data_fields)->{field}{{}}, "\\"(.*)\\"")',
+        "object": '| alter {field_name} = json_extract_scalar({field_object} , "$.{field_path}")',
+        "list": '| alter {field_name} = arraystring(json_extract_array({field_object} , "$.{field_path}")," ")',
     }
-    platform_functions: CortexXQLFunctions = cortex_xql_functions
+    platform_functions: CortexXQLFunctions = None
 
     or_token = "or"
     and_token = "and"
@@ -152,9 +152,9 @@ class CortexXQLQueryRender(PlatformQueryRender):
     comment_symbol = "//"
     is_single_line_comment = False
 
-    def __init__(self):
-        super().__init__()
-        self.platform_functions.manager.post_init_configure(self)
+    def init_platform_functions(self) -> None:
+        self.platform_functions = cortex_xql_functions
+        self.platform_functions.platform_query_render = self
 
     def process_raw_log_field(self, field: str, field_type: str) -> Optional[str]:
         raw_log_field_pattern = self.raw_log_field_pattern_map.get(field_type)

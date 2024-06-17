@@ -18,7 +18,7 @@ limitations under the License.
 """
 from abc import ABC, abstractmethod
 from collections.abc import Callable
-from typing import Optional, Union
+from typing import ClassVar, Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.context_vars import return_only_first_query_ctx_var
@@ -165,7 +165,14 @@ class QueryRender(ABC):
     is_single_line_comment: bool = False
     unsupported_functions_text = "Unsupported functions were excluded from the result query:"
 
-    platform_functions: PlatformFunctions = PlatformFunctions()
+    platform_functions: PlatformFunctions = None
+
+    def __init__(self):
+        self.init_platform_functions()
+
+    def init_platform_functions(self) -> None:
+        self.platform_functions = PlatformFunctions()
+        self.platform_functions.platform_query_render = self
 
     def render_not_supported_functions(self, not_supported_functions: list) -> str:
         line_template = f"{self.comment_symbol} " if self.comment_symbol and self.is_single_line_comment else ""
@@ -193,9 +200,10 @@ class PlatformQueryRender(QueryRender):
     field_value_map = BaseQueryFieldValue(or_token=or_token)
 
     query_pattern = "{table} {query} {functions}"
-    raw_log_field_pattern_map: dict = None
+    raw_log_field_pattern_map: ClassVar[dict[str, str]] = None
 
     def __init__(self):
+        super().__init__()
         self.operator_map = {
             LogicalOperatorType.AND: f" {self.and_token} ",
             LogicalOperatorType.OR: f" {self.or_token} ",
