@@ -26,7 +26,7 @@ class ModifierManager:
         return Identifier(token_type=self.modifier_map.get(modifier, modifier))
 
     def modifier_all(self, field_name: str, modifier: str, values: Union[str, list[str]]) -> Union[tuple, list]:
-        if (isinstance(values, list) and len(values) == 1) or isinstance(values, str):
+        if (isinstance(values, list) and len(values) == 1) or isinstance(values, (str, int)):
             operator = self.map_modifier(modifier=modifier)
             values = self.convert_values_to_str_values(values, modifier)
             return (FieldValue(source_name=field_name, operator=operator, value=values),)
