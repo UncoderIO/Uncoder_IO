@@ -21,7 +21,6 @@ from collections.abc import Callable
 from typing import Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
-from app.translator.core.context_vars import return_only_first_query_ctx_var
 from app.translator.core.custom_types.tokens import LogicalOperatorType, OperatorType
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.escape_manager import EscapeManager
@@ -192,8 +191,8 @@ class PlatformQueryRender(QueryRender):
 
     field_value_map = BaseQueryFieldValue(or_token=or_token)
 
-    query_pattern = "{table} {query} {functions}"
-    raw_log_field_pattern_map: dict = None
+    query_pattern = "{prefix}{query}{functions}"
+    raw_log_field_pattern: str = None
 
     def __init__(self):
         self.operator_map = {
@@ -201,6 +200,12 @@ class PlatformQueryRender(QueryRender):
             LogicalOperatorType.OR: f" {self.or_token} ",
             LogicalOperatorType.NOT: f" {self.not_token} ",
         }
+
+    def query_concatenation(self, prefix: str, search: str, functions: str) -> str:
+        prefix = prefix if prefix else ""
+        search = f" {search}" if search else ""
+        functions = f" {functions}" if functions else ""
+        return self.query_pattern.format(prefix=prefix, query=search, functions=functions).strip()
 
     def generate_prefix(self, log_source_signature: LogSourceSignature, functions_prefix: str = "") -> str:  # noqa: ARG002
         if str(log_source_signature):
@@ -283,8 +288,7 @@ class PlatformQueryRender(QueryRender):
         *args,  # noqa: ARG002
         **kwargs,  # noqa: ARG002
     ) -> str:
-        query = self.query_pattern.format(prefix=prefix, query=query, functions=functions).strip()
-
+        query = self.query_concatenation(prefix=prefix, search=query, functions=functions)
         query = self.wrap_query_with_meta_info(meta_info=meta_info, query=query)
         if not_supported_functions:
             rendered_not_supported = self.render_not_supported_functions(not_supported_functions)
@@ -325,23 +329,7 @@ class PlatformQueryRender(QueryRender):
             prefix="", query=query_container.query, functions="", meta_info=query_container.meta_info
         )
 
-    def process_raw_log_field(self, field: str, field_type: str) -> Optional[str]:
-        if raw_log_field_pattern := self.raw_log_field_pattern_map.get(field_type):
-            return raw_log_field_pattern.pattern.format(field=field)
-
-    def process_raw_log_field_prefix(self, field: str, source_mapping: SourceMapping) -> Optional[list]:
-        if isinstance(field, list):
-            list_of_prefix = []
-            for f in field:
-                if prepared_prefix := self.process_raw_log_field_prefix(field=f, source_mapping=source_mapping):
-                    list_of_prefix.extend(prepared_prefix)
-            return list_of_prefix
-        if raw_log_field_type := source_mapping.raw_log_fields.get(field):
-            return [self.process_raw_log_field(field=field, field_type=raw_log_field_type)]
-
     def generate_raw_log_fields(self, fields: list[Field], source_mapping: SourceMapping) -> str:
-        if self.raw_log_field_pattern_map is None:
-            return ""
         defined_raw_log_fields = []
         for field in fields:
             mapped_field = source_mapping.fields_mapping.get_platform_field_name(generic_field_name=field.source_name)
@@ -352,8 +340,10 @@ class PlatformQueryRender(QueryRender):
                 )
             if not mapped_field and self.is_strict_mapping:
                 raise StrictPlatformException(field_name=field.source_name, platform_name=self.details.name)
-            if field_prefix := self.process_raw_log_field_prefix(field=mapped_field, source_mapping=source_mapping):
-                defined_raw_log_fields.extend(field_prefix)
+            if mapped_field not in source_mapping.raw_log_fields:
+                continue
+            field_prefix = self.raw_log_field_pattern.format(field=mapped_field)
+            defined_raw_log_fields.append(field_prefix)
         return "\n".join(set(defined_raw_log_fields))
 
     def _generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
@@ -384,8 +374,6 @@ class PlatformQueryRender(QueryRender):
                     meta_info=query_container.meta_info,
                     source_mapping=source_mapping,
                 )
-                if return_only_first_query_ctx_var.get() is True:
-                    return finalized_query
                 queries_map[source_mapping.source_id] = finalized_query
         if not queries_map and errors:
             raise errors[0]

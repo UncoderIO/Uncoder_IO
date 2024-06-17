@@ -127,7 +127,7 @@ class AQLQueryRender(PlatformQueryRender):
     not_token = "NOT"
 
     field_value_map = AQLFieldValue(or_token=or_token)
-    query_pattern = "{prefix} AND {query} {functions}"
+    query_pattern = "{prefix} AND{query}{functions}"
 
     def generate_prefix(self, log_source_signature: AQLLogSourceSignature, functions_prefix: str = "") -> str:  # noqa: ARG002
         table = str(log_source_signature)
