@@ -23,10 +23,12 @@ from app.translator.managers import render_manager
 from app.translator.platforms.base.sql.renders.sql import SqlFieldValue, SqlQueryRender
 from app.translator.platforms.elasticsearch.mapping import ElasticSearchMappings, elasticsearch_mappings
 from app.translator.platforms.elasticsearch.const import elasticsearch_esql_query_details
+from app.translator.platforms.elasticsearch.str_value_manager import esql_str_value_manager
 
 
 class ESQLFieldValue(SqlFieldValue):
     details: PlatformDetails = elasticsearch_esql_query_details
+    str_value_manager = esql_str_value_manager
 
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
@@ -54,7 +56,9 @@ class ESQLQueryRender(SqlQueryRender):
     details: PlatformDetails = elasticsearch_esql_query_details
     mappings: ElasticSearchMappings = elasticsearch_mappings
 
-    or_token = "OR"
+    or_token = "or"
+    and_token = "and"
+    not_token = "not"
     field_value_map = ESQLFieldValue(or_token=or_token)
 
     def generate_prefix(self, log_source_signature: LogSourceSignature, functions_prefix: str = "") -> str:  # noqa: ARG002
