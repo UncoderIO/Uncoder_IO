@@ -19,6 +19,7 @@ limitations under the License.
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
+from app.translator.core.context_vars import return_only_first_query_ctx_var
 from app.translator.core.custom_types.tokens import LogicalOperatorType
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.exceptions.core import StrictPlatformException
@@ -262,6 +263,8 @@ class LogRhythmAxonQueryRender(PlatformQueryRender):
                 meta_info=query_container.meta_info,
                 source_mapping=source_mapping,
             )
+            if return_only_first_query_ctx_var.get() is True:
+                return finalized_query
             queries_map[source_mapping.source_id] = finalized_query
 
         return self.finalize(queries_map)
