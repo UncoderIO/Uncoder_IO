@@ -21,3 +21,5 @@ raw_log_fields:
   param2: regex
   Channel: regex
   DeviceName: regex
+  Message: regex
+  ComputerName: regex

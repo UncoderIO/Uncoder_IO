@@ -16,6 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.managers import render_manager
 from app.translator.platforms.athena.const import athena_details

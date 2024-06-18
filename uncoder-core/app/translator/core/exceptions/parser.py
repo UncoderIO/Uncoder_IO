@@ -1,5 +1,4 @@
-class BaseParserException(BaseException):
-    ...
+class BaseParserException(BaseException): ...
 
 
 class TokenizerGeneralException(BaseParserException):

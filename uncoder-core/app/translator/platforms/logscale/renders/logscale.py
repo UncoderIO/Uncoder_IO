@@ -16,6 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from typing import Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
@@ -95,7 +96,7 @@ class LogScaleFieldValue(BaseQueryFieldValue):
 class LogScaleQueryRender(PlatformQueryRender):
     details: PlatformDetails = logscale_query_details
     mappings: LogScaleMappings = logscale_mappings
-    platform_functions: LogScaleFunctions = log_scale_functions
+    platform_functions: LogScaleFunctions = None
 
     or_token = "or"
     and_token = ""
@@ -104,9 +105,9 @@ class LogScaleQueryRender(PlatformQueryRender):
     field_value_map = LogScaleFieldValue(or_token=or_token)
     query_pattern = "{prefix} {query} {functions}"
 
-    def __init__(self):
-        super().__init__()
-        self.platform_functions.manager.post_init_configure(self)
+    def init_platform_functions(self) -> None:
+        self.platform_functions = log_scale_functions
+        self.platform_functions.platform_query_render = self
 
     def wrap_with_comment(self, value: str) -> str:
         return f"/* {value} */"

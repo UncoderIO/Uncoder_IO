@@ -17,3 +17,4 @@ raw_log_fields:
   ContextInfo: regex
   HostName: regex
   EngineVersion: regex
+  Path: regex

@@ -39,10 +39,12 @@ field_mapping:
     - HostCount-source
     - identityHostName
     - sourceAssetName
+    - HostCount-src
   DestinationHostname:
     - HostCount-destination
     - Recipient Host
     - DestinationHostName
+    - HostCount-dst
   src-packets:
     - PacketRatio-src
     - src-packets
