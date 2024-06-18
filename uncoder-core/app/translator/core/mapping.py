@@ -20,6 +20,10 @@ class LogSourceSignature(ABC):
     def __str__(self) -> str:
         raise NotImplementedError("Abstract method")
 
+    @property
+    def default_source(self) -> dict:
+        return self._default_source
+
 
 class FieldMapping:
     def __init__(self, generic_field_name: str, platform_field_name: str):
