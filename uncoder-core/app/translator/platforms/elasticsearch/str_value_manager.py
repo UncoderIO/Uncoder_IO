@@ -23,24 +23,6 @@ from app.translator.core.custom_types.values import ValueType
 from app.translator.core.str_value_manager import (
     CONTAINER_SPEC_SYMBOLS_MAP,
     BaseSpecSymbol,
-    ReAnySymbol,
-    ReCaretSymbol,
-    ReCommaSymbol,
-    ReDigitalSymbol,
-    ReEndOfStrSymbol,
-    ReHyphenSymbol,
-    ReLeftCurlyBracket,
-    ReLeftParenthesis,
-    ReLeftSquareBracket,
-    ReOneOrMoreQuantifier,
-    ReOrOperator,
-    ReRightCurlyBracket,
-    ReRightParenthesis,
-    ReRightSquareBracket,
-    ReWhiteSpaceSymbol,
-    ReWordSymbol,
-    ReZeroOrMoreQuantifier,
-    ReZeroOrOneQuantifier,
     SingleSymbolWildCard,
     StrValue,
     StrValueManager,
@@ -48,14 +30,13 @@ from app.translator.core.str_value_manager import (
 )
 from app.translator.platforms.elasticsearch.escape_manager import esql_escape_manager
 
-AQL_CONTAINER_SPEC_SYMBOLS_MAP = copy.copy(CONTAINER_SPEC_SYMBOLS_MAP)
-AQL_CONTAINER_SPEC_SYMBOLS_MAP.update({SingleSymbolWildCard: "_", UnboundLenWildCard: "%"})
+ESQL_CONTAINER_SPEC_SYMBOLS_MAP = copy.copy(CONTAINER_SPEC_SYMBOLS_MAP)
+ESQL_CONTAINER_SPEC_SYMBOLS_MAP.update({SingleSymbolWildCard: "_", UnboundLenWildCard: "%"})
 
 
 class ESQLStrValueManager(StrValueManager):
     escape_manager = esql_escape_manager
-    container_spec_symbols_map: ClassVar[dict[type[BaseSpecSymbol], str]] = AQL_CONTAINER_SPEC_SYMBOLS_MAP
-    container_spec_symbols_map: ClassVar[dict[type[BaseSpecSymbol], str]] = AQL_CONTAINER_SPEC_SYMBOLS_MAP
+    container_spec_symbols_map: ClassVar[dict[type[BaseSpecSymbol], str]] = ESQL_CONTAINER_SPEC_SYMBOLS_MAP
 
     def from_container_to_str(self, container: StrValue, value_type: str = ValueType.value) -> str:
         result = ""

@@ -17,6 +17,7 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 from app.translator.const import DEFAULT_VALUE_TYPE
+from app.translator.core.custom_types.values import ValueType
 from app.translator.core.mapping import LogSourceSignature
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.managers import render_manager
@@ -33,28 +34,29 @@ class ESQLFieldValue(SqlFieldValue):
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.contains_modifier(field=field, value=v) for v in value)})"
-        return f'{field} LIKE "*{value}*"'
+        return f'{field} LIKE "*{self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=False)}*"'
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.endswith_modifier(field=field, value=v) for v in value)})"
-        return f'{field} LIKE "*{value}?"'
+        return f'{field} LIKE "*{self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=False)}?"'
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.startswith_modifier(field=field, value=v) for v in value)})"
-        return f'{field} LIKE "{value}%"'
+        return f'{field} LIKE "{self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=False)}%"'
 
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.regex_modifier(field=field, value=v) for v in value)})"
-        return f'{field} RLIKE "{value}"'
+        return f'{field} RLIKE \\"{self._pre_process_value(field, value, value_type=ValueType.regex_value, wrap_str=False)}\\"'
 
 
 @render_manager.register
 class ESQLQueryRender(SqlQueryRender):
     details: PlatformDetails = elasticsearch_esql_query_details
     mappings: ElasticSearchMappings = elasticsearch_mappings
+    comment_symbol = "//"
 
     or_token = "or"
     and_token = "and"
