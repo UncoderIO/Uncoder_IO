@@ -10,8 +10,8 @@ class AQLEscapeManager(EscapeManager):
         ValueType.value: [EscapeDetails(pattern=r"(')", escape_symbols=r"'\1")],
         ValueType.regex_value: [
             EscapeDetails(pattern=r"([$^*+()\[\]{}|.?\-\\])", escape_symbols=r"\\\1"),
-            EscapeDetails(pattern=r"(')", escape_symbols=r"'\1")
-        ]
+            EscapeDetails(pattern=r"(')", escape_symbols=r"'\1"),
+        ],
     }
 
 
