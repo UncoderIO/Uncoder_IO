@@ -16,19 +16,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-import copy
 from typing import ClassVar
 
-from app.translator.core.custom_types.values import ValueType
 from app.translator.core.str_value_manager import (
     BaseSpecSymbol,
     ReDigitalSymbol,
     ReWhiteSpaceSymbol,
     ReWordSymbol,
-    StrValueManager
+    StrValueManager,
 )
 from app.translator.platforms.elasticsearch.escape_manager import ESQLEscapeManager, esql_escape_manager
-
 
 
 class ESQLStrValueManager(StrValueManager):

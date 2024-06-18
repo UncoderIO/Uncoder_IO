@@ -18,7 +18,7 @@ ELASTIC_QUERY_TYPES = {
     _ELASTALERT_LUCENE_RULE,
     _ELASTIC_WATCHER_RULE,
     _ELASTIC_ESQL_QUERY,
-    _ELASTIC_ESQL_RULE
+    _ELASTIC_ESQL_RULE,
 }
 
 ELASTICSEARCH_LUCENE_QUERY_DETAILS = {
@@ -219,5 +219,5 @@ ESQL_RULE = {
     "type": "esql",
     "language": "esql",
     "query": "",
-    "actions": []
+    "actions": [],
 }

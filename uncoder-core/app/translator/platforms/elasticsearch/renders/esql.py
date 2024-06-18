@@ -22,8 +22,8 @@ from app.translator.core.mapping import LogSourceSignature
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.managers import render_manager
 from app.translator.platforms.base.sql.renders.sql import SqlFieldValue, SqlQueryRender
-from app.translator.platforms.elasticsearch.mapping import ElasticSearchMappings, elasticsearch_mappings
 from app.translator.platforms.elasticsearch.const import elasticsearch_esql_query_details
+from app.translator.platforms.elasticsearch.mapping import ElasticSearchMappings, elasticsearch_mappings
 from app.translator.platforms.elasticsearch.str_value_manager import esql_str_value_manager
 
 

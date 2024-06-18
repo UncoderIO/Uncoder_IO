@@ -8,9 +8,9 @@ from app.translator.core.models.escape_details import EscapeDetails
 class ESQLEscapeManager(EscapeManager):
     escape_map: ClassVar[dict[str, list[EscapeDetails]]] = {
         ValueType.regex_value: [
-            EscapeDetails(pattern=r'"', escape_symbols=r'\"'),
-            EscapeDetails(pattern=r"\\", escape_symbols=r"\\\\")
-        ],
+            EscapeDetails(pattern=r'"', escape_symbols=r"\""),
+            EscapeDetails(pattern=r"\\", escape_symbols=r"\\\\"),
+        ]
     }
 
 
