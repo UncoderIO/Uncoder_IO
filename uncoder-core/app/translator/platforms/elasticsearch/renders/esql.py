@@ -39,12 +39,12 @@ class ESQLFieldValue(SqlFieldValue):
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.endswith_modifier(field=field, value=v) for v in value)})"
-        return f'{field} LIKE "*{self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=False)}?"'
+        return f'{field} LIKE "*{self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=False)}"'
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.startswith_modifier(field=field, value=v) for v in value)})"
-        return f'{field} LIKE "{self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=False)}%"'
+        return f'{field} LIKE "{self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=False)}*"'
 
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):

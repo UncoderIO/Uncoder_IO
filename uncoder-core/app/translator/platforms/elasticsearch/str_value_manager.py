@@ -21,41 +21,23 @@ from typing import ClassVar
 
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.str_value_manager import (
-    CONTAINER_SPEC_SYMBOLS_MAP,
     BaseSpecSymbol,
-    SingleSymbolWildCard,
-    StrValue,
-    StrValueManager,
-    UnboundLenWildCard,
+    ReDigitalSymbol,
+    ReWhiteSpaceSymbol,
+    ReWordSymbol,
+    StrValueManager
 )
-from app.translator.platforms.elasticsearch.escape_manager import esql_escape_manager
+from app.translator.platforms.elasticsearch.escape_manager import ESQLEscapeManager, esql_escape_manager
 
-ESQL_CONTAINER_SPEC_SYMBOLS_MAP = copy.copy(CONTAINER_SPEC_SYMBOLS_MAP)
-ESQL_CONTAINER_SPEC_SYMBOLS_MAP.update({SingleSymbolWildCard: "_", UnboundLenWildCard: "%"})
 
 
 class ESQLStrValueManager(StrValueManager):
-    escape_manager = esql_escape_manager
-    container_spec_symbols_map: ClassVar[dict[type[BaseSpecSymbol], str]] = ESQL_CONTAINER_SPEC_SYMBOLS_MAP
-
-    def from_container_to_str(self, container: StrValue, value_type: str = ValueType.value) -> str:
-        result = ""
-        for el in container.split_value:
-            if isinstance(el, str):
-                result += self.escape_manager.escape(el, value_type)
-            elif isinstance(el, BaseSpecSymbol):
-                if value_type == ValueType.regex_value:
-                    if isinstance(el, SingleSymbolWildCard):
-                        result += "."
-                        continue
-                    if isinstance(el, UnboundLenWildCard):
-                        result += ".*"
-                        continue
-
-                if pattern := self.container_spec_symbols_map.get(type(el)):
-                    result += pattern
-
-        return result
+    escape_manager: ESQLEscapeManager = esql_escape_manager
+    re_str_alpha_num_symbols_map: ClassVar[dict[str, type[BaseSpecSymbol]]] = {
+        "w": ReWordSymbol,
+        "d": ReDigitalSymbol,
+        "s": ReWhiteSpaceSymbol,
+    }
 
 
 esql_str_value_manager = ESQLStrValueManager()
