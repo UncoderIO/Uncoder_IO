@@ -30,6 +30,3 @@ field_mapping:
   ParentProduct: causality_actor_process_signature_product
   ParentCompany: causality_actor_process_signature_vendor
   EventType: event_sub_type
-  SetValue: REGISTRY_SET_VALUE
-  DeleteValue: REGISTRY_DELETE_VALUE
-  CreateKey: REGISTRY_CREATE_KEY
