@@ -21,6 +21,11 @@ class SplFunctionType(CustomEnum):
     where = "where"
 
 
+class SplFunctionGroupType(CustomEnum):
+    agg = "agg"
+    time = "time"
+
+
 class SplSortOrderType(CustomEnum):
     asc = "+"
     desc = "-"

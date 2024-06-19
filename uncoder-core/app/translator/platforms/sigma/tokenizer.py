@@ -28,6 +28,7 @@ from app.translator.platforms.sigma.models.modifiers import ModifierManager
 
 class Selection:
     token_type = "selection"
+
     def __init__(self, name):
         self.name = name
 
@@ -142,10 +143,12 @@ class SigmaConditionTokenizer:
                 missed_indices.append(index + 1)
         return missed_indices
 
-    def __add_parentheses_after_and_not(self, tokens: list[Union[Selection, Identifier]]) -> list[Union[Selection, Identifier]]:
+    def __add_parentheses_after_and_not(
+        self, tokens: list[Union[Selection, Identifier]]
+    ) -> list[Union[Selection, Identifier]]:
         indices = self.get_missed_parentheses(tokens=tokens)
         for index in reversed(indices):
-            tokens.insert(index+1, Identifier(token_type=GroupType.R_PAREN))
+            tokens.insert(index + 1, Identifier(token_type=GroupType.R_PAREN))
             tokens.insert(index, Identifier(token_type=GroupType.L_PAREN))
         return tokens
 

@@ -16,6 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
@@ -76,10 +77,13 @@ class SqlQueryRender(PlatformQueryRender):
     and_token = "AND"
     not_token = "NOT"
 
-    query_pattern = "{prefix} WHERE {query} {functions}"
     comment_symbol = "--"
     is_single_line_comment = True
 
     def generate_prefix(self, log_source_signature: LogSourceSignature, functions_prefix: str = "") -> str:  # noqa: ARG002
         table = str(log_source_signature) if str(log_source_signature) else "eventlog"
         return f"SELECT * FROM {table}"
+
+    @staticmethod
+    def _finalize_search_query(query: str) -> str:
+        return f"WHERE {query}" if query else ""

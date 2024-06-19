@@ -16,6 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.managers import render_manager
 from app.translator.platforms.base.spl.renders.spl import SplFieldValue, SplQueryRender
@@ -36,8 +37,8 @@ class SplunkQueryRender(SplQueryRender):
 
     field_value_map = SplunkFieldValue(or_token=or_token)
     mappings: SplunkMappings = splunk_mappings
-    platform_functions: SplunkFunctions = splunk_functions
+    platform_functions: SplunkFunctions = None
 
-    def __init__(self):
-        super().__init__()
-        self.platform_functions.manager.post_init_configure(self)
+    def init_platform_functions(self) -> None:
+        self.platform_functions = splunk_functions
+        self.platform_functions.platform_query_render = self

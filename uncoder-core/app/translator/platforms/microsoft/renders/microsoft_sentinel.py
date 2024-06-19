@@ -16,6 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
@@ -121,22 +122,25 @@ class MicrosoftSentinelFieldValue(BaseQueryFieldValue):
 @render_manager.register
 class MicrosoftSentinelQueryRender(PlatformQueryRender):
     details: PlatformDetails = microsoft_sentinel_query_details
-    platform_functions: MicrosoftFunctions = microsoft_sentinel_functions
+    platform_functions: MicrosoftFunctions = None
 
     or_token = "or"
     and_token = "and"
     not_token = "not"
 
     field_value_map = MicrosoftSentinelFieldValue(or_token=or_token)
-    query_pattern = "{prefix} | where {query}{functions}"
 
     mappings: MicrosoftSentinelMappings = microsoft_sentinel_mappings
     comment_symbol = "//"
     is_single_line_comment = True
 
-    def __init__(self):
-        super().__init__()
-        self.platform_functions.manager.post_init_configure(self)
+    def init_platform_functions(self) -> None:
+        self.platform_functions = microsoft_sentinel_functions
+        self.platform_functions.platform_query_render = self
 
     def generate_prefix(self, log_source_signature: LogSourceSignature, functions_prefix: str = "") -> str:  # noqa: ARG002
         return str(log_source_signature)
+
+    @staticmethod
+    def _finalize_search_query(query: str) -> str:
+        return f"| where {query}" if query else ""

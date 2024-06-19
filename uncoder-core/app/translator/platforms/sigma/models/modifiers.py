@@ -80,8 +80,7 @@ class ModifierManager:
 
     @staticmethod
     def convert_values_to_str_values(
-            values: Union[int, str, list[Union[int, str]]],
-            operator: str
+        values: Union[int, str, list[Union[int, str]]], operator: str
     ) -> Union[StrValue, list[StrValue]]:
         if not isinstance(values, list):
             values = [values]
