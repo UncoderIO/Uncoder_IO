@@ -50,7 +50,6 @@ class ElastAlertRuleRender(ElasticSearchQueryRender):
     not_token = "NOT"
 
     field_value_map = ElasticAlertRuleFieldValue(or_token=or_token)
-    query_pattern = "{prefix} {query} {functions}"
 
     def finalize_query(
         self,

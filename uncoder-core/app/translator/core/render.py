@@ -200,7 +200,6 @@ class PlatformQueryRender(QueryRender):
 
     field_value_map = BaseQueryFieldValue(or_token=or_token)
 
-    query_pattern = "{prefix}{query}{functions}"
     raw_log_field_pattern_map: ClassVar[dict[str, str]] = None
 
     def __init__(self):
@@ -210,12 +209,6 @@ class PlatformQueryRender(QueryRender):
             LogicalOperatorType.OR: f" {self.or_token} ",
             LogicalOperatorType.NOT: f" {self.not_token} ",
         }
-
-    def query_concatenation(self, prefix: str, search: str, functions: str) -> str:
-        prefix = prefix if prefix else ""
-        search = f" {search}" if search else ""
-        functions = f" {functions}" if functions else ""
-        return self.query_pattern.format(prefix=prefix, query=search, functions=functions).strip()
 
     def generate_prefix(self, log_source_signature: LogSourceSignature, functions_prefix: str = "") -> str:  # noqa: ARG002
         if str(log_source_signature):
@@ -287,6 +280,10 @@ class PlatformQueryRender(QueryRender):
             query = f"{query}\n\n{query_meta_info}"
         return query
 
+    @staticmethod
+    def _finalize_search_query(query: str) -> str:
+        return query
+
     def finalize_query(
         self,
         prefix: str,
@@ -298,8 +295,8 @@ class PlatformQueryRender(QueryRender):
         *args,  # noqa: ARG002
         **kwargs,  # noqa: ARG002
     ) -> str:
-        query = self.query_pattern.format(prefix=prefix, query=query, functions=functions).strip()
-
+        parts = filter(lambda s: bool(s), map(str.strip, [prefix, self._finalize_search_query(query), functions]))
+        query = " ".join(parts)
         query = self.wrap_query_with_meta_info(meta_info=meta_info, query=query)
         if not_supported_functions:
             rendered_not_supported = self.render_not_supported_functions(not_supported_functions)
@@ -342,7 +339,7 @@ class PlatformQueryRender(QueryRender):
 
     def process_raw_log_field(self, field: str, field_type: str) -> Optional[str]:
         if raw_log_field_pattern := self.raw_log_field_pattern_map.get(field_type):
-            return raw_log_field_pattern.pattern.format(field=field)
+            return raw_log_field_pattern.format(field=field)
 
     def process_raw_log_field_prefix(self, field: str, source_mapping: SourceMapping) -> Optional[list]:
         if isinstance(field, list):

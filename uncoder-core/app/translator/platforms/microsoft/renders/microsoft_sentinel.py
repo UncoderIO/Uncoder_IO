@@ -129,7 +129,6 @@ class MicrosoftSentinelQueryRender(PlatformQueryRender):
     not_token = "not"
 
     field_value_map = MicrosoftSentinelFieldValue(or_token=or_token)
-    query_pattern = "{prefix} | where {query}{functions}"
 
     mappings: MicrosoftSentinelMappings = microsoft_sentinel_mappings
     comment_symbol = "//"
@@ -141,3 +140,7 @@ class MicrosoftSentinelQueryRender(PlatformQueryRender):
 
     def generate_prefix(self, log_source_signature: LogSourceSignature, functions_prefix: str = "") -> str:  # noqa: ARG002
         return str(log_source_signature)
+
+    @staticmethod
+    def _finalize_search_query(query: str) -> str:
+        return f"| where {query}" if query else ""

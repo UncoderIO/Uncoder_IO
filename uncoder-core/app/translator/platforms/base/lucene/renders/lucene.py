@@ -107,8 +107,6 @@ class LuceneQueryRender(PlatformQueryRender):
     and_token = "AND"
     not_token = "NOT"
 
-    query_pattern = "{query}{functions}"
-
     comment_symbol = "//"
     is_single_line_comment = True
 

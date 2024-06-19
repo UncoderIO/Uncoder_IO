@@ -51,7 +51,6 @@ class ElasticSearchRuleRender(ElasticSearchQueryRender):
     not_token = "NOT"
 
     field_value_map = ElasticSearchRuleFieldValue(or_token=or_token)
-    query_pattern = "{prefix} {query} {functions}"
 
     def __create_mitre_threat(self, mitre_attack: dict) -> Union[list, list[dict]]:
         if not mitre_attack.get("techniques"):

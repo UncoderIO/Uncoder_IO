@@ -32,7 +32,6 @@ class CrowdStrikeFieldValue(SplFieldValue):
 @render_manager.register
 class CrowdStrikeQueryRender(SplQueryRender):
     details: PlatformDetails = crowdstrike_query_details
-    query_pattern = "{prefix} {query} {functions}"
     mappings: CrowdstrikeMappings = crowdstrike_mappings
     platform_functions: CrowdStrikeFunctions = None
 

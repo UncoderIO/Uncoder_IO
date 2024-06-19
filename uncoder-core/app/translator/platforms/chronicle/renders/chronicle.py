@@ -110,6 +110,5 @@ class ChronicleQueryRender(PlatformQueryRender):
     not_token = "not"
 
     field_value_map = ChronicleFieldValue(or_token=or_token)
-    query_pattern = "{query} {functions}"
     comment_symbol = "//"
     is_single_line_comment = True

@@ -36,6 +36,9 @@ class AthenaQueryRender(SqlQueryRender):
     or_token = "OR"
 
     field_value_map = AthenaFieldValue(or_token=or_token)
-    query_pattern = "{prefix} WHERE{query}{functions}"
     comment_symbol = "--"
     is_single_line_comment = True
+
+    @staticmethod
+    def _finalize_search_query(query: str) -> str:
+        return f"WHERE {query}" if query else ""

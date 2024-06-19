@@ -79,7 +79,6 @@ class SplQueryRender(PlatformQueryRender):
     and_token = "AND"
     not_token = "NOT"
 
-    query_pattern = "{prefix} {query} {functions}"
     comment_symbol = "```"
 
     def wrap_with_comment(self, value: str) -> str:

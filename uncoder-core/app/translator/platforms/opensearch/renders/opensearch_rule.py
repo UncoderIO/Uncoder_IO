@@ -50,7 +50,6 @@ class OpenSearchRuleRender(OpenSearchQueryRender):
     not_token = "NOT"
 
     field_value_map = OpenSearchRuleFieldValue(or_token=or_token)
-    query_pattern = "{prefix} {query} {functions}"
 
     def __init__(self):
         super().__init__()

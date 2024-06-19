@@ -103,7 +103,6 @@ class LogScaleQueryRender(PlatformQueryRender):
     not_token = "not"
 
     field_value_map = LogScaleFieldValue(or_token=or_token)
-    query_pattern = "{prefix} {query} {functions}"
 
     def init_platform_functions(self) -> None:
         self.platform_functions = log_scale_functions
@@ -123,10 +122,7 @@ class LogScaleQueryRender(PlatformQueryRender):
         *args,  # noqa: ARG002
         **kwargs,  # noqa: ARG002
     ) -> str:
-        if prefix:
-            query = self.query_pattern.format(prefix=prefix, query=query, functions=functions)
-        else:
-            query = f"{query} {functions.lstrip()}"
+        query = super().finalize_query(prefix=prefix, query=query, functions=functions)
         query = self.wrap_query_with_meta_info(meta_info=meta_info, query=query)
         if not_supported_functions:
             rendered_not_supported = self.render_not_supported_functions(not_supported_functions)

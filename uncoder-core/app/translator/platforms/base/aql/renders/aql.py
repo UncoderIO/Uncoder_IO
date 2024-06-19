@@ -128,7 +128,6 @@ class AQLQueryRender(PlatformQueryRender):
     not_token = "NOT"
 
     field_value_map = AQLFieldValue(or_token=or_token)
-    query_pattern = "{prefix} AND{query}{functions}"
 
     def generate_prefix(self, log_source_signature: AQLLogSourceSignature, functions_prefix: str = "") -> str:  # noqa: ARG002
         table = str(log_source_signature)
@@ -137,3 +136,7 @@ class AQLQueryRender(PlatformQueryRender):
 
     def wrap_with_comment(self, value: str) -> str:
         return f"/* {value} */"
+
+    @staticmethod
+    def _finalize_search_query(query: str) -> str:
+        return f"AND {query}" if query else ""
