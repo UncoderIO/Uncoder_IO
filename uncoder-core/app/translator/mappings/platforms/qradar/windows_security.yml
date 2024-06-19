@@ -130,6 +130,9 @@ field_mapping:
   NewValue: NewValue
   Source: Source
   Status: Status
+  SubjectAccountName: 
+    - Subject Account Name
+    - SubjectAccountName
   SubjectDomainName: SubjectDomainName
   SubjectUserName: Target Username
   SubjectUserSid: SubjectUserSid
@@ -172,4 +175,3 @@ field_mapping:
   ParentProcessName: Parent Process Name
   Service: Service
   hasIdentity: hasIdentity
-  SubjectAccountName: SubjectAccountName
