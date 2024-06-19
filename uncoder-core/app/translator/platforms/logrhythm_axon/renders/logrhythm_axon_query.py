@@ -205,12 +205,15 @@ class LogRhythmAxonQueryRender(PlatformQueryRender):
     not_token = "NOT"
 
     field_value_map = LogRhythmAxonFieldValue(or_token=or_token)
-    query_pattern = "{prefix} AND {query}"
 
     mappings: LogRhythmAxonMappings = logrhythm_axon_mappings
     comment_symbol = "//"
     is_single_line_comment = True
     is_strict_mapping = True
+
+    @staticmethod
+    def _finalize_search_query(query: str) -> str:
+        return f"AND {query}" if query else ""
 
     def generate_prefix(self, log_source_signature: LogSourceSignature, functions_prefix: str = "") -> str:  # noqa: ARG002
         return str(log_source_signature)

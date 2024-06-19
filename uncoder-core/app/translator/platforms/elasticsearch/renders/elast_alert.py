@@ -16,6 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from typing import Optional
 
 from app.translator.core.custom_types.meta_info import SeverityType
@@ -49,7 +50,6 @@ class ElastAlertRuleRender(ElasticSearchQueryRender):
     not_token = "NOT"
 
     field_value_map = ElasticAlertRuleFieldValue(or_token=or_token)
-    query_pattern = "{prefix} {query} {functions}"
 
     def finalize_query(
         self,

@@ -162,7 +162,6 @@ class CortexXQLQueryRender(PlatformQueryRender):
     not_token = "not"
 
     field_value_map = CortexXQLFieldValue(or_token=or_token)
-    query_pattern = "{prefix} | filter {query} {functions}"
     comment_symbol = "//"
     is_single_line_comment = False
 
@@ -211,3 +210,7 @@ class CortexXQLQueryRender(PlatformQueryRender):
                 token.value = values_to_update
 
         return super().apply_token(token=token, source_mapping=source_mapping)
+
+    @staticmethod
+    def _finalize_search_query(query: str) -> str:
+        return f"| filter {query}" if query else ""
