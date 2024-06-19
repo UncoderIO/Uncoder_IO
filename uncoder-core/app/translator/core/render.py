@@ -343,11 +343,11 @@ class PlatformQueryRender(QueryRender):
 
     def process_raw_log_field_prefix(self, field: str, source_mapping: SourceMapping) -> Optional[list]:
         if isinstance(field, list):
-            list_of_prefix = []
+            prefix_list = []
             for f in field:
-                if prepared_prefix := self.process_raw_log_field_prefix(field=f, source_mapping=source_mapping):
-                    list_of_prefix.extend(prepared_prefix)
-            return list_of_prefix
+                if _prefix_list := self.process_raw_log_field_prefix(field=f, source_mapping=source_mapping):
+                    prefix_list.extend(_prefix_list)
+            return prefix_list
         if raw_log_field_type := source_mapping.raw_log_fields.get(field):
             return [self.process_raw_log_field(field=field, field_type=raw_log_field_type)]
 
@@ -364,9 +364,11 @@ class PlatformQueryRender(QueryRender):
                 )
             if not mapped_field and self.is_strict_mapping:
                 raise StrictPlatformException(field_name=field.source_name, platform_name=self.details.name)
-            if field_prefix := self.process_raw_log_field_prefix(field=mapped_field, source_mapping=source_mapping):
-                defined_raw_log_fields.extend(field_prefix)
-        return "\n".join(set(defined_raw_log_fields))
+            if prefix_list := self.process_raw_log_field_prefix(field=mapped_field, source_mapping=source_mapping):
+                for prefix in prefix_list:
+                    if prefix not in defined_raw_log_fields:
+                        defined_raw_log_fields.append(prefix)
+        return "\n".join(defined_raw_log_fields)
 
     def _generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
         queries_map = {}
