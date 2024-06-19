@@ -16,23 +16,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-from curses.ascii import isdigit
 from typing import Union
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.mapping import LogSourceSignature
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.str_value_manager import StrValue
 from app.translator.managers import render_manager
 from app.translator.platforms.base.sql.renders.sql import SqlFieldValue, SqlQueryRender
 from app.translator.platforms.elasticsearch.const import elasticsearch_esql_query_details
 from app.translator.platforms.elasticsearch.mapping import ElasticSearchMappings, elasticsearch_mappings
-from app.translator.platforms.elasticsearch.str_value_manager import esql_str_value_manager
+from app.translator.platforms.elasticsearch.str_value_manager import ESQLStrValueManager, esql_str_value_manager
 
 
 class ESQLFieldValue(SqlFieldValue):
     details: PlatformDetails = elasticsearch_esql_query_details
-    str_value_manager = esql_str_value_manager
+    str_value_manager: ESQLStrValueManager = esql_str_value_manager
 
     @staticmethod
     def _make_case_insensitive(value: str) -> str:
@@ -48,12 +46,34 @@ class ESQLFieldValue(SqlFieldValue):
     def _wrap_str_value(value: str) -> str:
         return f'"{value}"'
 
+    def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+        if isinstance(value, list):
+            return f"({self.or_token.join([self.equal_modifier(field=field, value=v) for v in value])})"
+        return f"{field} = {self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)}"
+
+    def less_modifier(self, field: str, value: Union[int, str]) -> str:
+        return f"{field} < {self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)}"
+
+    def less_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
+        return f"{field} <= {self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)}"
+
+    def greater_modifier(self, field: str, value: Union[int, str]) -> str:
+        return f"{field} > {self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)}"
+
+    def greater_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
+        return f"{field} >= {self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)}"
+
+    def not_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+        if isinstance(value, list):
+            return f"({self.or_token.join([self.not_equal_modifier(field=field, value=v) for v in value])})"
+        return f"{field} != {self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)}"
+
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
-        if field.endswith('.text'):
-            return self.regex_modifier(field=field, value=value)
         if isinstance(value, list):
             return f"({self.or_token.join(self.contains_modifier(field=field, value=v) for v in value)})"
-        return f'contains({field}, {self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)})'
+        if field.endswith('.text'):
+            return self.regex_modifier(field=field, value=value)
+        return f'{field} like "*{self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=False)}*"'
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if field.endswith('.text'):
@@ -77,7 +97,7 @@ class ESQLFieldValue(SqlFieldValue):
             value = self._make_case_insensitive(pre_processed_value)
         else:
             value = pre_processed_value
-        return f'{field} rlike "{value}"'
+        return f'{field} rlike ".*{value}.*"'
 
 
 @render_manager.register
