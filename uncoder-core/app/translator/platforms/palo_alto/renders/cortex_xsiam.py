@@ -186,29 +186,16 @@ class CortexXQLQueryRender(PlatformQueryRender):
         return f"{functions_prefix}{log_source_signature}"
 
     def apply_token(self, token: Union[FieldValue, Keyword, Identifier], source_mapping: SourceMapping) -> str:
-        if (
-            isinstance(token, FieldValue)
-            and source_mapping.source_id in SOURCE_MAPPING_TO_FIELD_VALUE_MAP
-            and token.field.source_name in SOURCE_MAPPING_TO_FIELD_VALUE_MAP[source_mapping.source_id]
-        ):
-            values_to_update = []
-            token_values = token.values
-            for token_value in token_values:
-                if (
-                    isinstance(token_value, str)
-                    and token_value
-                    in SOURCE_MAPPING_TO_FIELD_VALUE_MAP[source_mapping.source_id][token.field.source_name]
-                ):
+        if isinstance(token, FieldValue):
+            field_name = token.field.source_name
+            if values_map := SOURCE_MAPPING_TO_FIELD_VALUE_MAP.get(source_mapping.source_id, {}).get(field_name):
+                values_to_update = []
+                for token_value in token.values:
+                    mapped_value: str = values_map.get(token_value, token_value)
                     values_to_update.append(
-                        SOURCE_MAPPING_TO_FIELD_VALUE_MAP[source_mapping.source_id][token.field.source_name][
-                            token_value
-                        ]
+                        StrValue(value=mapped_value, split_value=mapped_value.split()) if mapped_value else token_value
                     )
-                else:
-                    values_to_update.append(token_value)
-            if values_to_update != token_values:
                 token.value = values_to_update
-
         return super().apply_token(token=token, source_mapping=source_mapping)
 
     @staticmethod
