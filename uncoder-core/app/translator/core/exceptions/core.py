@@ -11,7 +11,7 @@ class StrictPlatformException(BasePlatformException):
     field_name = None
 
     def __init__(
-        self, platform_name: str, field_name: str, mapping: str = "default", detected_fields: Optional[list] = None
+        self, platform_name: str, field_name: str, mapping: str = None, detected_fields: Optional[list] = None
     ):
         message = (
             f"Platform {platform_name} has strict mapping. "
