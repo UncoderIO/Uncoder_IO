@@ -210,9 +210,9 @@ class PlatformQueryRender(QueryRender):
             LogicalOperatorType.NOT: f" {self.not_token} ",
         }
 
-    def generate_prefix(self, log_source_signature: LogSourceSignature, functions_prefix: str = "") -> str:  # noqa: ARG002
-        if str(log_source_signature):
-            return f"{log_source_signature!s} {self.and_token}"
+    def generate_prefix(self, log_source_signature: Optional[LogSourceSignature], functions_prefix: str = "") -> str:  # noqa: ARG002
+        if log_source_signature:
+            return f"{log_source_signature} {self.and_token}"
         return ""
 
     def generate_functions(self, functions: list[Function], source_mapping: SourceMapping) -> RenderedFunctions:
