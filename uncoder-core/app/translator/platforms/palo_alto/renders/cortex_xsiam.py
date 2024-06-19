@@ -51,12 +51,12 @@ class CortexXQLFieldValue(BaseQueryFieldValue):
 
     @staticmethod
     def _wrap_str_value(value: str) -> str:
-        if value == 'SetValue':
-            return f'"REGISTRY_SET_VALUE"'
-        if value == 'DeleteValue':
-            return f'"REGISTRY_DELETE_VALUE"'
-        if value == 'CreateKey':
-            return f'"REGISTRY_CREATE_KEY"'
+        if value == "SetValue":
+            return '"REGISTRY_SET_VALUE"'
+        if value == "DeleteValue":
+            return '"REGISTRY_DELETE_VALUE"'
+        if value == "CreateKey":
+            return '"REGISTRY_CREATE_KEY"'
         return f'"{value}"'
 
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
