@@ -21,6 +21,9 @@ from typing import ClassVar, Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.values import ValueType
+from app.translator.core.mapping import SourceMapping
+from app.translator.core.models.field import FieldValue, Keyword
+from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
 from app.translator.core.str_value_manager import StrValue
@@ -33,6 +36,16 @@ from app.translator.platforms.palo_alto.mapping import (
     cortex_xql_mappings,
 )
 from app.translator.platforms.palo_alto.str_value_manager import cortex_xql_str_value_manager
+
+SOURCE_MAPPING_TO_FIELD_VALUE_MAP = {
+    "windows_registry_event": {
+        "EventType": {
+            "SetValue": "REGISTRY_SET_VALUE",
+            "DeleteValue": "REGISTRY_DELETE_VALUE",
+            "CreateKey": "REGISTRY_CREATE_KEY",
+        }
+    }
+}
 
 
 class CortexXQLFieldValue(BaseQueryFieldValue):
@@ -51,12 +64,6 @@ class CortexXQLFieldValue(BaseQueryFieldValue):
 
     @staticmethod
     def _wrap_str_value(value: str) -> str:
-        if value == "SetValue":
-            return '"REGISTRY_SET_VALUE"'
-        if value == "DeleteValue":
-            return '"REGISTRY_DELETE_VALUE"'
-        if value == "CreateKey":
-            return '"REGISTRY_CREATE_KEY"'
         return f'"{value}"'
 
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
@@ -178,3 +185,29 @@ class CortexXQLQueryRender(PlatformQueryRender):
     def generate_prefix(self, log_source_signature: CortexXQLLogSourceSignature, functions_prefix: str = "") -> str:
         functions_prefix = f"{functions_prefix} | " if functions_prefix else ""
         return f"{functions_prefix}{log_source_signature}"
+
+    def apply_token(self, token: Union[FieldValue, Keyword, Identifier], source_mapping: SourceMapping) -> str:
+        if (
+            isinstance(token, FieldValue)
+            and source_mapping.source_id in SOURCE_MAPPING_TO_FIELD_VALUE_MAP
+            and token.field.source_name in SOURCE_MAPPING_TO_FIELD_VALUE_MAP[source_mapping.source_id]
+        ):
+            values_to_update = []
+            token_values = token.values
+            for token_value in token_values:
+                if (
+                    isinstance(token_value, str)
+                    and token_value
+                    in SOURCE_MAPPING_TO_FIELD_VALUE_MAP[source_mapping.source_id][token.field.source_name]
+                ):
+                    values_to_update.append(
+                        SOURCE_MAPPING_TO_FIELD_VALUE_MAP[source_mapping.source_id][token.field.source_name][
+                            token_value
+                        ]
+                    )
+                else:
+                    values_to_update.append(token_value)
+            if values_to_update != token_values:
+                token.value = values_to_update
+
+        return super().apply_token(token=token, source_mapping=source_mapping)
