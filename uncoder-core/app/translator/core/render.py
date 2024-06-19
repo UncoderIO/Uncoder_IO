@@ -211,7 +211,7 @@ class PlatformQueryRender(QueryRender):
         }
 
     def generate_prefix(self, log_source_signature: Optional[LogSourceSignature], functions_prefix: str = "") -> str:  # noqa: ARG002
-        if log_source_signature:
+        if log_source_signature and str(log_source_signature):
             return f"{log_source_signature} {self.and_token}"
         return ""
 
