@@ -10,7 +10,8 @@ class ChronicleLogSourceSignature(LogSourceSignature):
 
 
 class ChronicleMappings(BasePlatformMappings):
-    def prepare_log_source_signature(self, mapping: dict) -> ChronicleLogSourceSignature: ...
+    def prepare_log_source_signature(self, mapping: dict) -> ChronicleLogSourceSignature:
+        ...
 
     def get_suitable_source_mappings(self, field_names: list[str]) -> list[SourceMapping]:
         suitable_source_mappings = []

@@ -37,7 +37,8 @@ from app.translator.platforms.logrhythm_axon.escape_manager import logrhythm_que
 from app.translator.platforms.logrhythm_axon.mapping import LogRhythmAxonMappings, logrhythm_axon_mappings
 
 
-class LogRhythmRegexRenderException(BaseRenderException): ...
+class LogRhythmRegexRenderException(BaseRenderException):
+    ...
 
 
 class LogRhythmAxonFieldValue(BaseQueryFieldValue):
