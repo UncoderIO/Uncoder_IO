@@ -16,10 +16,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+from curses.ascii import isdigit
+from typing import Union
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.mapping import LogSourceSignature
 from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.core.str_value_manager import StrValue
 from app.translator.managers import render_manager
 from app.translator.platforms.base.sql.renders.sql import SqlFieldValue, SqlQueryRender
 from app.translator.platforms.elasticsearch.const import elasticsearch_esql_query_details
@@ -31,25 +34,50 @@ class ESQLFieldValue(SqlFieldValue):
     details: PlatformDetails = elasticsearch_esql_query_details
     str_value_manager = esql_str_value_manager
 
+    @staticmethod
+    def _make_case_insensitive(value: str) -> str:
+        container: list[str] = []
+        for v in value:
+            if v.isalpha():
+                container.append(f'[{v.upper()}{v.lower()}]')
+            else:
+                container.append(v)
+        return ''.join(container)
+
+    @staticmethod
+    def _wrap_str_value(value: str) -> str:
+        return f'"{value}"'
+
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+        if field.endswith('.text'):
+            return self.regex_modifier(field=field, value=value)
         if isinstance(value, list):
             return f"({self.or_token.join(self.contains_modifier(field=field, value=v) for v in value)})"
-        return f'{field} LIKE "*{self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=False)}*"'
+        return f'contains({field}, {self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)})'
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+        if field.endswith('.text'):
+            return self.regex_modifier(field=field, value=value)
         if isinstance(value, list):
             return f"({self.or_token.join(self.endswith_modifier(field=field, value=v) for v in value)})"
-        return f'{field} LIKE "*{self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=False)}"'
+        return f'ends_with({field}, {self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)})'
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+        if field.endswith('.text'):
+            return self.regex_modifier(field=field, value=value)
         if isinstance(value, list):
             return f"({self.or_token.join(self.startswith_modifier(field=field, value=v) for v in value)})"
-        return f'{field} LIKE "{self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=False)}*"'
+        return f'starts_with({field}, {self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)})'
 
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.regex_modifier(field=field, value=v) for v in value)})"
-        return f'{field} RLIKE \\"{self._pre_process_value(field, value, value_type=ValueType.regex_value, wrap_str=False)}\\"'
+        pre_processed_value = self._pre_process_value(field, value, value_type=ValueType.regex_value, wrap_str=False)
+        if isinstance(pre_processed_value, str):
+            value = self._make_case_insensitive(pre_processed_value)
+        else:
+            value = pre_processed_value
+        return f'{field} rlike "{value}"'
 
 
 @render_manager.register
