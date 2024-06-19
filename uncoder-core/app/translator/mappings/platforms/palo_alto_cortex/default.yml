@@ -77,6 +77,7 @@ field_mapping:
   OldTargetUserName: xdm.target.user.username
   UserPrincipalName: xdm.source.user.username
   DestAddress: xdm.target.ipv4
+  SubjectAccountName: xdm.source.user.username
   SubjectUserName: xdm.source.user.username
   SubjectUserSid: xdm.source.user.identifier
   SourceAddr: xdm.source.ipv4
@@ -117,7 +118,6 @@ field_mapping:
   method: xdm.network.http.method
   notice.user_agent: xdm.network.http.browser
   hasIdentity: xdm.source.user.identity_type
-  SubjectAccountName: xdm.source.user.username
   ComputerName: xdm.source.host.hostname
   ExternalSeverity: xdm.alert.severity
   SourceMAC: xdm.source.host.mac_addresses
