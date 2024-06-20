@@ -3,10 +3,10 @@ source: windows_ntlm
 
 
 log_source:
-  source_type: [XmlWinEventLog:Microsoft-Windows-NTLM/Operational]
+  sourcetype: [XmlWinEventLog:Microsoft-Windows-NTLM/Operational]
 
 default_log_source:
-  source_type: XmlWinEventLog:Microsoft-Windows-NTLM/Operational
+  sourcetype: XmlWinEventLog:Microsoft-Windows-NTLM/Operational
 
 field_mapping:
   WorkstationName: WorkstationName

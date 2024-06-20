@@ -3,11 +3,11 @@ source: firewall
 
 
 log_source:
-  source_type: [fortigate_traffic]
+  sourcetype: [fortigate_traffic]
   index: [fortigate]
 
 default_log_source:
-  source_type: fortigate_traffic
+  sourcetype: fortigate_traffic
   index: fortigate
 
 field_mapping:
