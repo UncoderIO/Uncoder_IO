@@ -387,7 +387,7 @@ class PlatformQueryRender(QueryRender):
                     defined_raw_log_fields = self.generate_raw_log_fields(
                         fields=query_container.meta_info.query_fields, source_mapping=source_mapping
                     )
-                    prefix += f"\n{defined_raw_log_fields}\n"
+                    prefix += f"\n{defined_raw_log_fields}"
                 result = self.generate_query(tokens=query_container.tokens, source_mapping=source_mapping)
             except StrictPlatformException as err:
                 errors.append(err)
