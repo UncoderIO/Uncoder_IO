@@ -197,6 +197,7 @@ class PlatformQueryRender(QueryRender):
     not_token = "not"
 
     group_token = "(%s)"
+    query_parts_delimiter = " "
 
     field_value_map = BaseQueryFieldValue(or_token=or_token)
 
@@ -284,6 +285,10 @@ class PlatformQueryRender(QueryRender):
     def _finalize_search_query(query: str) -> str:
         return query
 
+    def _join_query_parts(self, prefix: str, query: str, functions: str) -> str:
+        parts = filter(lambda s: bool(s), map(str.strip, [prefix, self._finalize_search_query(query), functions]))
+        return self.query_parts_delimiter.join(parts)
+
     def finalize_query(
         self,
         prefix: str,
@@ -295,8 +300,7 @@ class PlatformQueryRender(QueryRender):
         *args,  # noqa: ARG002
         **kwargs,  # noqa: ARG002
     ) -> str:
-        parts = filter(lambda s: bool(s), map(str.strip, [prefix, self._finalize_search_query(query), functions]))
-        query = " ".join(parts)
+        query = self._join_query_parts(prefix, query, functions)
         query = self.wrap_query_with_meta_info(meta_info=meta_info, query=query)
         if not_supported_functions:
             rendered_not_supported = self.render_not_supported_functions(not_supported_functions)
