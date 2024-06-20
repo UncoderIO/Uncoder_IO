@@ -22,14 +22,14 @@ from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.mapping import LogSourceSignature
 from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
 from app.translator.managers import render_manager
-from app.translator.platforms.base.sql.renders.sql import SqlFieldValue, SqlQueryRender
 from app.translator.platforms.elasticsearch.const import elasticsearch_esql_query_details
 from app.translator.platforms.elasticsearch.mapping import ElasticSearchMappings, elasticsearch_mappings
 from app.translator.platforms.elasticsearch.str_value_manager import ESQLStrValueManager, esql_str_value_manager
 
 
-class ESQLFieldValue(SqlFieldValue):
+class ESQLFieldValue(BaseQueryFieldValue):
     details: PlatformDetails = elasticsearch_esql_query_details
     str_value_manager: ESQLStrValueManager = esql_str_value_manager
 
@@ -104,7 +104,7 @@ class ESQLFieldValue(SqlFieldValue):
 
 
 @render_manager.register
-class ESQLQueryRender(SqlQueryRender):
+class ESQLQueryRender(PlatformQueryRender):
     details: PlatformDetails = elasticsearch_esql_query_details
     mappings: ElasticSearchMappings = elasticsearch_mappings
     comment_symbol = "//"
@@ -117,3 +117,7 @@ class ESQLQueryRender(SqlQueryRender):
     def generate_prefix(self, log_source_signature: LogSourceSignature, functions_prefix: str = "") -> str:  # noqa: ARG002
         table = str(log_source_signature) if str(log_source_signature) else "*"
         return f"FROM {table} metadata _id, _version, _index |"
+
+    @staticmethod
+    def _finalize_search_query(query: str) -> str:
+        return f"WHERE {query}" if query else ""
