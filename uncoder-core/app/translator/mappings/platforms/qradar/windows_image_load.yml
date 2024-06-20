@@ -13,8 +13,12 @@ default_log_source:
   qideventcategory: Microsoft-Windows-Sysmon/Operational
 
 field_mapping:
-  Image: username
-  ImageLoaded: Process Path
-  SignatureStatus: Signature Status
+  Image: Process Path
+  ImageLoaded: 
+    - Process Path
+    - LoadedImage
+  SignatureStatus: 
+    - Signature Status
+    - SignatureStatus
   OriginalFileName: OriginalFileName
   Signed: Signed

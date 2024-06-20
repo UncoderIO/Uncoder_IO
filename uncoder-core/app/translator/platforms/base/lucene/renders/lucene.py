@@ -16,6 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from typing import Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
@@ -105,8 +106,6 @@ class LuceneQueryRender(PlatformQueryRender):
     or_token = "OR"
     and_token = "AND"
     not_token = "NOT"
-
-    query_pattern = "{query} {functions}"
 
     comment_symbol = "//"
     is_single_line_comment = True

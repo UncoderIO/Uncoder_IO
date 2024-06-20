@@ -3,7 +3,7 @@ source: windows_registry_event
 
 log_source:
   product: [windows]
-  category: [registry_event, registry_set]
+  category: [registry_event, registry_set, registry_delete, registry_add]
 
 default_log_source:
   product: windows

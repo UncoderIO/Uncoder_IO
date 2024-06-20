@@ -1,0 +1,13 @@
+platform: Palo Alto XSIAM
+source: dns
+
+default_log_source:
+  datamodel: datamodel
+
+field_mapping:
+  dns-query: xdm.network.dns.dns_question.name
+  dns-answer: xdm.network.dns.dns_resource_record.value
+  #dns-record: dns-record
+  dns_query_name: xdm.network.dns.dns_question.name
+  QueryName: xdm.network.dns.dns_question.name
+  query: xdm.network.dns.dns_question.name

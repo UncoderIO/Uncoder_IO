@@ -4,7 +4,7 @@ source: azure_m365
 
 log_source:
   product: [azure]
-  service: [m365]
+  service: [m365, o365, office365]
 
 default_log_source:
   product: azure

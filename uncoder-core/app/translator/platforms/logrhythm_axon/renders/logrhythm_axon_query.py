@@ -16,9 +16,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
+from app.translator.core.context_vars import return_only_first_query_ctx_var
 from app.translator.core.custom_types.tokens import LogicalOperatorType
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.exceptions.core import StrictPlatformException
@@ -203,12 +205,15 @@ class LogRhythmAxonQueryRender(PlatformQueryRender):
     not_token = "NOT"
 
     field_value_map = LogRhythmAxonFieldValue(or_token=or_token)
-    query_pattern = "{prefix} AND {query}"
 
     mappings: LogRhythmAxonMappings = logrhythm_axon_mappings
     comment_symbol = "//"
     is_single_line_comment = True
     is_strict_mapping = True
+
+    @staticmethod
+    def _finalize_search_query(query: str) -> str:
+        return f"AND {query}" if query else ""
 
     def generate_prefix(self, log_source_signature: LogSourceSignature, functions_prefix: str = "") -> str:  # noqa: ARG002
         return str(log_source_signature)
@@ -262,6 +267,8 @@ class LogRhythmAxonQueryRender(PlatformQueryRender):
                 meta_info=query_container.meta_info,
                 source_mapping=source_mapping,
             )
+            if return_only_first_query_ctx_var.get() is True:
+                return finalized_query
             queries_map[source_mapping.source_id] = finalized_query
 
         return self.finalize(queries_map)

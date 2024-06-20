@@ -16,6 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from app.translator.core.str_value_manager import (
     ReAnySymbol,
     ReCaretSymbol,
@@ -57,7 +58,7 @@ RE_STR_SPEC_SYMBOLS_MAP = {
     "}": ReRightCurlyBracket,
     "|": ReOrOperator,
     ",": ReCommaSymbol,
-    "-": ReHyphenSymbol
+    "-": ReHyphenSymbol,
 }
 
 

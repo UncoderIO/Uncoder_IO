@@ -17,6 +17,7 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 from typing import Union
+
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.mapping import LogSourceSignature
@@ -37,10 +38,10 @@ class ESQLFieldValue(SqlFieldValue):
         container: list[str] = []
         for v in value:
             if v.isalpha():
-                container.append(f'[{v.upper()}{v.lower()}]')
+                container.append(f"[{v.upper()}{v.lower()}]")
             else:
                 container.append(v)
-        return ''.join(container)
+        return "".join(container)
 
     @staticmethod
     def _wrap_str_value(value: str) -> str:
@@ -71,23 +72,25 @@ class ESQLFieldValue(SqlFieldValue):
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.contains_modifier(field=field, value=v) for v in value)})"
-        if field.endswith('.text'):
+        if field.endswith(".text"):
             return self.regex_modifier(field=field, value=value)
         return f'{field} like "*{self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=False)}*"'
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
-        if field.endswith('.text'):
+        if field.endswith(".text"):
             return self.regex_modifier(field=field, value=value)
         if isinstance(value, list):
             return f"({self.or_token.join(self.endswith_modifier(field=field, value=v) for v in value)})"
-        return f'ends_with({field}, {self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)})'
+        return f"ends_with({field}, {self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)})"
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
-        if field.endswith('.text'):
+        if field.endswith(".text"):
             return self.regex_modifier(field=field, value=value)
         if isinstance(value, list):
             return f"({self.or_token.join(self.startswith_modifier(field=field, value=v) for v in value)})"
-        return f'starts_with({field}, {self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)})'
+        return (
+            f"starts_with({field}, {self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)})"
+        )
 
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):

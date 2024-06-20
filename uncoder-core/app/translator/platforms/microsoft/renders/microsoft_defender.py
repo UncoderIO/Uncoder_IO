@@ -36,8 +36,12 @@ class MicrosoftDefenderFieldValue(MicrosoftSentinelFieldValue):
 class MicrosoftDefenderQueryRender(MicrosoftSentinelQueryRender):
     mappings: MicrosoftDefenderMappings = microsoft_defender_mappings
     details: PlatformDetails = microsoft_defender_details
-    platform_functions: MicrosoftFunctions = microsoft_defender_functions
+    platform_functions: MicrosoftFunctions = None
     or_token = "or"
     field_value_map = MicrosoftDefenderFieldValue(or_token=or_token)
 
     is_strict_mapping = True
+
+    def init_platform_functions(self) -> None:
+        self.platform_functions = microsoft_defender_functions
+        self.platform_functions.platform_query_render = self

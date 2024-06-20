@@ -35,6 +35,7 @@ field_mapping:
   DestinationIp: xdm.target.ipv4
   dst-port: xdm.target.port
   DestinationPort: xdm.target.port
+  destinationPort: xdm.target.port
   src-bytes: xdm.source.sent_bytes
   dst-bytes: xdm.target.sent_bytes
   src-hostname: xdm.source.host.hostname
@@ -75,14 +76,15 @@ field_mapping:
   NewTargetUserName: xdm.target.user.username
   OldTargetUserName: xdm.target.user.username
   UserPrincipalName: xdm.source.user.username
-
   DestAddress: xdm.target.ipv4
+  SubjectAccountName: xdm.source.user.username
   SubjectUserName: xdm.source.user.username
   SubjectUserSid: xdm.source.user.identifier
   SourceAddr: xdm.source.ipv4
   SourceAddress: xdm.source.ipv4
   TargetSid: xdm.target.user.identifier
   TargetUserName: xdm.target.user.username
+  SourceUserName: xdm.source.user.username
   ParentProcessName: xdm.source.process.executable.path
   client.user.full_name: xdm.target.user.username
   source.user.full_name: xdm.source.user.username
@@ -115,3 +117,11 @@ field_mapping:
   http.method: xdm.network.http.method
   method: xdm.network.http.method
   notice.user_agent: xdm.network.http.browser
+  hasIdentity: xdm.source.user.identity_type
+  ComputerName: xdm.source.host.hostname
+  ExternalSeverity: xdm.alert.severity
+  SourceMAC: xdm.source.host.mac_addresses
+  DestinationMAC: xdm.target.host.mac_addresses
+  SourceOS: xdm.source.host.os
+  DestinationOS: xdm.target.host.os
+  url_category: xdm.network.http.url_category

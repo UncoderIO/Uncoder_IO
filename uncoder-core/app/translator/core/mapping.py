@@ -20,6 +20,10 @@ class LogSourceSignature(ABC):
     def __str__(self) -> str:
         raise NotImplementedError("Abstract method")
 
+    @property
+    def default_source(self) -> dict:
+        return self._default_source
+
 
 class FieldMapping:
     def __init__(self, generic_field_name: str, platform_field_name: str):
@@ -72,7 +76,7 @@ class SourceMapping:
         source_id: str,
         log_source_signature: _LogSourceSignatureType = None,
         fields_mapping: Optional[FieldsMapping] = None,
-        raw_log_fields: Optional[list] = None,
+        raw_log_fields: Optional[dict] = None,
     ):
         self.source_id = source_id
         self.log_source_signature = log_source_signature
@@ -103,7 +107,7 @@ class BasePlatformMappings:
                     continue
 
             field_mappings_dict = mapping_dict.get("field_mapping", {})
-            raw_log_fields = mapping_dict.get("raw_log_fields", [])
+            raw_log_fields = mapping_dict.get("raw_log_fields", {})
             field_mappings_dict.update({field: field for field in raw_log_fields})
             fields_mapping = self.prepare_fields_mapping(field_mapping=field_mappings_dict)
             self.update_default_source_mapping(default_mapping=default_mapping, fields_mapping=fields_mapping)

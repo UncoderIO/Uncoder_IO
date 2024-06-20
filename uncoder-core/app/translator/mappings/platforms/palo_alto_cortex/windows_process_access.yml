@@ -6,14 +6,15 @@ default_log_source:
 
 field_mapping:
   User: action_process_username
+  SourceUser: action_process_username
 
 raw_log_fields:
-  - SourceProcessGUID
-  - SourceProcessId
-  - SourceThreadId
-  - SourceImage
-  - TargetProcessGUID
-  - TargerProcessId
-  - TargetImage
-  - GrantedAccess
-  - CallTrace
+  SourceProcessGUID: regex
+  SourceProcessId: regex
+  SourceThreadId: regex
+  SourceImage: regex
+  TargetProcessGUID: regex
+  TargerProcessId: regex
+  TargetImage: regex
+  GrantedAccess: regex
+  CallTrace: regex

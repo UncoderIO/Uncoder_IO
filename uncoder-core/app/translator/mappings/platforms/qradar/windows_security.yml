@@ -19,28 +19,44 @@ field_mapping:
   AuthenticationPackageName: AuthenticationPackageName
   CallingProcessName: CallingProcessName
   Channel: Channel
-  ComputerName: Machine Identifier
+  ComputerName: 
+    - Machine Identifier
+    - Hostname
   EventType: EventType
   FailureReason: FailureReason
   FileName: Filename
   GrantedAccess: GrantedAccess
   Hashes: File Hash
   HiveName: HiveName
-  IpAddress: IpAddress
-  IpPort: IpPort
+  IpAddress: 
+    - sourceip
+    - identityIP
+  IpPort: sourceport
   KeyLength: KeyLength
   LogonProcessName: LogonProcessName
-  LogonType: Logon Type
+  LogonType: 
+    - Logon Type
+    - Login Type
+    - MSLogonType
   LinkName: LinkName
   MemberName: MemberName
   MemberSid: MemberSid
   NewProcessName: Process Name
   ObjectClass: ObjectClass
-  ObjectName: Object Name
-  ObjectType: Object Type
+  ObjectName: 
+    - Object Name
+    - objectname
+    - MSFileObjectName
+    - ObjectName_Filename
+    - ObjectName
+  ObjectType: 
+    - Object Type
+    - ObjectType
   ObjectValueName: ObjectValueName
   Path: Path
-  CommandLine: Command
+  CommandLine: 
+    - Command
+    - Process Command Line
   OldUacValue: OldUacValue
   SubStatus: SubStatus
   DisplayName: DisplayName
@@ -55,14 +71,18 @@ field_mapping:
   ClientProcessId: ClientProcessId
   ParentProcessId: ParentProcessId
   AccessList: AccessList
-  GroupMembership: GroupMembership
+  GroupMembership: 
+    - GroupMembership
+    - GroupName
   FilterName: FilterName
   ChangeType: ChangeType
   LayerName: LayerName
   ServiceAccount: ServiceAccount
   AttributeValue: AttributeValue
   SessionName: SessionName
-  TaskName: TaskName
+  TaskName: 
+    - TaskName
+    - Task Name
   ObjectDN: ObjectDN
   TemplateContent: TemplateContent
   NewTemplateContent: NewTemplateContent
@@ -99,23 +119,35 @@ field_mapping:
   UserAccountControl: UserAccountControl
   RegistryValue: Target Object
   SecurityID: SecurityID
-  ServiceFileName: Service Filename
+  ServiceFileName: 
+    - Service Filename
+    - ServiceFileName
   SecurityDescriptor: SecurityDescriptor
   ServiceName: Service Name
-  ShareName: Share Name
+  ShareName: 
+    - Share Name
+    - ShareName
   NewValue: NewValue
   Source: Source
   Status: Status
+  SubjectAccountName: 
+    - Subject Account Name
+    - SubjectAccountName
   SubjectDomainName: SubjectDomainName
   SubjectUserName: Target Username
   SubjectUserSid: SubjectUserSid
   SourceAddr: sourceip
-  SourceAddress: sourceip
+  SourceAddress: 
+    - sourceip
+    - sourceaddress
+  TargetFilename: File Directory
   TargetName: Target Username
   ServicePrincipalNames: ServicePrincipalNames
   TargetDomainName: TargetDomainName
   TargetSid: TargetSid
-  TargetUserName: Target Username
+  TargetUserName: 
+    - Target Username
+    - Target User Name
   ObjectServer: ObjectServer
   TargetUserSid: TargetUserSid
   TicketEncryptionType: TicketEncryptionType
@@ -142,3 +174,4 @@ field_mapping:
   UserID: UserID
   ParentProcessName: Parent Process Name
   Service: Service
+  hasIdentity: hasIdentity

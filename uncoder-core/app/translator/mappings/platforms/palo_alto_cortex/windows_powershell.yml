@@ -10,10 +10,11 @@ field_mapping:
 
 
 raw_log_fields:
-  - CommandLine
-  - ScriptBlockText
-  - Payload
-  - HostApplication
-  - ContextInfo
-  - HostName
-  - EngineVersion
+  CommandLine: regex
+  ScriptBlockText: regex
+  Payload: regex
+  HostApplication: regex
+  ContextInfo: regex
+  HostName: regex
+  EngineVersion: regex
+  Path: regex
