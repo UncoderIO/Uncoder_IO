@@ -18,7 +18,7 @@ limitations under the License.
 """
 import copy
 import json
-from typing import Union
+from typing import Optional, Union
 
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.mitre import MitreConfig
@@ -73,9 +73,9 @@ class ESQLRuleRender(ESQLQueryRender):
         prefix: str,
         query: str,
         functions: str,
-        meta_info: Union[MetaInfoContainer, None] = None,
-        source_mapping: Union[SourceMapping, None] = None,  # noqa: ARG002
-        not_supported_functions: Union[list, None] = None,
+        meta_info: Optional[MetaInfoContainer] = None,
+        source_mapping: Optional[SourceMapping] = None,  # noqa: ARG002
+        not_supported_functions: Optional[list] = None,
         *args,  # noqa: ARG002
         **kwargs,  # noqa: ARG002
     ) -> str:

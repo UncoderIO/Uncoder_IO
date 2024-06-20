@@ -289,9 +289,9 @@ class PlatformQueryRender(QueryRender):
         prefix: str,
         query: str,
         functions: str,
-        meta_info: Union[MetaInfoContainer, None] = None,
-        source_mapping: Union[SourceMapping, None] = None,  # noqa: ARG002
-        not_supported_functions: Union[list, None] = None,
+        meta_info: Optional[MetaInfoContainer] = None,
+        source_mapping: Optional[SourceMapping] = None,  # noqa: ARG002
+        not_supported_functions: Optional[list] = None,
         *args,  # noqa: ARG002
         **kwargs,  # noqa: ARG002
     ) -> str:
