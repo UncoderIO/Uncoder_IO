@@ -266,7 +266,7 @@ class PlatformQueryRender(QueryRender):
             result_values.append(self.apply_token(token=token, source_mapping=source_mapping))
         return "".join(result_values)
 
-    def wrap_query_with_meta_info(self, meta_info: MetaInfoContainer, query: str) -> str:
+    def wrap_query_with_meta_info(self, meta_info: Optional[MetaInfoContainer], query: str) -> str:
         if meta_info and (meta_info.id or meta_info.title):
             meta_info_dict = {
                 "name: ": meta_info.title,
@@ -289,9 +289,9 @@ class PlatformQueryRender(QueryRender):
         prefix: str,
         query: str,
         functions: str,
-        meta_info: Optional[MetaInfoContainer] = None,
-        source_mapping: Optional[SourceMapping] = None,  # noqa: ARG002
-        not_supported_functions: Optional[list] = None,
+        meta_info: Union[MetaInfoContainer, None] = None,
+        source_mapping: Union[SourceMapping, None] = None,  # noqa: ARG002
+        not_supported_functions: Union[list, None] = None,
         *args,  # noqa: ARG002
         **kwargs,  # noqa: ARG002
     ) -> str:
