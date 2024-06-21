@@ -9,16 +9,20 @@ class FunctionType(CustomEnum):
     min = "min"
     sum = "sum"
 
-    divide = "divide"
+    values = "values"
 
     earliest = "earliest"
     latest = "latest"
 
+    divide = "divide"
+
     lower = "lower"
+    split = "split"
     upper = "upper"
 
-    compare_boolean = "compare_boolean"
-
+    array_length = "array_length"
+    compare = "compare"
+    extract_time = "extract_time"
     ipv4_is_in_range = "ipv4_is_in_range"
 
     bin = "bin"
@@ -30,4 +34,6 @@ class FunctionType(CustomEnum):
     stats = "stats"
     table = "table"
     timeframe = "timeframe"
-    values = "values"
+    union = "union"
+
+    aggregation_data_function = "aggregation_data_function"

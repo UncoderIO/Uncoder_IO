@@ -25,8 +25,8 @@ from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, SourceMapping
 from app.translator.core.models.field import FieldValue, Keyword
-from app.translator.core.models.query_container import TokenizedQueryContainer, RawQueryContainer
 from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.render import QueryRender
 from app.translator.core.str_value_manager import StrValue
 from app.translator.managers import render_manager

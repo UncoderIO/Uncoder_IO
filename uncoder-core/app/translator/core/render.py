@@ -16,9 +16,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from abc import ABC, abstractmethod
 from collections.abc import Callable
-from typing import Optional, Union
+from typing import ClassVar, Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.context_vars import return_only_first_query_ctx_var
@@ -165,7 +166,14 @@ class QueryRender(ABC):
     is_single_line_comment: bool = False
     unsupported_functions_text = "Unsupported functions were excluded from the result query:"
 
-    platform_functions: PlatformFunctions = PlatformFunctions()
+    platform_functions: PlatformFunctions = None
+
+    def __init__(self):
+        self.init_platform_functions()
+
+    def init_platform_functions(self) -> None:
+        self.platform_functions = PlatformFunctions()
+        self.platform_functions.platform_query_render = self
 
     def render_not_supported_functions(self, not_supported_functions: list) -> str:
         line_template = f"{self.comment_symbol} " if self.comment_symbol and self.is_single_line_comment else ""
@@ -189,22 +197,23 @@ class PlatformQueryRender(QueryRender):
     not_token = "not"
 
     group_token = "(%s)"
+    query_parts_delimiter = " "
 
     field_value_map = BaseQueryFieldValue(or_token=or_token)
 
-    query_pattern = "{table} {query} {functions}"
-    raw_log_field_pattern_map: dict = None
+    raw_log_field_pattern_map: ClassVar[dict[str, str]] = None
 
     def __init__(self):
+        super().__init__()
         self.operator_map = {
             LogicalOperatorType.AND: f" {self.and_token} ",
             LogicalOperatorType.OR: f" {self.or_token} ",
             LogicalOperatorType.NOT: f" {self.not_token} ",
         }
 
-    def generate_prefix(self, log_source_signature: LogSourceSignature, functions_prefix: str = "") -> str:  # noqa: ARG002
-        if str(log_source_signature):
-            return f"{log_source_signature!s} {self.and_token}"
+    def generate_prefix(self, log_source_signature: Optional[LogSourceSignature], functions_prefix: str = "") -> str:  # noqa: ARG002
+        if log_source_signature and str(log_source_signature):
+            return f"{log_source_signature} {self.and_token}"
         return ""
 
     def generate_functions(self, functions: list[Function], source_mapping: SourceMapping) -> RenderedFunctions:
@@ -272,6 +281,14 @@ class PlatformQueryRender(QueryRender):
             query = f"{query}\n\n{query_meta_info}"
         return query
 
+    @staticmethod
+    def _finalize_search_query(query: str) -> str:
+        return query
+
+    def _join_query_parts(self, prefix: str, query: str, functions: str) -> str:
+        parts = filter(lambda s: bool(s), map(str.strip, [prefix, self._finalize_search_query(query), functions]))
+        return self.query_parts_delimiter.join(parts)
+
     def finalize_query(
         self,
         prefix: str,
@@ -283,8 +300,7 @@ class PlatformQueryRender(QueryRender):
         *args,  # noqa: ARG002
         **kwargs,  # noqa: ARG002
     ) -> str:
-        query = self.query_pattern.format(prefix=prefix, query=query, functions=functions).strip()
-
+        query = self._join_query_parts(prefix, query, functions)
         query = self.wrap_query_with_meta_info(meta_info=meta_info, query=query)
         if not_supported_functions:
             rendered_not_supported = self.render_not_supported_functions(not_supported_functions)
@@ -327,15 +343,15 @@ class PlatformQueryRender(QueryRender):
 
     def process_raw_log_field(self, field: str, field_type: str) -> Optional[str]:
         if raw_log_field_pattern := self.raw_log_field_pattern_map.get(field_type):
-            return raw_log_field_pattern.pattern.format(field=field)
+            return raw_log_field_pattern.format(field=field)
 
     def process_raw_log_field_prefix(self, field: str, source_mapping: SourceMapping) -> Optional[list]:
         if isinstance(field, list):
-            list_of_prefix = []
+            prefix_list = []
             for f in field:
-                if prepared_prefix := self.process_raw_log_field_prefix(field=f, source_mapping=source_mapping):
-                    list_of_prefix.extend(prepared_prefix)
-            return list_of_prefix
+                if _prefix_list := self.process_raw_log_field_prefix(field=f, source_mapping=source_mapping):
+                    prefix_list.extend(_prefix_list)
+            return prefix_list
         if raw_log_field_type := source_mapping.raw_log_fields.get(field):
             return [self.process_raw_log_field(field=field, field_type=raw_log_field_type)]
 
@@ -352,9 +368,11 @@ class PlatformQueryRender(QueryRender):
                 )
             if not mapped_field and self.is_strict_mapping:
                 raise StrictPlatformException(field_name=field.source_name, platform_name=self.details.name)
-            if field_prefix := self.process_raw_log_field_prefix(field=mapped_field, source_mapping=source_mapping):
-                defined_raw_log_fields.extend(field_prefix)
-        return "\n".join(set(defined_raw_log_fields))
+            if prefix_list := self.process_raw_log_field_prefix(field=mapped_field, source_mapping=source_mapping):
+                for prefix in prefix_list:
+                    if prefix not in defined_raw_log_fields:
+                        defined_raw_log_fields.append(prefix)
+        return "\n".join(defined_raw_log_fields)
 
     def _generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
         queries_map = {}
@@ -369,7 +387,7 @@ class PlatformQueryRender(QueryRender):
                     defined_raw_log_fields = self.generate_raw_log_fields(
                         fields=query_container.meta_info.query_fields, source_mapping=source_mapping
                     )
-                    prefix += f"\n{defined_raw_log_fields}\n"
+                    prefix += f"\n{defined_raw_log_fields}"
                 result = self.generate_query(tokens=query_container.tokens, source_mapping=source_mapping)
             except StrictPlatformException as err:
                 errors.append(err)

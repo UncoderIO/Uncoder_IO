@@ -15,6 +15,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
+
 from typing import Union
 
 from app.translator.core.custom_types.tokens import GroupType, LogicalOperatorType
