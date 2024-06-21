@@ -270,7 +270,7 @@ class PlatformQueryRender(QueryRender):
                 not_found_mapping_fields.add(err.field_name)
         if not_found_mapping_fields:
             raise StrictPlatformException(
-                self.details.name, "", source_mapping.source_id, list(not_found_mapping_fields)
+                self.details.name, "", source_mapping.source_id, sorted(list(not_found_mapping_fields))
             )
         return "".join(result_values)
 
