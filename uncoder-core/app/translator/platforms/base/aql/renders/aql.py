@@ -21,13 +21,13 @@ from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.values import ValueType
-from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
+from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
 from app.translator.core.str_value_manager import StrValue
 from app.translator.platforms.base.aql.mapping import AQLLogSourceSignature, AQLMappings, aql_mappings
 from app.translator.platforms.base.aql.str_value_manager import aql_str_value_manager
 
 
-class AQLFieldValue(BaseQueryFieldValue):
+class AQLFieldValueRender(BaseFieldValueRender):
     str_value_manager = aql_str_value_manager
 
     @staticmethod
@@ -126,8 +126,6 @@ class AQLQueryRender(PlatformQueryRender):
     or_token = "OR"
     and_token = "AND"
     not_token = "NOT"
-
-    field_value_map = AQLFieldValue(or_token=or_token)
 
     def generate_prefix(self, log_source_signature: AQLLogSourceSignature, functions_prefix: str = "") -> str:  # noqa: ARG002
         table = str(log_source_signature)

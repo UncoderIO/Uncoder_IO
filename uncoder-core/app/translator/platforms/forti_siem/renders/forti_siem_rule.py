@@ -18,6 +18,7 @@ import re
 from typing import Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
+from app.translator.core.const import TOKEN_TYPE
 from app.translator.core.context_vars import return_only_first_query_ctx_var
 from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.custom_types.tokens import GroupType, LogicalOperatorType, OperatorType
@@ -28,9 +29,8 @@ from app.translator.core.models.field import FieldValue
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, TokenizedQueryContainer
-from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
+from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
 from app.translator.core.str_value_manager import StrValue
-from app.translator.core.tokenizer import TOKEN_TYPE
 from app.translator.managers import render_manager
 from app.translator.platforms.forti_siem.const import (
     FORTI_SIEM_RULE,
@@ -76,7 +76,7 @@ _NOT_STR_FIELDS = [
 ]
 
 
-class FortiSiemFieldValue(BaseQueryFieldValue):
+class FortiSiemFieldValueRender(BaseFieldValueRender):
     details: PlatformDetails = forti_siem_rule_details
     str_value_manager = forti_siem_str_value_manager
 
@@ -194,7 +194,7 @@ class FortiSiemRuleRender(PlatformQueryRender):
 
     group_token = "(%s)"
 
-    field_value_map = FortiSiemFieldValue(or_token=or_token)
+    field_value_render = FortiSiemFieldValueRender(or_token=or_token)
 
     @staticmethod
     def __is_negated_token(prev_token: TOKEN_TYPE) -> bool:
@@ -244,7 +244,7 @@ class FortiSiemRuleRender(PlatformQueryRender):
 
         return tokens
 
-    def _generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
+    def generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
         queries_map = {}
         source_mappings = self._get_source_mappings(query_container.meta_info.source_mapping_ids)
 
@@ -324,11 +324,7 @@ class FortiSiemRuleRender(PlatformQueryRender):
         rule = rule.replace("<query_placeholder>", query)
         rule = rule.replace("<group_by_attr_placeholder>", ", ".join(args_list))
         rule = rule.replace("<attr_list_placeholder>", self.get_attr_str(fields.copy()))
-
-        if not_supported_functions:
-            rendered_not_supported = self.render_not_supported_functions(not_supported_functions)
-            return rule + rendered_not_supported
-        return rule
+        return self.wrap_with_not_supported_functions(rule, not_supported_functions)
 
     @staticmethod
     def get_attr_str(fields: set[str]) -> str:

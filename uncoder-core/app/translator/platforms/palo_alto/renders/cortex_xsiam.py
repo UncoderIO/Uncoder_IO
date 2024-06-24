@@ -20,9 +20,11 @@ limitations under the License.
 from typing import ClassVar, Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
+from app.translator.core.context_vars import preset_log_source_str_ctx_var
+from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
+from app.translator.core.render import BaseFieldFieldRender, BaseFieldValueRender, PlatformQueryRender
 from app.translator.core.str_value_manager import StrValue
 from app.translator.managers import render_manager
 from app.translator.platforms.palo_alto.const import cortex_xql_query_details
@@ -35,7 +37,7 @@ from app.translator.platforms.palo_alto.mapping import (
 from app.translator.platforms.palo_alto.str_value_manager import cortex_xql_str_value_manager
 
 
-class CortexXQLFieldValue(BaseQueryFieldValue):
+class CortexXQLFieldValueRender(BaseFieldValueRender):
     details: PlatformDetails = cortex_xql_query_details
     str_value_manager = cortex_xql_str_value_manager
 
@@ -132,6 +134,17 @@ class CortexXQLFieldValue(BaseQueryFieldValue):
         return f"_raw_log contains {self._pre_process_value(field ,value, value_type=ValueType.value, wrap_str=True)}"
 
 
+class CortexXQLFieldFieldRender(BaseFieldFieldRender):
+    operators_map: ClassVar[dict[str, str]] = {
+        OperatorType.EQ: "=",
+        OperatorType.NOT_EQ: "!=",
+        OperatorType.LT: "<",
+        OperatorType.LTE: "<=",
+        OperatorType.GT: ">",
+        OperatorType.GTE: ">=",
+    }
+
+
 @render_manager.register
 class CortexXQLQueryRender(PlatformQueryRender):
     details: PlatformDetails = cortex_xql_query_details
@@ -149,7 +162,8 @@ class CortexXQLQueryRender(PlatformQueryRender):
     not_token = "not"
     query_parts_delimiter = "\n"
 
-    field_value_map = CortexXQLFieldValue(or_token=or_token)
+    field_field_render = CortexXQLFieldFieldRender()
+    field_value_render = CortexXQLFieldValueRender(or_token=or_token)
     comment_symbol = "//"
     is_single_line_comment = False
 
@@ -171,7 +185,8 @@ class CortexXQLQueryRender(PlatformQueryRender):
 
     def generate_prefix(self, log_source_signature: CortexXQLLogSourceSignature, functions_prefix: str = "") -> str:
         functions_prefix = f"{functions_prefix} | " if functions_prefix else ""
-        return f"{functions_prefix}{log_source_signature}"
+        log_source_str = preset_log_source_str_ctx_var.get() or str(log_source_signature)
+        return f"{functions_prefix}{log_source_str}"
 
     @staticmethod
     def _finalize_search_query(query: str) -> str:

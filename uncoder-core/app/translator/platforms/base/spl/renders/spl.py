@@ -21,11 +21,11 @@ from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.exceptions.render import UnsupportedRenderMethod
-from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
+from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
 from app.translator.platforms.base.spl.escape_manager import spl_escape_manager
 
 
-class SplFieldValue(BaseQueryFieldValue):
+class SplFieldValueRender(BaseFieldValueRender):
     escape_manager = spl_escape_manager
 
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
