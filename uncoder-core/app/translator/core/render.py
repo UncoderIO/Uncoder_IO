@@ -287,7 +287,7 @@ class PlatformQueryRender(QueryRender):
             result_values.append(self.apply_token(token=token, source_mapping=source_mapping))
         return "".join(result_values)
 
-    def wrap_with_meta_info(self, query: str, meta_info: MetaInfoContainer) -> str:
+    def wrap_with_meta_info(self, query: str, meta_info: Optional[MetaInfoContainer]) -> str:
         if wrap_query_with_meta_info_ctx_var.get() and meta_info and (meta_info.id or meta_info.title):
             meta_info_dict = {
                 "name: ": meta_info.title,

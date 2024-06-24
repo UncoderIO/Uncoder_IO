@@ -232,12 +232,13 @@ class LogRhythmAxonQueryRender(PlatformQueryRender):
                         f"Uncoder does not support complex regexp for unmapped field:"
                         f" {token.field.source_name} for LogRhythm Axon"
                     ) from exc
-            return self.group_token % self.logical_operators_map[LogicalOperatorType.OR].join(
+            joined = self.logical_operators_map[LogicalOperatorType.OR].join(
                 [
                     self.field_value_render.apply_field_value(field=field, operator=token.operator, value=token.value)
                     for field in mapped_fields
                 ]
             )
+            return self.group_token % joined if len(mapped_fields) > 1 else joined
 
         return super().apply_token(token, source_mapping)
 
