@@ -64,6 +64,8 @@ class Translator:
         )
 
     def __translate_one(self, text: str, source: str, target: str) -> (bool, str):
+        if source == target:
+            return True, text
         status, parsed_data = self.__parse_incoming_data(text=text, source=source, target=target)
         if not status:
             return status, parsed_data
