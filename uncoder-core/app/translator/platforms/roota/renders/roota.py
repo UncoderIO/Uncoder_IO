@@ -59,14 +59,10 @@ class RootARender(QueryRender):
         rule["license"] = tokenized_query_container.meta_info.license
         rule["references"] = tokenized_query_container.meta_info.references or rule["references"]
 
-        if tokenized_query_container.meta_info.mitre_attack:
-            rule["mitre-attack"] = [
-                tactic["external_id"].lower()
-                for tactic in tokenized_query_container.meta_info.mitre_attack.get("tactics", [])
-            ] + [
-                technique["technique_id"].lower()
-                for technique in tokenized_query_container.meta_info.mitre_attack.get("techniques", [])
-            ]
+        mitre_attack = tokenized_query_container.meta_info.mitre_attack
+        tactics = [tactic["external_id"].lower() for tactic in mitre_attack.get("tactics", [])]
+        techniques = [technique["technique_id"].lower() for technique in mitre_attack.get("techniques", [])]
+        rule["mitre-attack"] = tactics + techniques
 
         if tokenized_query_container.meta_info.parsed_logsources:
             for logsource_type, value in tokenized_query_container.meta_info.parsed_logsources.items():
