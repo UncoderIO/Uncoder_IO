@@ -10,7 +10,7 @@ class BasePlatformException(BaseException):
 
 
 class StrictPlatformException(BasePlatformException):
-    field_name = None
+    field_name: str = None
 
     def __init__(
         self, platform_name: str, field_name: str, mapping: str = None, detected_fields: Optional[list] = None
