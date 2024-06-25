@@ -16,7 +16,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
 
-from typing import Any, Union
+from typing import Any, Optional, Union
 
 import yaml
 
@@ -314,7 +314,7 @@ class SigmaRender(QueryRender):
             return rule + rendered_not_supported
         return rule
 
-    def generate(self, raw_query_container: RawQueryContainer, tokenized_query_container: TokenizedQueryContainer) -> str:
+    def generate(self, raw_query_container: RawQueryContainer, tokenized_query_container: Optional[TokenizedQueryContainer]) -> str:
         if tokenized_query_container:
             return self._generate_from_tokenized_query_container(tokenized_query_container)
 

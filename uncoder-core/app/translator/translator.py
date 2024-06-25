@@ -56,7 +56,10 @@ class Translator:
 
     @handle_translation_exceptions
     def __render_translation(
-        self, raw_query_container: RawQueryContainer, tokenized_query_container: TokenizedQueryContainer, target: str
+        self,
+        raw_query_container: RawQueryContainer,
+        tokenized_query_container: Optional[TokenizedQueryContainer],
+        target: str,
     ) -> str:
         render = self.__get_render(target)
         return render.generate(

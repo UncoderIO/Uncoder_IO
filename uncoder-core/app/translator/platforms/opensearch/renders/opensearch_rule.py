@@ -88,7 +88,7 @@ class OpenSearchRuleRender(OpenSearchQueryRender):
         return super().apply_token(token, source_mapping)
 
     def generate(
-        self, raw_query_container: RawQueryContainer, tokenized_query_container: TokenizedQueryContainer
+        self, raw_query_container: RawQueryContainer, tokenized_query_container: Optional[TokenizedQueryContainer]
     ) -> str:
         self.fields = {}
         return super().generate(
