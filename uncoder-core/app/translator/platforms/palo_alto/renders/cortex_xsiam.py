@@ -147,6 +147,7 @@ class CortexXQLQueryRender(PlatformQueryRender):
     or_token = "or"
     and_token = "and"
     not_token = "not"
+    query_parts_delimiter = "\n"
 
     field_value_map = CortexXQLFieldValue(or_token=or_token)
     comment_symbol = "//"

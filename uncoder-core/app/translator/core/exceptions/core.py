@@ -1,10 +1,12 @@
 from typing import Optional
 
 
-class NotImplementedException(BaseException): ...
+class NotImplementedException(BaseException):
+    ...
 
 
-class BasePlatformException(BaseException): ...
+class BasePlatformException(BaseException):
+    ...
 
 
 class StrictPlatformException(BasePlatformException):

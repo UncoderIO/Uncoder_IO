@@ -65,3 +65,4 @@ field_mapping:
   TargetUserName: DestinationUserName
   SourceUserName: SourceUserName
   url_category: XForceCategoryByURL
+  EventSeverity: EventSeverity
