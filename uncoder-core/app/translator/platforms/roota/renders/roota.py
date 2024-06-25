@@ -41,7 +41,7 @@ class RootARender(QueryRender):
             raise BaseRenderException("Meta info is required")
         if raw_query_container.language == SIGMA_RULE_DETAILS["platform_id"]:
             query_language = MICROSOFT_SENTINEL_QUERY_DETAILS["platform_id"]
-            query = self.render_manager.get(MICROSOFT_SENTINEL_QUERY_DETAILS["platform_id"]).generate(
+            query = self.render_manager.get(query_language).generate(
                 raw_query_container=raw_query_container, tokenized_query_container=tokenized_query_container
             )
         else:
