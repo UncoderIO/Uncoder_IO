@@ -56,10 +56,12 @@ class Translator:
 
     @handle_translation_exceptions
     def __render_translation(
-        self, query_container: Union[RawQueryContainer, TokenizedQueryContainer], target: str
+        self, raw_query_container: RawQueryContainer, tokenized_query_container: TokenizedQueryContainer, target: str
     ) -> str:
         render = self.__get_render(target)
-        return render.generate(query_container)
+        return render.generate(
+            raw_query_container=raw_query_container, tokenized_query_container=tokenized_query_container
+        )
 
     def __translate_one(self, text: str, source: str, target: str) -> (bool, str):
         status, parsed_data = self.__parse_incoming_data(text=text, source=source, target=target)
@@ -67,8 +69,9 @@ class Translator:
             return status, parsed_data
 
         raw_query_container, tokenized_query_container = parsed_data
-        query_container = tokenized_query_container or raw_query_container
-        return self.__render_translation(query_container=query_container, target=target)
+        return self.__render_translation(
+            raw_query_container=raw_query_container, tokenized_query_container=tokenized_query_container, target=target
+        )
 
     def __translate_all(self, text: str, source: str) -> list[dict]:
         status, parsed_data = self.__parse_incoming_data(text=text, source=source)

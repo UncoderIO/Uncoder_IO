@@ -314,8 +314,9 @@ class SigmaRender(QueryRender):
             return rule + rendered_not_supported
         return rule
 
-    def generate(self, query_container: Union[RawQueryContainer, TokenizedQueryContainer]) -> str:
-        if isinstance(query_container, RawQueryContainer):
-            return self._generate_from_raw_query_container(query_container)
+    def generate(self, raw_query_container: RawQueryContainer, tokenized_query_container: TokenizedQueryContainer) -> str:
+        if tokenized_query_container:
+            return self._generate_from_tokenized_query_container(tokenized_query_container)
 
-        return self._generate_from_tokenized_query_container(query_container)
+        return self._generate_from_raw_query_container(raw_query_container)
+

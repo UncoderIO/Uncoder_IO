@@ -184,7 +184,9 @@ class QueryRender(ABC):
         return f"{self.comment_symbol} {value}"
 
     @abstractmethod
-    def generate(self, query_container: Union[RawQueryContainer, TokenizedQueryContainer]) -> str:
+    def generate(
+        self, raw_query_container: RawQueryContainer, tokenized_query_container: TokenizedQueryContainer
+    ) -> str:
         raise NotImplementedError("Abstract method")
 
 
@@ -263,16 +265,8 @@ class PlatformQueryRender(QueryRender):
 
     def generate_query(self, tokens: list[TOKEN_TYPE], source_mapping: SourceMapping) -> str:
         result_values = []
-        not_found_mapping_fields = set()
         for token in tokens:
-            try:
-                result_values.append(self.apply_token(token=token, source_mapping=source_mapping))
-            except StrictPlatformException as err:
-                not_found_mapping_fields.add(err.field_name)
-        if not_found_mapping_fields:
-            raise StrictPlatformException(
-                self.details.name, "", source_mapping.source_id, sorted(list(not_found_mapping_fields))
-            )
+            result_values.append(self.apply_token(token=token, source_mapping=source_mapping))
         return "".join(result_values)
 
     def wrap_query_with_meta_info(self, meta_info: MetaInfoContainer, query: str) -> str:
@@ -417,8 +411,9 @@ class PlatformQueryRender(QueryRender):
             raise errors[0]
         return self.finalize(queries_map)
 
-    def generate(self, query_container: Union[RawQueryContainer, TokenizedQueryContainer]) -> str:
-        if isinstance(query_container, RawQueryContainer):
-            return self._generate_from_raw_query_container(query_container)
-
-        return self._generate_from_tokenized_query_container(query_container)
+    def generate(
+        self, raw_query_container: RawQueryContainer, tokenized_query_container: TokenizedQueryContainer
+    ) -> str:
+        if tokenized_query_container:
+            return self._generate_from_tokenized_query_container(tokenized_query_container)
+        return self._generate_from_raw_query_container(raw_query_container)
