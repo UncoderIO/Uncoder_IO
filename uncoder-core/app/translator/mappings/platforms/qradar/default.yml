@@ -13,9 +13,12 @@ field_mapping:
   dst-port:
     - DstPort
     - DestinationPort
+    - remoteport
   dst-hostname: DstHost
   src-hostname: SrcHost
-  src-port: SourcePort
+  src-port:
+    - SourcePort
+    - localport
   src-ip:
     - sourceip
     - source_ip
@@ -27,6 +30,7 @@ field_mapping:
     - destination_ip
     - destinationIP
     - destinationaddress
+    - destination
   User:
     - userName
     - EventUserName
@@ -65,3 +69,4 @@ field_mapping:
   TargetUserName: DestinationUserName
   SourceUserName: SourceUserName
   url_category: XForceCategoryByURL
+  EventSeverity: EventSeverity
