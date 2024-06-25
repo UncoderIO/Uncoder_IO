@@ -64,8 +64,6 @@ class Translator:
         )
 
     def __translate_one(self, text: str, source: str, target: str) -> (bool, str):
-        if source == target:
-            return True, text
         status, parsed_data = self.__parse_incoming_data(text=text, source=source, target=target)
         if not status:
             return status, parsed_data
@@ -87,14 +85,22 @@ class Translator:
                 continue
 
             if raw_query_container and self.__is_one_vendor_translation(raw_query_container.language, target):
-                status, data = self.__render_translation(query_container=raw_query_container, target=target)
+                status, data = self.__render_translation(
+                    raw_query_container=raw_query_container, tokenized_query_container=None, target=target
+                )
             else:
-                status, data = self.__render_translation(query_container=tokenized_query_container, target=target)
+                status, data = self.__render_translation(
+                    raw_query_container=raw_query_container,
+                    tokenized_query_container=tokenized_query_container,
+                    target=target,
+                )
             result.append({"status": status, "result": data, "platform_id": target})
 
         return result
 
     def translate_one(self, text: str, source: str, target: str) -> (bool, str):
+        if source == target:
+            return True, text
         return self.__translate_one(text=text, source=source, target=target)
 
     def translate_all(self, text: str, source: str) -> list[dict]:
