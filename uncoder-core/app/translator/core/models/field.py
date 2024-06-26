@@ -76,6 +76,11 @@ class FieldValue:
             return self.values[0]
         return self.values
 
+    @value.setter
+    def value(self, new_value: Union[int, str, StrValue, list[Union[int, str, StrValue]]]) -> None:
+        self.values = []
+        self.__add_value(new_value)
+
     def __add_value(self, value: Optional[Union[int, str, StrValue, list, tuple]]) -> None:
         if value and isinstance(value, (list, tuple)):
             for v in value:

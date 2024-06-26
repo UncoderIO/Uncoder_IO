@@ -11,3 +11,4 @@ field_mapping:
   dns_query_name: xdm.network.dns.dns_question.name
   QueryName: xdm.network.dns.dns_question.name
   query: xdm.network.dns.dns_question.name
+  dns-record-type: xdm.network.dns.dns_question.type

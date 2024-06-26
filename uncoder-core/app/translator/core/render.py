@@ -283,8 +283,14 @@ class PlatformQueryRender(QueryRender):
 
     def generate_query(self, tokens: list[TOKEN_TYPE], source_mapping: SourceMapping) -> str:
         result_values = []
+        unmapped_fields = set()
         for token in tokens:
-            result_values.append(self.apply_token(token=token, source_mapping=source_mapping))
+            try:
+                result_values.append(self.apply_token(token=token, source_mapping=source_mapping))
+            except StrictPlatformException as err:
+                unmapped_fields.add(err.field_name)
+        if unmapped_fields:
+            raise StrictPlatformException(self.details.name, "", source_mapping.source_id, sorted(unmapped_fields))
         return "".join(result_values)
 
     def wrap_with_meta_info(self, query: str, meta_info: Optional[MetaInfoContainer]) -> str:

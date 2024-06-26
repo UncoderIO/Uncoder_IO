@@ -41,7 +41,9 @@ field_mapping:
   LinkName: LinkName
   MemberName: MemberName
   MemberSid: MemberSid
-  NewProcessName: Process Name
+  NewProcessName: 
+    - Process Name
+    - New Process Name
   ObjectClass: ObjectClass
   ObjectName: 
     - Object Name
@@ -122,6 +124,7 @@ field_mapping:
   ServiceFileName: 
     - Service Filename
     - ServiceFileName
+    - Service File Name
   SecurityDescriptor: SecurityDescriptor
   ServiceName: Service Name
   ShareName: 
