@@ -13,12 +13,14 @@ class StrictPlatformException(BasePlatformException):
     field_name: str = None
 
     def __init__(
-        self, platform_name: str, field_name: str, mapping: str = None, detected_fields: Optional[list] = None
+        self, platform_name: str, field_name: str, mapping: Optional[str] = None, detected_fields: Optional[list] = None
     ):
         message = (
             f"Platform {platform_name} has strict mapping. "
             f"Source fields: {', '.join(detected_fields) if detected_fields else field_name} has no mapping."
-            f" Mapping file: {mapping}." if mapping else ""
+            f" Mapping file: {mapping}."
+            if mapping
+            else ""
         )
         self.field_name = field_name
         super().__init__(message)
