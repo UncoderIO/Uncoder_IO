@@ -7,7 +7,8 @@ default_log_source:
 field_mapping:
   EventID: action_evtlog_event_id
   Provider_Name: provider_name
-
+  SubjectAccountName: actor_effective_username
+  
 raw_log_fields:
   ParentImage: regex
   AccessMask: regex
@@ -148,3 +149,4 @@ raw_log_fields:
   Service: regex
   SamAccountName: regex
   ImpersonationLevel: regex
+  PrimaryGroupId: regex

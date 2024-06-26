@@ -1,0 +1,46 @@
+platform: Palo Alto XSIAM
+source: azure_signinlogs
+
+
+default_log_source:
+  dataset: msft_azure_raw
+
+field_mapping:
+  AppDisplayName: properties.appDisplayName
+  AppId: properties.appId
+  AuthenticationRequirement: properties.authenticationRequirement
+  Category: properties.category
+  ConditionalAccessStatus: properties.conditionalAccessStatus
+  DeviceDetail: properties.deviceDetail
+  IsInteractive: properties.isInteractive
+  NetworkLocationDetails: properties.networkLocationDetails
+  ResourceDisplayName: properties.resourceDisplayName
+  ResourceIdentity: properties.resourceIdentity
+  ResultDescription: properties.resultDescription
+  ResultType: properties.resultType
+  Status.errorCode: properties.status.errorCode
+  Status: properties.status
+  Status.failureReason: properties.status.failureReason
+  TokenIssuerType: properties.tokenIssuerType
+  UserAgent: properties.userAgent
+  UserPrincipalName: properties.userPrincipalName
+
+raw_log_fields:
+  properties.appDisplayName: object
+  properties.appId: object
+  properties.authenticationRequirement: object
+  properties.category: object
+  properties.conditionalAccessStatus: object
+  properties.deviceDetail: object
+  properties.isInteractive: object
+  properties.networkLocationDetails: object
+  properties.resourceDisplayName: object
+  properties.resourceIdentity: object
+  properties.resultDescription: object
+  properties.resultType: object
+  properties.status.errorCode: object
+  properties.status: object
+  properties.status.failureReason: object
+  properties.tokenIssuerType: object
+  properties.userAgent: object
+  properties.userPrincipalName: object

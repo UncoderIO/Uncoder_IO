@@ -16,6 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
@@ -78,7 +79,6 @@ class SplQueryRender(PlatformQueryRender):
     and_token = "AND"
     not_token = "NOT"
 
-    query_pattern = "{prefix} {query} {functions}"
     comment_symbol = "```"
 
     def wrap_with_comment(self, value: str) -> str:

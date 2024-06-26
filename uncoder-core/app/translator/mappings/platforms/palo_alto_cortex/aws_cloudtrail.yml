@@ -33,3 +33,4 @@ raw_log_fields:
   userIdentity.sessionContext.sessionIssuer.type: object
   userIdentity.type: object
   userIdentity.userName: object
+  requestParameters.publiclyAccessible: object

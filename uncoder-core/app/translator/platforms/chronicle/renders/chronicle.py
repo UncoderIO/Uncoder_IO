@@ -16,6 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
@@ -109,6 +110,5 @@ class ChronicleQueryRender(PlatformQueryRender):
     not_token = "not"
 
     field_value_map = ChronicleFieldValue(or_token=or_token)
-    query_pattern = "{query} {functions}"
     comment_symbol = "//"
     is_single_line_comment = True

@@ -16,6 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.managers import render_manager
 from app.translator.platforms.base.spl.renders.spl import SplFieldValue, SplQueryRender
@@ -31,14 +32,13 @@ class CrowdStrikeFieldValue(SplFieldValue):
 @render_manager.register
 class CrowdStrikeQueryRender(SplQueryRender):
     details: PlatformDetails = crowdstrike_query_details
-    query_pattern = "{prefix} {query} {functions}"
     mappings: CrowdstrikeMappings = crowdstrike_mappings
-    platform_functions: CrowdStrikeFunctions = crowd_strike_functions
+    platform_functions: CrowdStrikeFunctions = None
 
     or_token = "OR"
     field_value_map = CrowdStrikeFieldValue(or_token=or_token)
     comment_symbol = "`"
 
-    def __init__(self):
-        super().__init__()
-        self.platform_functions.manager.post_init_configure(self)
+    def init_platform_functions(self) -> None:
+        self.platform_functions = crowd_strike_functions
+        self.platform_functions.platform_query_render = self

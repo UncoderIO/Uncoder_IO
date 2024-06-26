@@ -16,6 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from typing import ClassVar, Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
@@ -146,9 +147,9 @@ class CortexXQLQueryRender(PlatformQueryRender):
     or_token = "or"
     and_token = "and"
     not_token = "not"
+    query_parts_delimiter = "\n"
 
     field_value_map = CortexXQLFieldValue(or_token=or_token)
-    query_pattern = "{prefix} | filter {query} {functions}"
     comment_symbol = "//"
     is_single_line_comment = False
 
@@ -171,3 +172,7 @@ class CortexXQLQueryRender(PlatformQueryRender):
     def generate_prefix(self, log_source_signature: CortexXQLLogSourceSignature, functions_prefix: str = "") -> str:
         functions_prefix = f"{functions_prefix} | " if functions_prefix else ""
         return f"{functions_prefix}{log_source_signature}"
+
+    @staticmethod
+    def _finalize_search_query(query: str) -> str:
+        return f"| filter {query}" if query else ""

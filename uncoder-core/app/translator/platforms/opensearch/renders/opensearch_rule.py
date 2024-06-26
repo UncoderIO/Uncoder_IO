@@ -16,6 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 import copy
 import json
 from typing import Optional, Union
@@ -49,7 +50,6 @@ class OpenSearchRuleRender(OpenSearchQueryRender):
     not_token = "NOT"
 
     field_value_map = OpenSearchRuleFieldValue(or_token=or_token)
-    query_pattern = "{prefix} {query} {functions}"
 
     def __init__(self):
         super().__init__()

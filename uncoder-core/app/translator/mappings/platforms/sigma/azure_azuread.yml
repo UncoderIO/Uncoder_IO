@@ -4,7 +4,7 @@ source: azure_azuread
 
 log_source:
   product: [azure]
-  service: [azuread]
+  service: [azuread, auditlogs]
 
 default_log_source:
   product: azure
