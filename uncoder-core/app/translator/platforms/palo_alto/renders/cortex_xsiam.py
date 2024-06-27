@@ -50,6 +50,7 @@ SOURCE_MAPPING_TO_FIELD_VALUE_MAP = {
 }
 
 
+
 class CortexXQLFieldValueRender(BaseFieldValueRender):
     details: PlatformDetails = cortex_xql_query_details
     str_value_manager = cortex_xql_str_value_manager
