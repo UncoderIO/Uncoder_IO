@@ -344,11 +344,7 @@ class QueryTokenizer(BaseTokenizer):
                 result.extend(self.get_field_tokens_from_func_args(args=arg.by_clauses))
                 result.extend(self.get_field_tokens_from_func_args(args=[arg.filter_]))
             elif isinstance(arg, (JoinFunction, UnionFunction)):
-                result.extend(self.get_field_tokens_from_func_args(args=arg.tokenized_query_container.tokens))
-                result.extend(
-                    self.get_field_tokens_from_func_args(args=arg.tokenized_query_container.functions.functions)
-                )
-                result.extend(self.get_field_tokens_from_func_args(args=arg.condition))
+                continue
             elif isinstance(arg, Function):
                 result.extend(self.get_field_tokens_from_func_args(args=arg.args))
             elif isinstance(arg, SortArg) and isinstance(arg.field, Field):
