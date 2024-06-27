@@ -21,6 +21,9 @@ from typing import ClassVar, Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.values import ValueType
+from app.translator.core.mapping import SourceMapping
+from app.translator.core.models.field import FieldValue, Keyword
+from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
 from app.translator.core.str_value_manager import StrValue
@@ -33,6 +36,16 @@ from app.translator.platforms.palo_alto.mapping import (
     cortex_xql_mappings,
 )
 from app.translator.platforms.palo_alto.str_value_manager import cortex_xql_str_value_manager
+
+SOURCE_MAPPING_TO_FIELD_VALUE_MAP = {
+    "windows_registry_event": {
+        "EventType": {
+            "SetValue": "REGISTRY_SET_VALUE",
+            "DeleteValue": "REGISTRY_DELETE_VALUE",
+            "CreateKey": "REGISTRY_CREATE_KEY",
+        }
+    }
+}
 
 
 class CortexXQLFieldValue(BaseQueryFieldValue):
@@ -172,6 +185,19 @@ class CortexXQLQueryRender(PlatformQueryRender):
     def generate_prefix(self, log_source_signature: CortexXQLLogSourceSignature, functions_prefix: str = "") -> str:
         functions_prefix = f"{functions_prefix} | " if functions_prefix else ""
         return f"{functions_prefix}{log_source_signature}"
+
+    def apply_token(self, token: Union[FieldValue, Keyword, Identifier], source_mapping: SourceMapping) -> str:
+        if isinstance(token, FieldValue):
+            field_name = token.field.source_name
+            if values_map := SOURCE_MAPPING_TO_FIELD_VALUE_MAP.get(source_mapping.source_id, {}).get(field_name):
+                values_to_update = []
+                for token_value in token.values:
+                    mapped_value: str = values_map.get(token_value, token_value)
+                    values_to_update.append(
+                        StrValue(value=mapped_value, split_value=mapped_value.split()) if mapped_value else token_value
+                    )
+                token.value = values_to_update
+        return super().apply_token(token=token, source_mapping=source_mapping)
 
     @staticmethod
     def _finalize_search_query(query: str) -> str:
