@@ -30,6 +30,7 @@ class MetaInfoContainer:
         false_positives: Optional[list[str]] = None,
         source_mapping_ids: Optional[list[str]] = None,
         parsed_logsources: Optional[dict] = None,
+        timeframe: Optional[str] = None,
     ) -> None:
         self.id = id_ or str(uuid.uuid4())
         self.title = title or ""
@@ -47,6 +48,7 @@ class MetaInfoContainer:
         self.false_positives = false_positives or []
         self.source_mapping_ids = source_mapping_ids or [DEFAULT_MAPPING_NAME]
         self.parsed_logsources = parsed_logsources or {}
+        self.timeframe = timeframe or ""
 
 
 @dataclass

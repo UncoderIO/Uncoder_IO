@@ -73,6 +73,7 @@ class SigmaParser(QueryParser, YamlRuleMixin):
             false_positives=self.__parse_false_positives(rule.get("falsepositives")),
             source_mapping_ids=source_mapping_ids,
             parsed_logsources=parsed_logsources,
+            timeframe=rule.get('detection', {}).get('timeframe')
         )
 
     def __validate_rule(self, rule: dict):

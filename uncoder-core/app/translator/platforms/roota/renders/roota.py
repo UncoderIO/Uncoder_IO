@@ -15,6 +15,8 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
+import math
+import re
 from typing import Optional
 
 import yaml
@@ -24,7 +26,7 @@ from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.render import QueryRender
 from app.translator.managers import RenderManager, render_manager
-from app.translator.platforms.microsoft.const import MICROSOFT_SENTINEL_QUERY_DETAILS
+from app.translator.platforms.microsoft.const import MICROSOFT_SENTINEL_QUERY_DETAILS, MICROSOFT_SENTINEL_RULE_DETAILS
 from app.translator.platforms.roota.const import ROOTA_RULE_DETAILS, ROOTA_RULE_TEMPLATE
 from app.translator.platforms.sigma.const import SIGMA_RULE_DETAILS
 
@@ -36,11 +38,62 @@ class RootARender(QueryRender):
     details: PlatformDetails = PlatformDetails(**ROOTA_RULE_DETAILS)
     render_manager: RenderManager = render_manager
 
+    @staticmethod
+    def __transform_sentinel_rule_timeframe_to_roota_timeframe(sentinel_rule_timeframe: str) -> str:
+        regex = r"P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?"
+        matches = re.match(regex, sentinel_rule_timeframe)
+
+        if not matches:
+            return ""
+
+        year_ = 365  # days
+        month_ = 30  # days
+        week_ = 7  # days
+        day_ = 24  # hours
+        hour_ = 60  # minutes
+        minute_ = 60  # seconds
+
+        years, months, days, hours, minutes, seconds = matches.groups()
+
+        years = int(years) if years else 0
+        months = int(months) if months else 0
+        days = int(days) if days else 0
+        hours = int(hours) if hours else 0
+        minutes = int(minutes) if minutes else 0
+        seconds = int(seconds) if seconds else 0
+
+        total_seconds = (
+            years * year_ * day_ * hour_ * minute_
+            + months * month_ * day_ * hour_ * minute_
+            + days * day_ * hour_ * minute_
+            + hours * hour_ * minute_
+            + minutes * minute_
+            + seconds
+        )
+
+        if total_seconds >= week_ * day_ * hour_ * minute_:
+            timeframe_value = math.ceil(total_seconds / (week_ * day_ * hour_ * minute_))
+            timeframe_unit = "w"
+        elif total_seconds >= day_ * hour_ * minute_:
+            timeframe_value = math.ceil(total_seconds / (day_ * hour_ * minute_))
+            timeframe_unit = "d"
+        elif total_seconds >= hour_ * minute_:
+            timeframe_value = math.ceil(total_seconds / (hour_ * minute_))
+            timeframe_unit = "h"
+        elif total_seconds >= minute_:
+            timeframe_value = math.ceil(total_seconds / minute_)
+            timeframe_unit = "m"
+        else:
+            timeframe_value = math.ceil(total_seconds)
+            timeframe_unit = "s"
+        return f"{timeframe_value}{timeframe_unit}"
+
     def generate(
         self, raw_query_container: RawQueryContainer, tokenized_query_container: Optional[TokenizedQueryContainer]
     ) -> str:
         if not tokenized_query_container or not tokenized_query_container.meta_info:
             raise BaseRenderException("Meta info is required")
+        timeframe: Optional[str] = None
         if raw_query_container.language == SIGMA_RULE_DETAILS["platform_id"]:
             query_language = MICROSOFT_SENTINEL_QUERY_DETAILS["platform_id"]
             query = self.render_manager.get(query_language).generate(
@@ -65,6 +118,23 @@ class RootARender(QueryRender):
         tactics = [tactic["external_id"].lower() for tactic in mitre_attack.get("tactics", [])]
         techniques = [technique["technique_id"].lower() for technique in mitre_attack.get("techniques", [])]
         rule["mitre-attack"] = tactics + techniques
+
+        if (
+            raw_query_container.language == SIGMA_RULE_DETAILS["platform_id"]
+            and tokenized_query_container.meta_info.timeframe
+        ):
+            timeframe = tokenized_query_container.meta_info.timeframe
+        elif (
+            raw_query_container.language == MICROSOFT_SENTINEL_RULE_DETAILS["platform_id"]
+            and tokenized_query_container.meta_info.timeframe
+        ):
+            timeframe = self.__transform_sentinel_rule_timeframe_to_roota_timeframe(
+                tokenized_query_container.meta_info.timeframe
+            )
+
+        if timeframe:
+            rule["correlation"] = {}
+            rule["correlation"]["timeframe"] = timeframe
 
         if tokenized_query_container.meta_info.parsed_logsources:
             for logsource_type, value in tokenized_query_container.meta_info.parsed_logsources.items():

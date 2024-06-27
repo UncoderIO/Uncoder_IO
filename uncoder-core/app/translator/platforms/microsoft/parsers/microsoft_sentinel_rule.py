@@ -33,5 +33,7 @@ class MicrosoftSentinelRuleParser(MicrosoftSentinelQueryParser, JsonRuleMixin):
         return RawQueryContainer(
             query=rule["query"],
             language=language,
-            meta_info=MetaInfoContainer(title=rule.get("displayName"), description=rule.get("description")),
+            meta_info=MetaInfoContainer(
+                title=rule.get("displayName"), description=rule.get("description"), timeframe=rule.get("queryFrequency")
+            ),
         )
