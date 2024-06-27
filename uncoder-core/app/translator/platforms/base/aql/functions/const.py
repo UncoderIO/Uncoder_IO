@@ -13,9 +13,17 @@ class AQLFunctionType(CustomEnum):
     avg: str = "AVG"
     count: str = "COUNT"
     distinct_count: str = "DISTINCTCOUNT"
+    group_by: str = "GROUP BY"
     last: str = "LAST"
-    fields: str = "fields"
-    aggregation_data_parser: str = "aggregation_data_parser"
+    fields: str = "SELECT"
+    limit: str = "LIMIT"
+    order_by: str = "ORDER BY"
+
+    aggregation_data_function: str = "aggregation_data_function"
+
+
+class AQLFunctionGroupType(CustomEnum):
+    agg = "agg"
 
 
 class AQLSortOrderType(CustomEnum):

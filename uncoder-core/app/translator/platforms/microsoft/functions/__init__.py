@@ -1,13 +1,18 @@
+import os.path
+
 from app.translator.core.exceptions.functions import InvalidFunctionSignature, NotSupportedFunctionException
 from app.translator.core.functions import PlatformFunctions
 from app.translator.core.models.functions.base import ParsedFunctions
 from app.translator.platforms.microsoft.functions.const import KQLFunctionType
-from app.translator.platforms.microsoft.functions.manager import MicrosoftFunctionsManager
+from app.translator.platforms.microsoft.functions.manager import (
+    MicrosoftFunctionsManager,
+    microsoft_defender_functions_manager,
+    microsoft_sentinel_functions_manager,
+)
 
 
 class MicrosoftFunctions(PlatformFunctions):
-    def __init__(self):
-        self.manager = MicrosoftFunctionsManager()
+    dir_path: str = os.path.abspath(os.path.dirname(__file__))
 
     def parse(self, query: str) -> tuple[str, str, ParsedFunctions]:
         parsed = []
@@ -24,7 +29,7 @@ class MicrosoftFunctions(PlatformFunctions):
                 continue
 
             try:
-                func_parser = self.manager.get_parser(self.manager.get_generic_func_name(func_name))
+                func_parser = self.manager.get_hof_parser(func_name)
                 parsed.append(func_parser.parse(func_body, func))
             except NotSupportedFunctionException:
                 not_supported.append(func)
@@ -42,5 +47,13 @@ class MicrosoftFunctions(PlatformFunctions):
         )
 
 
-microsoft_sentinel_functions = MicrosoftFunctions()
-microsoft_defender_functions = MicrosoftFunctions()
+class MicrosoftSentinelFunctions(MicrosoftFunctions):
+    manager: MicrosoftFunctionsManager = microsoft_sentinel_functions_manager
+
+
+class MicrosoftDefenderFunctions(MicrosoftFunctions):
+    manager: MicrosoftFunctionsManager = microsoft_defender_functions_manager
+
+
+microsoft_sentinel_functions = MicrosoftSentinelFunctions()
+microsoft_defender_functions = MicrosoftDefenderFunctions()

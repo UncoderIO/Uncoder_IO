@@ -1,3 +1,4 @@
+import os.path
 import re
 
 from app.translator.core.exceptions.functions import InvalidFunctionSignature, NotSupportedFunctionException
@@ -5,11 +6,12 @@ from app.translator.core.functions import PlatformFunctions
 from app.translator.core.models.functions.base import ParsedFunctions
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
 from app.translator.platforms.base.spl.functions.const import SplFunctionType
-from app.translator.platforms.base.spl.functions.manager import SplFunctionsManager
+from app.translator.platforms.base.spl.functions.manager import SplFunctionsManager, spl_functions_manager
 
 
 class SplFunctions(PlatformFunctions):
-    manager = SplFunctionsManager()
+    dir_path: str = os.path.abspath(os.path.dirname(__file__))
+    manager: SplFunctionsManager = spl_functions_manager
 
     @staticmethod
     def prepare_query(query: str) -> str:
@@ -27,7 +29,7 @@ class SplFunctions(PlatformFunctions):
             split_func = func.strip().split(" ")
             func_name, func_body = split_func[0], " ".join(split_func[1:])
             try:
-                func_parser = self.manager.get_parser(self.manager.get_generic_func_name(func_name))
+                func_parser = self.manager.get_hof_parser(func_name)
                 parsed.append(func_parser.parse(func_body, func))
             except NotSupportedFunctionException:
                 not_supported.append(func)
