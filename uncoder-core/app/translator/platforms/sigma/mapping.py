@@ -19,9 +19,9 @@ class SigmaLogSourceSignature(LogSourceSignature):
     def is_suitable(
         self, service: Optional[list[str]], product: Optional[list[str]], category: Optional[list[str]]
     ) -> bool:
-        product_match = set(product or []).issubset(self.products) if product else False
-        category_match = set(category or []).issubset(self.categories) if category else False
-        service_match = set(service or []).issubset(self.services) if service else False
+        product_match = set(product_.lower() for product_ in product or []).issubset(self.products) if product else False
+        category_match = set(category_.lower() for category_ in category or []).issubset(self.categories) if category else False
+        service_match = set(service_.lower() for service_ in service or [] or []).issubset(self.services) if service else False
         if not product and not service:
             return category_match
         return product_match and service_match or product_match and category_match
