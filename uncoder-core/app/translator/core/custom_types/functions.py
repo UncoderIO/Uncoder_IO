@@ -28,6 +28,7 @@ class FunctionType(CustomEnum):
     bin = "bin"
     eval = "eval"
     fields = "fields"
+    join = "join"
     rename = "rename"
     search = "search"
     sort_limit = "sort_limit"
