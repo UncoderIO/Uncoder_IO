@@ -112,6 +112,7 @@ class RootARender(QueryRender):
         rule["detection"]["language"] = query_language
         rule["detection"]["body"] = query
         rule["license"] = tokenized_query_container.meta_info.license
+        rule["uuid"] = tokenized_query_container.meta_info.id
         rule["references"] = tokenized_query_container.meta_info.references or rule["references"]
 
         mitre_attack = tokenized_query_container.meta_info.mitre_attack

@@ -18,4 +18,5 @@ ROOTA_RULE_TEMPLATE = {
     "logsource": {},
     "references": [],
     "license": "",
+    "uuid": "",
 }
