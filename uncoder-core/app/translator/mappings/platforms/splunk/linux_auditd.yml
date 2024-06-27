@@ -3,10 +3,10 @@ source: linux_auditd
 
 
 log_source:
-  source_type: [linux:audit]
+  sourcetype: [linux:audit]
 
 default_log_source:
-  source_type: linux:audit
+  sourcetype: linux:audit
 
 field_mapping:
   a0: a0

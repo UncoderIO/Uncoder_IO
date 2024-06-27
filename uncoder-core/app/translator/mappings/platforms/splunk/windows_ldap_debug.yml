@@ -3,10 +3,10 @@ source: windows_ldap_debug
 
 
 log_source:
-  source_type: [XmlWinEventLog:Microsoft-Windows-LDAP-Client/Debug]
+  sourcetype: [XmlWinEventLog:Microsoft-Windows-LDAP-Client/Debug]
 
 default_log_source:
-  source_type: XmlWinEventLog:Microsoft-Windows-LDAP-Client/Debug
+  sourcetype: XmlWinEventLog:Microsoft-Windows-LDAP-Client/Debug
 
 field_mapping:
   EventID: EventID
