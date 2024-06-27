@@ -15,6 +15,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
+
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.managers import parser_manager
 from app.translator.platforms.base.spl.parsers.spl import SplQueryParser

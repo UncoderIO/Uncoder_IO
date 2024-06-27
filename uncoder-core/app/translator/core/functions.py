@@ -21,13 +21,13 @@ from __future__ import annotations
 import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from functools import cached_property
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, ClassVar, Optional, Union
 
-from app.translator.core.exceptions.functions import InvalidFunctionSignature, NotSupportedFunctionException
+from app.translator.core.exceptions.functions import NotSupportedFunctionException
 from app.translator.core.mapping import SourceMapping
-from app.translator.core.models.field import Field
+from app.translator.core.models.field import Alias, Field
 from app.translator.core.models.functions.base import Function, ParsedFunctions, RenderedFunctions
+from app.translator.tools.utils import execute_module
 from settings import INIT_FUNCTIONS
 
 if TYPE_CHECKING:
@@ -41,6 +41,14 @@ class FunctionMatchContainer:
 
 
 class BaseFunctionParser(ABC):
+    function_names_map: ClassVar[dict[str, str]] = {}
+    functions_group_name: str = None
+    manager: PlatformFunctionsManager = None
+
+    def set_functions_manager(self, manager: PlatformFunctionsManager) -> BaseFunctionParser:
+        self.manager = manager
+        return self
+
     @abstractmethod
     def parse(self, *args, **kwargs) -> Function:
         raise NotImplementedError
@@ -73,21 +81,25 @@ class HigherOrderFunctionParser(BaseFunctionParser):  # for highest level functi
 
 
 class FunctionRender(ABC):
+    function_names_map: ClassVar[dict[str, str]] = {}
+    order_to_render: int = 0
+    in_query_render: bool = False
+    render_to_prefix: bool = False
+    manager: PlatformFunctionsManager = None
+
+    def set_functions_manager(self, manager: PlatformFunctionsManager) -> FunctionRender:
+        self.manager = manager
+        return self
+
     @abstractmethod
     def render(self, function: Function, source_mapping: SourceMapping) -> str:
         raise NotImplementedError
 
     @staticmethod
-    def concat_kwargs(kwargs: dict[str, str]) -> str:
-        result = ""
-        for key, value in kwargs.items():
-            if value:
-                result = f"{result}, {key}={value}" if result else f"{key}={value}"
+    def map_field(field: Union[Alias, Field], source_mapping: SourceMapping) -> str:
+        if isinstance(field, Alias):
+            return field.name
 
-        return result
-
-    @staticmethod
-    def map_field(field: Field, source_mapping: SourceMapping) -> str:
         generic_field_name = field.get_generic_field_name(source_mapping.source_id)
         mapped_field = source_mapping.fields_mapping.get_platform_field_name(generic_field_name=generic_field_name)
         if isinstance(mapped_field, list):
@@ -97,23 +109,48 @@ class FunctionRender(ABC):
 
 
 class PlatformFunctionsManager:
+    platform_functions: PlatformFunctions = None
+
     def __init__(self):
-        self._parsers_map: dict[str, HigherOrderFunctionParser] = {}
-        self._renders_map: dict[str, FunctionRender] = {}
-        self._in_query_renders_map: dict[str, FunctionRender] = {}
-        self._names_map: dict[str, str] = {}
-        self._order_to_render: dict[str, int] = {}
-        self._render_to_prefix_functions: list[str] = []
+        # {platform_func_name: HigherOrderFunctionParser}
+        self._hof_parsers_map: dict[str, HigherOrderFunctionParser] = {}
+        self._parsers_map: dict[str, FunctionParser] = {}  # {platform_func_name: FunctionParser}
 
-    def post_init_configure(self, platform_render: PlatformQueryRender) -> None:
-        raise NotImplementedError
+        self._renders_map: dict[str, FunctionRender] = {}  # {generic_func_name: FunctionRender}
+        self._in_query_renders_map: dict[str, FunctionRender] = {}  # {generic_func_name: FunctionRender}
+        self._order_to_render: dict[str, int] = {}  # {generic_func_name: int}
 
-    @cached_property
-    def _inverted_names_map(self) -> dict[str, str]:
-        return {value: key for key, value in self._names_map.items()}
+    def register_render(self, render_class: type[FunctionRender]) -> type[FunctionRender]:
+        render = render_class()
+        render.manager = self
+        for generic_function_name in render.function_names_map:
+            self._renders_map[generic_function_name] = render
+            self._order_to_render[generic_function_name] = render.order_to_render
+            if render.in_query_render:
+                self._in_query_renders_map[generic_function_name] = render
 
-    def get_parser(self, generic_func_name: str) -> HigherOrderFunctionParser:
-        if INIT_FUNCTIONS and (parser := self._parsers_map.get(generic_func_name)):
+        return render_class
+
+    def register_parser(self, parser_class: type[BaseFunctionParser]) -> type[BaseFunctionParser]:
+        parser = parser_class()
+        parser.manager = self
+        parsers_map = self._hof_parsers_map if isinstance(parser, HigherOrderFunctionParser) else self._parsers_map
+        for platform_function_name in parser.function_names_map:
+            parsers_map[platform_function_name] = parser
+
+        if parser.functions_group_name:
+            parsers_map[parser.functions_group_name] = parser
+
+        return parser_class
+
+    def get_hof_parser(self, platform_func_name: str) -> HigherOrderFunctionParser:
+        if INIT_FUNCTIONS and (parser := self._hof_parsers_map.get(platform_func_name)):
+            return parser
+
+        raise NotSupportedFunctionException
+
+    def get_parser(self, platform_func_name: str) -> FunctionParser:
+        if INIT_FUNCTIONS and (parser := self._parsers_map.get(platform_func_name)):
             return parser
 
         raise NotSupportedFunctionException
@@ -130,16 +167,6 @@ class PlatformFunctionsManager:
 
         raise NotSupportedFunctionException
 
-    def get_generic_func_name(self, platform_func_name: str) -> Optional[str]:
-        if INIT_FUNCTIONS and (generic_func_name := self._names_map.get(platform_func_name)):
-            return generic_func_name
-
-        raise NotSupportedFunctionException
-
-    def get_platform_func_name(self, generic_func_name: str) -> Optional[str]:
-        if INIT_FUNCTIONS:
-            return self._inverted_names_map.get(generic_func_name)
-
     @property
     def order_to_render(self) -> dict[str, int]:
         if INIT_FUNCTIONS:
@@ -147,39 +174,22 @@ class PlatformFunctionsManager:
 
         return {}
 
-    @property
-    def render_to_prefix_functions(self) -> list[str]:
-        if INIT_FUNCTIONS:
-            return self._render_to_prefix_functions
-
-        return []
-
 
 class PlatformFunctions:
+    dir_path: str = None
+    platform_query_render: PlatformQueryRender = None
     manager: PlatformFunctionsManager = PlatformFunctionsManager()
+
     function_delimiter = "|"
 
-    def parse(self, query: str) -> ParsedFunctions:
-        parsed = []
-        not_supported = []
-        invalid = []
-        functions = query.split(self.function_delimiter)
-        for func in functions:
-            split_func = func.strip().split(" ")
-            func_name, func_body = split_func[0], " ".join(split_func[1:])
-            try:
-                func_parser = self.manager.get_parser(self.manager.get_generic_func_name(func_name))
-                parsed.append(func_parser.parse(func_body, func))
-            except NotSupportedFunctionException:
-                not_supported.append(func)
-            except InvalidFunctionSignature:
-                invalid.append(func)
+    def __init__(self):
+        self.manager.platform_functions = self
+        if self.dir_path:
+            execute_module(f"{self.dir_path}/parsers/__init__.py")
+            execute_module(f"{self.dir_path}/renders/__init__.py")
 
-        return ParsedFunctions(
-            functions=parsed,
-            not_supported=[self.wrap_function_with_delimiter(func) for func in not_supported],
-            invalid=invalid,
-        )
+    def parse(self, query: str) -> ParsedFunctions:  # noqa: ARG002
+        return ParsedFunctions()
 
     def _sort_functions_to_render(self, functions: list[Function]) -> list[Function]:
         return sorted(functions, key=lambda func: self.manager.order_to_render.get(func.name, 0))
@@ -193,7 +203,7 @@ class PlatformFunctions:
             try:
                 func_render = self.manager.get_render(func.name)
                 _rendered = func_render.render(func, source_mapping)
-                if func.name in self.manager.render_to_prefix_functions:
+                if func_render.render_to_prefix:
                     rendered_prefix += _rendered
                 else:
                     rendered += self.wrap_function_with_delimiter(_rendered)

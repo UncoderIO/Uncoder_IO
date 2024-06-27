@@ -197,6 +197,7 @@ class PlatformQueryRender(QueryRender):
     not_token = "not"
 
     group_token = "(%s)"
+    query_parts_delimiter = " "
 
     field_value_map = BaseQueryFieldValue(or_token=or_token)
 
@@ -262,8 +263,14 @@ class PlatformQueryRender(QueryRender):
 
     def generate_query(self, tokens: list[TOKEN_TYPE], source_mapping: SourceMapping) -> str:
         result_values = []
+        unmapped_fields = set()
         for token in tokens:
-            result_values.append(self.apply_token(token=token, source_mapping=source_mapping))
+            try:
+                result_values.append(self.apply_token(token=token, source_mapping=source_mapping))
+            except StrictPlatformException as err:
+                unmapped_fields.add(err.field_name)
+        if unmapped_fields:
+            raise StrictPlatformException(self.details.name, "", source_mapping.source_id, sorted(unmapped_fields))
         return "".join(result_values)
 
     def wrap_query_with_meta_info(self, meta_info: MetaInfoContainer, query: str) -> str:
@@ -284,6 +291,10 @@ class PlatformQueryRender(QueryRender):
     def _finalize_search_query(query: str) -> str:
         return query
 
+    def _join_query_parts(self, prefix: str, query: str, functions: str) -> str:
+        parts = filter(lambda s: bool(s), map(str.strip, [prefix, self._finalize_search_query(query), functions]))
+        return self.query_parts_delimiter.join(parts)
+
     def finalize_query(
         self,
         prefix: str,
@@ -295,8 +306,7 @@ class PlatformQueryRender(QueryRender):
         *args,  # noqa: ARG002
         **kwargs,  # noqa: ARG002
     ) -> str:
-        parts = filter(lambda s: bool(s), map(str.strip, [prefix, self._finalize_search_query(query), functions]))
-        query = " ".join(parts)
+        query = self._join_query_parts(prefix, query, functions)
         query = self.wrap_query_with_meta_info(meta_info=meta_info, query=query)
         if not_supported_functions:
             rendered_not_supported = self.render_not_supported_functions(not_supported_functions)
@@ -383,7 +393,7 @@ class PlatformQueryRender(QueryRender):
                     defined_raw_log_fields = self.generate_raw_log_fields(
                         fields=query_container.meta_info.query_fields, source_mapping=source_mapping
                     )
-                    prefix += f"\n{defined_raw_log_fields}\n"
+                    prefix += f"\n{defined_raw_log_fields}"
                 result = self.generate_query(tokens=query_container.tokens, source_mapping=source_mapping)
             except StrictPlatformException as err:
                 errors.append(err)

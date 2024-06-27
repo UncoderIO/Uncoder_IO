@@ -1,5 +1,14 @@
+import importlib.util
 import re
+from contextlib import suppress
 from typing import Optional, Union
+
+
+def execute_module(path: str) -> None:
+    with suppress(FileNotFoundError):
+        spec = importlib.util.spec_from_file_location("__init__", path)
+        init_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(init_module)
 
 
 def get_match_group(match: re.Match, group_name: str) -> Optional[str]:
