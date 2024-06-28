@@ -50,7 +50,6 @@ SOURCE_MAPPING_TO_FIELD_VALUE_MAP = {
 }
 
 
-
 class CortexXQLFieldValueRender(BaseFieldValueRender):
     details: PlatformDetails = cortex_xql_query_details
     str_value_manager = cortex_xql_str_value_manager
@@ -72,7 +71,7 @@ class CortexXQLFieldValueRender(BaseFieldValueRender):
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             values = ", ".join(
-                f"{self._pre_process_value(field, v, value_type=ValueType.value, wrap_str=True)}" for v in value
+                f"{self._pre_process_value(field, str(v), value_type=ValueType.value, wrap_str=True)}" for v in value
             )
             return f"{field} in ({values})"
 
@@ -123,7 +122,11 @@ class CortexXQLFieldValueRender(BaseFieldValueRender):
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.regex_modifier(field=field, value=v) for v in value)})"
-        return f"{field} ~= {self._pre_process_value(field ,value, value_type=ValueType.regex_value, wrap_str=True)}"
+        value = self._pre_process_value(field, value, value_type=ValueType.regex_value, wrap_str=True)
+        if value.endswith('\\\\"'):
+            value = value[:-1] + "]" + value[-1:]
+            value = value[:-4] + "[" + value[-4:]
+        return f"{field} ~= {value}"
 
     def not_regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
