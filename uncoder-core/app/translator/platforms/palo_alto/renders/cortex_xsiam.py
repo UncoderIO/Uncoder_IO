@@ -30,7 +30,7 @@ from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render import BaseFieldFieldRender, BaseFieldValueRender, PlatformQueryRender
 from app.translator.core.str_value_manager import StrValue
 from app.translator.managers import render_manager
-from app.translator.platforms.palo_alto.const import cortex_xql_query_details
+from app.translator.platforms.palo_alto.const import PREDEFINED_FIELDS_MAP, cortex_xql_query_details
 from app.translator.platforms.palo_alto.functions import CortexXQLFunctions, cortex_xql_functions
 from app.translator.platforms.palo_alto.mapping import (
     CortexXQLLogSourceSignature,
@@ -167,7 +167,8 @@ class CortexXQLQueryRender(PlatformQueryRender):
     details: PlatformDetails = cortex_xql_query_details
     mappings: CortexXQLMappings = cortex_xql_mappings
     is_strict_mapping = True
-    raw_log_field_pattern_map: ClassVar[dict[str, str]] = {
+    predefined_fields_map = PREDEFINED_FIELDS_MAP
+    raw_log_field_patterns_map: ClassVar[dict[str, str]] = {
         "regex": '| alter {field} = regextract(to_json_string(action_evtlog_data_fields)->{field}{{}}, "\\"(.*)\\"")',
         "object": '| alter {field_name} = json_extract_scalar({field_object} , "$.{field_path}")',
         "list": '| alter {field_name} = arraystring(json_extract_array({field_object} , "$.{field_path}")," ")',
@@ -189,7 +190,7 @@ class CortexXQLQueryRender(PlatformQueryRender):
         self.platform_functions.platform_query_render = self
 
     def process_raw_log_field(self, field: str, field_type: str) -> Optional[str]:
-        raw_log_field_pattern = self.raw_log_field_pattern_map.get(field_type)
+        raw_log_field_pattern = self.raw_log_field_patterns_map.get(field_type)
         if raw_log_field_pattern is None:
             return
         if field_type == "regex":
@@ -206,7 +207,7 @@ class CortexXQLQueryRender(PlatformQueryRender):
         return f"{functions_prefix}{log_source_str}"
 
     def apply_token(self, token: Union[FieldValue, Keyword, Identifier], source_mapping: SourceMapping) -> str:
-        if isinstance(token, FieldValue):
+        if isinstance(token, FieldValue) and token.field:
             field_name = token.field.source_name
             if values_map := SOURCE_MAPPING_TO_FIELD_VALUE_MAP.get(source_mapping.source_id, {}).get(field_name):
                 values_to_update = []

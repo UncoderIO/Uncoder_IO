@@ -219,7 +219,7 @@ class LogRhythmAxonQueryRender(PlatformQueryRender):
         return str(log_source_signature)
 
     def apply_token(self, token: Union[FieldValue, Keyword, Identifier], source_mapping: SourceMapping) -> str:
-        if isinstance(token, FieldValue):
+        if isinstance(token, FieldValue) and token.field:
             try:
                 mapped_fields = self.map_field(token.field, source_mapping)
             except StrictPlatformException:

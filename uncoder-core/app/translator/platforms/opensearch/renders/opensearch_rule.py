@@ -79,7 +79,7 @@ class OpenSearchRuleRender(OpenSearchQueryRender):
         return self.wrap_with_not_supported_functions(rule_str, not_supported_functions)
 
     def apply_token(self, token: Union[FieldValue, Keyword, Identifier], source_mapping: SourceMapping) -> str:
-        if isinstance(token, FieldValue):
+        if isinstance(token, FieldValue) and token.field:
             for field in self.map_field(token.field, source_mapping):
                 self.fields.update({field: f"{{ctx.results.0.hits.hits.0._source.{field}}}"})
         return super().apply_token(token, source_mapping)
