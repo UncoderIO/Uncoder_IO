@@ -16,6 +16,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
 
+from contextlib import suppress
 from datetime import timedelta
 from typing import Optional
 
@@ -36,11 +37,8 @@ class MicrosoftSentinelRuleParser(MicrosoftSentinelQueryParser, JsonRuleMixin):
 
     @staticmethod
     def __parse_timeframe(raw_timeframe: Optional[str]) -> Optional[timedelta]:
-        try:
-            if parsed := isodate.parse_duration(raw_timeframe):
-                return parsed
-        except (TypeError, ISO8601Error):
-            return None
+        with suppress(ISO8601Error):
+            return isodate.parse_duration(raw_timeframe)
 
     def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
         rule = self.load_rule(text=text)
