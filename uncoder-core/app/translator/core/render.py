@@ -438,5 +438,5 @@ class PlatformQueryRender(QueryRender):
         self, raw_query_container: RawQueryContainer, tokenized_query_container: Optional[TokenizedQueryContainer]
     ) -> str:
         if tokenized_query_container:
-            return self._generate_from_tokenized_query_container(tokenized_query_container)
-        return self._generate_from_raw_query_container(raw_query_container)
+            return self.generate_from_tokenized_query_container(tokenized_query_container)
+        return self.generate_from_raw_query_container(raw_query_container)
