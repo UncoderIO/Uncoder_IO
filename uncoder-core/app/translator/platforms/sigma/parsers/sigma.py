@@ -65,7 +65,6 @@ class SigmaParser(QueryParser, YamlRuleMixin):
                     return timedelta(hours=int(time_value))
                 if time_unit == 'd':
                     return timedelta(days=int(time_value))
-        return None
 
     def _get_meta_info(
         self,

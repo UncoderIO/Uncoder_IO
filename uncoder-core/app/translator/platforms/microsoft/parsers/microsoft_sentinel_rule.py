@@ -20,6 +20,7 @@ from datetime import timedelta
 from typing import Optional
 
 import isodate
+from isodate.isoerror import ISO8601Error
 
 from app.translator.core.mixins.rule import JsonRuleMixin
 from app.translator.core.models.platform_details import PlatformDetails
@@ -34,10 +35,12 @@ class MicrosoftSentinelRuleParser(MicrosoftSentinelQueryParser, JsonRuleMixin):
     details: PlatformDetails = microsoft_sentinel_rule_details
 
     @staticmethod
-    def __parse_timeframe(raw_timeframe: Optional[str] = "") -> Optional[timedelta]:
-        if parsed := isodate.parse_duration(raw_timeframe):
-            return parsed
-        return None
+    def __parse_timeframe(raw_timeframe: Optional[str]) -> Optional[timedelta]:
+        try:
+            if parsed := isodate.parse_duration(raw_timeframe):
+                return parsed
+        except (TypeError, ISO8601Error):
+            return None
 
     def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
         rule = self.load_rule(text=text)
@@ -47,6 +50,6 @@ class MicrosoftSentinelRuleParser(MicrosoftSentinelQueryParser, JsonRuleMixin):
             meta_info=MetaInfoContainer(
                 title=rule.get("displayName"),
                 description=rule.get("description"),
-                timeframe=self.__parse_timeframe(rule.get("queryFrequency")),
+                timeframe=self.__parse_timeframe(rule.get("queryFrequency", "")),
             ),
         )
