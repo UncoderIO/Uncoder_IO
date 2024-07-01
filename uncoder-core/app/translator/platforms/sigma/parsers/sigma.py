@@ -17,7 +17,9 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 
-from typing import Union
+from datetime import timedelta
+from re import I
+from typing import Optional, Union
 
 from app.translator.core.exceptions.core import SigmaRuleValidationException
 from app.translator.core.mixins.rule import YamlRuleMixin
@@ -48,6 +50,23 @@ class SigmaParser(QueryParser, YamlRuleMixin):
             return [i.strip() for i in false_positives.split(",")]
         return false_positives
 
+    @staticmethod
+    def __parse_timeframe(raw_timeframe: Optional[str] = None) -> Optional[timedelta]:
+        if raw_timeframe:
+            time_unit = raw_timeframe[-1].lower()
+            time_value = raw_timeframe[:-1]
+
+            if time_value.isdigit():
+                if time_unit == 's':
+                    return timedelta(seconds=int(time_value))
+                if time_unit == 'm':
+                    return timedelta(minutes=int(time_value))
+                if time_unit == 'h':
+                    return timedelta(hours=int(time_value))
+                if time_unit == 'd':
+                    return timedelta(days=int(time_value))
+        return None
+
     def _get_meta_info(
         self,
         rule: dict,
@@ -73,7 +92,7 @@ class SigmaParser(QueryParser, YamlRuleMixin):
             false_positives=self.__parse_false_positives(rule.get("falsepositives")),
             source_mapping_ids=source_mapping_ids,
             parsed_logsources=parsed_logsources,
-            timeframe=rule.get('detection', {}).get('timeframe')
+            timeframe=self.__parse_timeframe(rule.get('detection', {}).get('timeframe'))
         )
 
     def __validate_rule(self, rule: dict):
@@ -109,6 +128,6 @@ class SigmaParser(QueryParser, YamlRuleMixin):
                 source_mapping_ids=[source_mapping.source_id for source_mapping in source_mappings],
                 sigma_fields_tokens=sigma_fields_tokens,
                 parsed_logsources=log_sources,
-                fields_tokens=field_tokens,
+                fields_tokens=field_tokens
             ),
         )

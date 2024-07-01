@@ -16,6 +16,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
 
+from datetime import timedelta
+from typing import Optional
+
+import isodate
+
 from app.translator.core.mixins.rule import JsonRuleMixin
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer
@@ -28,12 +33,20 @@ from app.translator.platforms.microsoft.parsers.microsoft_sentinel import Micros
 class MicrosoftSentinelRuleParser(MicrosoftSentinelQueryParser, JsonRuleMixin):
     details: PlatformDetails = microsoft_sentinel_rule_details
 
+    @staticmethod
+    def __parse_timeframe(raw_timeframe: Optional[str] = "") -> Optional[timedelta]:
+        if parsed := isodate.parse_duration(raw_timeframe):
+            return parsed
+        return None
+
     def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
         rule = self.load_rule(text=text)
         return RawQueryContainer(
             query=rule["query"],
             language=language,
             meta_info=MetaInfoContainer(
-                title=rule.get("displayName"), description=rule.get("description"), timeframe=rule.get("queryFrequency")
+                title=rule.get("displayName"),
+                description=rule.get("description"),
+                timeframe=self.__parse_timeframe(rule.get("queryFrequency")),
             ),
         )
