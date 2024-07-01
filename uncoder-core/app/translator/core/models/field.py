@@ -37,6 +37,22 @@ class Field:
         self.__generic_names_map = generic_names_map
 
 
+class FieldField:
+    def __init__(
+        self,
+        source_name_left: str,
+        operator: Identifier,
+        source_name_right: str,
+        is_alias_left: bool = False,
+        is_alias_right: bool = False,
+    ):
+        self.field_left = Field(source_name=source_name_left)
+        self.alias_left = Alias(name=source_name_left) if is_alias_left else None
+        self.operator = operator
+        self.field_right = Field(source_name=source_name_right)
+        self.alias_right = Alias(name=source_name_right) if is_alias_right else None
+
+
 class FieldValue:
     def __init__(
         self,
@@ -59,6 +75,11 @@ class FieldValue:
         if isinstance(self.values, list) and len(self.values) == 1:
             return self.values[0]
         return self.values
+
+    @value.setter
+    def value(self, new_value: Union[int, str, StrValue, list[Union[int, str, StrValue]]]) -> None:
+        self.values = []
+        self.__add_value(new_value)
 
     def __add_value(self, value: Optional[Union[int, str, StrValue, list, tuple]]) -> None:
         if value and isinstance(value, (list, tuple)):

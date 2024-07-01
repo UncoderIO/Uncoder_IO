@@ -22,10 +22,10 @@ from typing import Union
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.exceptions.render import UnsupportedRenderMethod
 from app.translator.core.mapping import LogSourceSignature
-from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
+from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
 
 
-class SqlFieldValue(BaseQueryFieldValue):
+class SqlFieldValueRender(BaseFieldValueRender):
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join([self.equal_modifier(field=field, value=v) for v in value])})"

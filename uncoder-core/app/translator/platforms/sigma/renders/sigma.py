@@ -281,10 +281,10 @@ class SigmaRender(QueryRender):
 
         return self.mappings.get_source_mapping(DEFAULT_MAPPING_NAME)
 
-    def _generate_from_raw_query_container(self, query_container: RawQueryContainer) -> str:
+    def generate_from_raw_query_container(self, query_container: RawQueryContainer) -> str:
         raise NotImplementedError
 
-    def _generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
+    def generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
         self.reset_counters()
 
         meta_info = query_container.meta_info

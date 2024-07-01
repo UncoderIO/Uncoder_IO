@@ -11,13 +11,20 @@ default_log_source:
   category: 8110
 
 field_mapping:
-  CommandLine: Command
+  CommandLine:
+    - Command
+    - Encoded Argument
   CurrentDirectory: CurrentDirectory
   Hashes: File Hash
-  Image: Process Path
+  Image:
+    - Process Path
+    - Process Name
+    - DGApplication
   IntegrityLevel: IntegrityLevel
   ParentCommandLine: Parent Command
   ParentImage: Parent Process Path
   ParentUser: ParentUser
   Product: Product
-  User: username
+  User:
+    - username
+    - userName

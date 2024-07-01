@@ -3,11 +3,11 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from typing import Optional
 
+from app.translator.core.const import TOKEN_TYPE
 from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME
 from app.translator.core.models.field import Field
 from app.translator.core.models.functions.base import ParsedFunctions
-from app.translator.core.tokenizer import TOKEN_TYPE
 
 
 class MetaInfoContainer:

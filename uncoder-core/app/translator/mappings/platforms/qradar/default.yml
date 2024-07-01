@@ -35,7 +35,9 @@ field_mapping:
     - userName
     - EventUserName
   CommandLine: Command
-  Protocol: IPProtocol
+  Protocol: 
+    - IPProtocol
+    - protocol
   Application:
     - Application
     - application
@@ -57,10 +59,13 @@ field_mapping:
     - dst-packets
   src-bytes: src-bytes
   dst-bytes: dst-bytes
-  ExternalSeverity: External Severity
+  ExternalSeverity:
+    - External Severity
+    - Observeit Severity
   SourceMAC:
     - SourceMAC
     - MAC
+    - sourceMAC
   DestinationMAC: DestinationMAC
   SourceOS:
     - SourceOS
@@ -70,3 +75,6 @@ field_mapping:
   SourceUserName: SourceUserName
   url_category: XForceCategoryByURL
   EventSeverity: EventSeverity
+  Source:
+    - Source
+    - source

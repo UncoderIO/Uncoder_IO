@@ -3,10 +3,10 @@ source: aws_eks
 
 
 log_source:
-  source_type: [aws:*]
+  sourcetype: [aws:*]
 
 default_log_source:
-  source_type: aws:*
+  sourcetype: aws:*
 
 field_mapping:
   annotations.authorization.k8s.io\/decision: annotations.authorization.k8s.io\/decision

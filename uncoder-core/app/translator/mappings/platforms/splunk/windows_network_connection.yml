@@ -4,11 +4,11 @@ source: windows_network_connection
 
 log_source:
   source: [WinEventLog:Microsoft-Windows-Sysmon/Operational]
-  source_type: [XmlWinEventLog:Microsoft-Windows-Sysmon/Operational]
+  sourcetype: [XmlWinEventLog:Microsoft-Windows-Sysmon/Operational]
 
 default_log_source:
   source: WinEventLog:Microsoft-Windows-Sysmon/Operational
-  source_type: XmlWinEventLog:Microsoft-Windows-Sysmon/Operational
+  sourcetype: XmlWinEventLog:Microsoft-Windows-Sysmon/Operational
 
 field_mapping:
   Image: Image

@@ -3,10 +3,10 @@ source: azure_AzureDiagnostics
 
 
 log_source:
-  source_type: [azure:*]
+  sourcetype: [azure:*]
 
 default_log_source:
-  source_type: azure:*
+  sourcetype: azure:*
 
 field_mapping:
   ResultDescription: ResultDescription
