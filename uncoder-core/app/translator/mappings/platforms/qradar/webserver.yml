@@ -17,7 +17,11 @@ field_mapping:
   c-uri-extension: c-uri-extension
   c-uri-query: URL
   cs-cookie: cs-cookie
-  cs-host: cs-host
+  cs-host: 
+    - UrlHost
+    - URL Host
+    - URL Domain
+    - HTTP Host
   cs-referrer: URL Referrer
   cs-version: cs-version
   r-dns: r-dns
