@@ -42,8 +42,8 @@ class SplunkMappings(BasePlatformMappings):
         default_log_source = mapping["default_log_source"]
         return SplunkLogSourceSignature(
             sources=log_source.get("source"),
-            source_types=log_source.get("source_type"),
-            source_categories=log_source.get("source_category"),
+            source_types=log_source.get("sourcetype"),
+            source_categories=log_source.get("sourcecategory"),
             indices=log_source.get("index"),
             default_source=default_log_source,
         )

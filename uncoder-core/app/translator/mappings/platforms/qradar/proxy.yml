@@ -24,6 +24,7 @@ field_mapping:
   cs-host:
     - UrlHost
     - URL Host
+    - URL Domain
   cs-referrer:
     - URL Referrer
     - Referrer URL

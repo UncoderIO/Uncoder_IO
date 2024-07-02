@@ -3,7 +3,7 @@ source: gcp_gcp.audit
 
 
 log_source:
-  source_type: [google:gcp:*]
+  sourcetype: [google:gcp:*]
 
 default_log_source:
   index: google:gcp:*

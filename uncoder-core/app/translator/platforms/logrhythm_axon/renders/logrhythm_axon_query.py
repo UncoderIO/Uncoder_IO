@@ -30,7 +30,7 @@ from app.translator.core.models.field import FieldValue, Keyword
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import TokenizedQueryContainer
-from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
+from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
 from app.translator.managers import render_manager
 from app.translator.platforms.logrhythm_axon.const import UNMAPPED_FIELD_DEFAULT_NAME, logrhythm_axon_query_details
 from app.translator.platforms.logrhythm_axon.escape_manager import logrhythm_query_escape_manager
@@ -41,7 +41,7 @@ class LogRhythmRegexRenderException(BaseRenderException):
     ...
 
 
-class LogRhythmAxonFieldValue(BaseQueryFieldValue):
+class LogRhythmAxonFieldValueRender(BaseFieldValueRender):
     details: PlatformDetails = logrhythm_axon_query_details
     escape_manager = logrhythm_query_escape_manager
 
@@ -204,7 +204,7 @@ class LogRhythmAxonQueryRender(PlatformQueryRender):
     and_token = "AND"
     not_token = "NOT"
 
-    field_value_map = LogRhythmAxonFieldValue(or_token=or_token)
+    field_value_render = LogRhythmAxonFieldValueRender(or_token=or_token)
 
     mappings: LogRhythmAxonMappings = logrhythm_axon_mappings
     comment_symbol = "//"
@@ -219,12 +219,12 @@ class LogRhythmAxonQueryRender(PlatformQueryRender):
         return str(log_source_signature)
 
     def apply_token(self, token: Union[FieldValue, Keyword, Identifier], source_mapping: SourceMapping) -> str:
-        if isinstance(token, FieldValue):
+        if isinstance(token, FieldValue) and token.field:
             try:
                 mapped_fields = self.map_field(token.field, source_mapping)
             except StrictPlatformException:
                 try:
-                    return self.field_value_map.apply_field_value(
+                    return self.field_value_render.apply_field_value(
                         field=UNMAPPED_FIELD_DEFAULT_NAME, operator=token.operator, value=token.value
                     )
                 except LogRhythmRegexRenderException as exc:
@@ -232,20 +232,17 @@ class LogRhythmAxonQueryRender(PlatformQueryRender):
                         f"Uncoder does not support complex regexp for unmapped field:"
                         f" {token.field.source_name} for LogRhythm Axon"
                     ) from exc
-            if len(mapped_fields) > 1:
-                return self.group_token % self.operator_map[LogicalOperatorType.OR].join(
-                    [
-                        self.field_value_map.apply_field_value(field=field, operator=token.operator, value=token.value)
-                        for field in mapped_fields
-                    ]
-                )
-            return self.field_value_map.apply_field_value(
-                field=mapped_fields[0], operator=token.operator, value=token.value
+            joined = self.logical_operators_map[LogicalOperatorType.OR].join(
+                [
+                    self.field_value_render.apply_field_value(field=field, operator=token.operator, value=token.value)
+                    for field in mapped_fields
+                ]
             )
+            return self.group_token % joined if len(mapped_fields) > 1 else joined
 
         return super().apply_token(token, source_mapping)
 
-    def _generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
+    def generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
         queries_map = {}
         source_mappings = self._get_source_mappings(query_container.meta_info.source_mapping_ids)
 

@@ -11,9 +11,12 @@ default_log_source:
   category: 8110
 
 field_mapping:
-  CommandLine: Command
+  CommandLine:
+    - Command
+    - ASACommand
   Image: Process Path
   ParentCommandLine: Parent Command
   ParentImage: Parent Process Path
   User: username
   LogonId: Logon ID
+  EventID: ASASyslogCode

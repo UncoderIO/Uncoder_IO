@@ -20,12 +20,17 @@ limitations under the License.
 from typing import ClassVar, Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
+from app.translator.core.context_vars import preset_log_source_str_ctx_var
+from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.custom_types.values import ValueType
+from app.translator.core.mapping import SourceMapping
+from app.translator.core.models.field import FieldValue, Keyword
+from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
+from app.translator.core.render import BaseFieldFieldRender, BaseFieldValueRender, PlatformQueryRender
 from app.translator.core.str_value_manager import StrValue
 from app.translator.managers import render_manager
-from app.translator.platforms.palo_alto.const import cortex_xql_query_details
+from app.translator.platforms.palo_alto.const import PREDEFINED_FIELDS_MAP, cortex_xql_query_details
 from app.translator.platforms.palo_alto.functions import CortexXQLFunctions, cortex_xql_functions
 from app.translator.platforms.palo_alto.mapping import (
     CortexXQLLogSourceSignature,
@@ -34,8 +39,18 @@ from app.translator.platforms.palo_alto.mapping import (
 )
 from app.translator.platforms.palo_alto.str_value_manager import cortex_xql_str_value_manager
 
+SOURCE_MAPPING_TO_FIELD_VALUE_MAP = {
+    "windows_registry_event": {
+        "EventType": {
+            "SetValue": "REGISTRY_SET_VALUE",
+            "DeleteValue": "REGISTRY_DELETE_VALUE",
+            "CreateKey": "REGISTRY_CREATE_KEY",
+        }
+    }
+}
 
-class CortexXQLFieldValue(BaseQueryFieldValue):
+
+class CortexXQLFieldValueRender(BaseFieldValueRender):
     details: PlatformDetails = cortex_xql_query_details
     str_value_manager = cortex_xql_str_value_manager
 
@@ -56,7 +71,8 @@ class CortexXQLFieldValue(BaseQueryFieldValue):
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             values = ", ".join(
-                f"{self._pre_process_value(field, v, value_type=ValueType.value, wrap_str=True)}" for v in value
+                f"{self._pre_process_value(field, str(v) if isinstance(v, int) else v, ValueType.value, True)}"
+                for v in value
             )
             return f"{field} in ({values})"
 
@@ -107,7 +123,11 @@ class CortexXQLFieldValue(BaseQueryFieldValue):
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.regex_modifier(field=field, value=v) for v in value)})"
-        return f"{field} ~= {self._pre_process_value(field ,value, value_type=ValueType.regex_value, wrap_str=True)}"
+        value = self._pre_process_value(field, value, value_type=ValueType.regex_value, wrap_str=True)
+        if value.endswith('\\\\"'):
+            value = value[:-1] + "]" + value[-1:]
+            value = value[:-4] + "[" + value[-4:]
+        return f"{field} ~= {value}"
 
     def not_regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
@@ -132,12 +152,24 @@ class CortexXQLFieldValue(BaseQueryFieldValue):
         return f"_raw_log contains {self._pre_process_value(field ,value, value_type=ValueType.value, wrap_str=True)}"
 
 
+class CortexXQLFieldFieldRender(BaseFieldFieldRender):
+    operators_map: ClassVar[dict[str, str]] = {
+        OperatorType.EQ: "=",
+        OperatorType.NOT_EQ: "!=",
+        OperatorType.LT: "<",
+        OperatorType.LTE: "<=",
+        OperatorType.GT: ">",
+        OperatorType.GTE: ">=",
+    }
+
+
 @render_manager.register
 class CortexXQLQueryRender(PlatformQueryRender):
     details: PlatformDetails = cortex_xql_query_details
     mappings: CortexXQLMappings = cortex_xql_mappings
     is_strict_mapping = True
-    raw_log_field_pattern_map: ClassVar[dict[str, str]] = {
+    predefined_fields_map = PREDEFINED_FIELDS_MAP
+    raw_log_field_patterns_map: ClassVar[dict[str, str]] = {
         "regex": '| alter {field} = regextract(to_json_string(action_evtlog_data_fields)->{field}{{}}, "\\"(.*)\\"")',
         "object": '| alter {field_name} = json_extract_scalar({field_object} , "$.{field_path}")',
         "list": '| alter {field_name} = arraystring(json_extract_array({field_object} , "$.{field_path}")," ")',
@@ -149,7 +181,8 @@ class CortexXQLQueryRender(PlatformQueryRender):
     not_token = "not"
     query_parts_delimiter = "\n"
 
-    field_value_map = CortexXQLFieldValue(or_token=or_token)
+    field_field_render = CortexXQLFieldFieldRender()
+    field_value_render = CortexXQLFieldValueRender(or_token=or_token)
     comment_symbol = "//"
     is_single_line_comment = False
 
@@ -158,7 +191,7 @@ class CortexXQLQueryRender(PlatformQueryRender):
         self.platform_functions.platform_query_render = self
 
     def process_raw_log_field(self, field: str, field_type: str) -> Optional[str]:
-        raw_log_field_pattern = self.raw_log_field_pattern_map.get(field_type)
+        raw_log_field_pattern = self.raw_log_field_patterns_map.get(field_type)
         if raw_log_field_pattern is None:
             return
         if field_type == "regex":
@@ -171,7 +204,21 @@ class CortexXQLQueryRender(PlatformQueryRender):
 
     def generate_prefix(self, log_source_signature: CortexXQLLogSourceSignature, functions_prefix: str = "") -> str:
         functions_prefix = f"{functions_prefix} | " if functions_prefix else ""
-        return f"{functions_prefix}{log_source_signature}"
+        log_source_str = preset_log_source_str_ctx_var.get() or str(log_source_signature)
+        return f"{functions_prefix}{log_source_str}"
+
+    def apply_token(self, token: Union[FieldValue, Keyword, Identifier], source_mapping: SourceMapping) -> str:
+        if isinstance(token, FieldValue) and token.field:
+            field_name = token.field.source_name
+            if values_map := SOURCE_MAPPING_TO_FIELD_VALUE_MAP.get(source_mapping.source_id, {}).get(field_name):
+                values_to_update = []
+                for token_value in token.values:
+                    mapped_value: str = values_map.get(token_value, token_value)
+                    values_to_update.append(
+                        StrValue(value=mapped_value, split_value=mapped_value.split()) if mapped_value else token_value
+                    )
+                token.value = values_to_update
+        return super().apply_token(token=token, source_mapping=source_mapping)
 
     @staticmethod
     def _finalize_search_query(query: str) -> str:

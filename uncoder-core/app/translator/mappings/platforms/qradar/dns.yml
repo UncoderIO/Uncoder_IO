@@ -13,3 +13,4 @@ field_mapping:
   parent-domain: parent-domain
   dns-answer: dns-answer
   dns-record: URL
+  dns-record-type: DNSRecordType

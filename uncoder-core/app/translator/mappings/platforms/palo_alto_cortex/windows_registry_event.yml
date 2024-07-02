@@ -29,3 +29,4 @@ field_mapping:
   ParentLogonId: causality_actor_process_logon_id
   ParentProduct: causality_actor_process_signature_product
   ParentCompany: causality_actor_process_signature_vendor
+  EventType: event_sub_type

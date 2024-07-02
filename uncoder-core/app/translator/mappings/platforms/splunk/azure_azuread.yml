@@ -3,10 +3,10 @@ source: azure_azuread
 
 
 log_source:
-  source_type: [azure:aad:*]
+  sourcetype: [azure:aad:*]
 
 default_log_source:
-  source_type: azure:aad:*
+  sourcetype: azure:aad:*
 
 field_mapping:
   ActivityDisplayName: ActivityDisplayName

@@ -20,6 +20,7 @@ import re
 from abc import ABC, abstractmethod
 from typing import Union
 
+from app.translator.core.const import TOKEN_TYPE
 from app.translator.core.exceptions.parser import TokenizerGeneralException
 from app.translator.core.functions import PlatformFunctions
 from app.translator.core.mapping import BasePlatformMappings, SourceMapping
@@ -28,7 +29,7 @@ from app.translator.core.models.functions.base import ParsedFunctions
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
-from app.translator.core.tokenizer import TOKEN_TYPE, QueryTokenizer
+from app.translator.core.tokenizer import QueryTokenizer
 
 
 class QueryParser(ABC):
