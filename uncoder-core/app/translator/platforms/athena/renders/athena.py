@@ -16,14 +16,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.managers import render_manager
 from app.translator.platforms.athena.const import athena_details
 from app.translator.platforms.athena.mapping import AthenaMappings, athena_mappings
-from app.translator.platforms.base.sql.renders.sql import SqlFieldValue, SqlQueryRender
+from app.translator.platforms.base.sql.renders.sql import SqlFieldValueRender, SqlQueryRender
 
 
-class AthenaFieldValue(SqlFieldValue):
+class AthenaFieldValueRender(SqlFieldValueRender):
     details: PlatformDetails = athena_details
 
 
@@ -34,7 +35,10 @@ class AthenaQueryRender(SqlQueryRender):
 
     or_token = "OR"
 
-    field_value_map = AthenaFieldValue(or_token=or_token)
-    query_pattern = "{prefix} WHERE {query} {functions}"
+    field_value_render = AthenaFieldValueRender(or_token=or_token)
     comment_symbol = "--"
     is_single_line_comment = True
+
+    @staticmethod
+    def _finalize_search_query(query: str) -> str:
+        return f"WHERE {query}" if query else ""

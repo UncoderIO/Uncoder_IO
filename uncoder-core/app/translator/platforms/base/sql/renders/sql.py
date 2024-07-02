@@ -16,15 +16,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.exceptions.render import UnsupportedRenderMethod
 from app.translator.core.mapping import LogSourceSignature
-from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
+from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
 
 
-class SqlFieldValue(BaseQueryFieldValue):
+class SqlFieldValueRender(BaseFieldValueRender):
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join([self.equal_modifier(field=field, value=v) for v in value])})"
@@ -76,10 +77,13 @@ class SqlQueryRender(PlatformQueryRender):
     and_token = "AND"
     not_token = "NOT"
 
-    query_pattern = "{prefix} WHERE {query} {functions}"
     comment_symbol = "--"
     is_single_line_comment = True
 
     def generate_prefix(self, log_source_signature: LogSourceSignature, functions_prefix: str = "") -> str:  # noqa: ARG002
         table = str(log_source_signature) if str(log_source_signature) else "eventlog"
         return f"SELECT * FROM {table}"
+
+    @staticmethod
+    def _finalize_search_query(query: str) -> str:
+        return f"WHERE {query}" if query else ""

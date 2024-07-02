@@ -16,6 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 import copy
 import json
 from typing import Optional
@@ -44,7 +45,7 @@ class KibanaRuleRender(ElasticSearchQueryRender):
     details: PlatformDetails = kibana_rule_details
     mappings: ElasticSearchMappings = elasticsearch_mappings
     or_token = "OR"
-    field_value_map = KibanaFieldValue(or_token=or_token)
+    field_value_render = KibanaFieldValue(or_token=or_token)
 
     def finalize_query(
         self,
@@ -73,7 +74,4 @@ class KibanaRuleRender(ElasticSearchQueryRender):
             references=meta_info.references,
         )
         rule_str = json.dumps(rule, indent=4, sort_keys=False)
-        if not_supported_functions:
-            rendered_not_supported = self.render_not_supported_functions(not_supported_functions)
-            return rule_str + rendered_not_supported
-        return rule_str
+        return self.wrap_with_not_supported_functions(rule_str, not_supported_functions)

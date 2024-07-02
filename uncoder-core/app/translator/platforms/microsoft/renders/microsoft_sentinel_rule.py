@@ -16,6 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 import copy
 import json
 from typing import Optional
@@ -27,7 +28,7 @@ from app.translator.core.models.query_container import MetaInfoContainer
 from app.translator.managers import render_manager
 from app.translator.platforms.microsoft.const import DEFAULT_MICROSOFT_SENTINEL_RULE, microsoft_sentinel_rule_details
 from app.translator.platforms.microsoft.renders.microsoft_sentinel import (
-    MicrosoftSentinelFieldValue,
+    MicrosoftSentinelFieldValueRender,
     MicrosoftSentinelQueryRender,
 )
 from app.translator.tools.utils import get_rule_description_str
@@ -41,7 +42,7 @@ _SEVERITIES_MAP = {
 }
 
 
-class MicrosoftSentinelRuleFieldValue(MicrosoftSentinelFieldValue):
+class MicrosoftSentinelRuleFieldValueRender(MicrosoftSentinelFieldValueRender):
     details: PlatformDetails = microsoft_sentinel_rule_details
 
 
@@ -49,7 +50,7 @@ class MicrosoftSentinelRuleFieldValue(MicrosoftSentinelFieldValue):
 class MicrosoftSentinelRuleRender(MicrosoftSentinelQueryRender):
     details: PlatformDetails = microsoft_sentinel_rule_details
     or_token = "or"
-    field_value_map = MicrosoftSentinelRuleFieldValue(or_token=or_token)
+    field_value_render = MicrosoftSentinelRuleFieldValueRender(or_token=or_token)
 
     def __create_mitre_threat(self, meta_info: MetaInfoContainer) -> tuple[list, list]:
         tactics = set()
@@ -91,7 +92,4 @@ class MicrosoftSentinelRuleRender(MicrosoftSentinelQueryRender):
         rule["tactics"] = mitre_tactics
         rule["techniques"] = mitre_techniques
         json_rule = json.dumps(rule, indent=4, sort_keys=False)
-        if not_supported_functions:
-            rendered_not_supported = self.render_not_supported_functions(not_supported_functions)
-            return json_rule + rendered_not_supported
-        return json_rule
+        return self.wrap_with_not_supported_functions(json_rule, not_supported_functions)

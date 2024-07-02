@@ -37,6 +37,27 @@ class Field:
         self.__generic_names_map = generic_names_map
 
 
+class PredefinedField:
+    def __init__(self, name: str):
+        self.name = name
+
+
+class FieldField:
+    def __init__(
+        self,
+        source_name_left: str,
+        operator: Identifier,
+        source_name_right: str,
+        is_alias_left: bool = False,
+        is_alias_right: bool = False,
+    ):
+        self.field_left = Field(source_name=source_name_left) if not is_alias_left else None
+        self.alias_left = Alias(name=source_name_left) if is_alias_left else None
+        self.operator = operator
+        self.field_right = Field(source_name=source_name_right) if not is_alias_right else None
+        self.alias_right = Alias(name=source_name_right) if is_alias_right else None
+
+
 class FieldValue:
     def __init__(
         self,
@@ -44,11 +65,14 @@ class FieldValue:
         operator: Identifier,
         value: Union[int, str, StrValue, list, tuple],
         is_alias: bool = False,
+        is_predefined_field: bool = False,
     ):
-        self.field = Field(source_name=source_name)
-        self.alias = None
-        if is_alias:
-            self.alias = Alias(name=source_name)
+        # mapped by platform fields mapping
+        self.field = Field(source_name=source_name) if not (is_alias or is_predefined_field) else None
+        # not mapped
+        self.alias = Alias(name=source_name) if is_alias else None
+        # mapped by platform predefined fields mapping
+        self.predefined_field = PredefinedField(name=source_name) if is_predefined_field else None
 
         self.operator = operator
         self.values = []
@@ -59,6 +83,11 @@ class FieldValue:
         if isinstance(self.values, list) and len(self.values) == 1:
             return self.values[0]
         return self.values
+
+    @value.setter
+    def value(self, new_value: Union[int, str, StrValue, list[Union[int, str, StrValue]]]) -> None:
+        self.values = []
+        self.__add_value(new_value)
 
     def __add_value(self, value: Optional[Union[int, str, StrValue, list, tuple]]) -> None:
         if value and isinstance(value, (list, tuple)):
@@ -75,10 +104,13 @@ class FieldValue:
             self.values.append(value)
 
     def __repr__(self):
-        if self.field:
-            return f"{self.field.source_name} {self.operator.token_type} {self.values}"
+        if self.alias:
+            return f"{self.alias.name} {self.operator.token_type} {self.values}"
 
-        return f"{self.alias.name} {self.operator.token_type} {self.values}"
+        if self.predefined_field:
+            return f"{self.predefined_field.name} {self.operator.token_type} {self.values}"
+
+        return f"{self.field.source_name} {self.operator.token_type} {self.values}"
 
 
 class Keyword:

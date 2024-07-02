@@ -13,9 +13,12 @@ field_mapping:
   dst-port:
     - DstPort
     - DestinationPort
+    - remoteport
   dst-hostname: DstHost
   src-hostname: SrcHost
-  src-port: SourcePort
+  src-port:
+    - SourcePort
+    - localport
   src-ip:
     - sourceip
     - source_ip
@@ -27,11 +30,14 @@ field_mapping:
     - destination_ip
     - destinationIP
     - destinationaddress
+    - destination
   User:
     - userName
     - EventUserName
   CommandLine: Command
-  Protocol: IPProtocol
+  Protocol: 
+    - IPProtocol
+    - protocol
   Application:
     - Application
     - application
@@ -39,10 +45,12 @@ field_mapping:
     - HostCount-source
     - identityHostName
     - sourceAssetName
+    - HostCount-src
   DestinationHostname:
     - HostCount-destination
     - Recipient Host
     - DestinationHostName
+    - HostCount-dst
   src-packets:
     - PacketRatio-src
     - src-packets
@@ -51,10 +59,13 @@ field_mapping:
     - dst-packets
   src-bytes: src-bytes
   dst-bytes: dst-bytes
-  ExternalSeverity: External Severity
+  ExternalSeverity:
+    - External Severity
+    - Observeit Severity
   SourceMAC:
     - SourceMAC
     - MAC
+    - sourceMAC
   DestinationMAC: DestinationMAC
   SourceOS:
     - SourceOS
@@ -63,3 +74,7 @@ field_mapping:
   TargetUserName: DestinationUserName
   SourceUserName: SourceUserName
   url_category: XForceCategoryByURL
+  EventSeverity: EventSeverity
+  Source:
+    - Source
+    - source

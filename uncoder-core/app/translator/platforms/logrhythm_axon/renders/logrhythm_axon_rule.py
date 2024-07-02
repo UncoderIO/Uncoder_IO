@@ -16,6 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 import copy
 import json
 from typing import Optional
@@ -28,7 +29,7 @@ from app.translator.managers import render_manager
 from app.translator.platforms.logrhythm_axon.const import DEFAULT_LOGRHYTHM_AXON_RULE, logrhythm_axon_rule_details
 from app.translator.platforms.logrhythm_axon.escape_manager import logrhythm_rule_escape_manager
 from app.translator.platforms.logrhythm_axon.renders.logrhythm_axon_query import (
-    LogRhythmAxonFieldValue,
+    LogRhythmAxonFieldValueRender,
     LogRhythmAxonQueryRender,
 )
 from app.translator.tools.utils import get_rule_description_str
@@ -43,7 +44,7 @@ _SEVERITIES_MAP = {
 }
 
 
-class LogRhythmAxonRuleFieldValue(LogRhythmAxonFieldValue):
+class LogRhythmAxonRuleFieldValueRender(LogRhythmAxonFieldValueRender):
     details: PlatformDetails = logrhythm_axon_rule_details
     escape_manager = logrhythm_rule_escape_manager
 
@@ -52,7 +53,7 @@ class LogRhythmAxonRuleFieldValue(LogRhythmAxonFieldValue):
 class LogRhythmAxonRuleRender(LogRhythmAxonQueryRender):
     details: PlatformDetails = logrhythm_axon_rule_details
     or_token = "or"
-    field_value_map = LogRhythmAxonRuleFieldValue(or_token=or_token)
+    field_value_render = LogRhythmAxonRuleFieldValueRender(or_token=or_token)
 
     def finalize_query(
         self,
@@ -92,7 +93,4 @@ class LogRhythmAxonRuleRender(LogRhythmAxonQueryRender):
             ]
 
         json_rule = json.dumps(rule, indent=4, sort_keys=False)
-        if not_supported_functions:
-            rendered_not_supported = self.render_not_supported_functions(not_supported_functions)
-            return json_rule + rendered_not_supported
-        return json_rule
+        return self.wrap_with_not_supported_functions(json_rule, not_supported_functions)

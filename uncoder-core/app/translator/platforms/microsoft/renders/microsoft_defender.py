@@ -23,12 +23,12 @@ from app.translator.platforms.microsoft.const import microsoft_defender_details
 from app.translator.platforms.microsoft.functions import MicrosoftFunctions, microsoft_defender_functions
 from app.translator.platforms.microsoft.mapping import MicrosoftDefenderMappings, microsoft_defender_mappings
 from app.translator.platforms.microsoft.renders.microsoft_sentinel import (
-    MicrosoftSentinelFieldValue,
+    MicrosoftSentinelFieldValueRender,
     MicrosoftSentinelQueryRender,
 )
 
 
-class MicrosoftDefenderFieldValue(MicrosoftSentinelFieldValue):
+class MicrosoftDefenderFieldValueRender(MicrosoftSentinelFieldValueRender):
     details: PlatformDetails = microsoft_defender_details
 
 
@@ -36,8 +36,12 @@ class MicrosoftDefenderFieldValue(MicrosoftSentinelFieldValue):
 class MicrosoftDefenderQueryRender(MicrosoftSentinelQueryRender):
     mappings: MicrosoftDefenderMappings = microsoft_defender_mappings
     details: PlatformDetails = microsoft_defender_details
-    platform_functions: MicrosoftFunctions = microsoft_defender_functions
+    platform_functions: MicrosoftFunctions = None
     or_token = "or"
-    field_value_map = MicrosoftDefenderFieldValue(or_token=or_token)
+    field_value_render = MicrosoftDefenderFieldValueRender(or_token=or_token)
 
     is_strict_mapping = True
+
+    def init_platform_functions(self) -> None:
+        self.platform_functions = microsoft_defender_functions
+        self.platform_functions.platform_query_render = self

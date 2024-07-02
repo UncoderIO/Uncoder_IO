@@ -16,17 +16,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.values import ValueType
-from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
+from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
 from app.translator.core.str_value_manager import StrValue
 from app.translator.platforms.base.aql.mapping import AQLLogSourceSignature, AQLMappings, aql_mappings
 from app.translator.platforms.base.aql.str_value_manager import aql_str_value_manager
 
 
-class AQLFieldValue(BaseQueryFieldValue):
+class AQLFieldValueRender(BaseFieldValueRender):
     str_value_manager = aql_str_value_manager
 
     @staticmethod
@@ -126,9 +127,6 @@ class AQLQueryRender(PlatformQueryRender):
     and_token = "AND"
     not_token = "NOT"
 
-    field_value_map = AQLFieldValue(or_token=or_token)
-    query_pattern = "{prefix} AND {query} {functions}"
-
     def generate_prefix(self, log_source_signature: AQLLogSourceSignature, functions_prefix: str = "") -> str:  # noqa: ARG002
         table = str(log_source_signature)
         extra_condition = log_source_signature.extra_condition
@@ -136,3 +134,7 @@ class AQLQueryRender(PlatformQueryRender):
 
     def wrap_with_comment(self, value: str) -> str:
         return f"/* {value} */"
+
+    @staticmethod
+    def _finalize_search_query(query: str) -> str:
+        return f"AND {query}" if query else ""

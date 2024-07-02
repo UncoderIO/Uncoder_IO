@@ -16,20 +16,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.exceptions.render import UnsupportedRenderMethod
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
+from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
 from app.translator.managers import render_manager
 from app.translator.platforms.chronicle.const import chronicle_query_details
 from app.translator.platforms.chronicle.escape_manager import chronicle_escape_manager
 from app.translator.platforms.chronicle.mapping import ChronicleMappings, chronicle_mappings
 
 
-class ChronicleFieldValue(BaseQueryFieldValue):
+class ChronicleFieldValueRender(BaseFieldValueRender):
     details: PlatformDetails = chronicle_query_details
     escape_manager = chronicle_escape_manager
 
@@ -108,7 +109,6 @@ class ChronicleQueryRender(PlatformQueryRender):
     and_token = "and"
     not_token = "not"
 
-    field_value_map = ChronicleFieldValue(or_token=or_token)
-    query_pattern = "{query} {functions}"
+    field_value_render = ChronicleFieldValueRender(or_token=or_token)
     comment_symbol = "//"
     is_single_line_comment = True

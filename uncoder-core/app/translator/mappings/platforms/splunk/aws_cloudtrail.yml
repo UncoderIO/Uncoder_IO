@@ -3,10 +3,10 @@ source: aws_cloudtrail
 
 
 log_source:
-  source_type: [aws:cloudtrail]
+  sourcetype: [aws:cloudtrail]
 
 default_log_source:
-  source_type: aws:cloudtrail
+  sourcetype: aws:cloudtrail
 
 field_mapping:
   eventSource: eventSource

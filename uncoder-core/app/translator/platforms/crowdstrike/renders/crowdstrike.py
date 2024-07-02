@@ -16,29 +16,29 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.managers import render_manager
-from app.translator.platforms.base.spl.renders.spl import SplFieldValue, SplQueryRender
+from app.translator.platforms.base.spl.renders.spl import SplFieldValueRender, SplQueryRender
 from app.translator.platforms.crowdstrike.const import crowdstrike_query_details
 from app.translator.platforms.crowdstrike.functions import CrowdStrikeFunctions, crowd_strike_functions
 from app.translator.platforms.crowdstrike.mapping import CrowdstrikeMappings, crowdstrike_mappings
 
 
-class CrowdStrikeFieldValue(SplFieldValue):
+class CrowdStrikeFieldValueRender(SplFieldValueRender):
     details = crowdstrike_query_details
 
 
 @render_manager.register
 class CrowdStrikeQueryRender(SplQueryRender):
     details: PlatformDetails = crowdstrike_query_details
-    query_pattern = "{prefix} {query} {functions}"
     mappings: CrowdstrikeMappings = crowdstrike_mappings
-    platform_functions: CrowdStrikeFunctions = crowd_strike_functions
+    platform_functions: CrowdStrikeFunctions = None
 
     or_token = "OR"
-    field_value_map = CrowdStrikeFieldValue(or_token=or_token)
+    field_value_render = CrowdStrikeFieldValueRender(or_token=or_token)
     comment_symbol = "`"
 
-    def __init__(self):
-        super().__init__()
-        self.platform_functions.manager.post_init_configure(self)
+    def init_platform_functions(self) -> None:
+        self.platform_functions = crowd_strike_functions
+        self.platform_functions.platform_query_render = self

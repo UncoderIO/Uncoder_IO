@@ -16,13 +16,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from typing import Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer
-from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
+from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
 from app.translator.managers import render_manager
 from app.translator.platforms.logscale.const import logscale_query_details
 from app.translator.platforms.logscale.escape_manager import logscale_escape_manager
@@ -30,7 +31,7 @@ from app.translator.platforms.logscale.functions import LogScaleFunctions, log_s
 from app.translator.platforms.logscale.mapping import LogScaleMappings, logscale_mappings
 
 
-class LogScaleFieldValue(BaseQueryFieldValue):
+class LogScaleFieldValueRender(BaseFieldValueRender):
     details: PlatformDetails = logscale_query_details
     escape_manager = logscale_escape_manager
 
@@ -95,18 +96,17 @@ class LogScaleFieldValue(BaseQueryFieldValue):
 class LogScaleQueryRender(PlatformQueryRender):
     details: PlatformDetails = logscale_query_details
     mappings: LogScaleMappings = logscale_mappings
-    platform_functions: LogScaleFunctions = log_scale_functions
+    platform_functions: LogScaleFunctions = None
 
     or_token = "or"
     and_token = ""
     not_token = "not"
 
-    field_value_map = LogScaleFieldValue(or_token=or_token)
-    query_pattern = "{prefix} {query} {functions}"
+    field_value_render = LogScaleFieldValueRender(or_token=or_token)
 
-    def __init__(self):
-        super().__init__()
-        self.platform_functions.manager.post_init_configure(self)
+    def init_platform_functions(self) -> None:
+        self.platform_functions = log_scale_functions
+        self.platform_functions.platform_query_render = self
 
     def wrap_with_comment(self, value: str) -> str:
         return f"/* {value} */"
@@ -122,12 +122,6 @@ class LogScaleQueryRender(PlatformQueryRender):
         *args,  # noqa: ARG002
         **kwargs,  # noqa: ARG002
     ) -> str:
-        if prefix:
-            query = self.query_pattern.format(prefix=prefix, query=query, functions=functions)
-        else:
-            query = f"{query} {functions.lstrip()}"
-        query = self.wrap_query_with_meta_info(meta_info=meta_info, query=query)
-        if not_supported_functions:
-            rendered_not_supported = self.render_not_supported_functions(not_supported_functions)
-            return query + rendered_not_supported
-        return query
+        query = super().finalize_query(prefix=prefix, query=query, functions=functions)
+        query = self.wrap_with_meta_info(query, meta_info)
+        return self.wrap_with_not_supported_functions(query, not_supported_functions)

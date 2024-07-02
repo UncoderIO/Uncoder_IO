@@ -9,7 +9,9 @@ default_log_source:
   devicetype: 12
 
 field_mapping:
-  EventID: Event ID
+  EventID:
+    - Event ID
+    - EventID
   ParentImage: Parent Process Path
   AccessMask: AccessMask
   AccountName: Account Name
@@ -22,13 +24,16 @@ field_mapping:
   ComputerName: 
     - Machine Identifier
     - Hostname
+    - identityNetBiosName
   EventType: EventType
   FailureReason: FailureReason
   FileName: Filename
   GrantedAccess: GrantedAccess
   Hashes: File Hash
   HiveName: HiveName
-  IpAddress: 
+  IpAddress:
+    - sourceIP
+    - SourceIP
     - sourceip
     - identityIP
   IpPort: sourceport
@@ -41,9 +46,11 @@ field_mapping:
   LinkName: LinkName
   MemberName: MemberName
   MemberSid: MemberSid
-  NewProcessName: Process Name
+  NewProcessName: 
+    - Process Name
+    - New Process Name
   ObjectClass: ObjectClass
-  ObjectName: 
+  ObjectName:
     - Object Name
     - objectname
     - MSFileObjectName
@@ -74,6 +81,7 @@ field_mapping:
   GroupMembership: 
     - GroupMembership
     - GroupName
+    - Group Name
   FilterName: FilterName
   ChangeType: ChangeType
   LayerName: LayerName
@@ -93,7 +101,9 @@ field_mapping:
   TargetServerName: TargetServerName
   NewTargetUserName: NewTargetUserName
   OperationType: OperationType
-  DestPort: destinationport
+  DestPort:
+    - destinationport
+    - DstPort
   ServiceStartType: ServiceStartType
   OldTargetUserName: OldTargetUserName
   UserPrincipalName: UserPrincipalName
@@ -102,7 +112,10 @@ field_mapping:
   DisableIntegrityChecks: DisableIntegrityChecks
   AuditSourceName: AuditSourceName
   Workstation: Machine Identifier
-  DestAddress: destinationip
+  DestAddress:
+    - destinationip
+    - DestinationIP
+    - destinationaddress
   PreAuthType: PreAuthType
   SecurityPackageName: SecurityPackageName
   SubjectLogonId: SubjectLogonId
@@ -122,6 +135,7 @@ field_mapping:
   ServiceFileName: 
     - Service Filename
     - ServiceFileName
+    - Service File Name
   SecurityDescriptor: SecurityDescriptor
   ServiceName: Service Name
   ShareName: 
@@ -130,6 +144,9 @@ field_mapping:
   NewValue: NewValue
   Source: Source
   Status: Status
+  SubjectAccountName: 
+    - Subject Account Name
+    - SubjectAccountName
   SubjectDomainName: SubjectDomainName
   SubjectUserName: Target Username
   SubjectUserSid: SubjectUserSid
@@ -144,6 +161,8 @@ field_mapping:
   TargetSid: TargetSid
   TargetUserName: 
     - Target Username
+    - User
+    - userName
     - Target User Name
   ObjectServer: ObjectServer
   TargetUserSid: TargetUserSid
@@ -172,4 +191,3 @@ field_mapping:
   ParentProcessName: Parent Process Name
   Service: Service
   hasIdentity: hasIdentity
-  SubjectAccountName: SubjectAccountName

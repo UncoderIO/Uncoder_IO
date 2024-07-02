@@ -25,8 +25,8 @@ from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, SourceMapping
 from app.translator.core.models.field import FieldValue, Keyword
-from app.translator.core.models.query_container import TokenizedQueryContainer, RawQueryContainer
 from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.render import QueryRender
 from app.translator.core.str_value_manager import StrValue
 from app.translator.managers import render_manager
@@ -281,10 +281,10 @@ class SigmaRender(QueryRender):
 
         return self.mappings.get_source_mapping(DEFAULT_MAPPING_NAME)
 
-    def _generate_from_raw_query_container(self, query_container: RawQueryContainer) -> str:
+    def generate_from_raw_query_container(self, query_container: RawQueryContainer) -> str:
         raise NotImplementedError
 
-    def _generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
+    def generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
         self.reset_counters()
 
         meta_info = query_container.meta_info
@@ -316,6 +316,6 @@ class SigmaRender(QueryRender):
 
     def generate(self, query_container: Union[RawQueryContainer, TokenizedQueryContainer]) -> str:
         if isinstance(query_container, RawQueryContainer):
-            return self._generate_from_raw_query_container(query_container)
+            return self.generate_from_raw_query_container(query_container)
 
-        return self._generate_from_tokenized_query_container(query_container)
+        return self.generate_from_tokenized_query_container(query_container)

@@ -16,16 +16,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.managers import render_manager
-from app.translator.platforms.base.aql.renders.aql import AQLFieldValue, AQLQueryRender
+from app.translator.platforms.base.aql.renders.aql import AQLFieldValueRender, AQLQueryRender
 from app.translator.platforms.qradar.const import qradar_query_details
 
 
-class QradarFieldValue(AQLFieldValue):
+class QradarFieldValueRender(AQLFieldValueRender):
     details: PlatformDetails = qradar_query_details
 
 
 @render_manager.register
 class QradarQueryRender(AQLQueryRender):
     details: PlatformDetails = qradar_query_details
+    field_value_render = QradarFieldValueRender(or_token=AQLQueryRender.or_token)
