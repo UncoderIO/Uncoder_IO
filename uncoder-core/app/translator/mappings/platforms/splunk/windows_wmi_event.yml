@@ -3,10 +3,10 @@ source: windows_wmi_event
 
 
 log_source:
-  source_type: [XmlWinEventLog:Microsoft-Windows-WMI-Activity/Operational]
+  sourcetype: [XmlWinEventLog:Microsoft-Windows-WMI-Activity/Operational]
 
 default_log_source:
-  source_type: XmlWinEventLog:Microsoft-Windows-WMI-Activity/Operational
+  sourcetype: XmlWinEventLog:Microsoft-Windows-WMI-Activity/Operational
 
 field_mapping:
   Destination: Destination

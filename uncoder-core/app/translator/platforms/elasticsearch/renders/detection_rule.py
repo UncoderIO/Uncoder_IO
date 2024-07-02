@@ -50,7 +50,7 @@ class ElasticSearchRuleRender(ElasticSearchQueryRender):
     and_token = "AND"
     not_token = "NOT"
 
-    field_value_map = ElasticSearchRuleFieldValue(or_token=or_token)
+    field_value_render = ElasticSearchRuleFieldValue(or_token=or_token)
 
     def __create_mitre_threat(self, mitre_attack: dict) -> Union[list, list[dict]]:
         if not mitre_attack.get("techniques"):
@@ -109,7 +109,4 @@ class ElasticSearchRuleRender(ElasticSearchQueryRender):
             }
         )
         rule_str = json.dumps(rule, indent=4, sort_keys=False, ensure_ascii=False)
-        if not_supported_functions:
-            rendered_not_supported = self.render_not_supported_functions(not_supported_functions)
-            return rule_str + rendered_not_supported
-        return rule_str
+        return self.wrap_with_not_supported_functions(rule_str, not_supported_functions)

@@ -3,10 +3,10 @@ source: azure_BehaviorAnalytics
 
 
 log_source:
-  source_type: [azure:*]
+  sourcetype: [azure:*]
 
 default_log_source:
-  source_type: azure:*
+  sourcetype: azure:*
 
 field_mapping:
   ActionType: ActionType

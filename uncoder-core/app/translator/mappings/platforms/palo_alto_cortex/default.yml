@@ -125,3 +125,4 @@ field_mapping:
   SourceOS: xdm.source.host.os
   DestinationOS: xdm.target.host.os
   url_category: xdm.network.http.url_category
+  EventSeverity: xdm.alert.severity
