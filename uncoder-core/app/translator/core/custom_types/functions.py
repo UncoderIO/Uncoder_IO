@@ -15,6 +15,7 @@ class FunctionType(CustomEnum):
     latest = "latest"
 
     divide = "divide"
+    multiply = "multiply"
 
     lower = "lower"
     split = "split"
@@ -28,6 +29,7 @@ class FunctionType(CustomEnum):
     bin = "bin"
     eval = "eval"
     fields = "fields"
+    iploc = "iploc"
     join = "join"
     rename = "rename"
     search = "search"

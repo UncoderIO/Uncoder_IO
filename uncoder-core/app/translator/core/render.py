@@ -31,7 +31,7 @@ from app.translator.core.exceptions.core import NotImplementedException, StrictP
 from app.translator.core.exceptions.parser import UnsupportedOperatorException
 from app.translator.core.functions import PlatformFunctions
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
-from app.translator.core.models.field import Field, FieldField, FieldValue, Keyword
+from app.translator.core.models.field import Field, FieldField, FieldValue, Keyword, PredefinedField
 from app.translator.core.models.functions.base import Function, RenderedFunctions
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.platform_details import PlatformDetails
@@ -218,7 +218,8 @@ class PlatformQueryRender(QueryRender):
     field_field_render = BaseFieldFieldRender()
     field_value_render = BaseFieldValueRender(or_token=or_token)
 
-    raw_log_field_pattern_map: ClassVar[dict[str, str]] = None
+    predefined_fields_map: ClassVar[dict[str, str]] = {}
+    raw_log_field_patterns_map: ClassVar[dict[str, str]] = {}
 
     def __init__(self):
         super().__init__()
@@ -248,9 +249,23 @@ class PlatformQueryRender(QueryRender):
 
         return mapped_field if mapped_field else [generic_field_name] if generic_field_name else [field.source_name]
 
+    def map_predefined_field(self, predefined_field: PredefinedField) -> str:
+        if not (mapped_predefined_field_name := self.predefined_fields_map.get(predefined_field.name)):
+            if self.is_strict_mapping:
+                raise StrictPlatformException(field_name=predefined_field.name, platform_name=self.details.name)
+
+            return predefined_field.name
+
+        return mapped_predefined_field_name
+
     def apply_token(self, token: Union[FieldValue, Keyword, Identifier], source_mapping: SourceMapping) -> str:
         if isinstance(token, FieldValue):
-            mapped_fields = [token.alias.name] if token.alias else self.map_field(token.field, source_mapping)
+            if token.alias:
+                mapped_fields = [token.alias.name]
+            elif token.predefined_field:
+                mapped_fields = [self.map_predefined_field(token.predefined_field)]
+            else:
+                mapped_fields = self.map_field(token.field, source_mapping)
             joined = self.logical_operators_map[LogicalOperatorType.OR].join(
                 [
                     self.field_value_render.apply_field_value(field=field, operator=token.operator, value=token.value)
@@ -365,7 +380,7 @@ class PlatformQueryRender(QueryRender):
         )
 
     def process_raw_log_field(self, field: str, field_type: str) -> Optional[str]:
-        if raw_log_field_pattern := self.raw_log_field_pattern_map.get(field_type):
+        if raw_log_field_pattern := self.raw_log_field_patterns_map.get(field_type):
             return raw_log_field_pattern.format(field=field)
 
     def process_raw_log_field_prefix(self, field: str, source_mapping: SourceMapping) -> Optional[list]:
@@ -379,7 +394,7 @@ class PlatformQueryRender(QueryRender):
             return [self.process_raw_log_field(field=field, field_type=raw_log_field_type)]
 
     def generate_raw_log_fields(self, fields: list[Field], source_mapping: SourceMapping) -> str:
-        if self.raw_log_field_pattern_map is None:
+        if not self.raw_log_field_patterns_map:
             return ""
         defined_raw_log_fields = []
         for field in fields:

@@ -11,10 +11,13 @@ default_log_source:
 field_mapping:
   src-ip:
     - sourceip
+    - sourceIP
+    - SourceIP
     - SrcHost
     - LocalHost
     - Source
     - NetworkView
+    - HostName
   src-port:
     - sourceport
     - SrcPort

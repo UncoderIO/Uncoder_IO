@@ -332,12 +332,12 @@ class QueryTokenizer(BaseTokenizer):
             if isinstance(arg, Field):
                 result.append(arg)
             elif isinstance(arg, FieldField):
-                if not arg.alias_left or arg.alias_left.name != arg.field_left.source_name:
+                if arg.field_left:
                     result.append(arg.field_left)
-                if not arg.alias_right or arg.alias_right.name != arg.field_right.source_name:
+                if arg.field_right:
                     result.append(arg.field_right)
             elif isinstance(arg, FieldValue):
-                if not arg.alias or arg.alias.name != arg.field.source_name:
+                if arg.field:
                     result.append(arg.field)
             elif isinstance(arg, GroupByFunction):
                 result.extend(self.get_field_tokens_from_func_args(args=arg.args))
