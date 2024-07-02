@@ -429,13 +429,13 @@ class PlatformQueryRender(QueryRender):
                 finalized_query = self._generate_from_tokenized_query_container_by_source_mapping(
                     query_container, source_mapping
                 )
+                if return_only_first_query_ctx_var.get() is True:
+                    return finalized_query
+                queries_map[source_mapping.source_id] = finalized_query
             except StrictPlatformException as err:
                 errors.append(err)
                 continue
 
-            if return_only_first_query_ctx_var.get() is True:
-                return finalized_query
-            queries_map[source_mapping.source_id] = finalized_query
         if not queries_map and errors:
             raise errors[0]
         return self.finalize(queries_map)

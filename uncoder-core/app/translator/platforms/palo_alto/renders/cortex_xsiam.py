@@ -16,7 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-
+from contextlib import suppress
 from typing import ClassVar, Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
@@ -229,23 +229,26 @@ class CortexXQLQueryRender(PlatformQueryRender):
         errors = []
         source_mappings = self._get_source_mappings(query_container.meta_info.source_mapping_ids)
 
-        for source_mapping in source_mappings:
+        last_mapping_index = len(source_mappings) - 1
+        for index, source_mapping in enumerate(source_mappings):
             try:
                 finalized_query = self._generate_from_tokenized_query_container_by_source_mapping(
                     query_container, source_mapping
                 )
+                if return_only_first_query_ctx_var.get() is True:
+                    return finalized_query
+                queries_map[source_mapping.source_id] = finalized_query
             except StrictPlatformException as err:
-                if source_mapping.source_id != DEFAULT_MAPPING_NAME:
-                    errors.append(err)
+                errors.append(err)
+                if index != last_mapping_index or source_mapping.source_id == DEFAULT_MAPPING_NAME or queries_map:
                     continue
 
-                finalized_query = self._generate_from_tokenized_query_container_by_source_mapping(
-                    query_container, self.mappings.get_source_mapping(DEFAULT_MAPPING_NAME)
-                )
+                with suppress(StrictPlatformException):
+                    finalized_query = self._generate_from_tokenized_query_container_by_source_mapping(
+                        query_container, self.mappings.get_source_mapping(DEFAULT_MAPPING_NAME)
+                    )
+                    queries_map[source_mapping.source_id] = finalized_query
 
-            if return_only_first_query_ctx_var.get() is True:
-                return finalized_query
-            queries_map[source_mapping.source_id] = finalized_query
         if not queries_map and errors:
             raise errors[0]
         return self.finalize(queries_map)
