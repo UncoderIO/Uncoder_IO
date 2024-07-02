@@ -145,128 +145,129 @@ class LogRhythmSiemRuleRender(LogRhythmSiemQueryRender):
 
 
     def pull_filter_item(self, f_type):
+        print(f'f_type passing to pull_filter item: {f_type}')
         if f_type == 'User (Origin)':
             f_type = 'Login'
         
         filter_type = {
-            'IDMGroupForAccount': 53,
-            'Address': 44,
-            'Amount': 64,
-            'Application': 97,
-            'MsgClass': 10,
-            'Command': 112,
-            'CommonEvent': 11,
-            'Direction': 2,
-            'Duration': 62,
-            'Group': 38,
+            'IDMGroupForAccount': [53, 2, 'User (Impacted) by Active Directory Group'],
+            'Address': [44, 11, 'Address (Sender or Recipient)'],
+            'Amount': [64, 10, 'Amount'],
+            'Application': [97, 11, 'PolyList Item'],
+            'MsgClass': [10, 2, 'Classification'],
+            'Command': [112, 4, 'Command'],
+            'CommonEvent': [11, 2, 'Common Event'],
+            'Direction': [2, 2, 'Direction'],
+            'Duration': [62, 10, 'Duration'],
+            'Group': [38, 11, 'Group'],
             'BytesIn': 58,
             'BytesOut': 59,
             'BytesInOut': 95,
             'DHost': 100,
-            'Host': 98,
+            'Host': [98, 11, 'PolyList Item'],
             'SHost': 99,
             'ItemsIn': 60,
             'ItemsOut': 61,
-            'ItemsInOut': 96,
+            'ItemsInOut': [96, 10, 'Host (Impacted) Packets Total'],
             'DHostName': 25,
-            'HostName': 23,
+            'HostName': [23, 4, 'HostName (Origin or Impacted)'],
             'SHostName': 24,
-            'KnownService': 16,
+            'KnownService': [16, 2, 'Known Application'],
             'DInterface': 108,
-            'Interface': 133,
+            'Interface': [133, 4, 'Interface (Origin or Impacted)'],
             'SInterface': 107,
             'DIP': 19,
-            'IP': 17,
+            'IP': [17, 5, 'IP Address (Origin or Impacted)'],
             'SIP': 18,
             'DIPRange': 22,
             'IPRange': 20,
             'SIPRange': 21,
             'KnownDHost': 15,
-            'KnownHost': 13,
+            'KnownHost': [13, 2, 'Known Host (Origin or Impacted)'],
             'KnownSHost': 14,
-            'Location': 87,
-            'SLocation': 85,
-            'DLocation': 86,
-            'MsgSource': 7,
-            'Entity': 6,
+            'Location': [87, 2, 'Location (Origin or Impacted)'],
+            'SLocation': [85, 2, 'Location (Origin)'],
+            'DLocation': [86, 2, 'Location (Impacted)'],
+            'MsgSource': [7, 2, 'Log Source'],
+            'Entity': [6, 2, 'Log Source Entity'],
             'RootEntity': 136,
-            'MsgSourceType': 9,
+            'MsgSourceType': [9, 2, 'Log Source Type'],
             'DMAC': 104,
-            'MAC': 132,
+            'MAC': [132, 4, 'MAC Address (Origin or Impacted)'],
             'SMAC': 103,
-            'Message': 35,
+            'Message': [35, 4, 'Log Message'],
             'MPERule': 12,
             'DNATIP': 106,
-            'NATIP': 126,
+            'NATIP': [126, 5, 'NAT IP Address (Origin or Impacted)'],
             'SNATIP': 105,
             'DNATIPRange': 125,
             'NATIPRange': 127,
             'SNATIPRange': 124,
             'DNATPort': 115,
-            'NATPort': 130,
+            'NATPort': [130, 2, 'NAT TCP/UDP Port (Origin or Impacted)'],
             'SNATPort': 114,
             'DNATPortRange': 129,
             'NATPortRange': 131,
             'SNATPortRange': 128,
             'DNetwork': 50,
-            'Network': 51,
+            'Network': [51, 2, 'Network (Origin or Impacted)'],
             'SNetwork': 49,
-            'Object': 34,
-            'ObjectName': 113,
+            'Object': [34, 11, 'Object'],
+            'ObjectName': [113, 4, 'Object Name'],
             'Login': 29,
-            'IDMGroupForLogin': 52,
-            'Priority': 3,
-            'Process': 41,
-            'PID': 109,
-            'Protocol': 28,
-            'Quantity': 63,
-            'Rate': 65,
-            'Recipient': 32,
-            'Sender': 31,
-            'Session': 40,
-            'Severity': 110,
-            'Size': 66,
-            'Subject': 33,
+            'IDMGroupForLogin': [52, 2, 'User (Origin) by Active Directory Group'],
+            'Priority': [3, 10, 'Risk Based Priority (RBP)'],
+            'Process': [41, 4, 'Process Name'],
+            'PID': [109, 2, 'Process ID'],
+            'Protocol': [28, 1, 'Protocol'],
+            'Quantity': [63, 10, 'Quantity'],
+            'Rate': [65, 10, 'Rate'],
+            'Recipient': [32, 11, 'Recipient'],
+            'Sender': [31, 11, 'Sender'],
+            'Session': [40, 4, 'Session'],
+            'Severity': [110, 4, 'Severity'],
+            'Size': [66, 10, 'Size'],
+            'Subject': [33, 4, 'Subject'],
             'DPort': 27,
-            'Port': 45,
+            'Port': [45,2, 'TCP/UDP Port (Origin or Impacted)'],
             'SPort': 26,
             'DPortRange': 47,
-            'PortRange': 48,
+            'PortRange': [48, 9, 'TCP/UDP Port Range (Origin or Impacted)'],
             'SPortRange': 46,
-            'URL': 42,
+            'URL': [42, 4, 'URL'],
             'Account': 30,
-            'User': 43,
-            'IDMGroupForUser': 54,
-            'VendorMsgID': 37,
-            'Version': 111,
+            'User': [43, 4, 'User (Origin or Impacted)'],
+            'IDMGroupForUser': [54, 2, 'User by Active Directory Group'],
+            'VendorMsgID': [37, 4, 'Vendor Message ID'],
+            'Version': [111, 4, 'Version'],
             'SZone': 93,
             'DZone': 94,
             'FilterGroup': 1000,
             'PolyListItem': 1001,
-            'Domain': 39,
-            'DomainOrigin': 137,
-            'Hash': 138,
-            'Policy': 139,
-            'VendorInfo': 140,
-            'Result': 141,
-            'ObjectType': 142,
-            'CVE': 143,
-            'UserAgent': 144,
-            'ParentProcessId': 145,
-            'ParentProcessName': 146,
-            'ParentProcessPath': 147,
-            'SerialNumber': 148,
-            'Reason': 149,
-            'Status': 150,
-            'ThreatId': 151,
-            'ThreatName': 152,
-            'SessionType': 153,
-            'Action': 154,
-            'ResponseCode': 155,
+            'Domain': [39, 11, 'Domain Impacted'],
+            'DomainOrigin': [137, 11, 'Domain Origin'],
+            'Hash': [138, 4, 'Hash'],
+            'Policy': [139, 4, 'Policy'],
+            'VendorInfo': [140, 4, 'Vendor Info'],
+            'Result': [141, 4, 'Result'],
+            'ObjectType': [142, 4, 'Object Type'],
+            'CVE': [143,11, 'CVE'],
+            'UserAgent': [144, 4, 'User Agent'],
+            'ParentProcessId': [145, 4, 'Parent Process ID'],
+            'ParentProcessName': [146, 4, 'Parent Process Name'],
+            'ParentProcessPath': [147, 4, 'Parent Process Path'],
+            'SerialNumber': [148, 4, 'Serial Number'],
+            'Reason': [149, 4, 'Reason'],
+            'Status': [150, 4, 'Status'],
+            'ThreatId': [151, 4, 'Threat ID'],
+            'ThreatName': [152, 4, 'Threat Name'],
+            'SessionType': [153, 4, 'Session Type'],
+            'Action': [154,13, 'Action'],
+            'ResponseCode': [155, 4, 'Response Code'],
             'UserOriginIdentityID': 167,
             'Identity': 160,
-            'UserImpactedIdentityID': 168,
-            'SenderIdentityID': 169,
+            'UserImpactedIdentityID': [168,2],
+            'SenderIdentityID': [169, 2, 'Sender Identity'],
             'RecipientIdentityID': 170
             }
 
@@ -312,19 +313,45 @@ class LogRhythmSiemRuleRender(LogRhythmSiemQueryRender):
                             # items = self.process_match(match)
                             field, value = match
                             f_t = self.field_translation(field)
+                            f_number = self.pull_filter_item(f_t)
+                            print(f'f_number: {f_number}')
                             port_list = [int(x.strip()) for x in value.split(',')]
+                            collected_values = []
                             for port in port_list:
-                                items.append({
-                                    "filterType": self.pull_filter_item(f_t),
-                                    "valueType": 4,
-                                    "value": {
-                                        "value": port,
-                                        "matchType": 0
-                                    },
-                                    "displayValue": f_t
+                                collected_values.append({
+                                    "filterType": f_number[0],
+                                    "valueType": f_number[1],
+                                    "value": port,
+                                    "displayValue": str(port)
                                 })
+                            items.append({
+                                "filterItemType": 0,
+                                "fieldOperator": 0,
+                                "filterMode": 1,
+                                "filterType": f_number[0],
+                                "values": collected_values,
+                                "name": f_number[2]
+                                # "name": f_t
+                            })
+                        # for port in port_list:
+                            #     items.append({
+                            #         "filterItemType": 0,
+                            #         "fieldOperator": 0,
+                            #         "filterMode": 1,
+                            #         "filterType": f_number[0],
+                            #         "values":[{
+                            #             "filterType": f_number[0],
+                            #             "valueType": f_number[1],
+                            #             "value": {
+                            #                 "value":port,
+                            #                 "matchType": 0
+                            #                 },
+                            #             "displayValue": str(port)
+                            #         }],
+                            #         "name": f_number[2]
+                            #         # "name": f_t
+                            #     })
                 elif 'CONTAINS' in sub_condition:
-                    print(f'CONTAINS sub_condition: {sub_condition}')
                     try:
                         matches = re.findall(r'(\w+\.\w+\.\w+) CONTAINS "([^"]+)"', sub_condition)[0]
                     except:
@@ -339,28 +366,45 @@ class LogRhythmSiemRuleRender(LogRhythmSiemQueryRender):
                         result = (match, s_c_filtered)
                         # result = (match, match + s_c_filtered)
                         f_t = self.field_translation(result[0])
+                        f_number = self.pull_filter_item(f_t)
                         v_t = result[1]
                         if result[0] in result[1]: 
                             v_t = v_t.replace(result[0],'')
                         items.append({
-                            "filterType": self.pull_filter_item(v_t),
-                            "valueType": 4,
-                            "value": {
-                                "value": result[1].replace('\\', '/'),
-                                "matchType": 0
-                            },
-                            "displayValue": f_t
+                            "filterItemType": 0,
+                            "fieldOperator": 0,
+                            "filterMode": 1,
+                            "filterType": f_number[0],
+                            "values":[{
+                                "filterType": f_number[0],
+                                "valueType": f_number[1],
+                                "value": {
+                                    "value":result[1].replace('\\', '/'),
+                                    "matchType": 0
+                                    },
+                                "displayValue": str(result[1].replace('\\', '/'))
+                            }],
+                            "name": f_number[2]
+                            # "name": f_t
                         })
                     if len(matches) == 2:
                         f_t = self.field_translation(matches[0])
+                        f_number = self.pull_filter_item(f_t)
                         items.append({
-                            "filterType": self.pull_filter_item(f_t),
-                            "valueType": 4,
-                            "value": {
-                                "value": matches[1].replace('\\', '/'),
-                                "matchType": 0
-                            },
-                            "displayValue": f_t
+                            "filterItemType": 0,
+                            "fieldOperator": 0,
+                            "filterMode": 1,
+                            "filterType": f_number[0],
+                            "values":[{
+                                "filterType": f_number[0],
+                                "valueType": f_number[1],
+                                "value": {
+                                    "value":matches[1].replace('\\', '/'),
+                                    "matchType": 0
+                                    },
+                                "displayValue": str(matches[1].replace('\\', '/'))
+                            }],
+                            "name": f_number[2]
                         })
                     else:
                         for match in matches:
@@ -368,7 +412,6 @@ class LogRhythmSiemRuleRender(LogRhythmSiemQueryRender):
                       
                 # Parse the sub_condition
                 elif 'AND' in sub_condition:
-                    print(f'AND sub_condition: {sub_condition} length={len(sub_condition)}')
                     matches = re.findall(r'(\w+\.\w+\.\w+) AND "([^"]+)"', sub_condition)
                     if not matches:
                         matches = re.findall(r'(\w+\.\w+\.\w+) matches ([^\s]+)', sub_condition)
@@ -378,14 +421,22 @@ class LogRhythmSiemRuleRender(LogRhythmSiemQueryRender):
                             f_t = self.field_translation(matches[0][0])
                             f_v = matches[0][1]
                             f_v = f_v.replace('\"','')
+                            f_number = self.pull_filter_item(f_t)
                             items.append({
-                                "filterType": self.pull_filter_item(f_t),
-                                "valueType": 4,
-                                "value": {
-                                    "value": f_v.replace('\\', '/'),
-                                    "matchType": 0
-                                },
-                                "displayValue": f_t
+                                "filterItemType": 0,
+                                "fieldOperator": 0,
+                                "filterMode": 1,
+                                "filterType": f_number[0],
+                                "values":[{
+                                    "filterType": f_number[0],
+                                    "valueType": f_number[1],
+                                    "value": {
+                                        "value": f_v.replace('\\', '/'),
+                                        "matchType": 0
+                                        },
+                                    "displayValue": str(f_v.replace('\\', '/'))
+                                }],
+                                "name": f_number[2]
                             })
                         else:
                             for match in matches:
@@ -411,7 +462,6 @@ class LogRhythmSiemRuleRender(LogRhythmSiemQueryRender):
                         matches = re.findall(r'object\.file\.name = "([^"]+)"', sub_condition)
                     if matches:
                         for match in matches:
-
                             items = self.process_match(match)
             except Exception as e:
                 print(f'Error processing sub_condition: {sub_condition}')
@@ -453,6 +503,7 @@ class LogRhythmSiemRuleRender(LogRhythmSiemQueryRender):
 
 
     def field_translation(self, field):
+        print(f'Field translation submission: {field}')
         if field == 'origin.account.name':
             field = 'User (Origin)'
         elif field == 'general_information.raw_message':
@@ -495,7 +546,7 @@ class LogRhythmSiemRuleRender(LogRhythmSiemQueryRender):
         elif field == 'action.network.byte_information.total':
             field = 'BytesInOut'
         elif field == 'object.process.name':
-            field = 'Application'
+            field = 'Process'
         elif field == 'action.duration':
             field = 'Duration'
         elif field == 'process.parent_process.path':
@@ -583,15 +634,35 @@ class LogRhythmSiemRuleRender(LogRhythmSiemQueryRender):
         # Clean if value is string, else just feed it through (could be port number)
         if isinstance(value, str):
             value = value.replace('\\', '/')
+        f_number = self.pull_filter_item(f_t)
+        # i = {
+        #         "filterType": self.pull_filter_item(f_t),
+        #         "valueType": 4,
+        #         "value": {
+        #             "value": value,
+        #             "matchType": 0
+        #         },
+        #         "displayValue": f_t
+        #     }
+
         i = {
-                "filterType": self.pull_filter_item(f_t),
-                "valueType": 4,
-                "value": {
-                    "value": value,
+            "filterItemType": 0,
+            "fieldOperator": 0,
+            "filterMode": 1,
+            "filterType": f_number[0],
+            "values":[
+                    {
+                "filterType": f_number[0],
+                "valueType": f_number[1],
+                "value": { 
+                    "value": value.replace('\\', '/'),
                     "matchType": 0
-                },
-                "displayValue": f_t
-            }
+                    },
+                "displayValue": str(value.replace('\\', '/'))
+                }
+            ],
+            "name": f_number[2]
+        }
         return i
     
         
