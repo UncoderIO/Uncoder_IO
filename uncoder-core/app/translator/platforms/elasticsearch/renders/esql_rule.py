@@ -42,6 +42,9 @@ class ESQLRuleRender(ESQLQueryRender):
     mappings: ElasticSearchMappings = elasticsearch_mappings
     mitre: MitreConfig = MitreConfig()
 
+    or_token = "or"
+    field_value_render = ESQLRuleFieldValueRender(or_token=or_token)
+
     def __create_mitre_threat(self, mitre_attack: dict) -> Union[list, list[dict]]:
         if not mitre_attack.get("techniques"):
             return []
