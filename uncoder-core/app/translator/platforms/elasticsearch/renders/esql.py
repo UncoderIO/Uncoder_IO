@@ -29,7 +29,7 @@ from app.translator.platforms.elasticsearch.mapping import ElasticSearchMappings
 from app.translator.platforms.elasticsearch.str_value_manager import ESQLStrValueManager, esql_str_value_manager
 
 
-class ESQLFieldValue(BaseFieldValueRender):
+class ESQLFieldValueRender(BaseFieldValueRender):
     details: PlatformDetails = elasticsearch_esql_query_details
     str_value_manager: ESQLStrValueManager = esql_str_value_manager
 
@@ -112,7 +112,7 @@ class ESQLQueryRender(PlatformQueryRender):
     or_token = "or"
     and_token = "and"
     not_token = "not"
-    field_value_render = ESQLFieldValue(or_token=or_token)
+    field_value_render = ESQLFieldValueRender(or_token=or_token)
 
     def generate_prefix(self, log_source_signature: LogSourceSignature, functions_prefix: str = "") -> str:  # noqa: ARG002
         table = str(log_source_signature) if str(log_source_signature) else "*"
