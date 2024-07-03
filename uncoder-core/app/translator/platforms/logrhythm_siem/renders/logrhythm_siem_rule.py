@@ -34,7 +34,8 @@ from app.translator.platforms.logrhythm_siem.const import DEFAULT_LOGRHYTHM_Siem
 from app.translator.platforms.logrhythm_siem.escape_manager import logrhythm_rule_escape_manager
 from app.translator.platforms.logrhythm_siem.renders.logrhythm_siem_query import (
     # LogRhythmSiemFieldValue
-    LogRhythmSiemFieldValue,
+    # LogRhythmSiemFieldValue,
+    LogRhythmSiemFieldValueRender,
     LogRhythmSiemQueryRender,
 )
 from app.translator.tools.utils import get_rule_description_str
@@ -49,7 +50,8 @@ _SEVERITIES_MAP = {
 }
 
 
-class LogRhythmSiemRuleFieldValue(LogRhythmSiemFieldValue):
+class LogRhythmSiemRuleFieldValue(LogRhythmSiemFieldValueRender):
+# class LogRhythmSiemRuleFieldValue(LogRhythmSiemFieldValue):
     details: PlatformDetails = logrhythm_siem_rule_details
     escape_manager = logrhythm_rule_escape_manager
 
@@ -145,7 +147,6 @@ class LogRhythmSiemRuleRender(LogRhythmSiemQueryRender):
 
 
     def pull_filter_item(self, f_type):
-        print(f'f_type passing to pull_filter item: {f_type}')
         if f_type == 'User (Origin)':
             f_type = 'Login'
         
@@ -314,7 +315,6 @@ class LogRhythmSiemRuleRender(LogRhythmSiemQueryRender):
                             field, value = match
                             f_t = self.field_translation(field)
                             f_number = self.pull_filter_item(f_t)
-                            print(f'f_number: {f_number}')
                             port_list = [int(x.strip()) for x in value.split(',')]
                             collected_values = []
                             for port in port_list:
@@ -452,7 +452,6 @@ class LogRhythmSiemRuleRender(LogRhythmSiemQueryRender):
                     else:
                         matches = re.findall(r'origin\.account\.name = "([^"]+)"', sub_condition)
                     if matches:
-                        print(f'origin.account.name -> {matches}')
                         for match in matches:
                             items = self.process_match(match)
                 elif 'object.file.name' in sub_condition or 'TargetFilename' in sub_condition:
@@ -467,7 +466,7 @@ class LogRhythmSiemRuleRender(LogRhythmSiemQueryRender):
                 print(f'Error processing sub_condition: {sub_condition}')
                 print(f'Error: {e}')
                 traceback.print_exc()
-        print(f'items END: {items}\nParsed_condition: {parsed_conditions}')
+        # print(f'items END: {items}\nParsed_condition: {parsed_conditions}')
         return items
     
 
@@ -484,7 +483,6 @@ class LogRhythmSiemRuleRender(LogRhythmSiemQueryRender):
         # Remove outer parentheses
         # Split the query into individual conditions
         query = re.sub(r'^\(\(|\)\)$', '', query)
-        print(f'Query Cleaned: {query}')
         conditions = re.split(r'\)\s*or \s*\(', query)
         parsed_conditions = []
 
@@ -503,7 +501,6 @@ class LogRhythmSiemRuleRender(LogRhythmSiemQueryRender):
 
 
     def field_translation(self, field):
-        print(f'Field translation submission: {field}')
         if field == 'origin.account.name':
             field = 'User (Origin)'
         elif field == 'general_information.raw_message':
@@ -595,13 +592,11 @@ class LogRhythmSiemRuleRender(LogRhythmSiemQueryRender):
                             # lr_TODO : clean value
                             new_value = match_obj.group(3)
                             current_match = (new_field, self.clean_value(new_value))
-                            print(f'keyword current_match len: {len(current_match)}\nvalue: {current_match}')
                             items.extend(self.item_append(current_match))
                 break
         else:
             # If no keywords are found, process the original match
             no_keywords = (field, value)
-            print(f'else item append no keyword:{no_keywords}')
             items.extend(self.item_append(no_keywords))
     
         return items
