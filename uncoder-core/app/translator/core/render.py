@@ -22,7 +22,7 @@ from collections.abc import Callable
 from typing import ClassVar, Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
-from app.translator.core.const import TOKEN_TYPE
+from app.translator.core.const import QUERY_TOKEN_TYPE
 from app.translator.core.context_vars import return_only_first_query_ctx_var, wrap_query_with_meta_info_ctx_var
 from app.translator.core.custom_types.tokens import LogicalOperatorType, OperatorType
 from app.translator.core.custom_types.values import ValueType
@@ -32,6 +32,7 @@ from app.translator.core.exceptions.parser import UnsupportedOperatorException
 from app.translator.core.functions import PlatformFunctions
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
 from app.translator.core.models.field import Field, FieldField, FieldValue, Keyword, PredefinedField
+from app.translator.core.models.function_value import FunctionValue
 from app.translator.core.models.functions.base import Function, RenderedFunctions
 from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.platform_details import PlatformDetails
@@ -258,7 +259,9 @@ class PlatformQueryRender(QueryRender):
 
         return mapped_predefined_field_name
 
-    def apply_token(self, token: Union[FieldValue, Keyword, Identifier], source_mapping: SourceMapping) -> str:
+    def apply_token(  # noqa: PLR0911
+        self, token: Union[FieldValue, Function, Keyword, Identifier], source_mapping: SourceMapping
+    ) -> str:
         if isinstance(token, FieldValue):
             if token.alias:
                 mapped_fields = [token.alias.name]
@@ -286,6 +289,12 @@ class PlatformQueryRender(QueryRender):
                 ]
             )
             return self.group_token % joined if len(cross_paired_fields) > 1 else joined
+        if isinstance(token, FunctionValue):
+            func_render = self.platform_functions.manager.get_in_query_render(token.function.name)
+            rendered_func = func_render.render(token.function, source_mapping)
+            return self.field_value_render.apply_field_value(
+                field=rendered_func, operator=token.operator, value=token.value
+            )
         if isinstance(token, Function):
             func_render = self.platform_functions.manager.get_in_query_render(token.name)
             return func_render.render(token, source_mapping)
@@ -296,7 +305,7 @@ class PlatformQueryRender(QueryRender):
 
         return token.token_type
 
-    def generate_query(self, tokens: list[TOKEN_TYPE], source_mapping: SourceMapping) -> str:
+    def generate_query(self, tokens: list[QUERY_TOKEN_TYPE], source_mapping: SourceMapping) -> str:
         result_values = []
         unmapped_fields = set()
         for token in tokens:
@@ -412,37 +421,45 @@ class PlatformQueryRender(QueryRender):
                         defined_raw_log_fields.append(prefix)
         return "\n".join(defined_raw_log_fields)
 
+    def _generate_from_tokenized_query_container_by_source_mapping(
+        self, query_container: TokenizedQueryContainer, source_mapping: SourceMapping
+    ) -> str:
+        rendered_functions = self.generate_functions(query_container.functions.functions, source_mapping)
+        prefix = self.generate_prefix(source_mapping.log_source_signature, rendered_functions.rendered_prefix)
+
+        if source_mapping.raw_log_fields:
+            defined_raw_log_fields = self.generate_raw_log_fields(
+                fields=query_container.meta_info.query_fields, source_mapping=source_mapping
+            )
+            prefix += f"\n{defined_raw_log_fields}"
+        query = self.generate_query(tokens=query_container.tokens, source_mapping=source_mapping)
+        not_supported_functions = query_container.functions.not_supported + rendered_functions.not_supported
+        return self.finalize_query(
+            prefix=prefix,
+            query=query,
+            functions=rendered_functions.rendered,
+            not_supported_functions=not_supported_functions,
+            meta_info=query_container.meta_info,
+            source_mapping=source_mapping,
+        )
+
     def generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
         queries_map = {}
         errors = []
         source_mappings = self._get_source_mappings(query_container.meta_info.source_mapping_ids)
 
         for source_mapping in source_mappings:
-            rendered_functions = self.generate_functions(query_container.functions.functions, source_mapping)
-            prefix = self.generate_prefix(source_mapping.log_source_signature, rendered_functions.rendered_prefix)
             try:
-                if source_mapping.raw_log_fields:
-                    defined_raw_log_fields = self.generate_raw_log_fields(
-                        fields=query_container.meta_info.query_fields, source_mapping=source_mapping
-                    )
-                    prefix += f"\n{defined_raw_log_fields}"
-                result = self.generate_query(tokens=query_container.tokens, source_mapping=source_mapping)
-            except StrictPlatformException as err:
-                errors.append(err)
-                continue
-            else:
-                not_supported_functions = query_container.functions.not_supported + rendered_functions.not_supported
-                finalized_query = self.finalize_query(
-                    prefix=prefix,
-                    query=result,
-                    functions=rendered_functions.rendered,
-                    not_supported_functions=not_supported_functions,
-                    meta_info=query_container.meta_info,
-                    source_mapping=source_mapping,
+                finalized_query = self._generate_from_tokenized_query_container_by_source_mapping(
+                    query_container, source_mapping
                 )
                 if return_only_first_query_ctx_var.get() is True:
                     return finalized_query
                 queries_map[source_mapping.source_id] = finalized_query
+            except StrictPlatformException as err:
+                errors.append(err)
+                continue
+
         if not queries_map and errors:
             raise errors[0]
         return self.finalize(queries_map)

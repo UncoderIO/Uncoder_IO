@@ -18,8 +18,7 @@ import re
 from typing import Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
-from app.translator.core.const import TOKEN_TYPE
-from app.translator.core.context_vars import return_only_first_query_ctx_var
+from app.translator.core.const import QUERY_TOKEN_TYPE
 from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.custom_types.tokens import GroupType, LogicalOperatorType, OperatorType
 from app.translator.core.custom_types.values import ValueType
@@ -197,7 +196,7 @@ class FortiSiemRuleRender(PlatformQueryRender):
     field_value_render = FortiSiemFieldValueRender(or_token=or_token)
 
     @staticmethod
-    def __is_negated_token(prev_token: TOKEN_TYPE) -> bool:
+    def __is_negated_token(prev_token: QUERY_TOKEN_TYPE) -> bool:
         return isinstance(prev_token, Identifier) and prev_token.token_type == LogicalOperatorType.NOT
 
     @staticmethod
@@ -208,7 +207,7 @@ class FortiSiemRuleRender(PlatformQueryRender):
         return is_negated_token or negation_ctx
 
     @staticmethod
-    def __negate_token(token: TOKEN_TYPE) -> None:
+    def __negate_token(token: QUERY_TOKEN_TYPE) -> None:
         if isinstance(token, Identifier):
             if token.token_type == LogicalOperatorType.AND:
                 token.token_type = LogicalOperatorType.OR
@@ -218,7 +217,7 @@ class FortiSiemRuleRender(PlatformQueryRender):
             token_type = token.operator.token_type
             token.operator.token_type = _NOT_OPERATORS_MAP_SUBSTITUTES.get(token_type) or token_type
 
-    def __replace_not_tokens(self, tokens: list[TOKEN_TYPE]) -> list[TOKEN_TYPE]:
+    def __replace_not_tokens(self, tokens: list[QUERY_TOKEN_TYPE]) -> list[QUERY_TOKEN_TYPE]:
         not_token_indices = []
         negation_ctx_stack = []
         for index, token in enumerate(tokens[1:], start=1):
@@ -244,40 +243,33 @@ class FortiSiemRuleRender(PlatformQueryRender):
 
         return tokens
 
-    def generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
-        queries_map = {}
-        source_mappings = self._get_source_mappings(query_container.meta_info.source_mapping_ids)
+    def _generate_from_tokenized_query_container_by_source_mapping(
+        self, query_container: TokenizedQueryContainer, source_mapping: SourceMapping
+    ) -> str:
+        is_event_type_set = False
+        field_values = [token for token in query_container.tokens if isinstance(token, FieldValue)]
+        mapped_fields_set = set()
+        for field_value in field_values:
+            mapped_fields = self.map_field(field_value.field, source_mapping)
+            mapped_fields_set = mapped_fields_set.union(set(mapped_fields))
+            if _EVENT_TYPE_FIELD in mapped_fields:
+                is_event_type_set = True
+                self.__update_event_type_values(field_value, source_mapping.source_id)
 
-        for source_mapping in source_mappings:
-            is_event_type_set = False
-            field_values = [token for token in query_container.tokens if isinstance(token, FieldValue)]
-            mapped_fields_set = set()
-            for field_value in field_values:
-                mapped_fields = self.map_field(field_value.field, source_mapping)
-                mapped_fields_set = mapped_fields_set.union(set(mapped_fields))
-                if _EVENT_TYPE_FIELD in mapped_fields:
-                    is_event_type_set = True
-                    self.__update_event_type_values(field_value, source_mapping.source_id)
-
-            tokens = self.__replace_not_tokens(query_container.tokens)
-            result = self.generate_query(tokens=tokens, source_mapping=source_mapping)
-            prefix = "" if is_event_type_set else self.generate_prefix(source_mapping.log_source_signature)
-            rendered_functions = self.generate_functions(query_container.functions.functions, source_mapping)
-            not_supported_functions = query_container.functions.not_supported + rendered_functions.not_supported
-            finalized_query = self.finalize_query(
-                prefix=prefix,
-                query=result,
-                functions=rendered_functions.rendered,
-                not_supported_functions=not_supported_functions,
-                meta_info=query_container.meta_info,
-                source_mapping=source_mapping,
-                fields=mapped_fields_set,
-            )
-            if return_only_first_query_ctx_var.get() is True:
-                return finalized_query
-            queries_map[source_mapping.source_id] = finalized_query
-
-        return self.finalize(queries_map)
+        tokens = self.__replace_not_tokens(query_container.tokens)
+        result = self.generate_query(tokens=tokens, source_mapping=source_mapping)
+        prefix = "" if is_event_type_set else self.generate_prefix(source_mapping.log_source_signature)
+        rendered_functions = self.generate_functions(query_container.functions.functions, source_mapping)
+        not_supported_functions = query_container.functions.not_supported + rendered_functions.not_supported
+        return self.finalize_query(
+            prefix=prefix,
+            query=result,
+            functions=rendered_functions.rendered,
+            not_supported_functions=not_supported_functions,
+            meta_info=query_container.meta_info,
+            source_mapping=source_mapping,
+            fields=mapped_fields_set,
+        )
 
     @staticmethod
     def __update_event_type_values(field_value: FieldValue, source_id: str) -> None:
