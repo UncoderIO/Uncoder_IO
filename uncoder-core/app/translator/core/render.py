@@ -412,37 +412,45 @@ class PlatformQueryRender(QueryRender):
                         defined_raw_log_fields.append(prefix)
         return "\n".join(defined_raw_log_fields)
 
+    def _generate_from_tokenized_query_container_by_source_mapping(
+        self, query_container: TokenizedQueryContainer, source_mapping: SourceMapping
+    ) -> str:
+        rendered_functions = self.generate_functions(query_container.functions.functions, source_mapping)
+        prefix = self.generate_prefix(source_mapping.log_source_signature, rendered_functions.rendered_prefix)
+
+        if source_mapping.raw_log_fields:
+            defined_raw_log_fields = self.generate_raw_log_fields(
+                fields=query_container.meta_info.query_fields, source_mapping=source_mapping
+            )
+            prefix += f"\n{defined_raw_log_fields}"
+        query = self.generate_query(tokens=query_container.tokens, source_mapping=source_mapping)
+        not_supported_functions = query_container.functions.not_supported + rendered_functions.not_supported
+        return self.finalize_query(
+            prefix=prefix,
+            query=query,
+            functions=rendered_functions.rendered,
+            not_supported_functions=not_supported_functions,
+            meta_info=query_container.meta_info,
+            source_mapping=source_mapping,
+        )
+
     def generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
         queries_map = {}
         errors = []
         source_mappings = self._get_source_mappings(query_container.meta_info.source_mapping_ids)
 
         for source_mapping in source_mappings:
-            rendered_functions = self.generate_functions(query_container.functions.functions, source_mapping)
-            prefix = self.generate_prefix(source_mapping.log_source_signature, rendered_functions.rendered_prefix)
             try:
-                if source_mapping.raw_log_fields:
-                    defined_raw_log_fields = self.generate_raw_log_fields(
-                        fields=query_container.meta_info.query_fields, source_mapping=source_mapping
-                    )
-                    prefix += f"\n{defined_raw_log_fields}"
-                result = self.generate_query(tokens=query_container.tokens, source_mapping=source_mapping)
-            except StrictPlatformException as err:
-                errors.append(err)
-                continue
-            else:
-                not_supported_functions = query_container.functions.not_supported + rendered_functions.not_supported
-                finalized_query = self.finalize_query(
-                    prefix=prefix,
-                    query=result,
-                    functions=rendered_functions.rendered,
-                    not_supported_functions=not_supported_functions,
-                    meta_info=query_container.meta_info,
-                    source_mapping=source_mapping,
+                finalized_query = self._generate_from_tokenized_query_container_by_source_mapping(
+                    query_container, source_mapping
                 )
                 if return_only_first_query_ctx_var.get() is True:
                     return finalized_query
                 queries_map[source_mapping.source_id] = finalized_query
+            except StrictPlatformException as err:
+                errors.append(err)
+                continue
+
         if not queries_map and errors:
             raise errors[0]
         return self.finalize(queries_map)
