@@ -21,8 +21,9 @@ from typing import Union
 
 from app.translator.core.custom_types.tokens import GroupType, LogicalOperatorType
 from app.translator.core.exceptions.parser import TokenizerGeneralException
-from app.translator.core.models.field import FieldValue, Keyword
-from app.translator.core.models.identifier import Identifier
+from app.translator.core.models.query_tokens.field_value import FieldValue
+from app.translator.core.models.query_tokens.keyword import Keyword
+from app.translator.core.models.query_tokens.identifier import Identifier
 from app.translator.platforms.sigma.models.modifiers import ModifierManager
 
 

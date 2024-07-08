@@ -22,10 +22,11 @@ from typing import ClassVar, Optional, Union
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.functions import PlatformFunctions
-from app.translator.core.models.field import FieldValue, Keyword
-from app.translator.core.models.function_value import FunctionValue
 from app.translator.core.models.functions.base import Function
-from app.translator.core.models.identifier import Identifier
+from app.translator.core.models.query_tokens.field_value import FieldValue
+from app.translator.core.models.query_tokens.function_value import FunctionValue
+from app.translator.core.models.query_tokens.identifier import Identifier
+from app.translator.core.models.query_tokens.keyword import Keyword
 from app.translator.core.str_value_manager import StrValue
 from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.platforms.base.aql.const import NUM_VALUE_PATTERN, SINGLE_QUOTES_VALUE_PATTERN, UTF8_PAYLOAD_PATTERN

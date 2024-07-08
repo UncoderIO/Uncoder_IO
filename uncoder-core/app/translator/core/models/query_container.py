@@ -6,8 +6,8 @@ from typing import Optional
 from app.translator.core.const import QUERY_TOKEN_TYPE
 from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME
-from app.translator.core.models.field import Field
 from app.translator.core.models.functions.base import ParsedFunctions
+from app.translator.core.models.query_tokens.field import Field
 
 
 class MetaInfoContainer:

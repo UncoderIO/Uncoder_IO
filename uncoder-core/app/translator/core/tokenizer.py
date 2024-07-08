@@ -32,8 +32,6 @@ from app.translator.core.exceptions.parser import (
 )
 from app.translator.core.functions import PlatformFunctions
 from app.translator.core.mapping import SourceMapping
-from app.translator.core.models.field import Field, FieldField, FieldValue, Keyword
-from app.translator.core.models.function_value import FunctionValue
 from app.translator.core.models.functions.base import Function
 from app.translator.core.models.functions.eval import EvalArg
 from app.translator.core.models.functions.group_by import GroupByFunction
@@ -41,14 +39,19 @@ from app.translator.core.models.functions.join import JoinFunction
 from app.translator.core.models.functions.rename import RenameArg
 from app.translator.core.models.functions.sort import SortArg
 from app.translator.core.models.functions.union import UnionFunction
-from app.translator.core.models.identifier import Identifier
+from app.translator.core.models.query_tokens.field import Field
+from app.translator.core.models.query_tokens.field_field import FieldField
+from app.translator.core.models.query_tokens.field_value import FieldValue
+from app.translator.core.models.query_tokens.function_value import FunctionValue
+from app.translator.core.models.query_tokens.identifier import Identifier
+from app.translator.core.models.query_tokens.keyword import Keyword
 from app.translator.core.str_value_manager import StrValue, StrValueManager
 from app.translator.tools.utils import get_match_group
 
 
 class BaseTokenizer(ABC):
     @abstractmethod
-    def tokenize(self, query: str) -> list[Union[FieldValue, Keyword, Identifier]]:
+    def tokenize(self, query: str) -> list[QUERY_TOKEN_TYPE]:
         raise NotImplementedError
 
 
@@ -315,7 +318,7 @@ class QueryTokenizer(BaseTokenizer):
         if parentheses:
             raise QueryParenthesesException
 
-    def tokenize(self, query: str) -> list[Union[FieldValue, Keyword, Identifier]]:
+    def tokenize(self, query: str) -> list[QUERY_TOKEN_TYPE]:
         tokenized = []
         while query:
             next_token, sliced_query = self._get_next_token(query=query)

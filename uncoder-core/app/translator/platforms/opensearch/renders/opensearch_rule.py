@@ -21,12 +21,12 @@ import copy
 import json
 from typing import Optional, Union
 
+from app.translator.core.const import QUERY_TOKEN_TYPE
 from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.mapping import SourceMapping
-from app.translator.core.models.field import FieldValue, Keyword
-from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer, TokenizedQueryContainer
+from app.translator.core.models.query_tokens.field_value import FieldValue
 from app.translator.managers import render_manager
 from app.translator.platforms.opensearch.const import OPENSEARCH_RULE, opensearch_rule_details
 from app.translator.platforms.opensearch.mapping import OpenSearchMappings, opensearch_mappings
@@ -78,7 +78,7 @@ class OpenSearchRuleRender(OpenSearchQueryRender):
         rule_str = json.dumps(rule, indent=4, sort_keys=False)
         return self.wrap_with_not_supported_functions(rule_str, not_supported_functions)
 
-    def apply_token(self, token: Union[FieldValue, Keyword, Identifier], source_mapping: SourceMapping) -> str:
+    def apply_token(self, token: QUERY_TOKEN_TYPE, source_mapping: SourceMapping) -> str:
         if isinstance(token, FieldValue) and token.field:
             for field in self.map_field(token.field, source_mapping):
                 self.fields.update({field: f"{{ctx.results.0.hits.hits.0._source.{field}}}"})

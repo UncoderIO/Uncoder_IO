@@ -24,11 +24,12 @@ from app.translator.core.const import QUERY_TOKEN_TYPE
 from app.translator.core.exceptions.parser import TokenizerGeneralException
 from app.translator.core.functions import PlatformFunctions
 from app.translator.core.mapping import BasePlatformMappings, SourceMapping
-from app.translator.core.models.field import Field, FieldValue
-from app.translator.core.models.function_value import FunctionValue
 from app.translator.core.models.functions.base import Function
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
+from app.translator.core.models.query_tokens.field import Field
+from app.translator.core.models.query_tokens.field_value import FieldValue
+from app.translator.core.models.query_tokens.function_value import FunctionValue
 from app.translator.core.tokenizer import QueryTokenizer
 
 
