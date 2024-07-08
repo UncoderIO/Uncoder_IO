@@ -2,22 +2,16 @@ from typing import Union
 
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.models.query_tokens.identifier import Identifier
+from app.translator.core.models.query_tokens.value import Value
 
 
-class Keyword:
+class Keyword(Value):
     def __init__(self, value: Union[str, list[str]]):
+        super().__init__(value)
         self.operator: Identifier = Identifier(token_type=OperatorType.KEYWORD)
         self.name = "keyword"
-        self.values = []
-        self.__add_value(value=value)
 
-    @property
-    def value(self) -> Union[str, list[str]]:
-        if isinstance(self.values, list) and len(self.values) == 1:
-            return self.values[0]
-        return self.values
-
-    def __add_value(self, value: Union[str, list[str]]) -> None:
+    def _add_value(self, value: Union[str, list[str]]) -> None:
         if value and isinstance(value, (list, tuple)):
             self.values.extend(value)
         elif value and isinstance(value, str):
