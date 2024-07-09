@@ -78,3 +78,4 @@ field_mapping:
   Source:
     - Source
     - source
+  duration: duration
