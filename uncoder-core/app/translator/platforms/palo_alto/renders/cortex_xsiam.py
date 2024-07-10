@@ -73,8 +73,7 @@ class CortexXQLFieldValueRender(BaseFieldValueRender):
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             values = ", ".join(
-                f"{self._pre_process_value(field, str(v) if isinstance(v, int) else v, ValueType.value, True)}"
-                for v in value
+                f"{self._pre_process_value(field, str(v), value_type=ValueType.value, wrap_str=True)}" for v in value
             )
             return f"{field} in ({values})"
 
