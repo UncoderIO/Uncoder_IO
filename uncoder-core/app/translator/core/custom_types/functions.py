@@ -22,7 +22,6 @@ class FunctionType(CustomEnum):
     upper = "upper"
 
     array_length = "array_length"
-    compare = "compare"
     extract_time = "extract_time"
     ipv4_is_in_range = "ipv4_is_in_range"
 

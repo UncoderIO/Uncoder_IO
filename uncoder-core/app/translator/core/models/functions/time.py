@@ -1,14 +1,8 @@
 from dataclasses import dataclass
 
 from app.translator.core.custom_types.functions import FunctionType
+from app.translator.core.custom_types.time import TimeFrameType
 from app.translator.core.models.functions.base import Function
-from app.translator.tools.custom_enum import CustomEnum
-
-
-class TimeFrameType(CustomEnum):
-    days = "days"
-    hours = "hours"
-    minutes = "minutes"
 
 
 @dataclass
