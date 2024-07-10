@@ -26,6 +26,7 @@ from app.translator.core.exceptions.render import UnsupportedRenderMethod
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, TokenizedQueryContainer
+from app.translator.core.models.query_tokens.field import Field
 from app.translator.core.models.query_tokens.field_value import FieldValue
 from app.translator.core.models.query_tokens.identifier import Identifier
 from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
@@ -36,7 +37,7 @@ from app.translator.platforms.forti_siem.const import (
     SOURCES_EVENT_TYPES_CONTAINERS_MAP,
     forti_siem_rule_details,
 )
-from app.translator.platforms.forti_siem.mapping import FortiSiemMappings, forti_siem_mappings
+from app.translator.platforms.forti_siem.mapping import FortiSiemMappings, forti_siem_rule_mappings
 from app.translator.platforms.forti_siem.str_value_manager import forti_siem_str_value_manager
 from app.translator.tools.utils import concatenate_str
 
@@ -185,7 +186,7 @@ class FortiSiemFieldValueRender(BaseFieldValueRender):
 @render_manager.register
 class FortiSiemRuleRender(PlatformQueryRender):
     details: PlatformDetails = forti_siem_rule_details
-    mappings: FortiSiemMappings = forti_siem_mappings
+    mappings: FortiSiemMappings = forti_siem_rule_mappings
 
     or_token = "OR"
     and_token = "AND"
@@ -246,11 +247,14 @@ class FortiSiemRuleRender(PlatformQueryRender):
     def _generate_from_tokenized_query_container_by_source_mapping(
         self, query_container: TokenizedQueryContainer, source_mapping: SourceMapping
     ) -> str:
+        unmapped_fields = self.mappings.check_fields_mapping_existence(
+            query_container.meta_info.query_fields, source_mapping
+        )
         is_event_type_set = False
         field_values = [token for token in query_container.tokens if isinstance(token, FieldValue)]
         mapped_fields_set = set()
         for field_value in field_values:
-            mapped_fields = self.map_field(field_value.field, source_mapping)
+            mapped_fields = self.mappings.map_field(field_value.field, source_mapping)
             mapped_fields_set = mapped_fields_set.union(set(mapped_fields))
             if _EVENT_TYPE_FIELD in mapped_fields:
                 is_event_type_set = True
@@ -266,6 +270,7 @@ class FortiSiemRuleRender(PlatformQueryRender):
             query=result,
             functions=rendered_functions.rendered,
             not_supported_functions=not_supported_functions,
+            unmapped_fields=unmapped_fields,
             meta_info=query_container.meta_info,
             source_mapping=source_mapping,
             fields=mapped_fields_set,
@@ -299,6 +304,7 @@ class FortiSiemRuleRender(PlatformQueryRender):
         meta_info: Optional[MetaInfoContainer] = None,
         source_mapping: Optional[SourceMapping] = None,  # noqa: ARG002
         not_supported_functions: Optional[list] = None,
+        unmapped_fields: Optional[list[Field]] = None,
         fields: Optional[set[str]] = None,
         *args,  # noqa: ARG002
         **kwargs,  # noqa: ARG002
@@ -316,6 +322,7 @@ class FortiSiemRuleRender(PlatformQueryRender):
         rule = rule.replace("<query_placeholder>", query)
         rule = rule.replace("<group_by_attr_placeholder>", ", ".join(args_list))
         rule = rule.replace("<attr_list_placeholder>", self.get_attr_str(fields.copy()))
+        rule = self.wrap_with_unmapped_fields(rule, unmapped_fields)
         return self.wrap_with_not_supported_functions(rule, not_supported_functions)
 
     @staticmethod

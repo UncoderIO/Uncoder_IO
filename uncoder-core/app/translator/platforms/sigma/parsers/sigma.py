@@ -28,17 +28,17 @@ from app.translator.core.models.query_container import MetaInfoContainer, RawQue
 from app.translator.core.parser import QueryParser
 from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.managers import parser_manager
-from app.translator.platforms.sigma.const import SIGMA_RULE_DETAILS
-from app.translator.platforms.sigma.mapping import SigmaMappings, sigma_mappings
+from app.translator.platforms.sigma.const import sigma_rule_details
+from app.translator.platforms.sigma.mapping import SigmaMappings, sigma_rule_mappings
 from app.translator.platforms.sigma.tokenizer import SigmaConditionTokenizer, SigmaTokenizer
 
 
 @parser_manager.register_main
 class SigmaParser(QueryParser, YamlRuleMixin):
-    details: PlatformDetails = PlatformDetails(**SIGMA_RULE_DETAILS)
+    details: PlatformDetails = sigma_rule_details
     condition_tokenizer = SigmaConditionTokenizer()
     tokenizer: SigmaTokenizer = SigmaTokenizer()
-    mappings: SigmaMappings = sigma_mappings
+    mappings: SigmaMappings = sigma_rule_mappings
     mandatory_fields = {"title", "description", "logsource", "detection"}
 
     wrapped_with_comment_pattern = r"^\s*#.*(?:\n|$)"

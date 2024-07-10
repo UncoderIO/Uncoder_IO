@@ -25,8 +25,10 @@ from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer
+from app.translator.core.models.query_tokens.field import Field
 from app.translator.managers import render_manager
 from app.translator.platforms.microsoft.const import DEFAULT_MICROSOFT_SENTINEL_RULE, microsoft_sentinel_rule_details
+from app.translator.platforms.microsoft.mapping import MicrosoftSentinelMappings, microsoft_sentinel_rule_mappings
 from app.translator.platforms.microsoft.renders.microsoft_sentinel import (
     MicrosoftSentinelFieldValueRender,
     MicrosoftSentinelQueryRender,
@@ -49,6 +51,7 @@ class MicrosoftSentinelRuleFieldValueRender(MicrosoftSentinelFieldValueRender):
 @render_manager.register
 class MicrosoftSentinelRuleRender(MicrosoftSentinelQueryRender):
     details: PlatformDetails = microsoft_sentinel_rule_details
+    mappings: MicrosoftSentinelMappings = microsoft_sentinel_rule_mappings
     or_token = "or"
     field_value_render = MicrosoftSentinelRuleFieldValueRender(or_token=or_token)
 
@@ -75,6 +78,7 @@ class MicrosoftSentinelRuleRender(MicrosoftSentinelQueryRender):
         meta_info: Optional[MetaInfoContainer] = None,
         source_mapping: Optional[SourceMapping] = None,  # noqa: ARG002
         not_supported_functions: Optional[list] = None,
+        unmapped_fields: Optional[list[Field]] = None,
         *args,  # noqa: ARG002
         **kwargs,  # noqa: ARG002
     ) -> str:
@@ -92,4 +96,5 @@ class MicrosoftSentinelRuleRender(MicrosoftSentinelQueryRender):
         rule["tactics"] = mitre_tactics
         rule["techniques"] = mitre_techniques
         json_rule = json.dumps(rule, indent=4, sort_keys=False)
+        json_rule = self.wrap_with_unmapped_fields(json_rule, unmapped_fields)
         return self.wrap_with_not_supported_functions(json_rule, not_supported_functions)

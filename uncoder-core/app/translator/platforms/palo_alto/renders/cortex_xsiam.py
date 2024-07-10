@@ -37,7 +37,7 @@ from app.translator.platforms.palo_alto.functions import CortexXQLFunctions, cor
 from app.translator.platforms.palo_alto.mapping import (
     CortexXQLLogSourceSignature,
     CortexXQLMappings,
-    cortex_xql_mappings,
+    cortex_xql_query_mappings,
 )
 from app.translator.platforms.palo_alto.str_value_manager import cortex_xql_str_value_manager
 
@@ -73,7 +73,8 @@ class CortexXQLFieldValueRender(BaseFieldValueRender):
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             values = ", ".join(
-                f"{self._pre_process_value(field, str(v), value_type=ValueType.value, wrap_str=True)}" for v in value
+                f"{self._pre_process_value(field, str(v) if isinstance(v, int) else v, ValueType.value, True)}"
+                for v in value
             )
             return f"{field} in ({values})"
 
@@ -167,8 +168,7 @@ class CortexXQLFieldFieldRender(BaseFieldFieldRender):
 @render_manager.register
 class CortexXQLQueryRender(PlatformQueryRender):
     details: PlatformDetails = cortex_xql_query_details
-    mappings: CortexXQLMappings = cortex_xql_mappings
-    is_strict_mapping = True
+    mappings: CortexXQLMappings = cortex_xql_query_mappings
     predefined_fields_map = PREDEFINED_FIELDS_MAP
     raw_log_field_patterns_map: ClassVar[dict[str, str]] = {
         "regex": '| alter {field} = regextract(to_json_string(action_evtlog_data_fields)->{field}{{}}, "\\"(.*)\\"")',

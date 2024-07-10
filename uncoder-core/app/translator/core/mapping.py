@@ -1,9 +1,15 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Optional, TypeVar
+from typing import TYPE_CHECKING, Optional, TypeVar
 
+from app.translator.core.exceptions.core import StrictPlatformException
+from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.mappings.utils.load_from_files import LoaderFileMappings
+
+if TYPE_CHECKING:
+    from app.translator.core.models.query_tokens.field import Field
+
 
 DEFAULT_MAPPING_NAME = "default"
 
@@ -85,12 +91,16 @@ class SourceMapping:
 
 
 class BasePlatformMappings:
+    details: PlatformDetails = None
+
+    is_strict_mapping: bool = False
     skip_load_default_mappings: bool = True
     extend_default_mapping_with_all_fields: bool = False
 
-    def __init__(self, platform_dir: str):
+    def __init__(self, platform_dir: str, platform_details: PlatformDetails):
         self._loader = LoaderFileMappings()
         self._platform_dir = platform_dir
+        self.details = platform_details
         self._source_mappings = self.prepare_mapping()
 
     def update_default_source_mapping(self, default_mapping: SourceMapping, fields_mapping: FieldsMapping) -> None:
@@ -147,6 +157,29 @@ class BasePlatformMappings:
     @property
     def default_mapping(self) -> SourceMapping:
         return self._source_mappings[DEFAULT_MAPPING_NAME]
+
+    def check_fields_mapping_existence(self, field_tokens: list[Field], source_mapping: SourceMapping) -> list[Field]:
+        not_mapped = []
+        for field in field_tokens:
+            generic_field_name = field.get_generic_field_name(source_mapping.source_id)
+            mapped_field = source_mapping.fields_mapping.get_platform_field_name(generic_field_name=generic_field_name)
+            if not mapped_field:
+                if self.is_strict_mapping:
+                    raise StrictPlatformException(field_name=field.source_name, platform_name=self.details.name)
+                not_mapped.append(field)
+
+        return not_mapped
+
+    @staticmethod
+    def map_field(field: Field, source_mapping: SourceMapping) -> list[str]:
+        generic_field_name = field.get_generic_field_name(source_mapping.source_id)
+        # field can be mapped to corresponding platform field name or list of platform field names
+        mapped_field = source_mapping.fields_mapping.get_platform_field_name(generic_field_name=generic_field_name)
+
+        if isinstance(mapped_field, str):
+            mapped_field = [mapped_field]
+
+        return mapped_field if mapped_field else [generic_field_name] if generic_field_name else [field.source_name]
 
 
 class BaseCommonPlatformMappings(ABC, BasePlatformMappings):

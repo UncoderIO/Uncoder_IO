@@ -1,6 +1,7 @@
 from typing import Optional
 
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
+from app.translator.platforms.splunk.const import splunk_alert_details, splunk_query_details
 
 
 class SplunkLogSourceSignature(LogSourceSignature):
@@ -69,4 +70,5 @@ class SplunkMappings(BasePlatformMappings):
         return suitable_source_mappings or [self._source_mappings[DEFAULT_MAPPING_NAME]]
 
 
-splunk_mappings = SplunkMappings(platform_dir="splunk")
+splunk_query_mappings = SplunkMappings(platform_dir="splunk", platform_details=splunk_query_details)
+splunk_alert_mappings = SplunkMappings(platform_dir="splunk", platform_details=splunk_alert_details)

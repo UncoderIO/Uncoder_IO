@@ -21,13 +21,13 @@ from app.translator.core.models.query_container import RawQueryContainer, Tokeni
 from app.translator.core.parser import PlatformQueryParser
 from app.translator.managers import parser_manager
 from app.translator.platforms.chronicle.const import chronicle_query_details
-from app.translator.platforms.chronicle.mapping import ChronicleMappings, chronicle_mappings
+from app.translator.platforms.chronicle.mapping import ChronicleMappings, chronicle_query_mappings
 from app.translator.platforms.chronicle.tokenizer import ChronicleQueryTokenizer
 
 
 @parser_manager.register_supported_by_roota
 class ChronicleQueryParser(PlatformQueryParser):
-    mappings: ChronicleMappings = chronicle_mappings
+    mappings: ChronicleMappings = chronicle_query_mappings
     tokenizer: ChronicleQueryTokenizer = ChronicleQueryTokenizer()
     details: PlatformDetails = chronicle_query_details
 

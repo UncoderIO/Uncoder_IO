@@ -9,4 +9,4 @@ GRAYLOG_QUERY_DETAILS = {
 }
 
 
-graylog_details = PlatformDetails(**GRAYLOG_QUERY_DETAILS)
+graylog_query_details = PlatformDetails(**GRAYLOG_QUERY_DETAILS)

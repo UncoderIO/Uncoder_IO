@@ -1,6 +1,7 @@
 from typing import Optional
 
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
+from app.translator.platforms.logrhythm_axon.const import logrhythm_axon_query_details, logrhythm_axon_rule_details
 
 
 class LogRhythmAxonLogSourceSignature(LogSourceSignature):
@@ -15,6 +16,8 @@ class LogRhythmAxonLogSourceSignature(LogSourceSignature):
 
 
 class LogRhythmAxonMappings(BasePlatformMappings):
+    is_strict_mapping = True
+
     def prepare_mapping(self) -> dict[str, SourceMapping]:
         source_mappings = {}
         for mapping_dict in self._loader.load_platform_mappings(self._platform_dir):
@@ -44,4 +47,9 @@ class LogRhythmAxonMappings(BasePlatformMappings):
         return suitable_source_mappings
 
 
-logrhythm_axon_mappings = LogRhythmAxonMappings(platform_dir="logrhythm_axon")
+logrhythm_axon_query_mappings = LogRhythmAxonMappings(
+    platform_dir="logrhythm_axon", platform_details=logrhythm_axon_query_details
+)
+logrhythm_axon_rule_mappings = LogRhythmAxonMappings(
+    platform_dir="logrhythm_axon", platform_details=logrhythm_axon_rule_details
+)

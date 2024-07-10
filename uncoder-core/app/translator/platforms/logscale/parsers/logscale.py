@@ -23,7 +23,7 @@ from app.translator.core.parser import PlatformQueryParser
 from app.translator.managers import parser_manager
 from app.translator.platforms.logscale.const import logscale_query_details
 from app.translator.platforms.logscale.functions import LogScaleFunctions, log_scale_functions
-from app.translator.platforms.logscale.mapping import LogScaleMappings, logscale_mappings
+from app.translator.platforms.logscale.mapping import LogScaleMappings, logscale_query_mappings
 from app.translator.platforms.logscale.tokenizer import LogScaleTokenizer
 
 
@@ -32,7 +32,7 @@ class LogScaleQueryParser(PlatformQueryParser):
     details: PlatformDetails = logscale_query_details
     platform_functions: LogScaleFunctions = log_scale_functions
     tokenizer = LogScaleTokenizer()
-    mappings: LogScaleMappings = logscale_mappings
+    mappings: LogScaleMappings = logscale_query_mappings
 
     wrapped_with_comment_pattern = r"^\s*/\*(?:|\n|.)*\*/"
 

@@ -18,14 +18,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.managers import parser_manager
-from app.translator.platforms.athena.const import athena_details
-from app.translator.platforms.athena.mapping import AthenaMappings, athena_mappings
+from app.translator.platforms.athena.const import athena_query_details
+from app.translator.platforms.athena.mapping import AthenaMappings, athena_query_mappings
 from app.translator.platforms.base.sql.parsers.sql import SqlQueryParser
 
 
 @parser_manager.register_supported_by_roota
 class AthenaQueryParser(SqlQueryParser):
-    details: PlatformDetails = athena_details
-    mappings: AthenaMappings = athena_mappings
+    details: PlatformDetails = athena_query_details
+    mappings: AthenaMappings = athena_query_mappings
     query_delimiter_pattern = r"\sFROM\s\S*\sWHERE\s"
     table_pattern = r"\sFROM\s(?P<table>[a-zA-Z\.\-\*]+)\sWHERE\s"

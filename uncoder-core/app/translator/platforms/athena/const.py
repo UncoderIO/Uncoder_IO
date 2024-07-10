@@ -9,4 +9,4 @@ ATHENA_QUERY_DETAILS = {
     "alt_platform_name": "OCSF",
 }
 
-athena_details = PlatformDetails(**ATHENA_QUERY_DETAILS)
+athena_query_details = PlatformDetails(**ATHENA_QUERY_DETAILS)

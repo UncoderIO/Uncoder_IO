@@ -27,7 +27,7 @@ from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
 from app.translator.managers import render_manager
 from app.translator.platforms.chronicle.const import chronicle_query_details
 from app.translator.platforms.chronicle.escape_manager import chronicle_escape_manager
-from app.translator.platforms.chronicle.mapping import ChronicleMappings, chronicle_mappings
+from app.translator.platforms.chronicle.mapping import ChronicleMappings, chronicle_query_mappings
 
 
 class ChronicleFieldValueRender(BaseFieldValueRender):
@@ -101,9 +101,7 @@ class ChronicleFieldValueRender(BaseFieldValueRender):
 @render_manager.register
 class ChronicleQueryRender(PlatformQueryRender):
     details: PlatformDetails = chronicle_query_details
-    mappings: ChronicleMappings = chronicle_mappings
-
-    is_strict_mapping = True
+    mappings: ChronicleMappings = chronicle_query_mappings
 
     or_token = "or"
     and_token = "and"

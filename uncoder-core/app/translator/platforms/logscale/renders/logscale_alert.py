@@ -24,8 +24,10 @@ from typing import Optional
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer
+from app.translator.core.models.query_tokens.field import Field
 from app.translator.managers import render_manager
 from app.translator.platforms.logscale.const import DEFAULT_LOGSCALE_ALERT, logscale_alert_details
+from app.translator.platforms.logscale.mapping import LogScaleMappings, logscale_alert_mappings
 from app.translator.platforms.logscale.renders.logscale import LogScaleFieldValueRender, LogScaleQueryRender
 from app.translator.tools.utils import get_rule_description_str
 
@@ -39,6 +41,7 @@ class LogScaleAlertFieldValueRender(LogScaleFieldValueRender):
 @render_manager.register
 class LogScaleAlertRender(LogScaleQueryRender):
     details: PlatformDetails = logscale_alert_details
+    mappings: LogScaleMappings = logscale_alert_mappings
     or_token = "or"
     field_value_render = LogScaleAlertFieldValueRender(or_token=or_token)
 
@@ -50,6 +53,7 @@ class LogScaleAlertRender(LogScaleQueryRender):
         meta_info: Optional[MetaInfoContainer] = None,
         source_mapping: Optional[SourceMapping] = None,  # noqa: ARG002
         not_supported_functions: Optional[list] = None,
+        unmapped_fields: Optional[list[Field]] = None,
         *args,  # noqa: ARG002
         **kwargs,  # noqa: ARG002
     ) -> str:
@@ -71,4 +75,5 @@ class LogScaleAlertRender(LogScaleQueryRender):
         )
 
         rule_str = json.dumps(rule, indent=4, sort_keys=False)
+        rule_str = self.wrap_with_unmapped_fields(rule_str, unmapped_fields)
         return self.wrap_with_not_supported_functions(rule_str, not_supported_functions)

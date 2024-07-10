@@ -25,9 +25,11 @@ from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer
+from app.translator.core.models.query_tokens.field import Field
 from app.translator.managers import render_manager
 from app.translator.platforms.logrhythm_axon.const import DEFAULT_LOGRHYTHM_AXON_RULE, logrhythm_axon_rule_details
 from app.translator.platforms.logrhythm_axon.escape_manager import logrhythm_rule_escape_manager
+from app.translator.platforms.logrhythm_axon.mapping import LogRhythmAxonMappings, logrhythm_axon_rule_mappings
 from app.translator.platforms.logrhythm_axon.renders.logrhythm_axon_query import (
     LogRhythmAxonFieldValueRender,
     LogRhythmAxonQueryRender,
@@ -52,6 +54,7 @@ class LogRhythmAxonRuleFieldValueRender(LogRhythmAxonFieldValueRender):
 @render_manager.register
 class LogRhythmAxonRuleRender(LogRhythmAxonQueryRender):
     details: PlatformDetails = logrhythm_axon_rule_details
+    mappings: LogRhythmAxonMappings = logrhythm_axon_rule_mappings
     or_token = "or"
     field_value_render = LogRhythmAxonRuleFieldValueRender(or_token=or_token)
 
@@ -63,6 +66,7 @@ class LogRhythmAxonRuleRender(LogRhythmAxonQueryRender):
         meta_info: Optional[MetaInfoContainer] = None,
         source_mapping: Optional[SourceMapping] = None,
         not_supported_functions: Optional[list] = None,
+        unmapped_fields: Optional[list[Field]] = None,
         *args,  # noqa: ARG002
         **kwargs,  # noqa: ARG002
     ) -> str:
@@ -89,8 +93,9 @@ class LogRhythmAxonRuleRender(LogRhythmAxonQueryRender):
             )
         if meta_info.output_table_fields:
             rule["observationPipeline"]["pattern"]["operations"][0]["logObserved"]["groupByFields"] = [
-                self.map_field(field, source_mapping)[0] for field in meta_info.output_table_fields
+                self.mappings.map_field(field, source_mapping)[0] for field in meta_info.output_table_fields
             ]
 
         json_rule = json.dumps(rule, indent=4, sort_keys=False)
+        json_rule = self.wrap_with_unmapped_fields(json_rule, unmapped_fields)
         return self.wrap_with_not_supported_functions(json_rule, not_supported_functions)

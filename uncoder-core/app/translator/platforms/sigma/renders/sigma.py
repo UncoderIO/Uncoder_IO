@@ -31,8 +31,8 @@ from app.translator.core.models.query_container import RawQueryContainer, Tokeni
 from app.translator.core.render import QueryRender
 from app.translator.core.str_value_manager import StrValue
 from app.translator.managers import render_manager
-from app.translator.platforms.sigma.const import SIGMA_RULE_DETAILS
-from app.translator.platforms.sigma.mapping import SigmaLogSourceSignature, SigmaMappings, sigma_mappings
+from app.translator.platforms.sigma.const import sigma_rule_details
+from app.translator.platforms.sigma.mapping import SigmaLogSourceSignature, SigmaMappings, sigma_rule_mappings
 from app.translator.platforms.sigma.models.compiler import DataStructureCompiler
 from app.translator.platforms.sigma.models.group import Group
 from app.translator.platforms.sigma.models.operator import AND, NOT, OR
@@ -51,8 +51,8 @@ class SigmaRender(QueryRender):
     comment_symbol = "#"
     is_single_line_comment = True
 
-    mappings: SigmaMappings = sigma_mappings
-    details: PlatformDetails = PlatformDetails(**SIGMA_RULE_DETAILS)
+    mappings: SigmaMappings = sigma_rule_mappings
+    details: PlatformDetails = sigma_rule_details
     str_value_manager = sigma_str_value_manager
 
     @property
@@ -198,15 +198,8 @@ class SigmaRender(QueryRender):
             not_node["condition"] = f"not {condition}"
         return not_node
 
-    @staticmethod
-    def map_field(source_mapping: SourceMapping, generic_field_name: str) -> str:
-        field_name = source_mapping.fields_mapping.get_platform_field_name(generic_field_name)
-        return field_name or generic_field_name
-
     def generate_field(self, data: FieldValue, source_mapping: SourceMapping):
-        source_id = source_mapping.source_id
-        generic_field_name = data.field.get_generic_field_name(source_id) or data.field.source_name
-        field_name = self.map_field(source_mapping, generic_field_name)
+        field_name = self.mappings.map_field(data.field, source_mapping)
         if data.operator.token_type not in (
             OperatorType.EQ,
             OperatorType.LT,
