@@ -2,8 +2,8 @@ from dataclasses import Field, dataclass, field
 from typing import Union
 
 from app.translator.core.custom_types.functions import FunctionType
-from app.translator.core.models.field import Alias
 from app.translator.core.models.functions.base import Function
+from app.translator.core.models.query_tokens.field import Alias
 
 
 @dataclass

@@ -21,8 +21,8 @@ from typing import Any, ClassVar, Optional
 
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.custom_types.values import ValueType
-from app.translator.core.models.field import FieldValue
-from app.translator.core.models.identifier import Identifier
+from app.translator.core.models.query_tokens.field_value import FieldValue
+from app.translator.core.models.query_tokens.identifier import Identifier
 from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.platforms.chronicle.escape_manager import chronicle_escape_manager
 from app.translator.tools.utils import get_match_group

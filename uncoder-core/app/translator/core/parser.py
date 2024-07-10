@@ -18,17 +18,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
 import re
 from abc import ABC, abstractmethod
-from typing import Union
+from typing import Optional, Union
 
-from app.translator.core.const import TOKEN_TYPE
+from app.translator.core.const import QUERY_TOKEN_TYPE
 from app.translator.core.exceptions.parser import TokenizerGeneralException
 from app.translator.core.functions import PlatformFunctions
 from app.translator.core.mapping import BasePlatformMappings, SourceMapping
-from app.translator.core.models.field import Field, FieldValue, Keyword
-from app.translator.core.models.functions.base import ParsedFunctions
-from app.translator.core.models.identifier import Identifier
+from app.translator.core.models.functions.base import Function
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
+from app.translator.core.models.query_tokens.field import Field
+from app.translator.core.models.query_tokens.field_value import FieldValue
+from app.translator.core.models.query_tokens.function_value import FunctionValue
 from app.translator.core.tokenizer import QueryTokenizer
 
 
@@ -55,24 +56,30 @@ class PlatformQueryParser(QueryParser, ABC):
     tokenizer: QueryTokenizer = None
     platform_functions: PlatformFunctions = None
 
-    def get_fields_tokens(self, tokens: list[Union[FieldValue, Keyword, Identifier]]) -> list[Field]:
-        return [token.field for token in self.tokenizer.filter_tokens(tokens, FieldValue)]
-
-    def get_tokens_and_source_mappings(
-        self, query: str, log_sources: dict[str, Union[str, list[str]]]
-    ) -> tuple[list[TOKEN_TYPE], list[SourceMapping]]:
+    def get_query_tokens(self, query: str) -> list[QUERY_TOKEN_TYPE]:
         if not query:
             raise TokenizerGeneralException("Can't translate empty query. Please provide more details")
-        tokens = self.tokenizer.tokenize(query=query)
-        field_tokens = self.get_fields_tokens(tokens=tokens)
+        return self.tokenizer.tokenize(query=query)
+
+    def get_field_tokens(
+        self, query_tokens: list[QUERY_TOKEN_TYPE], functions: Optional[list[Function]] = None
+    ) -> list[Field]:
+        field_tokens = []
+        for token in query_tokens:
+            if isinstance(token, FieldValue):
+                field_tokens.append(token.field)
+            elif isinstance(token, FunctionValue):
+                field_tokens.extend(self.tokenizer.get_field_tokens_from_func_args([token.function]))
+
+        if functions:
+            field_tokens.extend(self.tokenizer.get_field_tokens_from_func_args(functions))
+
+        return field_tokens
+
+    def get_source_mappings(
+        self, field_tokens: list[Field], log_sources: dict[str, Union[str, list[str]]]
+    ) -> list[SourceMapping]:
         field_names = [field.source_name for field in field_tokens]
         source_mappings = self.mappings.get_suitable_source_mappings(field_names=field_names, **log_sources)
         self.tokenizer.set_field_tokens_generic_names_map(field_tokens, source_mappings, self.mappings.default_mapping)
-
-        return tokens, source_mappings
-
-    def set_functions_fields_generic_names(
-        self, functions: ParsedFunctions, source_mappings: list[SourceMapping]
-    ) -> None:
-        field_tokens = self.tokenizer.get_field_tokens_from_func_args(args=functions.functions)
-        self.tokenizer.set_field_tokens_generic_names_map(field_tokens, source_mappings, self.mappings.default_mapping)
+        return source_mappings

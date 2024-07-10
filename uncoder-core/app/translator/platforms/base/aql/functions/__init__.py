@@ -23,9 +23,9 @@ from typing import Optional, Union
 from app.translator.core.custom_types.functions import FunctionType
 from app.translator.core.exceptions.functions import InvalidFunctionSignature, NotSupportedFunctionException
 from app.translator.core.functions import PlatformFunctions
-from app.translator.core.models.field import Field
 from app.translator.core.models.functions.base import Function, ParsedFunctions
 from app.translator.core.models.functions.sort import SortLimitFunction
+from app.translator.core.models.query_tokens.field import Field
 from app.translator.platforms.base.aql.const import TABLE_PATTERN
 from app.translator.platforms.base.aql.functions.const import (
     AGGREGATION_FUNCTIONS_MAP,

@@ -21,7 +21,8 @@ from typing import Union
 
 from app.translator.core.exceptions.core import SigmaRuleValidationException
 from app.translator.core.mixins.rule import YamlRuleMixin
-from app.translator.core.models.field import Field, FieldValue
+from app.translator.core.models.query_tokens.field import Field
+from app.translator.core.models.query_tokens.field_value import FieldValue
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.parser import QueryParser

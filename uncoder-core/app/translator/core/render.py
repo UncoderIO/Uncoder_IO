@@ -22,7 +22,7 @@ from collections.abc import Callable
 from typing import ClassVar, Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
-from app.translator.core.const import TOKEN_TYPE
+from app.translator.core.const import QUERY_TOKEN_TYPE
 from app.translator.core.context_vars import return_only_first_query_ctx_var, wrap_query_with_meta_info_ctx_var
 from app.translator.core.custom_types.tokens import LogicalOperatorType, OperatorType
 from app.translator.core.custom_types.values import ValueType
@@ -31,11 +31,15 @@ from app.translator.core.exceptions.core import NotImplementedException, StrictP
 from app.translator.core.exceptions.parser import UnsupportedOperatorException
 from app.translator.core.functions import PlatformFunctions
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
-from app.translator.core.models.field import Field, FieldField, FieldValue, Keyword, PredefinedField
 from app.translator.core.models.functions.base import Function, RenderedFunctions
-from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer, TokenizedQueryContainer
+from app.translator.core.models.query_tokens.field import Field, PredefinedField
+from app.translator.core.models.query_tokens.field_field import FieldField
+from app.translator.core.models.query_tokens.field_value import FieldValue
+from app.translator.core.models.query_tokens.function_value import FunctionValue
+from app.translator.core.models.query_tokens.identifier import Identifier
+from app.translator.core.models.query_tokens.keyword import Keyword
 from app.translator.core.str_value_manager import StrValue, StrValueManager
 
 
@@ -74,6 +78,10 @@ class BaseFieldValueRender(ABC):
     def _wrap_str_value(value: str) -> str:
         return value
 
+    @staticmethod
+    def _map_bool_value(value: bool) -> str:
+        return "true" if value else "false"
+
     def _pre_process_value(
         self, field: str, value: Union[int, str, StrValue], value_type: str = ValueType.value, wrap_str: bool = False
     ) -> Union[int, str]:
@@ -84,6 +92,8 @@ class BaseFieldValueRender(ABC):
         if isinstance(value, str):
             value = self.str_value_manager.escape_manager.escape(value, value_type)
             return self._wrap_str_value(value) if wrap_str else value
+        if isinstance(value, bool):
+            return self._map_bool_value(value)
         return value
 
     def _pre_process_values_list(
@@ -258,7 +268,7 @@ class PlatformQueryRender(QueryRender):
 
         return mapped_predefined_field_name
 
-    def apply_token(self, token: Union[FieldValue, Keyword, Identifier], source_mapping: SourceMapping) -> str:
+    def apply_token(self, token: QUERY_TOKEN_TYPE, source_mapping: SourceMapping) -> str:
         if isinstance(token, FieldValue):
             if token.alias:
                 mapped_fields = [token.alias.name]
@@ -286,9 +296,12 @@ class PlatformQueryRender(QueryRender):
                 ]
             )
             return self.group_token % joined if len(cross_paired_fields) > 1 else joined
-        if isinstance(token, Function):
-            func_render = self.platform_functions.manager.get_in_query_render(token.name)
-            return func_render.render(token, source_mapping)
+        if isinstance(token, FunctionValue):
+            func_render = self.platform_functions.manager.get_render(token.function.name)
+            rendered_func = func_render.render(token.function, source_mapping)
+            return self.field_value_render.apply_field_value(
+                field=rendered_func, operator=token.operator, value=token.value
+            )
         if isinstance(token, Keyword):
             return self.field_value_render.apply_field_value(field="", operator=token.operator, value=token.value)
         if token.token_type in LogicalOperatorType:
@@ -296,7 +309,7 @@ class PlatformQueryRender(QueryRender):
 
         return token.token_type
 
-    def generate_query(self, tokens: list[TOKEN_TYPE], source_mapping: SourceMapping) -> str:
+    def generate_query(self, tokens: list[QUERY_TOKEN_TYPE], source_mapping: SourceMapping) -> str:
         result_values = []
         unmapped_fields = set()
         for token in tokens:

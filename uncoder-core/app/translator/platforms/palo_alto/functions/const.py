@@ -31,8 +31,6 @@ class CortexXQLFunctionType(CustomEnum):
     timeframe = "timeframe"
     union = "union"
 
-    compare = "compare"
-
 
 class XqlSortOrderType(CustomEnum):
     asc = "asc"

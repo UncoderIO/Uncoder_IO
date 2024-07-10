@@ -20,15 +20,15 @@ limitations under the License.
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
+from app.translator.core.const import QUERY_TOKEN_TYPE
 from app.translator.core.custom_types.tokens import LogicalOperatorType
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.exceptions.core import StrictPlatformException
 from app.translator.core.exceptions.render import BaseRenderException
 from app.translator.core.mapping import LogSourceSignature, SourceMapping
-from app.translator.core.models.field import FieldValue, Keyword
-from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import TokenizedQueryContainer
+from app.translator.core.models.query_tokens.field_value import FieldValue
 from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
 from app.translator.managers import render_manager
 from app.translator.platforms.logrhythm_axon.const import UNMAPPED_FIELD_DEFAULT_NAME, logrhythm_axon_query_details
@@ -217,7 +217,7 @@ class LogRhythmAxonQueryRender(PlatformQueryRender):
     def generate_prefix(self, log_source_signature: LogSourceSignature, functions_prefix: str = "") -> str:  # noqa: ARG002
         return str(log_source_signature)
 
-    def apply_token(self, token: Union[FieldValue, Keyword, Identifier], source_mapping: SourceMapping) -> str:
+    def apply_token(self, token: QUERY_TOKEN_TYPE, source_mapping: SourceMapping) -> str:
         if isinstance(token, FieldValue) and token.field:
             try:
                 mapped_fields = self.map_field(token.field, source_mapping)

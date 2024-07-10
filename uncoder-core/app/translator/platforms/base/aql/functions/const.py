@@ -24,6 +24,7 @@ class AQLFunctionType(CustomEnum):
 
 class AQLFunctionGroupType(CustomEnum):
     agg = "agg"
+    str_conversion = "str_conversion"
 
 
 class AQLSortOrderType(CustomEnum):

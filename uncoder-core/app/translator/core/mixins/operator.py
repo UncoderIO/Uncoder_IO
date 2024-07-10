@@ -19,7 +19,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 from typing import Optional, Union
 
 from app.translator.core.custom_types.tokens import OperatorType
-from app.translator.core.models.identifier import Identifier
+from app.translator.core.models.query_tokens.identifier import Identifier
 
 
 class WildCardMixin:

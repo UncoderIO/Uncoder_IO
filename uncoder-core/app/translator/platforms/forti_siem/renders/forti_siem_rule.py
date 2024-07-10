@@ -18,16 +18,16 @@ import re
 from typing import Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
-from app.translator.core.const import TOKEN_TYPE
+from app.translator.core.const import QUERY_TOKEN_TYPE
 from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.custom_types.tokens import GroupType, LogicalOperatorType, OperatorType
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.exceptions.render import UnsupportedRenderMethod
 from app.translator.core.mapping import SourceMapping
-from app.translator.core.models.field import FieldValue
-from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, TokenizedQueryContainer
+from app.translator.core.models.query_tokens.field_value import FieldValue
+from app.translator.core.models.query_tokens.identifier import Identifier
 from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
 from app.translator.core.str_value_manager import StrValue
 from app.translator.managers import render_manager
@@ -196,7 +196,7 @@ class FortiSiemRuleRender(PlatformQueryRender):
     field_value_render = FortiSiemFieldValueRender(or_token=or_token)
 
     @staticmethod
-    def __is_negated_token(prev_token: TOKEN_TYPE) -> bool:
+    def __is_negated_token(prev_token: QUERY_TOKEN_TYPE) -> bool:
         return isinstance(prev_token, Identifier) and prev_token.token_type == LogicalOperatorType.NOT
 
     @staticmethod
@@ -207,7 +207,7 @@ class FortiSiemRuleRender(PlatformQueryRender):
         return is_negated_token or negation_ctx
 
     @staticmethod
-    def __negate_token(token: TOKEN_TYPE) -> None:
+    def __negate_token(token: QUERY_TOKEN_TYPE) -> None:
         if isinstance(token, Identifier):
             if token.token_type == LogicalOperatorType.AND:
                 token.token_type = LogicalOperatorType.OR
@@ -217,7 +217,7 @@ class FortiSiemRuleRender(PlatformQueryRender):
             token_type = token.operator.token_type
             token.operator.token_type = _NOT_OPERATORS_MAP_SUBSTITUTES.get(token_type) or token_type
 
-    def __replace_not_tokens(self, tokens: list[TOKEN_TYPE]) -> list[TOKEN_TYPE]:
+    def __replace_not_tokens(self, tokens: list[QUERY_TOKEN_TYPE]) -> list[QUERY_TOKEN_TYPE]:
         not_token_indices = []
         negation_ctx_stack = []
         for index, token in enumerate(tokens[1:], start=1):
