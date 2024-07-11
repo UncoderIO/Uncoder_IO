@@ -158,17 +158,18 @@ class BasePlatformMappings:
     def default_mapping(self) -> SourceMapping:
         return self._source_mappings[DEFAULT_MAPPING_NAME]
 
-    def check_fields_mapping_existence(self, field_tokens: list[Field], source_mapping: SourceMapping) -> list[Field]:
-        not_mapped = []
+    def check_fields_mapping_existence(self, field_tokens: list[Field], source_mapping: SourceMapping) -> list[str]:
+        unmapped = []
         for field in field_tokens:
             generic_field_name = field.get_generic_field_name(source_mapping.source_id)
             mapped_field = source_mapping.fields_mapping.get_platform_field_name(generic_field_name=generic_field_name)
-            if not mapped_field:
-                if self.is_strict_mapping:
-                    raise StrictPlatformException(field_name=field.source_name, platform_name=self.details.name)
-                not_mapped.append(field)
+            if not mapped_field and field.source_name not in unmapped:
+                unmapped.append(field.source_name)
 
-        return not_mapped
+        if self.is_strict_mapping and unmapped:
+            raise StrictPlatformException(platform_name=self.details.name, fields=unmapped)
+
+        return unmapped
 
     @staticmethod
     def map_field(field: Field, source_mapping: SourceMapping) -> list[str]:

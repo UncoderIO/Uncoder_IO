@@ -24,7 +24,6 @@ from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer
-from app.translator.core.models.query_tokens.field import Field
 from app.translator.managers import render_manager
 from app.translator.platforms.chronicle.const import DEFAULT_CHRONICLE_SECURITY_RULE, chronicle_rule_details
 from app.translator.platforms.chronicle.mapping import ChronicleMappings, chronicle_rule_mappings
@@ -112,7 +111,7 @@ class ChronicleSecurityRuleRender(ChronicleQueryRender):
         meta_info: Optional[MetaInfoContainer] = None,
         source_mapping: Optional[SourceMapping] = None,  # noqa: ARG002
         not_supported_functions: Optional[list] = None,  # ,
-        unmapped_fields: Optional[list[Field]] = None,
+        unmapped_fields: Optional[list[str]] = None,
         *args,  # noqa: ARG002
         **kwargs,  # noqa: ARG002
     ) -> str:

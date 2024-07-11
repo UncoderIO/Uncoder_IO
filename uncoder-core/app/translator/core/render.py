@@ -207,10 +207,9 @@ class QueryRender(ABC):
 
         return query
 
-    def wrap_with_unmapped_fields(self, query: str, fields: Optional[list[Field]]) -> str:
+    def wrap_with_unmapped_fields(self, query: str, fields: Optional[list[str]]) -> str:
         if fields:
-            joined = ", ".join(field.source_name for field in fields)
-            return query + "\n\n" + self.wrap_with_comment(f"{self.unmapped_fields_text}{joined}")
+            return query + "\n\n" + self.wrap_with_comment(f"{self.unmapped_fields_text}{', '.join(fields)}")
         return query
 
     def wrap_with_comment(self, value: str) -> str:
@@ -256,7 +255,7 @@ class PlatformQueryRender(QueryRender):
     def map_predefined_field(self, predefined_field: PredefinedField) -> str:
         if not (mapped_predefined_field_name := self.predefined_fields_map.get(predefined_field.name)):
             if self.mappings.is_strict_mapping:
-                raise StrictPlatformException(field_name=predefined_field.name, platform_name=self.details.name)
+                raise StrictPlatformException(platform_name=self.details.name, fields=[predefined_field.name])
 
             return predefined_field.name
 
@@ -309,14 +308,9 @@ class PlatformQueryRender(QueryRender):
 
     def generate_query(self, tokens: list[QUERY_TOKEN_TYPE], source_mapping: SourceMapping) -> str:
         result_values = []
-        unmapped_fields = set()
         for token in tokens:
-            try:
-                result_values.append(self.apply_token(token=token, source_mapping=source_mapping))
-            except StrictPlatformException as err:
-                unmapped_fields.add(err.field_name)
-        if unmapped_fields:
-            raise StrictPlatformException(self.details.name, "", source_mapping.source_id, sorted(unmapped_fields))
+            result_values.append(self.apply_token(token=token, source_mapping=source_mapping))
+
         return "".join(result_values)
 
     def wrap_with_meta_info(self, query: str, meta_info: Optional[MetaInfoContainer]) -> str:
@@ -349,7 +343,7 @@ class PlatformQueryRender(QueryRender):
         meta_info: Optional[MetaInfoContainer] = None,
         source_mapping: Optional[SourceMapping] = None,  # noqa: ARG002
         not_supported_functions: Optional[list] = None,
-        unmapped_fields: Optional[list[Field]] = None,
+        unmapped_fields: Optional[list[str]] = None,
         *args,  # noqa: ARG002
         **kwargs,  # noqa: ARG002
     ) -> str:
@@ -418,7 +412,7 @@ class PlatformQueryRender(QueryRender):
                     generic_field_name=generic_field_name
                 )
             if not mapped_field and self.mappings.is_strict_mapping:
-                raise StrictPlatformException(field_name=field.source_name, platform_name=self.details.name)
+                raise StrictPlatformException(platform_name=self.details.name, fields=[field.source_name])
             if prefix_list := self.process_raw_log_field_prefix(field=mapped_field, source_mapping=source_mapping):
                 for prefix in prefix_list:
                     if prefix not in defined_raw_log_fields:
