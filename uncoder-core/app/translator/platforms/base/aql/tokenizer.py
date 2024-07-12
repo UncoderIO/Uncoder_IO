@@ -29,7 +29,13 @@ from app.translator.core.models.query_tokens.identifier import Identifier
 from app.translator.core.models.query_tokens.keyword import Keyword
 from app.translator.core.str_value_manager import StrValue
 from app.translator.core.tokenizer import QueryTokenizer
-from app.translator.platforms.base.aql.const import NUM_VALUE_PATTERN, SINGLE_QUOTES_VALUE_PATTERN, UTF8_PAYLOAD_PATTERN
+from app.translator.platforms.base.aql.const import (
+    DOUBLE_QUOTES_FIELD_NAME_PATTERN,
+    FIELD_NAME_PATTERN,
+    NUM_VALUE_PATTERN,
+    SINGLE_QUOTES_VALUE_PATTERN,
+    UTF8_PAYLOAD_PATTERN,
+)
 from app.translator.platforms.base.aql.functions.const import AQLFunctionGroupType
 from app.translator.platforms.base.aql.str_value_manager import aql_str_value_manager
 from app.translator.tools.utils import get_match_group
@@ -51,7 +57,7 @@ class AQLTokenizer(QueryTokenizer):
     multi_value_operators_map: ClassVar[dict[str, str]] = {"in": OperatorType.EQ}
 
     field_pattern = r'(?P<field_name>"[a-zA-Z\._\-\s]+"|[a-zA-Z\._\-]+)'
-    function_pattern = r'(?P<func_name>[a-zA-Z_]+)\((?:(?:[a-zA-Z\._\-\s]+)|(?:"[a-zA-Z\._\-]+"))\)'
+    function_pattern = rf"(?P<func_name>[a-zA-Z_]+)\((?:{FIELD_NAME_PATTERN}|{DOUBLE_QUOTES_FIELD_NAME_PATTERN})\)"
     bool_value_pattern = rf"(?P<{ValueType.bool_value}>true|false)\s*"
     _value_pattern = rf"{NUM_VALUE_PATTERN}|{bool_value_pattern}|{SINGLE_QUOTES_VALUE_PATTERN}"
     multi_value_pattern = rf"""\((?P<{ValueType.multi_value}>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\s]*)\)"""
