@@ -167,7 +167,9 @@ class BasePlatformMappings:
                 unmapped.append(field.source_name)
 
         if self.is_strict_mapping and unmapped:
-            raise StrictPlatformException(platform_name=self.details.name, fields=unmapped)
+            raise StrictPlatformException(
+                platform_name=self.details.name, fields=unmapped, mapping=source_mapping.source_id
+            )
 
         return unmapped
 
