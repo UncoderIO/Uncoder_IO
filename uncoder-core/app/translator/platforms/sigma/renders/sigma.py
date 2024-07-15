@@ -199,7 +199,7 @@ class SigmaRender(QueryRender):
         return not_node
 
     def generate_field(self, data: FieldValue, source_mapping: SourceMapping):
-        field_name = self.mappings.map_field(data.field, source_mapping)
+        field_name = self.mappings.map_field(data.field, source_mapping)[0]
         if data.operator.token_type not in (
             OperatorType.EQ,
             OperatorType.LT,
