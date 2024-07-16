@@ -64,7 +64,16 @@ class QueryTokenizer(BaseTokenizer):
     fields_operator_map: ClassVar[dict[str, str]] = {}
     operators_map: ClassVar[dict[str, str]] = {}  # used to generate re pattern. so the keys order is important
 
-    logical_operator_pattern = r"^(?P<logical_operator>and|or|not|AND|OR|NOT)\s+"
+    logical_operators_map: ClassVar[dict[str, str]] = {
+        "and": LogicalOperatorType.AND,
+        "AND": LogicalOperatorType.AND,
+        "or": LogicalOperatorType.OR,
+        "OR": LogicalOperatorType.OR,
+        "not": LogicalOperatorType.NOT,
+        "NOT": LogicalOperatorType.NOT,
+    }
+    _logical_operator_pattern = f"(?P<logical_operator>{'|'.join(logical_operators_map)})"
+    logical_operator_pattern = rf"^{_logical_operator_pattern}\s+"
     field_value_pattern = r"""^___field___\s*___operator___\s*___value___"""
     base_value_pattern = r"(?:___value_pattern___)"
 
@@ -302,7 +311,12 @@ class QueryTokenizer(BaseTokenizer):
         if self.keyword_pattern and re.match(self.keyword_pattern, query):
             return self.search_keyword(query)
 
-        raise TokenizerGeneralException("Unsupported query entry")
+        unsupported_query_entry = self._get_unsupported_query_entry(query)
+        raise TokenizerGeneralException(f"Unsupported query entry: {unsupported_query_entry}")
+
+    def _get_unsupported_query_entry(self, query: str) -> str:
+        split_by_logical_operator = re.split(rf"\s+{self._logical_operator_pattern}\s+", query, maxsplit=1)
+        return split_by_logical_operator[0]
 
     @staticmethod
     def _validate_parentheses(tokens: list[QUERY_TOKEN_TYPE]) -> None:
