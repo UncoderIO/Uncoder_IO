@@ -412,7 +412,9 @@ class PlatformQueryRender(QueryRender):
                     generic_field_name=generic_field_name
                 )
             if not mapped_field and self.mappings.is_strict_mapping:
-                raise StrictPlatformException(platform_name=self.details.name, fields=[field.source_name])
+                raise StrictPlatformException(
+                    platform_name=self.details.name, fields=[field.source_name], mapping=source_mapping.source_id
+                )
             if prefix_list := self.process_raw_log_field_prefix(field=mapped_field, source_mapping=source_mapping):
                 for prefix in prefix_list:
                     if prefix not in defined_raw_log_fields:
