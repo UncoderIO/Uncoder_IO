@@ -1,6 +1,7 @@
 from typing import Optional
 
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
+from app.translator.platforms.athena.const import athena_query_details
 
 
 class AthenaLogSourceSignature(LogSourceSignature):
@@ -40,4 +41,4 @@ class AthenaMappings(BasePlatformMappings):
         return suitable_source_mappings
 
 
-athena_mappings = AthenaMappings(platform_dir="athena")
+athena_query_mappings = AthenaMappings(platform_dir="athena", platform_details=athena_query_details)

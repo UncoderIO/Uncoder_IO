@@ -18,12 +18,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.managers import parser_manager
+from app.translator.platforms.base.lucene.mapping import LuceneMappings
 from app.translator.platforms.base.lucene.parsers.lucene import LuceneQueryParser
 from app.translator.platforms.elasticsearch.const import elasticsearch_lucene_query_details
-from app.translator.platforms.elasticsearch.mapping import ElasticSearchMappings, elasticsearch_mappings
+from app.translator.platforms.elasticsearch.mapping import elasticsearch_lucene_query_mappings
 
 
 @parser_manager.register_supported_by_roota
 class ElasticSearchQueryParser(LuceneQueryParser):
     details: PlatformDetails = elasticsearch_lucene_query_details
-    mappings: ElasticSearchMappings = elasticsearch_mappings
+    mappings: LuceneMappings = elasticsearch_lucene_query_mappings

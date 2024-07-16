@@ -1,4 +1,5 @@
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
+from app.translator.platforms.chronicle.const import chronicle_query_details, chronicle_rule_details
 
 
 class ChronicleLogSourceSignature(LogSourceSignature):
@@ -10,6 +11,8 @@ class ChronicleLogSourceSignature(LogSourceSignature):
 
 
 class ChronicleMappings(BasePlatformMappings):
+    is_strict_mapping = True
+
     def prepare_log_source_signature(self, mapping: dict) -> ChronicleLogSourceSignature:
         ...
 
@@ -28,4 +31,5 @@ class ChronicleMappings(BasePlatformMappings):
         return suitable_source_mappings
 
 
-chronicle_mappings = ChronicleMappings(platform_dir="chronicle")
+chronicle_query_mappings = ChronicleMappings(platform_dir="chronicle", platform_details=chronicle_query_details)
+chronicle_rule_mappings = ChronicleMappings(platform_dir="chronicle", platform_details=chronicle_rule_details)

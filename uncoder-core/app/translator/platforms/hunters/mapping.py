@@ -1,4 +1,5 @@
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
+from app.translator.platforms.hunters.const import hunters_query_details
 
 
 class HuntersLogSourceSignature(LogSourceSignature):
@@ -32,4 +33,4 @@ class HuntersMappings(BasePlatformMappings):
         return suitable_source_mappings
 
 
-hunters_mappings = HuntersMappings(platform_dir="hunters")
+hunters_query_mappings = HuntersMappings(platform_dir="hunters", platform_details=hunters_query_details)

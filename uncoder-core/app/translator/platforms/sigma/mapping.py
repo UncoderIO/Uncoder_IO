@@ -1,6 +1,7 @@
 from typing import Optional
 
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
+from app.translator.platforms.sigma.const import sigma_rule_details
 
 
 class SigmaLogSourceSignature(LogSourceSignature):
@@ -59,4 +60,4 @@ class SigmaMappings(BasePlatformMappings):
         return suitable_source_mappings or [self._source_mappings[DEFAULT_MAPPING_NAME]]
 
 
-sigma_mappings = SigmaMappings(platform_dir="sigma")
+sigma_rule_mappings = SigmaMappings(platform_dir="sigma", platform_details=sigma_rule_details)

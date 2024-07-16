@@ -1,6 +1,7 @@
 from typing import Optional
 
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
+from app.translator.platforms.crowdstrike.const import crowdstrike_query_details
 
 
 class CrowdStrikeLogSourceSignature(LogSourceSignature):
@@ -38,4 +39,4 @@ class CrowdstrikeMappings(BasePlatformMappings):
         return suitable_source_mappings or [self._source_mappings[DEFAULT_MAPPING_NAME]]
 
 
-crowdstrike_mappings = CrowdstrikeMappings(platform_dir="crowdstrike")
+crowdstrike_query_mappings = CrowdstrikeMappings(platform_dir="crowdstrike", platform_details=crowdstrike_query_details)

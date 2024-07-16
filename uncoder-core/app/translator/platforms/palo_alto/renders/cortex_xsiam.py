@@ -16,18 +16,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-from contextlib import suppress
 from typing import ClassVar, Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.const import QUERY_TOKEN_TYPE
-from app.translator.core.context_vars import preset_log_source_str_ctx_var, return_only_first_query_ctx_var
+from app.translator.core.context_vars import preset_log_source_str_ctx_var
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.custom_types.values import ValueType
-from app.translator.core.exceptions.core import StrictPlatformException
-from app.translator.core.mapping import DEFAULT_MAPPING_NAME, SourceMapping
+from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.models.query_container import TokenizedQueryContainer
 from app.translator.core.models.query_tokens.field_value import FieldValue
 from app.translator.core.render import BaseFieldFieldRender, BaseFieldValueRender, PlatformQueryRender
 from app.translator.core.str_value_manager import StrValue
@@ -37,7 +34,7 @@ from app.translator.platforms.palo_alto.functions import CortexXQLFunctions, cor
 from app.translator.platforms.palo_alto.mapping import (
     CortexXQLLogSourceSignature,
     CortexXQLMappings,
-    cortex_xql_mappings,
+    cortex_xql_query_mappings,
 )
 from app.translator.platforms.palo_alto.str_value_manager import cortex_xql_str_value_manager
 
@@ -73,7 +70,8 @@ class CortexXQLFieldValueRender(BaseFieldValueRender):
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             values = ", ".join(
-                f"{self._pre_process_value(field, str(v), value_type=ValueType.value, wrap_str=True)}" for v in value
+                f"{self._pre_process_value(field, str(v) if isinstance(v, int) else v, ValueType.value, True)}"
+                for v in value
             )
             return f"{field} in ({values})"
 
@@ -167,8 +165,7 @@ class CortexXQLFieldFieldRender(BaseFieldFieldRender):
 @render_manager.register
 class CortexXQLQueryRender(PlatformQueryRender):
     details: PlatformDetails = cortex_xql_query_details
-    mappings: CortexXQLMappings = cortex_xql_mappings
-    is_strict_mapping = True
+    mappings: CortexXQLMappings = cortex_xql_query_mappings
     predefined_fields_map = PREDEFINED_FIELDS_MAP
     raw_log_field_patterns_map: ClassVar[dict[str, str]] = {
         "regex": '| alter {field} = regextract(to_json_string(action_evtlog_data_fields)->{field}{{}}, "\\"(.*)\\"")',
@@ -224,32 +221,3 @@ class CortexXQLQueryRender(PlatformQueryRender):
     @staticmethod
     def _finalize_search_query(query: str) -> str:
         return f"| filter {query}" if query else ""
-
-    def generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
-        queries_map = {}
-        errors = []
-        source_mappings = self._get_source_mappings(query_container.meta_info.source_mapping_ids)
-
-        last_mapping_index = len(source_mappings) - 1
-        for index, source_mapping in enumerate(source_mappings):
-            try:
-                finalized_query = self._generate_from_tokenized_query_container_by_source_mapping(
-                    query_container, source_mapping
-                )
-                if return_only_first_query_ctx_var.get() is True:
-                    return finalized_query
-                queries_map[source_mapping.source_id] = finalized_query
-            except StrictPlatformException as err:
-                errors.append(err)
-                if index != last_mapping_index or source_mapping.source_id == DEFAULT_MAPPING_NAME or queries_map:
-                    continue
-
-                with suppress(StrictPlatformException):
-                    finalized_query = self._generate_from_tokenized_query_container_by_source_mapping(
-                        query_container, self.mappings.get_source_mapping(DEFAULT_MAPPING_NAME)
-                    )
-                    queries_map[source_mapping.source_id] = finalized_query
-
-        if not queries_map and errors:
-            raise errors[0]
-        return self.finalize(queries_map)

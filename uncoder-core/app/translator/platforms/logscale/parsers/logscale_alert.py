@@ -21,12 +21,14 @@ from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer
 from app.translator.managers import parser_manager
 from app.translator.platforms.logscale.const import logscale_alert_details
+from app.translator.platforms.logscale.mapping import LogScaleMappings, logscale_alert_mappings
 from app.translator.platforms.logscale.parsers.logscale import LogScaleQueryParser
 
 
 @parser_manager.register
 class LogScaleAlertParser(LogScaleQueryParser, JsonRuleMixin):
     details: PlatformDetails = logscale_alert_details
+    mappings: LogScaleMappings = logscale_alert_mappings
 
     def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
         rule = self.load_rule(text=text)

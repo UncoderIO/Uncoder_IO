@@ -94,17 +94,16 @@ class FunctionRender(ABC):
     def render(self, function: Function, source_mapping: SourceMapping) -> str:
         raise NotImplementedError
 
-    @staticmethod
-    def map_field(field: Union[Alias, Field], source_mapping: SourceMapping) -> str:
+    def map_field(self, field: Union[Alias, Field], source_mapping: SourceMapping) -> str:
         if isinstance(field, Alias):
             return field.name
 
-        generic_field_name = field.get_generic_field_name(source_mapping.source_id)
-        mapped_field = source_mapping.fields_mapping.get_platform_field_name(generic_field_name=generic_field_name)
-        if isinstance(mapped_field, list):
-            mapped_field = mapped_field[0]
+        if isinstance(field, Field):
+            mappings = self.manager.platform_functions.platform_query_render.mappings
+            mapped_fields = mappings.map_field(field, source_mapping)
+            return mapped_fields[0]
 
-        return mapped_field if mapped_field else field.source_name
+        raise NotSupportedFunctionException
 
 
 class PlatformFunctionsManager:

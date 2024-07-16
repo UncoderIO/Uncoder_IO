@@ -20,13 +20,13 @@ limitations under the License.
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
 from app.translator.managers import render_cti_manager
-from app.translator.platforms.athena.const import athena_details
+from app.translator.platforms.athena.const import athena_query_details
 from app.translator.platforms.athena.mappings.athena_cti import DEFAULT_ATHENA_MAPPING
 
 
 @render_cti_manager.register
 class AthenaCTI(RenderCTI):
-    details: PlatformDetails = athena_details
+    details: PlatformDetails = athena_query_details
 
     field_value_template: str = "{key} = '{value}'"
     or_operator: str = " OR "

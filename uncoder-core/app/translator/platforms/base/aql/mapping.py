@@ -90,6 +90,3 @@ class AQLMappings(BasePlatformMappings):
             suitable_source_mappings = [self._source_mappings[DEFAULT_MAPPING_NAME]]
 
         return suitable_source_mappings
-
-
-aql_mappings = AQLMappings(platform_dir="qradar")

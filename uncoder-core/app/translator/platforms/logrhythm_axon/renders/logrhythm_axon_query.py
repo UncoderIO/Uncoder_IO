@@ -33,7 +33,7 @@ from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
 from app.translator.managers import render_manager
 from app.translator.platforms.logrhythm_axon.const import UNMAPPED_FIELD_DEFAULT_NAME, logrhythm_axon_query_details
 from app.translator.platforms.logrhythm_axon.escape_manager import logrhythm_query_escape_manager
-from app.translator.platforms.logrhythm_axon.mapping import LogRhythmAxonMappings, logrhythm_axon_mappings
+from app.translator.platforms.logrhythm_axon.mapping import LogRhythmAxonMappings, logrhythm_axon_query_mappings
 
 
 class LogRhythmRegexRenderException(BaseRenderException):
@@ -205,10 +205,9 @@ class LogRhythmAxonQueryRender(PlatformQueryRender):
 
     field_value_render = LogRhythmAxonFieldValueRender(or_token=or_token)
 
-    mappings: LogRhythmAxonMappings = logrhythm_axon_mappings
+    mappings: LogRhythmAxonMappings = logrhythm_axon_query_mappings
     comment_symbol = "//"
     is_single_line_comment = True
-    is_strict_mapping = True
 
     @staticmethod
     def _finalize_search_query(query: str) -> str:
@@ -220,7 +219,7 @@ class LogRhythmAxonQueryRender(PlatformQueryRender):
     def apply_token(self, token: QUERY_TOKEN_TYPE, source_mapping: SourceMapping) -> str:
         if isinstance(token, FieldValue) and token.field:
             try:
-                mapped_fields = self.map_field(token.field, source_mapping)
+                mapped_fields = self.mappings.map_field(token.field, source_mapping)
             except StrictPlatformException:
                 try:
                     return self.field_value_render.apply_field_value(
@@ -244,6 +243,9 @@ class LogRhythmAxonQueryRender(PlatformQueryRender):
     def _generate_from_tokenized_query_container_by_source_mapping(
         self, query_container: TokenizedQueryContainer, source_mapping: SourceMapping
     ) -> str:
+        unmapped_fields = self.mappings.check_fields_mapping_existence(
+            query_container.meta_info.query_fields, source_mapping
+        )
         prefix = self.generate_prefix(source_mapping.log_source_signature)
         if "product" in query_container.meta_info.parsed_logsources:
             prefix = f"{prefix} CONTAINS {query_container.meta_info.parsed_logsources['product'][0]}"
@@ -258,6 +260,7 @@ class LogRhythmAxonQueryRender(PlatformQueryRender):
             query=result,
             functions=rendered_functions.rendered,
             not_supported_functions=not_supported_functions,
+            unmapped_fields=unmapped_fields,
             meta_info=query_container.meta_info,
             source_mapping=source_mapping,
         )

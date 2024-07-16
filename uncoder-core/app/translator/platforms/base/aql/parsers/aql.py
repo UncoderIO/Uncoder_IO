@@ -26,14 +26,12 @@ from app.translator.core.parser import PlatformQueryParser
 from app.translator.platforms.base.aql.const import NUM_VALUE_PATTERN, SINGLE_QUOTES_VALUE_PATTERN, TABLE_GROUP_PATTERN
 from app.translator.platforms.base.aql.functions import AQLFunctions, aql_functions
 from app.translator.platforms.base.aql.log_source_map import LOG_SOURCE_FUNCTIONS_MAP
-from app.translator.platforms.base.aql.mapping import AQLMappings, aql_mappings
 from app.translator.platforms.base.aql.tokenizer import AQLTokenizer
 from app.translator.tools.utils import get_match_group
 
 
 class AQLQueryParser(PlatformQueryParser):
     tokenizer: AQLTokenizer = AQLTokenizer(aql_functions)
-    mappings: AQLMappings = aql_mappings
     platform_functions: AQLFunctions = aql_functions
 
     log_source_functions = ("LOGSOURCENAME", "LOGSOURCEGROUPNAME")

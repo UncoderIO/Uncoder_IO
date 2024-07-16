@@ -22,13 +22,13 @@ from typing import ClassVar
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
 from app.translator.managers import render_cti_manager
-from app.translator.platforms.microsoft.const import microsoft_defender_details
+from app.translator.platforms.microsoft.const import microsoft_defender_query_details
 from app.translator.platforms.microsoft.mappings.mdatp_cti import DEFAULT_MICROSOFT_DEFENDER_MAPPING
 
 
 @render_cti_manager.register
 class MicrosoftDefenderCTI(RenderCTI):
-    details: PlatformDetails = microsoft_defender_details
+    details: PlatformDetails = microsoft_defender_query_details
 
     field_value_templates_map: ClassVar[dict[str, str]] = {
         "default": '{key} =~ "{value}"',
