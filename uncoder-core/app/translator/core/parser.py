@@ -28,6 +28,7 @@ from app.translator.core.models.functions.base import Function
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.models.query_tokens.field import Field
+from app.translator.core.models.query_tokens.field_field import FieldField
 from app.translator.core.models.query_tokens.field_value import FieldValue
 from app.translator.core.models.query_tokens.function_value import FunctionValue
 from app.translator.core.tokenizer import QueryTokenizer
@@ -68,6 +69,11 @@ class PlatformQueryParser(QueryParser, ABC):
         for token in query_tokens:
             if isinstance(token, FieldValue):
                 field_tokens.append(token.field)
+            elif isinstance(token, FieldField):
+                if token.field_left:
+                    field_tokens.append(token.field_left)
+                if token.field_right:
+                    field_tokens.append(token.field_right)
             elif isinstance(token, FunctionValue):
                 field_tokens.extend(self.tokenizer.get_field_tokens_from_func_args([token.function]))
 
