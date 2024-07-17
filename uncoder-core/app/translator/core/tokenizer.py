@@ -338,7 +338,7 @@ class QueryTokenizer(BaseTokenizer):
     @staticmethod
     def filter_tokens(
         tokens: list[QUERY_TOKEN_TYPE],
-        token_type: Union[type[FieldValue], type[Field], type[Keyword], type[Identifier]],
+        token_type: Union[type[FieldValue], type[Field], type[FieldField], type[Keyword], type[Identifier]],
     ) -> list[QUERY_TOKEN_TYPE]:
         return [token for token in tokens if isinstance(token, token_type)]
 
@@ -363,7 +363,9 @@ class QueryTokenizer(BaseTokenizer):
                 result.extend(self.get_field_tokens_from_func_args(args=arg.args))
                 result.extend(self.get_field_tokens_from_func_args(args=arg.by_clauses))
                 result.extend(self.get_field_tokens_from_func_args(args=[arg.filter_]))
-            elif isinstance(arg, (JoinFunction, UnionFunction)):
+            elif isinstance(arg, JoinFunction):
+                result.extend(self.get_field_tokens_from_func_args(args=arg.condition))
+            elif isinstance(arg, UnionFunction):
                 continue
             elif isinstance(arg, Function):
                 result.extend(self.get_field_tokens_from_func_args(args=arg.args))
