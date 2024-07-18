@@ -46,6 +46,7 @@ field_mapping:
   c-uri-query: xdm.network.http.url
   QueryName: xdm.network.dns.dns_question.name
   Application: xdm.network.application_protocol
+  sourceNetwork: xdm.source.subnet
   SourceHostName: xdm.source.host.hostname
   DestinationHostname: xdm.target.host.hostname
   Hashes:
@@ -127,3 +128,9 @@ field_mapping:
   url_category: xdm.network.http.url_category
   EventSeverity: xdm.alert.severity
   duration: xdm.event.duration
+  ThreatName: xdm.alert.original_threat_id
+  AnalyzerName: xdm.observer.type
+  Classification: xdm.alert.category
+  ResultCode: xdm.event.outcome_reason
+  Technique: xdm.alert.mitre_techniques
+  Action: xdm.event.outcome

@@ -19,6 +19,7 @@ field_mapping:
   src-port:
     - SourcePort
     - localport
+    - sourcePort
   src-ip:
     - sourceip
     - source_ip
@@ -34,6 +35,7 @@ field_mapping:
   User:
     - userName
     - EventUserName
+    - Alert Threat Cause Actor Name
   CommandLine: Command
   Protocol: 
     - IPProtocol
@@ -41,6 +43,7 @@ field_mapping:
   Application:
     - Application
     - application
+  sourceNetwork: sourceNetwork
   SourceHostName:
     - HostCount-source
     - identityHostName
@@ -79,3 +82,11 @@ field_mapping:
     - Source
     - source
   duration: duration
+  ThreatName: 
+    - Threat Name
+    - Alert Blocked Threat Category
+  AnalyzerName: Analyzer Name
+  Classification: Classification
+  ResultCode: Alert Reason Code
+  Technique: Technique
+  Action: Action
