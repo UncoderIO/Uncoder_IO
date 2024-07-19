@@ -25,6 +25,7 @@ from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer
 from app.translator.managers import render_manager
 from app.translator.platforms.splunk.const import DEFAULT_SPLUNK_ALERT, splunk_alert_details
+from app.translator.platforms.splunk.mapping import SplunkMappings, splunk_alert_mappings
 from app.translator.platforms.splunk.renders.splunk import SplunkFieldValueRender, SplunkQueryRender
 from app.translator.tools.utils import get_rule_description_str
 
@@ -39,6 +40,8 @@ class SplunkAlertFieldValueRender(SplunkFieldValueRender):
 @render_manager.register
 class SplunkAlertRender(SplunkQueryRender):
     details: PlatformDetails = splunk_alert_details
+    mappings: SplunkMappings = splunk_alert_mappings
+
     or_token = "OR"
     field_value_render = SplunkAlertFieldValueRender(or_token=or_token)
 
@@ -59,6 +62,7 @@ class SplunkAlertRender(SplunkQueryRender):
         meta_info: Optional[MetaInfoContainer] = None,
         source_mapping: Optional[SourceMapping] = None,  # noqa: ARG002
         not_supported_functions: Optional[list] = None,
+        unmapped_fields: Optional[list[str]] = None,
         *args,  # noqa: ARG002
         **kwargs,  # noqa: ARG002
     ) -> str:
@@ -74,4 +78,5 @@ class SplunkAlertRender(SplunkQueryRender):
         if mitre_techniques:
             mitre_str = f"action.correlationsearch.annotations = {mitre_techniques})"
             rule = rule.replace("<annotations_place_holder>", mitre_str)
+        rule = self.wrap_with_unmapped_fields(rule, unmapped_fields)
         return self.wrap_with_not_supported_functions(rule, not_supported_functions)

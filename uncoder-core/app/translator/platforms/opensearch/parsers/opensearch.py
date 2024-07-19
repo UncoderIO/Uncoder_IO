@@ -18,12 +18,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.managers import parser_manager
+from app.translator.platforms.base.lucene.mapping import LuceneMappings
 from app.translator.platforms.base.lucene.parsers.lucene import LuceneQueryParser
 from app.translator.platforms.opensearch.const import opensearch_query_details
-from app.translator.platforms.opensearch.mapping import OpenSearchMappings, opensearch_mappings
+from app.translator.platforms.opensearch.mapping import opensearch_query_mappings
 
 
 @parser_manager.register_supported_by_roota
 class OpenSearchQueryParser(LuceneQueryParser):
     details: PlatformDetails = opensearch_query_details
-    mappings: OpenSearchMappings = opensearch_mappings
+    mappings: LuceneMappings = opensearch_query_mappings

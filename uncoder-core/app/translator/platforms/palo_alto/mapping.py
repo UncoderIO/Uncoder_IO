@@ -7,6 +7,7 @@ from app.translator.core.mapping import (
     LogSourceSignature,
     SourceMapping,
 )
+from app.translator.platforms.palo_alto.const import cortex_xql_query_details
 
 
 class CortexXQLLogSourceSignature(LogSourceSignature):
@@ -73,4 +74,6 @@ class CortexXQLMappings(BasePlatformMappings):
         return suitable_source_mappings
 
 
-cortex_xql_mappings = CortexXQLMappings(platform_dir="palo_alto_cortex")
+cortex_xql_query_mappings = CortexXQLMappings(
+    platform_dir="palo_alto_cortex", platform_details=cortex_xql_query_details
+)

@@ -28,12 +28,14 @@ from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer
 from app.translator.managers import parser_manager
 from app.translator.platforms.microsoft.const import microsoft_sentinel_rule_details
+from app.translator.platforms.microsoft.mapping import MicrosoftSentinelMappings, microsoft_sentinel_rule_mappings
 from app.translator.platforms.microsoft.parsers.microsoft_sentinel import MicrosoftSentinelQueryParser
 
 
 @parser_manager.register
 class MicrosoftSentinelRuleParser(MicrosoftSentinelQueryParser, JsonRuleMixin):
     details: PlatformDetails = microsoft_sentinel_rule_details
+    mappings: MicrosoftSentinelMappings = microsoft_sentinel_rule_mappings
 
     @staticmethod
     def __parse_timeframe(raw_timeframe: Optional[str]) -> Optional[timedelta]:

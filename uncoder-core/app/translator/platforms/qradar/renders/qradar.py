@@ -19,8 +19,10 @@ limitations under the License.
 
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.managers import render_manager
+from app.translator.platforms.base.aql.mapping import AQLMappings
 from app.translator.platforms.base.aql.renders.aql import AQLFieldValueRender, AQLQueryRender
 from app.translator.platforms.qradar.const import qradar_query_details
+from app.translator.platforms.qradar.mapping import qradar_query_mappings
 
 
 class QradarFieldValueRender(AQLFieldValueRender):
@@ -30,4 +32,5 @@ class QradarFieldValueRender(AQLFieldValueRender):
 @render_manager.register
 class QradarQueryRender(AQLQueryRender):
     details: PlatformDetails = qradar_query_details
+    mappings: AQLMappings = qradar_query_mappings
     field_value_render = QradarFieldValueRender(or_token=AQLQueryRender.or_token)

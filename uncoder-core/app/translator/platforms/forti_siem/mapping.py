@@ -6,6 +6,7 @@ from app.translator.core.mapping import (
     LogSourceSignature,
     SourceMapping,
 )
+from app.translator.platforms.forti_siem.const import forti_siem_rule_details
 
 
 class FortiSiemLogSourceSignature(LogSourceSignature):
@@ -57,4 +58,4 @@ class FortiSiemMappings(BaseCommonPlatformMappings):
         return suitable_source_mappings
 
 
-forti_siem_mappings = FortiSiemMappings(platform_dir="forti_siem")
+forti_siem_rule_mappings = FortiSiemMappings(platform_dir="forti_siem", platform_details=forti_siem_rule_details)

@@ -23,7 +23,7 @@ from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
 from app.translator.core.str_value_manager import StrValue
-from app.translator.platforms.base.aql.mapping import AQLLogSourceSignature, AQLMappings, aql_mappings
+from app.translator.platforms.base.aql.mapping import AQLLogSourceSignature
 from app.translator.platforms.base.aql.str_value_manager import aql_str_value_manager
 
 
@@ -121,8 +121,6 @@ class AQLFieldValueRender(BaseFieldValueRender):
 
 
 class AQLQueryRender(PlatformQueryRender):
-    mappings: AQLMappings = aql_mappings
-
     or_token = "OR"
     and_token = "AND"
     not_token = "NOT"

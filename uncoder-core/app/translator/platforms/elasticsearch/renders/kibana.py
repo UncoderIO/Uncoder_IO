@@ -25,8 +25,9 @@ from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer
 from app.translator.managers import render_manager
+from app.translator.platforms.base.lucene.mapping import LuceneMappings
 from app.translator.platforms.elasticsearch.const import KIBANA_RULE, KIBANA_SEARCH_SOURCE_JSON, kibana_rule_details
-from app.translator.platforms.elasticsearch.mapping import ElasticSearchMappings, elasticsearch_mappings
+from app.translator.platforms.elasticsearch.mapping import kibana_rule_mappings
 from app.translator.platforms.elasticsearch.renders.elasticsearch import (
     ElasticSearchFieldValue,
     ElasticSearchQueryRender,
@@ -43,7 +44,7 @@ class KibanaFieldValue(ElasticSearchFieldValue):
 @render_manager.register
 class KibanaRuleRender(ElasticSearchQueryRender):
     details: PlatformDetails = kibana_rule_details
-    mappings: ElasticSearchMappings = elasticsearch_mappings
+    mappings: LuceneMappings = kibana_rule_mappings
     or_token = "OR"
     field_value_render = KibanaFieldValue(or_token=or_token)
 
@@ -55,6 +56,7 @@ class KibanaRuleRender(ElasticSearchQueryRender):
         meta_info: Optional[MetaInfoContainer] = None,
         source_mapping: Optional[SourceMapping] = None,  # noqa: ARG002
         not_supported_functions: Optional[list] = None,
+        unmapped_fields: Optional[list[str]] = None,
         *args,  # noqa: ARG002
         **kwargs,  # noqa: ARG002
     ) -> str:
@@ -74,4 +76,5 @@ class KibanaRuleRender(ElasticSearchQueryRender):
             references=meta_info.references,
         )
         rule_str = json.dumps(rule, indent=4, sort_keys=False)
+        rule_str = self.wrap_with_unmapped_fields(rule_str, unmapped_fields)
         return self.wrap_with_not_supported_functions(rule_str, not_supported_functions)

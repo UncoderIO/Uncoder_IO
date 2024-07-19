@@ -20,21 +20,20 @@ limitations under the License.
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
-from app.translator.core.context_vars import return_only_first_query_ctx_var
+from app.translator.core.const import QUERY_TOKEN_TYPE
 from app.translator.core.custom_types.tokens import LogicalOperatorType
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.exceptions.core import StrictPlatformException
 from app.translator.core.exceptions.render import BaseRenderException
 from app.translator.core.mapping import LogSourceSignature, SourceMapping
-from app.translator.core.models.field import FieldValue, Keyword
-from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import TokenizedQueryContainer
+from app.translator.core.models.query_tokens.field_value import FieldValue
 from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
 from app.translator.managers import render_manager
 from app.translator.platforms.logrhythm_axon.const import UNMAPPED_FIELD_DEFAULT_NAME, logrhythm_axon_query_details
 from app.translator.platforms.logrhythm_axon.escape_manager import logrhythm_query_escape_manager
-from app.translator.platforms.logrhythm_axon.mapping import LogRhythmAxonMappings, logrhythm_axon_mappings
+from app.translator.platforms.logrhythm_axon.mapping import LogRhythmAxonMappings, logrhythm_axon_query_mappings
 
 
 class LogRhythmRegexRenderException(BaseRenderException):
@@ -206,10 +205,9 @@ class LogRhythmAxonQueryRender(PlatformQueryRender):
 
     field_value_render = LogRhythmAxonFieldValueRender(or_token=or_token)
 
-    mappings: LogRhythmAxonMappings = logrhythm_axon_mappings
+    mappings: LogRhythmAxonMappings = logrhythm_axon_query_mappings
     comment_symbol = "//"
     is_single_line_comment = True
-    is_strict_mapping = True
 
     @staticmethod
     def _finalize_search_query(query: str) -> str:
@@ -218,10 +216,10 @@ class LogRhythmAxonQueryRender(PlatformQueryRender):
     def generate_prefix(self, log_source_signature: LogSourceSignature, functions_prefix: str = "") -> str:  # noqa: ARG002
         return str(log_source_signature)
 
-    def apply_token(self, token: Union[FieldValue, Keyword, Identifier], source_mapping: SourceMapping) -> str:
-        if isinstance(token, FieldValue):
+    def apply_token(self, token: QUERY_TOKEN_TYPE, source_mapping: SourceMapping) -> str:
+        if isinstance(token, FieldValue) and token.field:
             try:
-                mapped_fields = self.map_field(token.field, source_mapping)
+                mapped_fields = self.mappings.map_field(token.field, source_mapping)
             except StrictPlatformException:
                 try:
                     return self.field_value_render.apply_field_value(
@@ -242,30 +240,27 @@ class LogRhythmAxonQueryRender(PlatformQueryRender):
 
         return super().apply_token(token, source_mapping)
 
-    def generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
-        queries_map = {}
-        source_mappings = self._get_source_mappings(query_container.meta_info.source_mapping_ids)
+    def _generate_from_tokenized_query_container_by_source_mapping(
+        self, query_container: TokenizedQueryContainer, source_mapping: SourceMapping
+    ) -> str:
+        unmapped_fields = self.mappings.check_fields_mapping_existence(
+            query_container.meta_info.query_fields, source_mapping
+        )
+        prefix = self.generate_prefix(source_mapping.log_source_signature)
+        if "product" in query_container.meta_info.parsed_logsources:
+            prefix = f"{prefix} CONTAINS {query_container.meta_info.parsed_logsources['product'][0]}"
+        else:
+            prefix = f"{prefix} CONTAINS anything"
 
-        for source_mapping in source_mappings:
-            prefix = self.generate_prefix(source_mapping.log_source_signature)
-            if "product" in query_container.meta_info.parsed_logsources:
-                prefix = f"{prefix} CONTAINS {query_container.meta_info.parsed_logsources['product'][0]}"
-            else:
-                prefix = f"{prefix} CONTAINS anything"
-
-            result = self.generate_query(tokens=query_container.tokens, source_mapping=source_mapping)
-            rendered_functions = self.generate_functions(query_container.functions.functions, source_mapping)
-            not_supported_functions = query_container.functions.not_supported + rendered_functions.not_supported
-            finalized_query = self.finalize_query(
-                prefix=prefix,
-                query=result,
-                functions=rendered_functions.rendered,
-                not_supported_functions=not_supported_functions,
-                meta_info=query_container.meta_info,
-                source_mapping=source_mapping,
-            )
-            if return_only_first_query_ctx_var.get() is True:
-                return finalized_query
-            queries_map[source_mapping.source_id] = finalized_query
-
-        return self.finalize(queries_map)
+        result = self.generate_query(tokens=query_container.tokens, source_mapping=source_mapping)
+        rendered_functions = self.generate_functions(query_container.functions.functions, source_mapping)
+        not_supported_functions = query_container.functions.not_supported + rendered_functions.not_supported
+        return self.finalize_query(
+            prefix=prefix,
+            query=result,
+            functions=rendered_functions.rendered,
+            not_supported_functions=not_supported_functions,
+            unmapped_fields=unmapped_fields,
+            meta_info=query_container.meta_info,
+            source_mapping=source_mapping,
+        )

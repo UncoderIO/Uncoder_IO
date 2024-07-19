@@ -19,6 +19,7 @@ field_mapping:
   src-port:
     - SourcePort
     - localport
+    - sourcePort
   src-ip:
     - sourceip
     - source_ip
@@ -78,3 +79,4 @@ field_mapping:
   Source:
     - Source
     - source
+  duration: duration
