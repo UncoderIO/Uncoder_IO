@@ -36,6 +36,8 @@ field_mapping:
     - userName
     - EventUserName
     - Alert Threat Cause Actor Name
+    - Username
+    - Security ID
   CommandLine: Command
   Protocol: 
     - IPProtocol
@@ -82,7 +84,7 @@ field_mapping:
     - Source
     - source
   duration: duration
-  ThreatName: 
+  ThreatName:
     - Threat Name
     - Alert Blocked Threat Category
   AnalyzerName: Analyzer Name
@@ -90,3 +92,13 @@ field_mapping:
   ResultCode: Alert Reason Code
   Technique: Technique
   Action: Action
+  Workstation: Machine Identifier
+  GroupMembership: Role Name
+  FileName: 
+    - Filename
+    - File Name
+  RegistryKey: 
+    - Registry Key
+    - Target Object
+  RegistryValue: RegistryValue
+  ProcessPath: Process Path
