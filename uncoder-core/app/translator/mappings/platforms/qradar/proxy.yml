@@ -13,13 +13,16 @@ field_mapping:
     - URL
     - XForceCategoryByURL
   c-useragent: User Agent
-  cs-method: HTTP Method
+  cs-method: 
+    - HTTP Method
+    - Method
   cs-bytes: Bytes Sent
   #cs-cookie-vars: cs-cookie-vars
   c-uri-extension: URL
   c-uri-query:
     - URL
     - URL Path
+    - URL Query String
   #cs-cookie: cs-cookie
   cs-host:
     - UrlHost
@@ -33,6 +36,10 @@ field_mapping:
   r-dns:
     - UrlHost
     - URL Host
-  sc-status: HTTP Response Code
+  sc-status: 
+    - HTTP Response Code
+    - Response Code
   #post-body: post-body
-  url_category: XForceCategoryByURL
+  url_category: 
+    - XForceCategoryByURL
+    - Web Category

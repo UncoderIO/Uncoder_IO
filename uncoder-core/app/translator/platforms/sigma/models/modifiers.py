@@ -1,8 +1,8 @@
 from typing import ClassVar, Optional, Union
 
 from app.translator.core.custom_types.tokens import GroupType, LogicalOperatorType, OperatorType
-from app.translator.core.models.field import FieldValue
-from app.translator.core.models.identifier import Identifier
+from app.translator.core.models.query_tokens.field_value import FieldValue
+from app.translator.core.models.query_tokens.identifier import Identifier
 from app.translator.core.str_value_manager import StrValue
 from app.translator.platforms.sigma.str_value_manager import sigma_str_value_manager
 

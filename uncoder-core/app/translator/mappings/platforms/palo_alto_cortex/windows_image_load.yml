@@ -9,6 +9,7 @@ default_log_source:
 
 field_mapping:
   ImageLoaded: action_module_path
+  FileExtension: action_file_extension
   md5: action_module_md5
   sha256: action_module_sha256
   User: actor_effective_username

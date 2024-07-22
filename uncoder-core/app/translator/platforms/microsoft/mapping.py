@@ -1,6 +1,11 @@
 from typing import Optional
 
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
+from app.translator.platforms.microsoft.const import (
+    microsoft_defender_query_details,
+    microsoft_sentinel_query_details,
+    microsoft_sentinel_rule_details,
+)
 
 
 class MicrosoftSentinelLogSourceSignature(LogSourceSignature):
@@ -37,7 +42,12 @@ class MicrosoftSentinelMappings(BasePlatformMappings):
         return suitable_source_mappings
 
 
-microsoft_sentinel_mappings = MicrosoftSentinelMappings(platform_dir="microsoft_sentinel")
+microsoft_sentinel_query_mappings = MicrosoftSentinelMappings(
+    platform_dir="microsoft_sentinel", platform_details=microsoft_sentinel_query_details
+)
+microsoft_sentinel_rule_mappings = MicrosoftSentinelMappings(
+    platform_dir="microsoft_sentinel", platform_details=microsoft_sentinel_rule_details
+)
 
 
 class MicrosoftDefenderLogSourceSignature(MicrosoftSentinelLogSourceSignature):
@@ -45,10 +55,14 @@ class MicrosoftDefenderLogSourceSignature(MicrosoftSentinelLogSourceSignature):
 
 
 class MicrosoftDefenderMappings(MicrosoftSentinelMappings):
+    is_strict_mapping = True
+
     def prepare_log_source_signature(self, mapping: dict) -> MicrosoftDefenderLogSourceSignature:
         tables = mapping.get("log_source", {}).get("table")
         default_log_source = mapping["default_log_source"]
         return MicrosoftDefenderLogSourceSignature(tables=tables, default_source=default_log_source)
 
 
-microsoft_defender_mappings = MicrosoftDefenderMappings(platform_dir="microsoft_defender")
+microsoft_defender_query_mappings = MicrosoftDefenderMappings(
+    platform_dir="microsoft_defender", platform_details=microsoft_defender_query_details
+)

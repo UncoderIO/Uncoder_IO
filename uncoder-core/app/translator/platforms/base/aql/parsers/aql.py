@@ -26,14 +26,12 @@ from app.translator.core.parser import PlatformQueryParser
 from app.translator.platforms.base.aql.const import NUM_VALUE_PATTERN, SINGLE_QUOTES_VALUE_PATTERN, TABLE_GROUP_PATTERN
 from app.translator.platforms.base.aql.functions import AQLFunctions, aql_functions
 from app.translator.platforms.base.aql.log_source_map import LOG_SOURCE_FUNCTIONS_MAP
-from app.translator.platforms.base.aql.mapping import AQLMappings, aql_mappings
-from app.translator.platforms.base.aql.tokenizer import AQLTokenizer, aql_tokenizer
+from app.translator.platforms.base.aql.tokenizer import AQLTokenizer
 from app.translator.tools.utils import get_match_group
 
 
 class AQLQueryParser(PlatformQueryParser):
-    tokenizer: AQLTokenizer = aql_tokenizer
-    mappings: AQLMappings = aql_mappings
+    tokenizer: AQLTokenizer = AQLTokenizer(aql_functions)
     platform_functions: AQLFunctions = aql_functions
 
     log_source_functions = ("LOGSOURCENAME", "LOGSOURCEGROUPNAME")
@@ -116,10 +114,10 @@ class AQLQueryParser(PlatformQueryParser):
 
     def parse(self, raw_query_container: RawQueryContainer) -> TokenizedQueryContainer:
         query, log_sources, functions = self._parse_query(raw_query_container.query)
-        tokens, source_mappings = self.get_tokens_and_source_mappings(query, log_sources)
-        fields_tokens = self.get_fields_tokens(tokens=tokens)
-        self.set_functions_fields_generic_names(functions=functions, source_mappings=source_mappings)
+        query_tokens = self.get_query_tokens(query)
+        field_tokens = self.get_field_tokens(query_tokens, functions.functions)
+        source_mappings = self.get_source_mappings(field_tokens, log_sources)
         meta_info = raw_query_container.meta_info
-        meta_info.query_fields = fields_tokens
+        meta_info.query_fields = field_tokens
         meta_info.source_mapping_ids = [source_mapping.source_id for source_mapping in source_mappings]
-        return TokenizedQueryContainer(tokens=tokens, meta_info=meta_info, functions=functions)
+        return TokenizedQueryContainer(tokens=query_tokens, meta_info=meta_info, functions=functions)

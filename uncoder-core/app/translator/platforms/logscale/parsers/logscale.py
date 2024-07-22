@@ -23,7 +23,7 @@ from app.translator.core.parser import PlatformQueryParser
 from app.translator.managers import parser_manager
 from app.translator.platforms.logscale.const import logscale_query_details
 from app.translator.platforms.logscale.functions import LogScaleFunctions, log_scale_functions
-from app.translator.platforms.logscale.mapping import LogScaleMappings, logscale_mappings
+from app.translator.platforms.logscale.mapping import LogScaleMappings, logscale_query_mappings
 from app.translator.platforms.logscale.tokenizer import LogScaleTokenizer
 
 
@@ -32,7 +32,7 @@ class LogScaleQueryParser(PlatformQueryParser):
     details: PlatformDetails = logscale_query_details
     platform_functions: LogScaleFunctions = log_scale_functions
     tokenizer = LogScaleTokenizer()
-    mappings: LogScaleMappings = logscale_mappings
+    mappings: LogScaleMappings = logscale_query_mappings
 
     wrapped_with_comment_pattern = r"^\s*/\*(?:|\n|.)*\*/"
 
@@ -42,10 +42,10 @@ class LogScaleQueryParser(PlatformQueryParser):
 
     def parse(self, raw_query_container: RawQueryContainer) -> TokenizedQueryContainer:
         query, functions = self._parse_query(query=raw_query_container.query)
-        tokens, source_mappings = self.get_tokens_and_source_mappings(query, {})
-        fields_tokens = self.get_fields_tokens(tokens=tokens)
-        self.set_functions_fields_generic_names(functions=functions, source_mappings=source_mappings)
+        query_tokens = self.get_query_tokens(query)
+        field_tokens = self.get_field_tokens(query_tokens, functions.functions)
+        source_mappings = self.get_source_mappings(field_tokens, {})
         meta_info = raw_query_container.meta_info
-        meta_info.query_fields = fields_tokens
+        meta_info.query_fields = field_tokens
         meta_info.source_mapping_ids = [source_mapping.source_id for source_mapping in source_mappings]
-        return TokenizedQueryContainer(tokens=tokens, meta_info=meta_info, functions=functions)
+        return TokenizedQueryContainer(tokens=query_tokens, meta_info=meta_info, functions=functions)

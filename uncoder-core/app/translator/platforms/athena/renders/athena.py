@@ -19,19 +19,19 @@ limitations under the License.
 
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.managers import render_manager
-from app.translator.platforms.athena.const import athena_details
-from app.translator.platforms.athena.mapping import AthenaMappings, athena_mappings
+from app.translator.platforms.athena.const import athena_query_details
+from app.translator.platforms.athena.mapping import AthenaMappings, athena_query_mappings
 from app.translator.platforms.base.sql.renders.sql import SqlFieldValueRender, SqlQueryRender
 
 
 class AthenaFieldValueRender(SqlFieldValueRender):
-    details: PlatformDetails = athena_details
+    details: PlatformDetails = athena_query_details
 
 
 @render_manager.register
 class AthenaQueryRender(SqlQueryRender):
-    details: PlatformDetails = athena_details
-    mappings: AthenaMappings = athena_mappings
+    details: PlatformDetails = athena_query_details
+    mappings: AthenaMappings = athena_query_mappings
 
     or_token = "OR"
 

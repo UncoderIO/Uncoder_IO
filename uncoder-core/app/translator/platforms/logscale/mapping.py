@@ -1,6 +1,7 @@
 from typing import Optional
 
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
+from app.translator.platforms.logscale.const import logscale_alert_details, logscale_query_details
 
 
 class LogScaleLogSourceSignature(LogSourceSignature):
@@ -34,4 +35,5 @@ class LogScaleMappings(BasePlatformMappings):
         return suitable_source_mappings
 
 
-logscale_mappings = LogScaleMappings(platform_dir="logscale")
+logscale_query_mappings = LogScaleMappings(platform_dir="logscale", platform_details=logscale_query_details)
+logscale_alert_mappings = LogScaleMappings(platform_dir="logscale", platform_details=logscale_alert_details)

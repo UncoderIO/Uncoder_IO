@@ -22,3 +22,4 @@ field_mapping:
     - SignatureStatus
   OriginalFileName: OriginalFileName
   Signed: Signed
+  FileExtension: File Extension

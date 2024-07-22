@@ -19,11 +19,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 import re
 from typing import ClassVar, Optional, Union
 
+from app.translator.core.const import QUERY_TOKEN_TYPE
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.mixins.logic import ANDLogicOperatorMixin
-from app.translator.core.models.field import FieldValue, Keyword
-from app.translator.core.models.identifier import Identifier
+from app.translator.core.models.query_tokens.field_value import FieldValue
+from app.translator.core.models.query_tokens.identifier import Identifier
+from app.translator.core.models.query_tokens.keyword import Keyword
 from app.translator.core.str_value_manager import StrValue
 from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.platforms.base.lucene.escape_manager import lucene_escape_manager
@@ -135,6 +137,6 @@ class LuceneTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
 
         return super()._check_field_value_match(query, white_space_pattern=white_space_pattern)
 
-    def tokenize(self, query: str) -> list[Union[FieldValue, Keyword, Identifier]]:
+    def tokenize(self, query: str) -> list[QUERY_TOKEN_TYPE]:
         tokens = super().tokenize(query=query)
         return self.add_and_token_if_missed(tokens=tokens)
