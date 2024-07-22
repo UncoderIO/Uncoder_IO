@@ -35,6 +35,7 @@ field_mapping:
   User:
     - userName
     - EventUserName
+    - Alert Threat Cause Actor Name
     - Username
     - Security ID
   CommandLine: Command
@@ -44,6 +45,7 @@ field_mapping:
   Application:
     - Application
     - application
+  sourceNetwork: sourceNetwork
   SourceHostName:
     - HostCount-source
     - identityHostName
@@ -82,6 +84,14 @@ field_mapping:
     - Source
     - source
   duration: duration
+  ThreatName:
+    - Threat Name
+    - Alert Blocked Threat Category
+  AnalyzerName: Analyzer Name
+  Classification: Classification
+  ResultCode: Alert Reason Code
+  Technique: Technique
+  Action: Action
   Workstation: Machine Identifier
   GroupMembership: Role Name
   FileName: 
