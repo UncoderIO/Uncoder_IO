@@ -12,11 +12,13 @@ ROOTA_RULE_TEMPLATE = {
     "details": "",
     "author": "",
     "severity": "",
+    "type": "query",
     "date": "",
     "mitre-attack": [],
     "detection": {"language": "", "body": ""},
     "logsource": {},
     "references": [],
+    "tags": [],
     "license": "",
     "uuid": "",
 }
