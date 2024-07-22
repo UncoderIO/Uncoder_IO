@@ -208,7 +208,7 @@ class QueryRender(ABC):
         return query
 
     def wrap_with_unmapped_fields(self, query: str, fields: Optional[list[str]]) -> str:
-        if fields:
+        if wrap_query_with_meta_info_ctx_var.get() and fields:
             return query + "\n\n" + self.wrap_with_comment(f"{self.unmapped_fields_text}{', '.join(fields)}")
         return query
 
