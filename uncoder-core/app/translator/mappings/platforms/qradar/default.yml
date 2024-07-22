@@ -19,6 +19,7 @@ field_mapping:
   src-port:
     - SourcePort
     - localport
+    - sourcePort
   src-ip:
     - sourceip
     - source_ip
@@ -34,6 +35,8 @@ field_mapping:
   User:
     - userName
     - EventUserName
+    - Username
+    - Security ID
   CommandLine: Command
   Protocol: 
     - IPProtocol
@@ -79,3 +82,13 @@ field_mapping:
     - Source
     - source
   duration: duration
+  Workstation: Machine Identifier
+  GroupMembership: Role Name
+  FileName: 
+    - Filename
+    - File Name
+  RegistryKey: 
+    - Registry Key
+    - Target Object
+  RegistryValue: RegistryValue
+  ProcessPath: Process Path

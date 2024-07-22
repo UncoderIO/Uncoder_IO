@@ -14,6 +14,7 @@ field_mapping:
   ProcessName:
     - xdm.target.process.name
     - xdm.source.process.name
+  ProcessPath: xdm.target.process.executable.path
   ImageLoaded:
     - xdm.target.process.executable.filename
     - xdm.source.process.executable.filename
@@ -64,7 +65,7 @@ field_mapping:
   dns-query: xdm.network.dns.dns_question.name
   dns-answer: xdm.network.dns.dns_resource_record.value
   dns-record: xdm.network.dns.dns_question.name
-  FileName: xdm.target.file.path
+  FileName: xdm.target.file.filename
   IpAddress: xdm.source.ipv4
   IpPort: xdm.source.port
   LogonProcessName: xdm.target.process.executable.path
@@ -127,3 +128,7 @@ field_mapping:
   url_category: xdm.network.http.url_category
   EventSeverity: xdm.alert.severity
   duration: xdm.event.duration
+  FileExtension: xdm.target.file.extension
+  Workstation: xdm.source.host.hostname
+  RegistryKey: xdm.target.registry.key
+  RegistryValue: xdm.target.registry.value
