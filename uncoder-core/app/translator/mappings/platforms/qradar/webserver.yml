@@ -24,10 +24,11 @@ field_mapping:
     - URL Path
     - URL Query String
   #cs-cookie: cs-cookie
-  cs-host: 
+  cs-host:
     - UrlHost
     - URL Host
     - URL Domain
+    - HTTP Host
   cs-referrer: 
     - URL Referrer
     - Referrer URL
