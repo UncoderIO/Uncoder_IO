@@ -372,13 +372,15 @@ class PlatformQueryRender(QueryRender):
 
         return result
 
-    def _get_source_mappings(self, source_mapping_ids: list[str]) -> list[SourceMapping]:
+    def _get_source_mappings(
+        self, source_mapping_ids: list[str], return_default: bool = True
+    ) -> Optional[list[SourceMapping]]:
         source_mappings = []
         for source_mapping_id in source_mapping_ids:
             if source_mapping := self.mappings.get_source_mapping(source_mapping_id):
                 source_mappings.append(source_mapping)
 
-        if not source_mappings:
+        if return_default and not source_mappings:
             source_mappings = [self.mappings.get_source_mapping(DEFAULT_MAPPING_NAME)]
 
         return source_mappings
