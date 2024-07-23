@@ -99,7 +99,9 @@ class RootARender(QueryRender):
 
         if not logsources and tokenized_query_container.meta_info.parsed_logsources:
             logsources = tokenized_query_container.meta_info.parsed_logsources
-        elif suitable_sigma_mapping := sigma_rule_mappings.get_source_mapping(source_mapping):
+        elif suitable_sigma_mapping := self.__get_source_mapping(
+            tokenized_query_container.meta_info.source_mapping_ids
+        ):
             logsources = suitable_sigma_mapping.log_source_signature.log_sources
 
         rule = ROOTA_RULE_TEMPLATE.copy()
