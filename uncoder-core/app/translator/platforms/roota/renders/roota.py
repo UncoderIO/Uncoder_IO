@@ -91,8 +91,6 @@ class RootARender(PlatformQueryRender):
 
     @staticmethod
     def __get_logsources_by_source_mapping_id(source_mapping_id: str) -> Optional[dict]:
-        if source_mapping_id == "default":
-            return None
         if source_mapping := sigma_rule_mappings.get_source_mapping(source_mapping_id):
             return source_mapping.log_source_signature.log_sources
 
