@@ -42,6 +42,6 @@ MICROSOFT_DEFENDER_DETAILS = {
     "group_id": "microsoft-defender",
 }
 
-microsoft_defender_details = PlatformDetails(**MICROSOFT_DEFENDER_DETAILS)
+microsoft_defender_query_details = PlatformDetails(**MICROSOFT_DEFENDER_DETAILS)
 microsoft_sentinel_query_details = PlatformDetails(**MICROSOFT_SENTINEL_QUERY_DETAILS)
 microsoft_sentinel_rule_details = PlatformDetails(**MICROSOFT_SENTINEL_RULE_DETAILS)

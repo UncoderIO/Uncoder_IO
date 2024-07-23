@@ -20,18 +20,18 @@ limitations under the License.
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.managers import render_manager
 from app.translator.platforms.base.sql.renders.sql import SqlFieldValueRender, SqlQueryRender
-from app.translator.platforms.hunters.const import hunters_details
-from app.translator.platforms.hunters.mapping import HuntersMappings, hunters_mappings
+from app.translator.platforms.hunters.const import hunters_query_details
+from app.translator.platforms.hunters.mapping import HuntersMappings, hunters_query_mappings
 
 
 class HuntersFieldValueRender(SqlFieldValueRender):
-    details: PlatformDetails = hunters_details
+    details: PlatformDetails = hunters_query_details
 
 
 @render_manager.register
 class HuntersQueryRender(SqlQueryRender):
-    details: PlatformDetails = hunters_details
-    mappings: HuntersMappings = hunters_mappings
+    details: PlatformDetails = hunters_query_details
+    mappings: HuntersMappings = hunters_query_mappings
 
     or_token = "OR"
 

@@ -8,4 +8,4 @@ HUNTERS_QUERY_DETAILS = {
     "group_id": "hunters",
 }
 
-hunters_details = PlatformDetails(**HUNTERS_QUERY_DETAILS)
+hunters_query_details = PlatformDetails(**HUNTERS_QUERY_DETAILS)

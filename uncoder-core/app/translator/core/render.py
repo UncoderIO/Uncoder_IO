@@ -22,7 +22,7 @@ from collections.abc import Callable
 from typing import ClassVar, Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
-from app.translator.core.const import TOKEN_TYPE
+from app.translator.core.const import QUERY_TOKEN_TYPE
 from app.translator.core.context_vars import return_only_first_query_ctx_var, wrap_query_with_meta_info_ctx_var
 from app.translator.core.custom_types.tokens import LogicalOperatorType, OperatorType
 from app.translator.core.custom_types.values import ValueType
@@ -31,11 +31,15 @@ from app.translator.core.exceptions.core import NotImplementedException, StrictP
 from app.translator.core.exceptions.parser import UnsupportedOperatorException
 from app.translator.core.functions import PlatformFunctions
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
-from app.translator.core.models.field import Field, FieldField, FieldValue, Keyword, PredefinedField
 from app.translator.core.models.functions.base import Function, RenderedFunctions
-from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer, TokenizedQueryContainer
+from app.translator.core.models.query_tokens.field import Field, PredefinedField
+from app.translator.core.models.query_tokens.field_field import FieldField
+from app.translator.core.models.query_tokens.field_value import FieldValue
+from app.translator.core.models.query_tokens.function_value import FunctionValue
+from app.translator.core.models.query_tokens.identifier import Identifier
+from app.translator.core.models.query_tokens.keyword import Keyword
 from app.translator.core.str_value_manager import StrValue, StrValueManager
 
 
@@ -74,6 +78,10 @@ class BaseFieldValueRender(ABC):
     def _wrap_str_value(value: str) -> str:
         return value
 
+    @staticmethod
+    def _map_bool_value(value: bool) -> str:
+        return "true" if value else "false"
+
     def _pre_process_value(
         self, field: str, value: Union[int, str, StrValue], value_type: str = ValueType.value, wrap_str: bool = False
     ) -> Union[int, str]:
@@ -84,6 +92,8 @@ class BaseFieldValueRender(ABC):
         if isinstance(value, str):
             value = self.str_value_manager.escape_manager.escape(value, value_type)
             return self._wrap_str_value(value) if wrap_str else value
+        if isinstance(value, bool):
+            return self._map_bool_value(value)
         return value
 
     def _pre_process_values_list(
@@ -174,6 +184,7 @@ class QueryRender(ABC):
     details: PlatformDetails = None
     is_single_line_comment: bool = False
     unsupported_functions_text = "Unsupported functions were excluded from the result query:"
+    unmapped_fields_text = "Unmapped fields: "
 
     platform_functions: PlatformFunctions = None
 
@@ -196,6 +207,11 @@ class QueryRender(ABC):
 
         return query
 
+    def wrap_with_unmapped_fields(self, query: str, fields: Optional[list[str]]) -> str:
+        if fields:
+            return query + "\n\n" + self.wrap_with_comment(f"{self.unmapped_fields_text}{', '.join(fields)}")
+        return query
+
     def wrap_with_comment(self, value: str) -> str:
         return f"{self.comment_symbol} {value}"
 
@@ -206,7 +222,6 @@ class QueryRender(ABC):
 
 class PlatformQueryRender(QueryRender):
     mappings: BasePlatformMappings = None
-    is_strict_mapping: bool = False
 
     or_token = "or"
     and_token = "and"
@@ -237,35 +252,23 @@ class PlatformQueryRender(QueryRender):
     def generate_functions(self, functions: list[Function], source_mapping: SourceMapping) -> RenderedFunctions:
         return self.platform_functions.render(functions, source_mapping)
 
-    def map_field(self, field: Field, source_mapping: SourceMapping) -> list[str]:
-        generic_field_name = field.get_generic_field_name(source_mapping.source_id)
-        # field can be mapped to corresponding platform field name or list of platform field names
-        mapped_field = source_mapping.fields_mapping.get_platform_field_name(generic_field_name=generic_field_name)
-        if not mapped_field and self.is_strict_mapping:
-            raise StrictPlatformException(field_name=field.source_name, platform_name=self.details.name)
-
-        if isinstance(mapped_field, str):
-            mapped_field = [mapped_field]
-
-        return mapped_field if mapped_field else [generic_field_name] if generic_field_name else [field.source_name]
-
     def map_predefined_field(self, predefined_field: PredefinedField) -> str:
         if not (mapped_predefined_field_name := self.predefined_fields_map.get(predefined_field.name)):
-            if self.is_strict_mapping:
-                raise StrictPlatformException(field_name=predefined_field.name, platform_name=self.details.name)
+            if self.mappings.is_strict_mapping:
+                raise StrictPlatformException(platform_name=self.details.name, fields=[predefined_field.name])
 
             return predefined_field.name
 
         return mapped_predefined_field_name
 
-    def apply_token(self, token: Union[FieldValue, Keyword, Identifier], source_mapping: SourceMapping) -> str:
+    def apply_token(self, token: QUERY_TOKEN_TYPE, source_mapping: SourceMapping) -> str:
         if isinstance(token, FieldValue):
             if token.alias:
                 mapped_fields = [token.alias.name]
             elif token.predefined_field:
                 mapped_fields = [self.map_predefined_field(token.predefined_field)]
             else:
-                mapped_fields = self.map_field(token.field, source_mapping)
+                mapped_fields = self.mappings.map_field(token.field, source_mapping)
             joined = self.logical_operators_map[LogicalOperatorType.OR].join(
                 [
                     self.field_value_render.apply_field_value(field=field, operator=token.operator, value=token.value)
@@ -275,9 +278,13 @@ class PlatformQueryRender(QueryRender):
             return self.group_token % joined if len(mapped_fields) > 1 else joined
         if isinstance(token, FieldField):
             alias_left, field_left = token.alias_left, token.field_left
-            mapped_fields_left = [alias_left.name] if alias_left else self.map_field(field_left, source_mapping)
+            mapped_fields_left = (
+                [alias_left.name] if alias_left else self.mappings.map_field(field_left, source_mapping)
+            )
             alias_right, field_right = token.alias_right, token.field_right
-            mapped_fields_right = [alias_right.name] if alias_right else self.map_field(field_right, source_mapping)
+            mapped_fields_right = (
+                [alias_right.name] if alias_right else self.mappings.map_field(field_right, source_mapping)
+            )
             cross_paired_fields = list(itertools.product(mapped_fields_left, mapped_fields_right))
             joined = self.logical_operators_map[LogicalOperatorType.OR].join(
                 [
@@ -286,9 +293,12 @@ class PlatformQueryRender(QueryRender):
                 ]
             )
             return self.group_token % joined if len(cross_paired_fields) > 1 else joined
-        if isinstance(token, Function):
-            func_render = self.platform_functions.manager.get_in_query_render(token.name)
-            return func_render.render(token, source_mapping)
+        if isinstance(token, FunctionValue):
+            func_render = self.platform_functions.manager.get_render(token.function.name)
+            rendered_func = func_render.render(token.function, source_mapping)
+            return self.field_value_render.apply_field_value(
+                field=rendered_func, operator=token.operator, value=token.value
+            )
         if isinstance(token, Keyword):
             return self.field_value_render.apply_field_value(field="", operator=token.operator, value=token.value)
         if token.token_type in LogicalOperatorType:
@@ -296,16 +306,11 @@ class PlatformQueryRender(QueryRender):
 
         return token.token_type
 
-    def generate_query(self, tokens: list[TOKEN_TYPE], source_mapping: SourceMapping) -> str:
+    def generate_query(self, tokens: list[QUERY_TOKEN_TYPE], source_mapping: SourceMapping) -> str:
         result_values = []
-        unmapped_fields = set()
         for token in tokens:
-            try:
-                result_values.append(self.apply_token(token=token, source_mapping=source_mapping))
-            except StrictPlatformException as err:
-                unmapped_fields.add(err.field_name)
-        if unmapped_fields:
-            raise StrictPlatformException(self.details.name, "", source_mapping.source_id, sorted(unmapped_fields))
+            result_values.append(self.apply_token(token=token, source_mapping=source_mapping))
+
         return "".join(result_values)
 
     def wrap_with_meta_info(self, query: str, meta_info: Optional[MetaInfoContainer]) -> str:
@@ -338,11 +343,13 @@ class PlatformQueryRender(QueryRender):
         meta_info: Optional[MetaInfoContainer] = None,
         source_mapping: Optional[SourceMapping] = None,  # noqa: ARG002
         not_supported_functions: Optional[list] = None,
+        unmapped_fields: Optional[list[str]] = None,
         *args,  # noqa: ARG002
         **kwargs,  # noqa: ARG002
     ) -> str:
         query = self._join_query_parts(prefix, query, functions)
         query = self.wrap_with_meta_info(query, meta_info)
+        query = self.wrap_with_unmapped_fields(query, unmapped_fields)
         return self.wrap_with_not_supported_functions(query, not_supported_functions)
 
     @staticmethod
@@ -404,13 +411,41 @@ class PlatformQueryRender(QueryRender):
                 mapped_field = source_mapping.fields_mapping.get_platform_field_name(
                     generic_field_name=generic_field_name
                 )
-            if not mapped_field and self.is_strict_mapping:
-                raise StrictPlatformException(field_name=field.source_name, platform_name=self.details.name)
+            if not mapped_field and self.mappings.is_strict_mapping:
+                raise StrictPlatformException(
+                    platform_name=self.details.name, fields=[field.source_name], mapping=source_mapping.source_id
+                )
             if prefix_list := self.process_raw_log_field_prefix(field=mapped_field, source_mapping=source_mapping):
                 for prefix in prefix_list:
                     if prefix not in defined_raw_log_fields:
                         defined_raw_log_fields.append(prefix)
         return "\n".join(defined_raw_log_fields)
+
+    def _generate_from_tokenized_query_container_by_source_mapping(
+        self, query_container: TokenizedQueryContainer, source_mapping: SourceMapping
+    ) -> str:
+        unmapped_fields = self.mappings.check_fields_mapping_existence(
+            query_container.meta_info.query_fields, source_mapping
+        )
+        rendered_functions = self.generate_functions(query_container.functions.functions, source_mapping)
+        prefix = self.generate_prefix(source_mapping.log_source_signature, rendered_functions.rendered_prefix)
+
+        if source_mapping.raw_log_fields:
+            defined_raw_log_fields = self.generate_raw_log_fields(
+                fields=query_container.meta_info.query_fields, source_mapping=source_mapping
+            )
+            prefix += f"\n{defined_raw_log_fields}"
+        query = self.generate_query(tokens=query_container.tokens, source_mapping=source_mapping)
+        not_supported_functions = query_container.functions.not_supported + rendered_functions.not_supported
+        return self.finalize_query(
+            prefix=prefix,
+            query=query,
+            functions=rendered_functions.rendered,
+            not_supported_functions=not_supported_functions,
+            unmapped_fields=unmapped_fields,
+            meta_info=query_container.meta_info,
+            source_mapping=source_mapping,
+        )
 
     def generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
         queries_map = {}
@@ -418,31 +453,17 @@ class PlatformQueryRender(QueryRender):
         source_mappings = self._get_source_mappings(query_container.meta_info.source_mapping_ids)
 
         for source_mapping in source_mappings:
-            rendered_functions = self.generate_functions(query_container.functions.functions, source_mapping)
-            prefix = self.generate_prefix(source_mapping.log_source_signature, rendered_functions.rendered_prefix)
             try:
-                if source_mapping.raw_log_fields:
-                    defined_raw_log_fields = self.generate_raw_log_fields(
-                        fields=query_container.meta_info.query_fields, source_mapping=source_mapping
-                    )
-                    prefix += f"\n{defined_raw_log_fields}"
-                result = self.generate_query(tokens=query_container.tokens, source_mapping=source_mapping)
-            except StrictPlatformException as err:
-                errors.append(err)
-                continue
-            else:
-                not_supported_functions = query_container.functions.not_supported + rendered_functions.not_supported
-                finalized_query = self.finalize_query(
-                    prefix=prefix,
-                    query=result,
-                    functions=rendered_functions.rendered,
-                    not_supported_functions=not_supported_functions,
-                    meta_info=query_container.meta_info,
-                    source_mapping=source_mapping,
+                finalized_query = self._generate_from_tokenized_query_container_by_source_mapping(
+                    query_container, source_mapping
                 )
                 if return_only_first_query_ctx_var.get() is True:
                     return finalized_query
                 queries_map[source_mapping.source_id] = finalized_query
+            except StrictPlatformException as err:
+                errors.append(err)
+                continue
+
         if not queries_map and errors:
             raise errors[0]
         return self.finalize(queries_map)

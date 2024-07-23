@@ -14,15 +14,19 @@ field_mapping:
   CommandLine:
     - Command
     - Encoded Argument
+    - Command Arguments
   CurrentDirectory: CurrentDirectory
   Hashes: File Hash
   Image:
     - Process Path
     - Process Name
     - DGApplication
+    - ProcessName
   IntegrityLevel: IntegrityLevel
   ParentCommandLine: Parent Command
-  ParentImage: Parent Process Path
+  ParentImage: 
+    - Parent Process Path
+    - ParentProcessName
   ParentUser: ParentUser
   Product: Product
   User:

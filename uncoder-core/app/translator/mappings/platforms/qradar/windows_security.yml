@@ -12,6 +12,7 @@ field_mapping:
   EventID:
     - Event ID
     - EventID
+    - qidEventId
   ParentImage: Parent Process Path
   AccessMask: AccessMask
   AccountName: Account Name

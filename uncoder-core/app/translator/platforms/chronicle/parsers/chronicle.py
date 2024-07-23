@@ -21,22 +21,23 @@ from app.translator.core.models.query_container import RawQueryContainer, Tokeni
 from app.translator.core.parser import PlatformQueryParser
 from app.translator.managers import parser_manager
 from app.translator.platforms.chronicle.const import chronicle_query_details
-from app.translator.platforms.chronicle.mapping import ChronicleMappings, chronicle_mappings
+from app.translator.platforms.chronicle.mapping import ChronicleMappings, chronicle_query_mappings
 from app.translator.platforms.chronicle.tokenizer import ChronicleQueryTokenizer
 
 
 @parser_manager.register_supported_by_roota
 class ChronicleQueryParser(PlatformQueryParser):
-    mappings: ChronicleMappings = chronicle_mappings
+    mappings: ChronicleMappings = chronicle_query_mappings
     tokenizer: ChronicleQueryTokenizer = ChronicleQueryTokenizer()
     details: PlatformDetails = chronicle_query_details
 
     wrapped_with_comment_pattern = r"^\s*//.*(?:\n|$)"
 
     def parse(self, raw_query_container: RawQueryContainer) -> TokenizedQueryContainer:
-        tokens, source_mappings = self.get_tokens_and_source_mappings(raw_query_container.query, {})
-        fields_tokens = self.get_fields_tokens(tokens=tokens)
+        query_tokens = self.get_query_tokens(raw_query_container.query)
+        field_tokens = self.get_field_tokens(query_tokens)
+        source_mappings = self.get_source_mappings(field_tokens, {})
         meta_info = raw_query_container.meta_info
-        meta_info.query_fields = fields_tokens
+        meta_info.query_fields = field_tokens
         meta_info.source_mapping_ids = [source_mapping.source_id for source_mapping in source_mappings]
-        return TokenizedQueryContainer(tokens=tokens, meta_info=meta_info)
+        return TokenizedQueryContainer(tokens=query_tokens, meta_info=meta_info)

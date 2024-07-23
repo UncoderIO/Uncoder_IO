@@ -24,9 +24,10 @@ from app.translator.core.custom_types.values import ValueType
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.str_value_manager import StrValue
 from app.translator.managers import render_manager
+from app.translator.platforms.base.lucene.mapping import LuceneMappings
 from app.translator.platforms.base.lucene.renders.lucene import LuceneFieldValueRender, LuceneQueryRender
 from app.translator.platforms.opensearch.const import opensearch_query_details
-from app.translator.platforms.opensearch.mapping import OpenSearchMappings, opensearch_mappings
+from app.translator.platforms.opensearch.mapping import opensearch_query_mappings
 
 
 class OpenSearchFieldValueRender(LuceneFieldValueRender):
@@ -99,7 +100,7 @@ class OpenSearchFieldValueRender(LuceneFieldValueRender):
 @render_manager.register
 class OpenSearchQueryRender(LuceneQueryRender):
     details: PlatformDetails = opensearch_query_details
-    mappings: OpenSearchMappings = opensearch_mappings
+    mappings: LuceneMappings = opensearch_query_mappings
 
     or_token = "OR"
     field_value_render = OpenSearchFieldValueRender(or_token=or_token)

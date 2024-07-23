@@ -27,7 +27,7 @@ from app.translator.managers import render_manager
 from app.translator.platforms.microsoft.const import microsoft_sentinel_query_details
 from app.translator.platforms.microsoft.escape_manager import microsoft_escape_manager
 from app.translator.platforms.microsoft.functions import MicrosoftFunctions, microsoft_sentinel_functions
-from app.translator.platforms.microsoft.mapping import MicrosoftSentinelMappings, microsoft_sentinel_mappings
+from app.translator.platforms.microsoft.mapping import MicrosoftSentinelMappings, microsoft_sentinel_query_mappings
 
 
 class MicrosoftSentinelFieldValueRender(BaseFieldValueRender):
@@ -130,7 +130,7 @@ class MicrosoftSentinelQueryRender(PlatformQueryRender):
 
     field_value_render = MicrosoftSentinelFieldValueRender(or_token=or_token)
 
-    mappings: MicrosoftSentinelMappings = microsoft_sentinel_mappings
+    mappings: MicrosoftSentinelMappings = microsoft_sentinel_query_mappings
     comment_symbol = "//"
     is_single_line_comment = True
 

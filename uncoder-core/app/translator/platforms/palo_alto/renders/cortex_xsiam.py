@@ -16,17 +16,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-
 from typing import ClassVar, Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
+from app.translator.core.const import QUERY_TOKEN_TYPE
 from app.translator.core.context_vars import preset_log_source_str_ctx_var
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.mapping import SourceMapping
-from app.translator.core.models.field import FieldValue, Keyword
-from app.translator.core.models.identifier import Identifier
 from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.core.models.query_tokens.field_value import FieldValue
 from app.translator.core.render import BaseFieldFieldRender, BaseFieldValueRender, PlatformQueryRender
 from app.translator.core.str_value_manager import StrValue
 from app.translator.managers import render_manager
@@ -35,7 +34,7 @@ from app.translator.platforms.palo_alto.functions import CortexXQLFunctions, cor
 from app.translator.platforms.palo_alto.mapping import (
     CortexXQLLogSourceSignature,
     CortexXQLMappings,
-    cortex_xql_mappings,
+    cortex_xql_query_mappings,
 )
 from app.translator.platforms.palo_alto.str_value_manager import cortex_xql_str_value_manager
 
@@ -166,8 +165,7 @@ class CortexXQLFieldFieldRender(BaseFieldFieldRender):
 @render_manager.register
 class CortexXQLQueryRender(PlatformQueryRender):
     details: PlatformDetails = cortex_xql_query_details
-    mappings: CortexXQLMappings = cortex_xql_mappings
-    is_strict_mapping = True
+    mappings: CortexXQLMappings = cortex_xql_query_mappings
     predefined_fields_map = PREDEFINED_FIELDS_MAP
     raw_log_field_patterns_map: ClassVar[dict[str, str]] = {
         "regex": '| alter {field} = regextract(to_json_string(action_evtlog_data_fields)->{field}{{}}, "\\"(.*)\\"")',
@@ -207,7 +205,7 @@ class CortexXQLQueryRender(PlatformQueryRender):
         log_source_str = preset_log_source_str_ctx_var.get() or str(log_source_signature)
         return f"{functions_prefix}{log_source_str}"
 
-    def apply_token(self, token: Union[FieldValue, Keyword, Identifier], source_mapping: SourceMapping) -> str:
+    def apply_token(self, token: QUERY_TOKEN_TYPE, source_mapping: SourceMapping) -> str:
         if isinstance(token, FieldValue) and token.field:
             field_name = token.field.source_name
             if values_map := SOURCE_MAPPING_TO_FIELD_VALUE_MAP.get(source_mapping.source_id, {}).get(field_name):

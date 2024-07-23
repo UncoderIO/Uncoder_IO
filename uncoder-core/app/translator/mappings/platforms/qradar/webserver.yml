@@ -9,17 +9,34 @@ default_log_source:
   devicetype: 10
 
 field_mapping:
-  c-uri: URL
-  c-useragent: c-useragent
-  cs-method: cs-method
+  c-uri:
+    - URL
+    - XForceCategoryByURL
+  c-useragent: User Agent
+  cs-method:
+    - HTTP Method
+    - Method
   cs-bytes: Bytes Sent
-  cs-cookie-vars: cs-cookie-vars
-  c-uri-extension: c-uri-extension
-  c-uri-query: URL
-  cs-cookie: cs-cookie
-  cs-host: cs-host
-  cs-referrer: URL Referrer
-  cs-version: cs-version
-  r-dns: r-dns
-  sc-status: sc-status
-  post-body: post-body
+  #cs-cookie-vars: cs-cookie-vars
+  c-uri-extension: URL
+  c-uri-query:
+    - URL
+    - URL Path
+    - URL Query String
+  #cs-cookie: cs-cookie
+  cs-host: 
+    - UrlHost
+    - URL Host
+    - URL Domain
+    - HTTP Host
+  cs-referrer:
+    - URL Referrer
+    - Referrer URL
+  cs-version: HTTP Version
+  r-dns:
+    - UrlHost
+    - URL Host
+  sc-status:
+    - HTTP Response Code
+    - Response Code
+  #post-body: post-body

@@ -20,7 +20,7 @@ import re
 from abc import ABC, abstractmethod
 from typing import Any, ClassVar, Optional, Union
 
-from app.translator.core.const import TOKEN_TYPE
+from app.translator.core.const import QUERY_TOKEN_TYPE
 from app.translator.core.custom_types.tokens import GroupType, LogicalOperatorType, OperatorType
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.escape_manager import EscapeManager
@@ -29,8 +29,8 @@ from app.translator.core.exceptions.parser import (
     TokenizerGeneralException,
     UnsupportedOperatorException,
 )
+from app.translator.core.functions import PlatformFunctions
 from app.translator.core.mapping import SourceMapping
-from app.translator.core.models.field import Field, FieldField, FieldValue, Keyword
 from app.translator.core.models.functions.base import Function
 from app.translator.core.models.functions.eval import EvalArg
 from app.translator.core.models.functions.group_by import GroupByFunction
@@ -38,14 +38,19 @@ from app.translator.core.models.functions.join import JoinFunction
 from app.translator.core.models.functions.rename import RenameArg
 from app.translator.core.models.functions.sort import SortArg
 from app.translator.core.models.functions.union import UnionFunction
-from app.translator.core.models.identifier import Identifier
+from app.translator.core.models.query_tokens.field import Field
+from app.translator.core.models.query_tokens.field_field import FieldField
+from app.translator.core.models.query_tokens.field_value import FieldValue
+from app.translator.core.models.query_tokens.function_value import FunctionValue
+from app.translator.core.models.query_tokens.identifier import Identifier
+from app.translator.core.models.query_tokens.keyword import Keyword
 from app.translator.core.str_value_manager import StrValue, StrValueManager
 from app.translator.tools.utils import get_match_group
 
 
 class BaseTokenizer(ABC):
     @abstractmethod
-    def tokenize(self, query: str) -> list[Union[FieldValue, Keyword, Identifier]]:
+    def tokenize(self, query: str) -> list[QUERY_TOKEN_TYPE]:
         raise NotImplementedError
 
 
@@ -58,12 +63,22 @@ class QueryTokenizer(BaseTokenizer):
     fields_operator_map: ClassVar[dict[str, str]] = {}
     operators_map: ClassVar[dict[str, str]] = {}  # used to generate re pattern. so the keys order is important
 
-    logical_operator_pattern = r"^(?P<logical_operator>and|or|not|AND|OR|NOT)\s+"
+    logical_operators_map: ClassVar[dict[str, str]] = {
+        "and": LogicalOperatorType.AND,
+        "AND": LogicalOperatorType.AND,
+        "or": LogicalOperatorType.OR,
+        "OR": LogicalOperatorType.OR,
+        "not": LogicalOperatorType.NOT,
+        "NOT": LogicalOperatorType.NOT,
+    }
+    _logical_operator_pattern = f"(?P<logical_operator>{'|'.join(logical_operators_map)})"
+    logical_operator_pattern = rf"^{_logical_operator_pattern}\s+"
     field_value_pattern = r"""^___field___\s*___operator___\s*___value___"""
     base_value_pattern = r"(?:___value_pattern___)"
 
     # do not modify, use subclasses to define this attribute
     field_pattern: str = None
+    function_pattern: str = None
     _value_pattern: str = None
     value_pattern: str = None
     multi_value_pattern: str = None
@@ -73,6 +88,7 @@ class QueryTokenizer(BaseTokenizer):
     wildcard_symbol = None
     escape_manager: EscapeManager = None
     str_value_manager: StrValueManager = None
+    platform_functions: PlatformFunctions = None
 
     def __init_subclass__(cls, **kwargs):
         cls._validate_re_patterns()
@@ -268,9 +284,16 @@ class QueryTokenizer(BaseTokenizer):
 
         return False
 
+    def search_function_value(self, query: str) -> tuple[FunctionValue, str]:
+        ...
+
+    @staticmethod
+    def _check_function_value_match(query: str) -> bool:  # noqa: ARG004
+        return False
+
     def _get_next_token(
         self, query: str
-    ) -> tuple[Union[FieldValue, Keyword, Identifier, list[Union[FieldValue, Identifier]]], str]:
+    ) -> tuple[Union[FieldValue, FunctionValue, Keyword, Identifier, list[Union[FieldValue, Identifier]]], str]:
         query = query.strip("\n").strip(" ").strip("\n")
         if query.startswith(GroupType.L_PAREN):
             return Identifier(token_type=GroupType.L_PAREN), query[1:]
@@ -280,15 +303,23 @@ class QueryTokenizer(BaseTokenizer):
             logical_operator = logical_operator_search.group("logical_operator")
             pos = logical_operator_search.end()
             return Identifier(token_type=logical_operator.lower()), query[pos:]
+        if self.platform_functions and self._check_function_value_match(query):  # noqa: SIM102
+            if search_result := self.search_function_value(query):
+                return search_result
         if self._check_field_value_match(query):
             return self.search_field_value(query)
         if self.keyword_pattern and re.match(self.keyword_pattern, query):
             return self.search_keyword(query)
 
-        raise TokenizerGeneralException("Unsupported query entry")
+        unsupported_query_entry = self._get_unsupported_query_entry(query)
+        raise TokenizerGeneralException(f"Unsupported query entry: {unsupported_query_entry}")
+
+    def _get_unsupported_query_entry(self, query: str) -> str:
+        split_by_logical_operator = re.split(rf"\s+{self._logical_operator_pattern}\s+", query, maxsplit=1)
+        return split_by_logical_operator[0]
 
     @staticmethod
-    def _validate_parentheses(tokens: list[TOKEN_TYPE]) -> None:
+    def _validate_parentheses(tokens: list[QUERY_TOKEN_TYPE]) -> None:
         parentheses = []
         for token in tokens:
             if isinstance(token, Identifier) and token.token_type in (GroupType.L_PAREN, GroupType.R_PAREN):
@@ -301,7 +332,7 @@ class QueryTokenizer(BaseTokenizer):
         if parentheses:
             raise QueryParenthesesException
 
-    def tokenize(self, query: str) -> list[Union[FieldValue, Keyword, Identifier]]:
+    def tokenize(self, query: str) -> list[QUERY_TOKEN_TYPE]:
         tokenized = []
         while query:
             next_token, sliced_query = self._get_next_token(query=query)
@@ -320,8 +351,9 @@ class QueryTokenizer(BaseTokenizer):
 
     @staticmethod
     def filter_tokens(
-        tokens: list[TOKEN_TYPE], token_type: Union[type[FieldValue], type[Field], type[Keyword], type[Identifier]]
-    ) -> list[TOKEN_TYPE]:
+        tokens: list[QUERY_TOKEN_TYPE],
+        token_type: Union[type[FieldValue], type[Field], type[FieldField], type[Keyword], type[Identifier]],
+    ) -> list[QUERY_TOKEN_TYPE]:
         return [token for token in tokens if isinstance(token, token_type)]
 
     def get_field_tokens_from_func_args(  # noqa: PLR0912
@@ -339,11 +371,15 @@ class QueryTokenizer(BaseTokenizer):
             elif isinstance(arg, FieldValue):
                 if arg.field:
                     result.append(arg.field)
+            elif isinstance(arg, FunctionValue):
+                result.extend(self.get_field_tokens_from_func_args(args=[arg.function]))
             elif isinstance(arg, GroupByFunction):
                 result.extend(self.get_field_tokens_from_func_args(args=arg.args))
                 result.extend(self.get_field_tokens_from_func_args(args=arg.by_clauses))
                 result.extend(self.get_field_tokens_from_func_args(args=[arg.filter_]))
-            elif isinstance(arg, (JoinFunction, UnionFunction)):
+            elif isinstance(arg, JoinFunction):
+                result.extend(self.get_field_tokens_from_func_args(args=arg.condition))
+            elif isinstance(arg, UnionFunction):
                 continue
             elif isinstance(arg, Function):
                 result.extend(self.get_field_tokens_from_func_args(args=arg.args))

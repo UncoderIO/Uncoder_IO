@@ -22,12 +22,14 @@ from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer
 from app.translator.managers import parser_manager
 from app.translator.platforms.splunk.const import splunk_alert_details
+from app.translator.platforms.splunk.mapping import SplunkMappings, splunk_alert_mappings
 from app.translator.platforms.splunk.parsers.splunk import SplunkQueryParser
 
 
 @parser_manager.register
 class SplunkAlertParser(SplunkQueryParser):
     details: PlatformDetails = splunk_alert_details
+    mappings: SplunkMappings = splunk_alert_mappings
 
     def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
         query = re.search(r"search\s*=\s*(?P<query>.+)", text).group("query")
