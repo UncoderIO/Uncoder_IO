@@ -73,6 +73,8 @@ class RootARender(PlatformQueryRender):
     ) -> tuple:
         if raw_query_container.language == SIGMA_RULE_DETAILS["platform_id"]:
             rule_query_language = MICROSOFT_SENTINEL_QUERY_DETAILS["platform_id"]
+            prev_state_return_only_first_query_ctx_var = return_only_first_query_ctx_var.get()
+            prev_state_wrap_query_with_meta_info_ctx_var = wrap_query_with_meta_info_ctx_var.get()
             return_only_first_query_ctx_var.set(True)
             wrap_query_with_meta_info_ctx_var.set(False)
 
@@ -80,6 +82,9 @@ class RootARender(PlatformQueryRender):
             rule_query = render.generate(
                 raw_query_container=raw_query_container, tokenized_query_container=tokenized_query_container
             )
+            return_only_first_query_ctx_var.set(prev_state_return_only_first_query_ctx_var)
+            wrap_query_with_meta_info_ctx_var.set(prev_state_wrap_query_with_meta_info_ctx_var)
+
             return rule_query, rule_query_language, tokenized_query_container.meta_info.parsed_logsources
         rule_query_language = raw_query_container.language.replace("rule", "query")
         rule_query = raw_query_container.query
