@@ -32,6 +32,16 @@ class SplunkAlertParser(SplunkQueryParser):
     mappings: SplunkMappings = splunk_alert_mappings
 
     def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
+        severity = ""
+        raw_mitre_attack: list[str] = []
+        if severity_match := re.search(r"alert\.severity\s*=\s*(\d+)", text):
+            severity = severity_match.group(1)
+        if mitre_attack_match := re.search(r'"mitre_attack":\s*\[(.*?)\]', text):
+            raw_mitre_attack = [attack.strip().strip('"') for attack in mitre_attack_match.group(1).split(",")]
         query = re.search(r"search\s*=\s*(?P<query>.+)", text).group("query")
         description = re.search(r"description\s*=\s*(?P<description>.+)", text).group("description")
-        return RawQueryContainer(query=query, language=language, meta_info=MetaInfoContainer(description=description))
+        return RawQueryContainer(
+            query=query,
+            language=language,
+            meta_info=MetaInfoContainer(description=description, severity=severity, raw_mitre_attack=raw_mitre_attack),
+        )

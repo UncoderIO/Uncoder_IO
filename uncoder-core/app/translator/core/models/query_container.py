@@ -26,6 +26,7 @@ class MetaInfoContainer:
         references: Optional[list[str]] = None,
         tags: Optional[list[str]] = None,
         mitre_attack: Optional[dict[str, list]] = None,
+        raw_mitre_attack: Optional[list] = None,
         status: Optional[str] = None,
         false_positives: Optional[list[str]] = None,
         source_mapping_ids: Optional[list[str]] = None,
@@ -44,6 +45,7 @@ class MetaInfoContainer:
         self.references = references or []
         self.tags = tags or []
         self.mitre_attack = mitre_attack or {}
+        self.raw_mitre_attack = raw_mitre_attack or []
         self.status = status or "stable"
         self.false_positives = false_positives or []
         self.source_mapping_ids = source_mapping_ids or [DEFAULT_MAPPING_NAME]

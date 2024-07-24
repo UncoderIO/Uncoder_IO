@@ -44,6 +44,8 @@ class MicrosoftSentinelRuleParser(MicrosoftSentinelQueryParser, JsonRuleMixin):
 
     def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
         rule = self.load_rule(text=text)
+        tactics = rule.get("tactics", [])
+        techniques = rule.get("techniques", [])
         return RawQueryContainer(
             query=rule["query"],
             language=language,
@@ -51,5 +53,8 @@ class MicrosoftSentinelRuleParser(MicrosoftSentinelQueryParser, JsonRuleMixin):
                 title=rule.get("displayName"),
                 description=rule.get("description"),
                 timeframe=self.__parse_timeframe(rule.get("queryFrequency", "")),
+                severity=rule.get("severity", "medium"),
+                tags=techniques,
+                raw_mitre_attack=tactics,
             ),
         )
