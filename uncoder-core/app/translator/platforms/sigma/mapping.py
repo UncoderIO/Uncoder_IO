@@ -58,11 +58,6 @@ class SigmaMappings(BasePlatformMappings):
                 suitable_source_mappings.append(source_mapping)
 
         return suitable_source_mappings or [self._source_mappings[DEFAULT_MAPPING_NAME]]
-    
-    def get_mapping_by_source_mapping_id(self, source_mapping_id: str) -> Optional[SourceMapping]:
-        if suitable_source_mapping := self._source_mappings.get(source_mapping_id):
-            return suitable_source_mapping
-        return None
 
 
 
