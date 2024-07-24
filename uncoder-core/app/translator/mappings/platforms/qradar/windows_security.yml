@@ -191,4 +191,3 @@ field_mapping:
   UserID: UserID
   ParentProcessName: Parent Process Name
   Service: Service
-  hasIdentity: hasIdentity

@@ -70,7 +70,7 @@ class FieldsMapping:
         self.__render_mapping.update(fields_mapping.__render_mapping)
 
     def is_suitable(self, field_names: list[str]) -> bool:
-        return set(field_names).issubset(set(self.__parser_mapping.keys()))
+        return bool(field_names) and set(field_names).issubset(set(self.__parser_mapping.keys()))
 
 
 _LogSourceSignatureType = TypeVar("_LogSourceSignatureType", bound=LogSourceSignature)

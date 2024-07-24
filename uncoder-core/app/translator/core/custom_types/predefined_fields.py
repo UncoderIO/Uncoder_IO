@@ -10,3 +10,7 @@ class IPLocationType(CustomEnum):
     lat_lon = "ip_loc_lat_lon"
     region = "ip_loc_region"
     timezone = "ip_loc_timezone"
+
+
+class TimeType(CustomEnum):
+    timestamp = "timestamp"
