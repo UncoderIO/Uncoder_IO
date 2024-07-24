@@ -66,7 +66,12 @@ RE_STR_SPEC_SYMBOLS_MAP = {
 class SigmaStrValueManager(StrValueManager):
     escape_manager = sigma_escape_manager
     str_spec_symbols_map = {"?": SingleSymbolWildCard, "*": UnboundLenWildCard}
-    re_str_alpha_num_symbols_map = {"b": ReWordBoundarySymbol, "w": ReWordSymbol, "d": ReDigitalSymbol, "s": ReWhiteSpaceSymbol}
+    re_str_alpha_num_symbols_map = {
+        "b": ReWordBoundarySymbol,
+        "w": ReWordSymbol,
+        "d": ReDigitalSymbol,
+        "s": ReWhiteSpaceSymbol
+    }
     re_str_spec_symbols_map = RE_STR_SPEC_SYMBOLS_MAP
 
     def from_str_to_container(self, value: str) -> StrValue:
