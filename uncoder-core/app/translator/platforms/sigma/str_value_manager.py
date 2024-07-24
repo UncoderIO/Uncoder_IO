@@ -33,13 +33,14 @@ from app.translator.core.str_value_manager import (
     ReRightParenthesis,
     ReRightSquareBracket,
     ReWhiteSpaceSymbol,
+    ReWordBoundarySymbol,
     ReWordSymbol,
     ReZeroOrMoreQuantifier,
     ReZeroOrOneQuantifier,
     SingleSymbolWildCard,
     StrValue,
     StrValueManager,
-    UnboundLenWildCard, ReWordBoundarySymbol,
+    UnboundLenWildCard,
 )
 from app.translator.platforms.sigma.escape_manager import sigma_escape_manager
 
