@@ -33,5 +33,7 @@ class ElasticSearchRuleParser(ElasticSearchQueryParser, JsonRuleMixin):
         return RawQueryContainer(
             query=rule["query"],
             language=language,
-            meta_info=MetaInfoContainer(title=rule["name"], description=rule["description"]),
+            meta_info=MetaInfoContainer(
+                title=rule["name"], description=rule["description"], references=rule.get("references", [])
+            ),
         )

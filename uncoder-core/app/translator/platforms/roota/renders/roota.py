@@ -21,7 +21,7 @@ from typing import Optional
 
 import yaml
 
-from app.translator.core.context_vars import wrap_query_with_meta_info_ctx_var
+from app.translator.core.context_vars import return_only_first_query_ctx_var, wrap_query_with_meta_info_ctx_var
 from app.translator.core.exceptions.render import BaseRenderException
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
@@ -73,6 +73,7 @@ class RootARender(PlatformQueryRender):
     ) -> tuple:
         if raw_query_container.language == SIGMA_RULE_DETAILS["platform_id"]:
             rule_query_language = MICROSOFT_SENTINEL_QUERY_DETAILS["platform_id"]
+            return_only_first_query_ctx_var.set(True)
             wrap_query_with_meta_info_ctx_var.set(False)
 
             render: QueryRender = render_manager.get(rule_query_language)
