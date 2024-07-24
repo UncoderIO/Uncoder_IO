@@ -24,7 +24,6 @@ from app.translator.core.const import QUERY_TOKEN_TYPE
 from app.translator.core.custom_types.tokens import GroupType, LogicalOperatorType, OperatorType
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.escape_manager import EscapeManager
-from app.translator.core.exceptions.functions import NotSupportedFunctionException
 from app.translator.core.exceptions.parser import (
     QueryParenthesesException,
     TokenizerGeneralException,
@@ -64,7 +63,16 @@ class QueryTokenizer(BaseTokenizer):
     fields_operator_map: ClassVar[dict[str, str]] = {}
     operators_map: ClassVar[dict[str, str]] = {}  # used to generate re pattern. so the keys order is important
 
-    logical_operator_pattern = r"^(?P<logical_operator>and|or|not|AND|OR|NOT)\s+"
+    logical_operators_map: ClassVar[dict[str, str]] = {
+        "and": LogicalOperatorType.AND,
+        "AND": LogicalOperatorType.AND,
+        "or": LogicalOperatorType.OR,
+        "OR": LogicalOperatorType.OR,
+        "not": LogicalOperatorType.NOT,
+        "NOT": LogicalOperatorType.NOT,
+    }
+    _logical_operator_pattern = f"(?P<logical_operator>{'|'.join(logical_operators_map)})"
+    logical_operator_pattern = rf"^{_logical_operator_pattern}\s+"
     field_value_pattern = r"""^___field___\s*___operator___\s*___value___"""
     base_value_pattern = r"(?:___value_pattern___)"
 
@@ -276,8 +284,8 @@ class QueryTokenizer(BaseTokenizer):
 
         return False
 
-    def search_function_value(self, query: str) -> tuple[FunctionValue, str]:  # noqa: ARG002
-        raise NotSupportedFunctionException
+    def search_function_value(self, query: str) -> tuple[FunctionValue, str]:
+        ...
 
     @staticmethod
     def _check_function_value_match(query: str) -> bool:  # noqa: ARG004
@@ -295,14 +303,20 @@ class QueryTokenizer(BaseTokenizer):
             logical_operator = logical_operator_search.group("logical_operator")
             pos = logical_operator_search.end()
             return Identifier(token_type=logical_operator.lower()), query[pos:]
-        if self.platform_functions and self._check_function_value_match(query):
-            return self.search_function_value(query)
+        if self.platform_functions and self._check_function_value_match(query):  # noqa: SIM102
+            if search_result := self.search_function_value(query):
+                return search_result
         if self._check_field_value_match(query):
             return self.search_field_value(query)
         if self.keyword_pattern and re.match(self.keyword_pattern, query):
             return self.search_keyword(query)
 
-        raise TokenizerGeneralException("Unsupported query entry")
+        unsupported_query_entry = self._get_unsupported_query_entry(query)
+        raise TokenizerGeneralException(f"Unsupported query entry: {unsupported_query_entry}")
+
+    def _get_unsupported_query_entry(self, query: str) -> str:
+        split_by_logical_operator = re.split(rf"\s+{self._logical_operator_pattern}\s+", query, maxsplit=1)
+        return split_by_logical_operator[0]
 
     @staticmethod
     def _validate_parentheses(tokens: list[QUERY_TOKEN_TYPE]) -> None:

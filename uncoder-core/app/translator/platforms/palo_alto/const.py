@@ -1,4 +1,4 @@
-from app.translator.core.custom_types.predefined_fields import IPLocationType
+from app.translator.core.custom_types.predefined_fields import IPLocationType, TimeType
 from app.translator.core.models.platform_details import PlatformDetails
 
 PLATFORM_DETAILS = {"group_id": "cortex", "group_name": "Palo Alto Cortex XSIAM"}
@@ -22,4 +22,5 @@ PREDEFINED_FIELDS_MAP = {
     IPLocationType.lat_lon: "loc_latlon",
     IPLocationType.region: "loc_region",
     IPLocationType.timezone: "loc_timezone",
+    TimeType.timestamp: "_time",
 }

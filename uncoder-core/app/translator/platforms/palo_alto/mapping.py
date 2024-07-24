@@ -38,7 +38,7 @@ class CortexXQLLogSourceSignature(LogSourceSignature):
         if dataset_data := self._default_source.get("dataset"):
             dataset = self.__prepare_log_source_for_render(logsource=dataset_data, model="dataset")
             return f"{self.__datamodel_scheme}{dataset}"
-        return "datamodel"
+        return "datamodel dataset = *"
 
 
 class CortexXQLMappings(BasePlatformMappings):
