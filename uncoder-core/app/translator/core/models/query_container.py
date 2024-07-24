@@ -26,7 +26,7 @@ class MetaInfoContainer:
         references: Optional[list[str]] = None,
         tags: Optional[list[str]] = None,
         mitre_attack: Optional[dict[str, list]] = None,
-        raw_mitre_attack: Optional[list] = None,
+        raw_mitre_attack: Optional[list[str]] = None,
         status: Optional[str] = None,
         false_positives: Optional[list[str]] = None,
         source_mapping_ids: Optional[list[str]] = None,
