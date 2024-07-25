@@ -35,7 +35,6 @@ class ElasticSearchRuleParser(ElasticSearchQueryParser, JsonRuleMixin):
             for threat_data in rule_mitre_attack_data:
                 if technique := self.mitre_config.get_technique(threat_data["technique"][0]["id"].lower()):
                     mitre_attack["techniques"].append(technique)
-                tactic = threat_data["tactic"]["name"].replace(" ", "_")
                 if tactic := self.mitre_config.get_tactic(threat_data["tactic"]["name"].replace(" ", "_").lower()):
                     mitre_attack["tactics"].append(tactic)
 
