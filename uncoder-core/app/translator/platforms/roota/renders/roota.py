@@ -150,6 +150,6 @@ class RootARender(PlatformQueryRender):
             rule["correlation"]["timeframe"] = self.__render_timeframe(tokenized_query_container.meta_info.timeframe)
 
         if rule_logsources:
-           rule["logsources"] = rule_logsources
+           rule["logsource"] = rule_logsources
 
         return yaml.dump(rule, Dumper=IndentedListDumper, default_flow_style=False, sort_keys=False, indent=4)
