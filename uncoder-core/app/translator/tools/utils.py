@@ -93,17 +93,12 @@ def parse_rule_description_str(description: str) -> dict:
     if rule_references_match := re.search(reference_pattern, description):
         rule_references = [rule_references_match.group(1)]
 
-    cleaned_description = re.sub(r"(Author:.+?)(?=Rule ID:|License:|Reference:|$)", "", description)
-    cleaned_description = re.sub(r"(Rule ID:.+?)(?=Author:|License:|Reference:|$)", "", cleaned_description)
-    cleaned_description = re.sub(r"(License:.+?)(?=Author:|Rule ID:|Reference:|$)", "", cleaned_description)
-    cleaned_description = re.sub(r"(Reference:.+?)(?=Author:|Rule ID:|License:|$)", "", cleaned_description)
-
-    cleaned_description = cleaned_description.strip()
+    description = re.sub(r"\s*(?:Author:|Rule ID:|License:|Reference:|$).*", "", description)
 
     return {
         "rule_id": rule_id,
         "rule_license": rule_license,
-        "rule_description": cleaned_description,
+        "rule_description": description,
         "rule_author": rule_author,
         "rule_references": rule_references,
     }
