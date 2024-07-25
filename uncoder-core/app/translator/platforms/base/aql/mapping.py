@@ -31,11 +31,12 @@ class AQLLogSourceSignature(LogSourceSignature):
         qid_event_category_match = (
             set(qideventcategory).issubset(self.qid_event_categories) if qideventcategory else None
         )
-        return all(
+        all_conditions = [
             condition
             for condition in (device_type_match, category_match, qid_match, qid_event_category_match)
             if condition is not None
-        )
+        ]
+        return bool(all_conditions) and all(all_conditions)
 
     def __str__(self) -> str:
         return self._default_source.get("table", "events")

@@ -26,7 +26,7 @@ from typing import TYPE_CHECKING, Any, ClassVar, Optional, Union
 from app.translator.core.exceptions.functions import NotSupportedFunctionException
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.functions.base import Function, ParsedFunctions, RenderedFunctions
-from app.translator.core.models.query_tokens.field import Alias, Field
+from app.translator.core.models.query_tokens.field import Alias, Field, PredefinedField
 from app.translator.tools.utils import execute_module
 from settings import INIT_FUNCTIONS
 
@@ -102,6 +102,9 @@ class FunctionRender(ABC):
             mappings = self.manager.platform_functions.platform_query_render.mappings
             mapped_fields = mappings.map_field(field, source_mapping)
             return mapped_fields[0]
+
+        if isinstance(field, PredefinedField):
+            return self.manager.platform_functions.platform_query_render.map_predefined_field(field)
 
         raise NotSupportedFunctionException
 

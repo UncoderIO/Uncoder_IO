@@ -97,8 +97,10 @@ field_mapping:
   FileName: 
     - Filename
     - File Name
+    - Encoded Filename
   RegistryKey: 
     - Registry Key
     - Target Object
   RegistryValue: RegistryValue
   ProcessPath: Process Path
+  hasIdentity: hasIdentity
