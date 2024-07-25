@@ -71,3 +71,39 @@ def get_rule_description_str(
     if references:
         rule_description = concatenate_str(rule_description, get_references_str(references))
     return rule_description
+
+
+def parse_rule_description_str(description: str) -> dict:
+    rule_id: str = ""
+    rule_author: str = ""
+    rule_license: str = ""
+    rule_references: list[str] = []
+
+    rule_id_pattern = r"Rule ID:\s*([\w-]+)"
+    author_pattern = r"Author:\s*([^\.]+)"
+    license_pattern = r"License:\s*([^\s]+)"
+    reference_pattern = r"Reference:\s*([^\s]+)"
+
+    if rule_id_match := re.search(rule_id_pattern, description):
+        rule_id = rule_id_match.group(1)
+    if rule_author_match := re.search(author_pattern, description):
+        rule_author = rule_author_match.group(1).strip()
+    if rule_license_match := re.search(license_pattern, description):
+        rule_license = rule_license_match.group(1)
+    if rule_references_match := re.search(reference_pattern, description):
+        rule_references = [rule_references_match.group(1)]
+
+    cleaned_description = re.sub(r"(Author:.+?)(?=Rule ID:|License:|Reference:|$)", "", description)
+    cleaned_description = re.sub(r"(Rule ID:.+?)(?=Author:|License:|Reference:|$)", "", cleaned_description)
+    cleaned_description = re.sub(r"(License:.+?)(?=Author:|Rule ID:|Reference:|$)", "", cleaned_description)
+    cleaned_description = re.sub(r"(Reference:.+?)(?=Author:|Rule ID:|License:|$)", "", cleaned_description)
+
+    cleaned_description = cleaned_description.strip()
+
+    return {
+        "rule_id": rule_id,
+        "rule_license": rule_license,
+        "rule_description": cleaned_description,
+        "rule_author": rule_author,
+        "rule_references": rule_references,
+    }
