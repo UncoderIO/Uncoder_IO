@@ -100,8 +100,11 @@ class RootARender(PlatformQueryRender):
             return_only_first_query_ctx_var.set(prev_state_return_only_first_query_ctx_var)
             wrap_query_with_meta_info_ctx_var.set(prev_state_wrap_query_with_meta_info_ctx_var)
 
-            return (rule_query, rule_query_language,
-                    self.__normalize_log_source(log_source=tokenized_query_container.meta_info.parsed_logsources))
+            return (
+                rule_query,
+                rule_query_language,
+                self.__normalize_log_source(log_source=tokenized_query_container.meta_info.parsed_logsources),
+            )
         rule_query_language = raw_query_container.language.replace("rule", "query")
         rule_query = raw_query_container.query
         for source_mapping_id in tokenized_query_container.meta_info.source_mapping_ids:
@@ -150,6 +153,6 @@ class RootARender(PlatformQueryRender):
             rule["correlation"]["timeframe"] = self.__render_timeframe(tokenized_query_container.meta_info.timeframe)
 
         if rule_logsources:
-           rule["logsource"] = rule_logsources
+            rule["logsource"] = rule_logsources
 
         return yaml.dump(rule, Dumper=IndentedListDumper, default_flow_style=False, sort_keys=False, indent=4)

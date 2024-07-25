@@ -38,10 +38,10 @@ class LogScaleAlertParser(LogScaleQueryParser, JsonRuleMixin):
             query=rule["query"]["queryString"],
             language=language,
             meta_info=MetaInfoContainer(
-                id_=parsed_description["rule_id"],
-                author=parsed_description["rule_author"],
-                references=parsed_description["rule_references"],
-                title=rule["name"],
-                description=parsed_description["rule_description"] or rule["description"],
+                id_=parsed_description.get("rule_id"),
+                author=parsed_description.get("author"),
+                references=parsed_description.get("references"),
+                title=rule.get("name"),
+                description=parsed_description.get("description") or rule.get("description"),
             ),
         )

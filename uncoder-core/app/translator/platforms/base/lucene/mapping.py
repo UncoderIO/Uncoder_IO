@@ -33,7 +33,7 @@ class LuceneMappings(BasePlatformMappings):
                 continue
 
             log_source_signature: LuceneLogSourceSignature = source_mapping.log_source_signature
-            if index and log_source_signature.is_suitable(index=index):
+            if index and log_source_signature.is_suitable(index=index):  # noqa: SIM102
                 if source_mapping.fields_mapping.is_suitable(field_names):
                     suitable_source_mappings.append(source_mapping)
 

@@ -56,11 +56,11 @@ class MicrosoftSentinelRuleParser(MicrosoftSentinelQueryParser, JsonRuleMixin):
             language=language,
             meta_info=MetaInfoContainer(
                 title=rule.get("displayName"),
-                description=parsed_description["rule_description"] or rule.get("description"),
+                description=parsed_description.get("description") or rule.get("description"),
                 timeframe=self.__parse_timeframe(rule.get("queryFrequency", "")),
                 severity=rule.get("severity", "medium"),
                 mitre_attack=mitre_attack if mitre_attack["tactics"] or mitre_attack["techniques"] else None,
-                author=parsed_description["rule_author"],
-                license_=parsed_description["rule_license"],
+                author=parsed_description.get("author") or rule.get("author", ""),
+                license_=parsed_description.get("license"),
             ),
         )
