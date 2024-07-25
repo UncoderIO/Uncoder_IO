@@ -30,6 +30,7 @@ from app.translator.managers import parser_manager
 from app.translator.platforms.microsoft.const import microsoft_sentinel_rule_details
 from app.translator.platforms.microsoft.mapping import MicrosoftSentinelMappings, microsoft_sentinel_rule_mappings
 from app.translator.platforms.microsoft.parsers.microsoft_sentinel import MicrosoftSentinelQueryParser
+from app.translator.tools.utils import parse_rule_description_str
 
 
 @parser_manager.register
@@ -48,15 +49,18 @@ class MicrosoftSentinelRuleParser(MicrosoftSentinelQueryParser, JsonRuleMixin):
             "tactics": [self.mitre_config.get_tactic(tactic.lower()) for tactic in rule.get("tactics", [])],
             "techniques": [self.mitre_config.get_technique(tactic.lower()) for tactic in rule.get("techniques", [])],
         }
+        parsed_description = parse_rule_description_str(rule.get("description", ""))
 
         return RawQueryContainer(
             query=rule["query"],
             language=language,
             meta_info=MetaInfoContainer(
                 title=rule.get("displayName"),
-                description=rule.get("description"),
+                description=parsed_description["rule_description"] or rule.get("description"),
                 timeframe=self.__parse_timeframe(rule.get("queryFrequency", "")),
                 severity=rule.get("severity", "medium"),
-                mitre_attack=mitre_attack,
+                mitre_attack=mitre_attack if mitre_attack["tactics"] or mitre_attack["techniques"] else None,
+                author=parsed_description["rule_author"],
+                license_=parsed_description["rule_license"],
             ),
         )

@@ -22,6 +22,7 @@ from app.translator.core.models.query_container import MetaInfoContainer, RawQue
 from app.translator.managers import parser_manager
 from app.translator.platforms.elasticsearch.const import elasticsearch_rule_details
 from app.translator.platforms.elasticsearch.parsers.elasticsearch import ElasticSearchQueryParser
+from app.translator.tools.utils import parse_rule_description_str
 
 
 @parser_manager.register
@@ -31,6 +32,7 @@ class ElasticSearchRuleParser(ElasticSearchQueryParser, JsonRuleMixin):
     def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
         rule = self.load_rule(text=text)
         mitre_attack = {"tactics": [], "techniques": []}
+        parsed_description = parse_rule_description_str(rule.get("description", ""))
         if rule_mitre_attack_data := rule.get("threat"):
             for threat_data in rule_mitre_attack_data:
                 if technique := self.mitre_config.get_technique(threat_data["technique"][0]["id"].lower()):
@@ -42,13 +44,14 @@ class ElasticSearchRuleParser(ElasticSearchQueryParser, JsonRuleMixin):
             query=rule["query"],
             language=language,
             meta_info=MetaInfoContainer(
-                id_=rule["rule_id"],
-                title=rule["name"],
-                description=rule["description"],
+                id_=rule.get("rule_id"),
+                title=rule.get("name"),
+                description=parsed_description["rule_description"] or rule.get("description"),
                 references=rule.get("references", []),
-                author=rule["author"],
-                severity=rule["severity"],
-                tags=rule["tags"],
-                mitre_attack=mitre_attack,
+                author=parsed_description["rule_author"],
+                severity=rule.get("severity"),
+                license_=parsed_description["rule_license"],
+                tags=rule.get("tags"),
+                mitre_attack=mitre_attack if mitre_attack["tactics"] or mitre_attack["techniques"] else None,
             ),
         )
