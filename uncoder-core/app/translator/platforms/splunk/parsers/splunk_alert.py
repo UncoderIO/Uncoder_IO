@@ -40,7 +40,8 @@ class SplunkAlertParser(SplunkQueryParser):
             level_map = {"1": "informational", "2": "low", "3": "medium", "4": "high", "5": "critical"}
             severity = level_map.get(str(severity_match.group(1)), "informational")
         if mitre_attack_match := re.search(r'"mitre_attack":\s*\[(.*?)\]', text):
-            raw_mitre_attack = [attack.strip().strip('"') for attack in mitre_attack_match.group(1).split(",")]
+            raw_mitre_attack = [attack.strip().strip('"').lower() for attack in mitre_attack_match.group(1).split(",")]
+
         if rule_id_match := re.search(r"Rule ID:\s*([\w-]+)", text):
             rule_id = rule_id_match.group(1)
         if rule_name_match := re.search(r"action\.notable\.param\.rule_title\s*=\s*(.*)", text):
