@@ -57,6 +57,6 @@ class MicrosoftSentinelRuleParser(MicrosoftSentinelQueryParser, JsonRuleMixin):
                 description=rule.get("description"),
                 timeframe=self.__parse_timeframe(rule.get("queryFrequency", "")),
                 severity=rule.get("severity", "medium"),
-                mitre_attack=mitre_attack if mitre_attack else None,
+                mitre_attack=mitre_attack,
             ),
         )
