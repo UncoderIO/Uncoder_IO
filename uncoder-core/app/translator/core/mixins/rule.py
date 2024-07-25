@@ -9,6 +9,8 @@ from app.translator.core.mitre import MitreConfig
 
 
 class JsonRuleMixin:
+    mitre_config: MitreConfig = MitreConfig()
+
     @staticmethod
     def load_rule(text: str) -> dict:
         try:

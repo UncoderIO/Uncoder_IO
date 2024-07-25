@@ -131,9 +131,8 @@ class RootARender(PlatformQueryRender):
             rule["mitre-attack"] = tokenized_query_container.meta_info.raw_mitre_attack
         elif tokenized_query_container.meta_info.mitre_attack:
             mitre_attack = tokenized_query_container.meta_info.mitre_attack
-            tactics = [tactic["external_id"].lower() for tactic in mitre_attack.get("tactics", [])]
             techniques = [technique["technique_id"].lower() for technique in mitre_attack.get("techniques", [])]
-            rule["mitre-attack"] = tactics + techniques
+            rule["mitre-attack"] = techniques
 
         if tokenized_query_container.meta_info.timeframe:
             rule["correlation"] = {}
