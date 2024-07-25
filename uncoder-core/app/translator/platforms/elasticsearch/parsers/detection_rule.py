@@ -30,6 +30,14 @@ class ElasticSearchRuleParser(ElasticSearchQueryParser, JsonRuleMixin):
 
     def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
         rule = self.load_rule(text=text)
+        mitre_attack = []
+        tags = []
+        if rule_mitre_attack_data := rule.get("threat"):
+            for threat_data in rule_mitre_attack_data:
+                technique = f"attack.{threat_data['technique'][0]['id'].lower()}"
+                tags.append(technique)
+                mitre_attack.append(technique)
+
         return RawQueryContainer(
             query=rule["query"],
             language=language,
