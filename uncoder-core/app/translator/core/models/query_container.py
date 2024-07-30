@@ -69,13 +69,14 @@ class MetaInfoContainer:
         self.raw_mitre_attack = raw_mitre_attack or []
         self.status = status or "stable"
         self.false_positives = false_positives or []
-        self.source_mapping_ids = sorted(source_mapping_ids) if source_mapping_ids else [DEFAULT_MAPPING_NAME]
+        self.source_mapping_ids = source_mapping_ids or [DEFAULT_MAPPING_NAME]
         self.parsed_logsources = parsed_logsources or {}
         self.timeframe = timeframe
 
     @property
-    def author_str(self) -> str:
-        return ", ".join(self.author)
+    def author_str(self) -> Optional[str]:
+        if self.author:
+            return ", ".join(self.author)
 
 
 @dataclass
