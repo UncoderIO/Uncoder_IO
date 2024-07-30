@@ -46,13 +46,13 @@ class MetaInfoContainer:
         severity: Optional[str] = None,
         references: Optional[list[str]] = None,
         tags: Optional[list[str]] = None,
-        mitre_attack: Optional[MitreInfoContainer] = None,
         raw_mitre_attack: Optional[list[str]] = None,
         status: Optional[str] = None,
         false_positives: Optional[list[str]] = None,
         source_mapping_ids: Optional[list[str]] = None,
         parsed_logsources: Optional[dict] = None,
         timeframe: Optional[timedelta] = None,
+        mitre_attack: MitreInfoContainer = MitreInfoContainer(),
     ) -> None:
         self.id = id_ or str(uuid.uuid4())
         self.title = title or ""

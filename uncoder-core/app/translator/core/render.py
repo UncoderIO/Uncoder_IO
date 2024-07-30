@@ -320,7 +320,7 @@ class PlatformQueryRender(QueryRender):
             meta_info_dict = {
                 "name: ": meta_info.title,
                 "uuid: ": meta_info.id,
-                "author: ": meta_info.author if meta_info.author else "not defined in query/rule",
+                "author: ": ", ".join(meta_info.author) if meta_info.author else "not defined in query/rule",
                 "licence: ": meta_info.license,
             }
             query_meta_info = "\n".join(

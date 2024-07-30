@@ -41,8 +41,7 @@ class YamlRuleMixin:
                     parsed_techniques.append(technique)
             elif tactic := self.mitre_config.get_tactic(tag):
                 parsed_tactics.append(tactic)
-        if parsed_techniques or parsed_tactics:
-            return MitreInfoContainer(tactics=parsed_tactics, techniques=parsed_techniques)
+        return MitreInfoContainer(tactics=parsed_tactics, techniques=parsed_techniques)
 
 
 class XMLRuleMixin:
