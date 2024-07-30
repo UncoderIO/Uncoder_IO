@@ -57,7 +57,7 @@ class MetaInfoContainer:
         self.id = id_ or str(uuid.uuid4())
         self.title = title or ""
         self.description = description or ""
-        self.author = author or ""
+        self.author = author or []
         self.date = date or datetime.now().date().strftime("%Y-%m-%d")
         self.output_table_fields = output_table_fields or []
         self.query_fields = query_fields or []

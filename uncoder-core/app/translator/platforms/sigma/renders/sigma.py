@@ -299,7 +299,7 @@ class SigmaRender(QueryRender):
             "id": meta_info.id,
             "description": description_str,
             "status": "experimental",
-            "author": meta_info.author,
+            "author": ', '.join(meta_info.author),
             "references": meta_info.references,
             "tags": meta_info.tags,
             "logsource": log_source_signature.log_sources,
