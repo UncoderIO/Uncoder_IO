@@ -86,7 +86,7 @@ def parse_rule_description_str(description: str) -> dict:
     for key, name in keys_map.items():
         if search := re.search(pattern.replace("___name___", name), description):
             if key == "author":
-                parsed[key] = search.group("value").split(",")
+                parsed[key] = [author.strip() for author in search.group("value").split(",")]
             else:
                 parsed[key] = search.group("value")
             description = description[: search.start()]
