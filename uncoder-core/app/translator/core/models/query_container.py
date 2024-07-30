@@ -6,9 +6,29 @@ from typing import Optional
 from app.translator.core.const import QUERY_TOKEN_TYPE
 from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME
-from app.translator.core.mitre import MitreInfoContainer
 from app.translator.core.models.functions.base import ParsedFunctions
 from app.translator.core.models.query_tokens.field import Field
+
+
+@dataclass
+class MitreTechniqueContainer:
+    technique_id: str
+    name: str
+    url: str
+    tactic: list[str]
+
+
+@dataclass
+class MitreTacticContainer:
+    external_id: str
+    url: str
+    name: str
+
+
+@dataclass
+class MitreInfoContainer:
+    tactics: list[MitreTacticContainer] = field(default_factory=list)
+    techniques: list[MitreTechniqueContainer] = field(default_factory=list)
 
 
 class MetaInfoContainer:

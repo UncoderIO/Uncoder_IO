@@ -2,34 +2,13 @@ import json
 import os
 import ssl
 import urllib.request
-from dataclasses import dataclass
 from json import JSONDecodeError
-from typing import Optional, Union
+from typing import Optional
 from urllib.error import HTTPError
 
+from app.translator.core.models.query_container import MitreInfoContainer, MitreTacticContainer, MitreTechniqueContainer
 from app.translator.tools.singleton_meta import SingletonMeta
 from const import ROOT_PROJECT_PATH
-
-
-@dataclass
-class MitreTechniqueContainer:
-    technique_id: str
-    name: str
-    url: str
-    tactic: list[str]
-
-
-@dataclass
-class MitreTacticContainer:
-    external_id: str
-    url: str
-    name: str
-
-
-@dataclass
-class MitreInfoContainer:
-    tactics: Union[list[MitreTacticContainer], list]
-    techniques: Union[list[MitreTechniqueContainer], list]
 
 
 class MitreConfig(metaclass=SingletonMeta):
@@ -157,16 +136,13 @@ class MitreConfig(metaclass=SingletonMeta):
 
     def get_mitre_info(
         self, tactics: Optional[list[str]] = None, techniques: Optional[list[str]] = None
-    ) -> Optional[MitreInfoContainer]:
+    ) -> MitreInfoContainer:
         tactics_list = []
         techniques_list = []
-        if tactics:
-            for tactic in tactics:
-                if tactic_found := self.get_tactic(tactic=tactic.lower()):
-                    tactics_list.append(tactic_found)
-        if techniques:
-            for technique in techniques:
-                if technique_found := self.get_technique(technique_id=technique.lower()):
-                    techniques_list.append(technique_found)
-        if tactics_list or techniques_list:
-            return MitreInfoContainer(tactics=tactics_list, techniques=techniques_list)
+        for tactic in tactics or []:
+            if tactic_found := self.get_tactic(tactic=tactic.lower()):
+                tactics_list.append(tactic_found)
+        for technique in techniques or []:
+            if technique_found := self.get_technique(technique_id=technique.lower()):
+                techniques_list.append(technique_found)
+        return MitreInfoContainer(tactics=tactics_list, techniques=techniques_list)
