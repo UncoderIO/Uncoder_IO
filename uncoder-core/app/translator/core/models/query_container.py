@@ -73,6 +73,11 @@ class MetaInfoContainer:
         self.parsed_logsources = parsed_logsources or {}
         self.timeframe = timeframe
 
+    @property
+    def author_str(self) -> Optional[str]:
+        if self.author:
+            return ", ".join(self.author)
+
 
 @dataclass
 class RawQueryContainer:
