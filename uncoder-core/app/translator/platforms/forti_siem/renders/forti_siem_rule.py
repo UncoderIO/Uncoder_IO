@@ -24,6 +24,7 @@ from app.translator.core.custom_types.tokens import GroupType, LogicalOperatorTy
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.exceptions.render import UnsupportedRenderMethod
 from app.translator.core.mapping import SourceMapping
+from app.translator.core.mitre import MitreInfoContainer
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, TokenizedQueryContainer
 from app.translator.core.models.query_tokens.field_value import FieldValue
@@ -363,16 +364,18 @@ class FortiSiemRuleRender(PlatformQueryRender):
         return re.sub(r'[\'"()+,]*', "", rule_name)
 
     @staticmethod
-    def get_mitre_info(mitre_attack: dict) -> tuple[str, str]:
+    def get_mitre_info(mitre_attack: Union[MitreInfoContainer, None]) -> tuple[str, str]:
+        if not mitre_attack:
+            return "", ""
         tactics = set()
         techniques = set()
-        for tactic in mitre_attack.get("tactics", []):
-            if tactic_name := tactic.get("tactic"):
+        for tactic in mitre_attack.tactics:
+            if tactic_name := tactic.name:
                 tactics.add(tactic_name)
 
-        for tech in mitre_attack.get("techniques", []):
-            techniques.add(tech["technique_id"])
-            tactics = tactics.union(set(tech.get("tactic", [])))
+        for tech in mitre_attack.techniques:
+            techniques.add(tech.technique_id)
+            tactics = tactics.union(set(tech.tactic))
 
         return ", ".join(sorted(tactics)), ", ".join(sorted(techniques))
 

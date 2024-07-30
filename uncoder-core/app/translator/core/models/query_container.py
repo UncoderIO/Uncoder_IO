@@ -6,6 +6,7 @@ from typing import Optional
 from app.translator.core.const import QUERY_TOKEN_TYPE
 from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME
+from app.translator.core.mitre import MitreInfoContainer
 from app.translator.core.models.functions.base import ParsedFunctions
 from app.translator.core.models.query_tokens.field import Field
 
@@ -17,7 +18,7 @@ class MetaInfoContainer:
         id_: Optional[str] = None,
         title: Optional[str] = None,
         description: Optional[str] = None,
-        author: Optional[str] = None,
+        author: Optional[list[str]] = None,
         date: Optional[str] = None,
         output_table_fields: Optional[list[Field]] = None,
         query_fields: Optional[list[Field]] = None,
@@ -25,7 +26,7 @@ class MetaInfoContainer:
         severity: Optional[str] = None,
         references: Optional[list[str]] = None,
         tags: Optional[list[str]] = None,
-        mitre_attack: Optional[dict[str, list]] = None,
+        mitre_attack: Optional[MitreInfoContainer] = None,
         raw_mitre_attack: Optional[list[str]] = None,
         status: Optional[str] = None,
         false_positives: Optional[list[str]] = None,
@@ -44,7 +45,7 @@ class MetaInfoContainer:
         self.severity = severity or SeverityType.low
         self.references = references or []
         self.tags = tags or []
-        self.mitre_attack = mitre_attack or {}
+        self.mitre_attack = mitre_attack or None
         self.raw_mitre_attack = raw_mitre_attack or []
         self.status = status or "stable"
         self.false_positives = false_positives or []

@@ -31,14 +31,16 @@ class ElasticSearchRuleParser(ElasticSearchQueryParser, JsonRuleMixin):
 
     def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
         rule = self.load_rule(text=text)
-        mitre_attack = {"tactics": [], "techniques": []}
         parsed_description = parse_rule_description_str(rule.get("description", ""))
+
+        mitre_attack = None
         if rule_mitre_attack_data := rule.get("threat"):
-            for threat_data in rule_mitre_attack_data:
-                if technique := self.mitre_config.get_technique(threat_data["technique"][0]["id"].lower()):
-                    mitre_attack["techniques"].append(technique)
-                if tactic := self.mitre_config.get_tactic(threat_data["tactic"]["name"].replace(" ", "_").lower()):
-                    mitre_attack["tactics"].append(tactic)
+            mitre_attack = self.mitre_config.get_mitre_info(
+                tactics=[
+                    threat_data["tactic"]["name"].replace(" ", "_").lower() for threat_data in rule_mitre_attack_data
+                ],
+                techniques=[threat_data["technique"][0]["id"].lower() for threat_data in rule_mitre_attack_data],
+            )
 
         return RawQueryContainer(
             query=rule["query"],
@@ -52,6 +54,6 @@ class ElasticSearchRuleParser(ElasticSearchQueryParser, JsonRuleMixin):
                 severity=rule.get("severity"),
                 license_=parsed_description.get("license"),
                 tags=rule.get("tags"),
-                mitre_attack=mitre_attack if mitre_attack["tactics"] or mitre_attack["techniques"] else None,
+                mitre_attack=mitre_attack,
             ),
         )
