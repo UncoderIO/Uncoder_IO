@@ -22,7 +22,7 @@ from typing import Optional
 from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.models.query_container import MetaInfoContainer
+from app.translator.core.models.query_container import MetaInfoContainer, MitreInfoContainer
 from app.translator.managers import render_manager
 from app.translator.platforms.splunk.const import DEFAULT_SPLUNK_ALERT, splunk_alert_details
 from app.translator.platforms.splunk.mapping import SplunkMappings, splunk_alert_mappings
@@ -46,13 +46,15 @@ class SplunkAlertRender(SplunkQueryRender):
     field_value_render = SplunkAlertFieldValueRender(or_token=or_token)
 
     @staticmethod
-    def __create_mitre_threat(meta_info: MetaInfoContainer) -> dict:
-        techniques = {"mitre_attack": []}
+    def __create_mitre_threat(mitre_attack: MitreInfoContainer) -> dict:
+        mitre_attack_render = {"mitre_attack": []}
 
-        for technique in meta_info.mitre_attack.techniques:
-            techniques["mitre_attack"].append(technique.technique_id)
-        techniques["mitre_attack"].sort()
-        return techniques
+        for technique in mitre_attack.techniques:
+            mitre_attack_render["mitre_attack"].append(technique.technique_id)
+        for tactic in mitre_attack.tactics:
+            mitre_attack_render["mitre_attack"].append(tactic.name)
+        mitre_attack_render["mitre_attack"].sort()
+        return mitre_attack_render
 
     def finalize_query(
         self,
@@ -77,7 +79,7 @@ class SplunkAlertRender(SplunkQueryRender):
             rule_id=meta_info.id,
         )
         rule = rule.replace("<description_place_holder>", rule_description)
-        mitre_techniques = self.__create_mitre_threat(meta_info=meta_info)
+        mitre_techniques = self.__create_mitre_threat(mitre_attack=meta_info.mitre_attack)
         if mitre_techniques:
             mitre_str = f"action.correlationsearch.annotations = {mitre_techniques})"
             rule = rule.replace("<annotations_place_holder>", mitre_str)

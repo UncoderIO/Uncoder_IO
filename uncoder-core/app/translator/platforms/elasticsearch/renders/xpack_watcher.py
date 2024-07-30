@@ -22,8 +22,9 @@ import json
 from typing import Optional
 
 from app.translator.core.mapping import SourceMapping
+from app.translator.core.mitre import MitreConfig
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.models.query_container import MetaInfoContainer
+from app.translator.core.models.query_container import MetaInfoContainer, MitreInfoContainer
 from app.translator.managers import render_manager
 from app.translator.platforms.base.lucene.mapping import LuceneMappings
 from app.translator.platforms.elasticsearch.const import XPACK_WATCHER_RULE, xpack_watcher_details
@@ -47,6 +48,24 @@ class XPackWatcherRuleRender(ElasticSearchQueryRender):
     mappings: LuceneMappings = xpack_watcher_mappings
     or_token = "OR"
     field_value_render = XpackWatcherRuleFieldValue(or_token=or_token)
+    mitre: MitreConfig = MitreConfig()
+
+    def __create_mitre_threat(self, mitre_attack: MitreInfoContainer) -> dict:
+        result = {"tactics": [], "techniques": []}
+
+        for tactic in mitre_attack.tactics:
+            result["tactics"].append({"external_id": tactic.external_id, "url": tactic.url, "tactic": tactic.name})
+        for technique in mitre_attack.techniques:
+            result["techniques"].append(
+                {
+                    "technique_id": technique.technique_id,
+                    "technique": technique.name,
+                    "url": technique.url,
+                    "tactic": technique.tactic,
+                }
+            )
+
+        return result if result["tactics"] or result["techniques"] else {}
 
     def finalize_query(
         self,
@@ -76,7 +95,7 @@ class XPackWatcherRuleRender(ElasticSearchQueryRender):
                     license_=meta_info.license,
                     mitre_attack=mitre_attack,
                 ),
-                "tags": meta_info.tags,
+                "tags": self.__create_mitre_threat(mitre_attack=meta_info.mitre_attack),
             }
         )
         rule["input"]["search"]["request"]["body"]["query"]["bool"]["must"][0]["query_string"]["query"] = query

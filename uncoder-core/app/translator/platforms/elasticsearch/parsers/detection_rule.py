@@ -33,14 +33,10 @@ class ElasticSearchRuleParser(ElasticSearchQueryParser, JsonRuleMixin):
         rule = self.load_rule(text=text)
         parsed_description = parse_rule_description_str(rule.get("description", ""))
 
-        mitre_attack = None
-        if rule_mitre_attack_data := rule.get("threat"):
-            mitre_attack = self.mitre_config.get_mitre_info(
-                tactics=[
-                    threat_data["tactic"]["name"].replace(" ", "_").lower() for threat_data in rule_mitre_attack_data
-                ],
-                techniques=[threat_data["technique"][0]["id"].lower() for threat_data in rule_mitre_attack_data],
-            )
+        mitre_attack = self.mitre_config.get_mitre_info(
+            tactics=[threat_data["tactic"]["name"].replace(" ", "_").lower() for threat_data in rule.get("threat", [])],
+            techniques=[threat_data["technique"][0]["id"].lower() for threat_data in rule.get("threat", [])],
+        )
 
         return RawQueryContainer(
             query=rule["query"],

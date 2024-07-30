@@ -18,6 +18,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
 import re
 
+from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer
 from app.translator.managers import parser_manager
@@ -36,9 +37,15 @@ class SplunkAlertParser(SplunkQueryParser):
         rule_name: str = ""
         severity: str = ""
         raw_mitre_attack: list[str] = []
-        if severity_match := re.search(r"action\.risk\.param\._risk_score\s*=\s*(\d+)", text):
-            level_map = {"0": "informational", "25": "low", "50": "medium", "75": "high", "100": "critical"}
+        if severity_match := re.search(r"alert\.severity\s*=\s*(\d+)", text):
+            level_map = {
+                "1": SeverityType.low,
+                "2": SeverityType.medium,
+                "3": SeverityType.high,
+                "4": SeverityType.critical,
+            }
             severity = level_map.get(str(severity_match.group(1)), "low")
+
         if mitre_attack_match := re.search(r'"mitre_attack":\s*\[(.*?)\]', text):
             raw_mitre_attack = [attack.strip().strip('"').lower() for attack in mitre_attack_match.group(1).split(",")]
 
