@@ -1,5 +1,5 @@
 import json
-from typing import Optional, Union
+from typing import Union
 
 import xmltodict
 import yaml
@@ -29,7 +29,7 @@ class YamlRuleMixin:
         except yaml.YAMLError as err:
             raise InvalidYamlStructure(error=str(err)) from err
 
-    def parse_mitre_attack(self, tags: list[str]) -> Optional[MitreInfoContainer]:
+    def parse_mitre_attack(self, tags: list[str]) -> MitreInfoContainer:
         parsed_techniques = []
         parsed_tactics = []
         for tag in set(tags):

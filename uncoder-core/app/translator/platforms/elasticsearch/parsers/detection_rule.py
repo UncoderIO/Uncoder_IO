@@ -46,7 +46,7 @@ class ElasticSearchRuleParser(ElasticSearchQueryParser, JsonRuleMixin):
                 title=rule.get("name"),
                 description=parsed_description.get("description") or rule.get("description"),
                 references=rule.get("references", []),
-                author=parsed_description.get("author") or rule.get("author", ""),
+                author=parsed_description.get("author") or rule.get("author"),
                 severity=rule.get("severity"),
                 license_=parsed_description.get("license"),
                 tags=rule.get("tags"),

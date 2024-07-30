@@ -79,7 +79,7 @@ class SigmaParser(QueryParser, YamlRuleMixin):
             title=rule.get("title"),
             id_=rule.get("id"),
             description=rule.get("description"),
-            author=rule.get("author"),
+            author=rule.get("author", '').split(', '),
             date=rule.get("date"),
             output_table_fields=sigma_fields_tokens,
             query_fields=fields_tokens,
