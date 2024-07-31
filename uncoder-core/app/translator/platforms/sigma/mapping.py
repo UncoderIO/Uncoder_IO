@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
 from app.translator.platforms.sigma.const import sigma_rule_details
@@ -47,6 +47,20 @@ class SigmaMappings(BasePlatformMappings):
         return SigmaLogSourceSignature(
             product=product, service=service, category=category, default_source=default_log_source
         )
+
+    def get_suitable_source_mappings(
+        self, field_names: list[str], log_sources: dict[str, list[Union[int, str]]]
+    ) -> list[SourceMapping]:
+        source_mappings = []
+        for source_mapping in self._source_mappings.values():
+            if source_mapping.source_id == DEFAULT_MAPPING_NAME:
+                continue
+
+            log_source_signature: LogSourceSignature = source_mapping.log_source_signature
+            if log_source_signature and log_source_signature.is_suitable(**log_sources):
+                source_mappings.append(source_mapping)
+
+        return source_mappings or [self._source_mappings[DEFAULT_MAPPING_NAME]]
 
 
 sigma_rule_mappings = SigmaMappings(platform_dir="sigma", platform_details=sigma_rule_details)
