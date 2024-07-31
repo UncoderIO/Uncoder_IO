@@ -1,7 +1,7 @@
 import importlib.util
 import re
 from contextlib import suppress
-from typing import Optional, Union
+from typing import Optional
 
 
 def execute_module(path: str) -> None:
@@ -22,12 +22,12 @@ def concatenate_str(str1: str, str2: str) -> str:
     return str1 + " " + str2 if str1 else str2
 
 
-def get_mitre_attack_str(mitre_attack: list[str]) -> str:
+def get_mitre_attack_str(mitre_attack: list) -> str:
     return f"MITRE ATT&CK: {', '.join(mitre_attack).upper()}."
 
 
-def get_author_str(author: str) -> str:
-    return f"Author: {author}."
+def get_author_str(author: list[str]) -> str:
+    return f"Author: {', '.join(author)}."
 
 
 def get_license_str(license_: str) -> str:
@@ -53,10 +53,10 @@ def get_references_str(references: list[str]) -> str:
 
 def get_rule_description_str(
     description: str,
-    author: Optional[str] = None,
+    author: Optional[list[str]] = None,
     rule_id: Optional[str] = None,
     license_: Optional[str] = None,
-    mitre_attack: Optional[Union[str, list[str]]] = None,
+    mitre_attack: Optional[list[str]] = None,
     references: Optional[list[str]] = None,
 ) -> str:
     rule_description = get_description_str(description)
@@ -71,3 +71,25 @@ def get_rule_description_str(
     if references:
         rule_description = concatenate_str(rule_description, get_references_str(references))
     return rule_description
+
+
+def parse_rule_description_str(description: str) -> dict:
+    parsed = {}
+    keys_map = {
+        "references": "Reference",
+        "mitre_attack": "MITRE ATT&CK",
+        "license": "License",
+        "rule_id": "Rule ID",
+        "author": "Author",
+    }
+    pattern = r"___name___:\s*(?P<value>.+)\."
+    for key, name in keys_map.items():
+        if search := re.search(pattern.replace("___name___", name), description):
+            if key in ("author", "references"):
+                parsed[key] = [value.strip() for value in search.group("value").split(",")]
+            else:
+                parsed[key] = search.group("value")
+            description = description[: search.start()]
+
+    parsed["description"] = description.strip()
+    return parsed

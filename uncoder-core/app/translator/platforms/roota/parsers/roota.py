@@ -57,7 +57,7 @@ class RootAParser(QueryParser, YamlRuleMixin):
             id_=rule.get("uuid"),
             title=rule.get("name"),
             description=rule.get("details"),
-            author=rule.get("author"),
+            author=rule.get("author", "").split(", "),
             date=rule.get("date"),
             license_=rule.get("license"),
             severity=rule.get("severity"),

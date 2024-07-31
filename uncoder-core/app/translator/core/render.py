@@ -208,7 +208,7 @@ class QueryRender(ABC):
         return query
 
     def wrap_with_unmapped_fields(self, query: str, fields: Optional[list[str]]) -> str:
-        if fields:
+        if wrap_query_with_meta_info_ctx_var.get() and fields:
             return query + "\n\n" + self.wrap_with_comment(f"{self.unmapped_fields_text}{', '.join(fields)}")
         return query
 
@@ -216,7 +216,9 @@ class QueryRender(ABC):
         return f"{self.comment_symbol} {value}"
 
     @abstractmethod
-    def generate(self, query_container: Union[RawQueryContainer, TokenizedQueryContainer]) -> str:
+    def generate(
+        self, raw_query_container: RawQueryContainer, tokenized_query_container: Optional[TokenizedQueryContainer]
+    ) -> str:
         raise NotImplementedError("Abstract method")
 
 
@@ -318,7 +320,7 @@ class PlatformQueryRender(QueryRender):
             meta_info_dict = {
                 "name: ": meta_info.title,
                 "uuid: ": meta_info.id,
-                "author: ": meta_info.author if meta_info.author else "not defined in query/rule",
+                "author: ": meta_info.author_str or "not defined in query/rule",
                 "licence: ": meta_info.license,
             }
             query_meta_info = "\n".join(
@@ -370,7 +372,7 @@ class PlatformQueryRender(QueryRender):
 
         return result
 
-    def _get_source_mappings(self, source_mapping_ids: list[str]) -> list[SourceMapping]:
+    def _get_source_mappings(self, source_mapping_ids: list[str]) -> Optional[list[SourceMapping]]:
         source_mappings = []
         for source_mapping_id in source_mapping_ids:
             if source_mapping := self.mappings.get_source_mapping(source_mapping_id):
@@ -468,8 +470,9 @@ class PlatformQueryRender(QueryRender):
             raise errors[0]
         return self.finalize(queries_map)
 
-    def generate(self, query_container: Union[RawQueryContainer, TokenizedQueryContainer]) -> str:
-        if isinstance(query_container, RawQueryContainer):
-            return self.generate_from_raw_query_container(query_container)
-
-        return self.generate_from_tokenized_query_container(query_container)
+    def generate(
+        self, raw_query_container: RawQueryContainer, tokenized_query_container: Optional[TokenizedQueryContainer]
+    ) -> str:
+        if tokenized_query_container:
+            return self.generate_from_tokenized_query_container(tokenized_query_container)
+        return self.generate_from_raw_query_container(raw_query_container)

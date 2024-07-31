@@ -22,6 +22,7 @@ from app.translator.core.models.query_container import MetaInfoContainer, RawQue
 from app.translator.managers import parser_manager
 from app.translator.platforms.elasticsearch.const import elasticsearch_rule_details
 from app.translator.platforms.elasticsearch.parsers.elasticsearch import ElasticSearchQueryParser
+from app.translator.tools.utils import parse_rule_description_str
 
 
 @parser_manager.register
@@ -30,8 +31,25 @@ class ElasticSearchRuleParser(ElasticSearchQueryParser, JsonRuleMixin):
 
     def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
         rule = self.load_rule(text=text)
+        parsed_description = parse_rule_description_str(rule.get("description", ""))
+
+        mitre_attack = self.mitre_config.get_mitre_info(
+            tactics=[threat_data["tactic"]["name"].replace(" ", "_").lower() for threat_data in rule.get("threat", [])],
+            techniques=[threat_data["technique"][0]["id"].lower() for threat_data in rule.get("threat", [])],
+        )
+
         return RawQueryContainer(
             query=rule["query"],
             language=language,
-            meta_info=MetaInfoContainer(title=rule["name"], description=rule["description"]),
+            meta_info=MetaInfoContainer(
+                id_=rule.get("rule_id"),
+                title=rule.get("name"),
+                description=parsed_description.get("description") or rule.get("description"),
+                references=rule.get("references", []),
+                author=parsed_description.get("author") or rule.get("author"),
+                severity=rule.get("severity"),
+                license_=parsed_description.get("license"),
+                tags=rule.get("tags"),
+                mitre_attack=mitre_attack,
+            ),
         )
