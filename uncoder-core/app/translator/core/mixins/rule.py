@@ -37,11 +37,10 @@ class YamlRuleMixin:
             if tag.startswith("attack."):
                 tag = tag[7::]
             if tag.startswith("t"):
-                if technique := self.mitre_config.get_technique(tag):
-                    parsed_techniques.append(technique)
-            elif tactic := self.mitre_config.get_tactic(tag):
-                parsed_tactics.append(tactic)
-        return MitreInfoContainer(tactics=parsed_tactics, techniques=parsed_techniques)
+                parsed_techniques.append(tag)
+            else:
+                parsed_tactics.append(tag)
+        return self.mitre_config.get_mitre_info(tactics=parsed_tactics, techniques=parsed_techniques)
 
 
 class XMLRuleMixin:
