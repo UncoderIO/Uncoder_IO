@@ -9,8 +9,8 @@ class CrowdStrikeLogSourceSignature(LogSourceSignature):
         self.event_simple_names = set(event_simple_name or [])
         self._default_source = default_source or {}
 
-    def is_suitable(self, event_simple_name: Optional[list[str]] = None) -> bool:
-        conditions = [set(event_simple_name).issubset(self.event_simple_names) if event_simple_name else None]
+    def is_suitable(self, event_simpleName: Optional[list[str]] = None) -> bool:  # noqa: N803
+        conditions = [set(event_simpleName).issubset(self.event_simple_names) if event_simpleName else None]
         return self._check_conditions(conditions)
 
     def __str__(self) -> str:
