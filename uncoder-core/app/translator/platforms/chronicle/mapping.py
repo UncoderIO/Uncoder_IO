@@ -4,7 +4,7 @@ from app.translator.platforms.chronicle.const import chronicle_query_details, ch
 
 class ChronicleLogSourceSignature(LogSourceSignature):
     def is_suitable(self) -> bool:
-        raise True
+        return True
 
     def __str__(self) -> str:
         return ""

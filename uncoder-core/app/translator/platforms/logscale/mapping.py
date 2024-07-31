@@ -12,7 +12,7 @@ class LogScaleLogSourceSignature(LogSourceSignature):
         return " ".join((f"{key}={value}" for key, value in self._default_source.items() if value))
 
     def is_suitable(self) -> bool:
-        raise True
+        return True
 
 
 class LogScaleMappings(BasePlatformMappings):
