@@ -22,14 +22,14 @@ class SplunkLogSourceSignature(LogSourceSignature):
     def is_suitable(
         self,
         source: Optional[list[str]] = None,
-        source_type: Optional[list[str]] = None,
-        source_category: Optional[list[str]] = None,
+        sourcetype: Optional[list[str]] = None,
+        sourcecategory: Optional[list[str]] = None,
         index: Optional[list[str]] = None,
     ) -> bool:
         conditions = [
             set(source).issubset(self.sources) if source else None,
-            set(source_type).issubset(self.source_types) if source_type else None,
-            set(source_category).issubset(self.source_categories) if source_category else None,
+            set(sourcetype).issubset(self.source_types) if sourcetype else None,
+            set(sourcecategory).issubset(self.source_categories) if sourcecategory else None,
             set(index).issubset(self.indices) if index else None,
         ]
         return self._check_conditions(conditions)

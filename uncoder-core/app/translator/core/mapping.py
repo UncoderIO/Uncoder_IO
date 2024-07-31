@@ -165,7 +165,7 @@ class BasePlatformMappings:
                 by_fields.append(source_mapping)
 
                 log_source_signature: LogSourceSignature = source_mapping.log_source_signature
-                if log_source_signature.is_suitable(**log_sources):
+                if log_source_signature and log_source_signature.is_suitable(**log_sources):
                     by_log_sources_and_fields.append(source_mapping)
 
         return by_log_sources_and_fields or by_fields or [self._source_mappings[DEFAULT_MAPPING_NAME]]
