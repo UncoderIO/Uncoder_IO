@@ -31,13 +31,6 @@ from app.translator.core.exceptions.parser import (
 )
 from app.translator.core.functions import PlatformFunctions
 from app.translator.core.mapping import SourceMapping
-from app.translator.core.models.functions.base import Function
-from app.translator.core.models.functions.eval import EvalArg
-from app.translator.core.models.functions.group_by import GroupByFunction
-from app.translator.core.models.functions.join import JoinFunction
-from app.translator.core.models.functions.rename import RenameArg
-from app.translator.core.models.functions.sort import SortArg
-from app.translator.core.models.functions.union import UnionFunction
 from app.translator.core.models.query_tokens.field import Field
 from app.translator.core.models.query_tokens.field_field import FieldField
 from app.translator.core.models.query_tokens.field_value import FieldValue
@@ -355,43 +348,6 @@ class QueryTokenizer(BaseTokenizer):
         token_type: Union[type[FieldValue], type[Field], type[FieldField], type[Keyword], type[Identifier]],
     ) -> list[QUERY_TOKEN_TYPE]:
         return [token for token in tokens if isinstance(token, token_type)]
-
-    def get_field_tokens_from_func_args(  # noqa: PLR0912
-        self, args: list[Union[Field, FieldValue, Keyword, Identifier, Function, SortArg]]
-    ) -> list[Field]:
-        result = []
-        for arg in args:
-            if isinstance(arg, Field):
-                result.append(arg)
-            elif isinstance(arg, FieldField):
-                if arg.field_left:
-                    result.append(arg.field_left)
-                if arg.field_right:
-                    result.append(arg.field_right)
-            elif isinstance(arg, FieldValue):
-                if arg.field:
-                    result.append(arg.field)
-            elif isinstance(arg, FunctionValue):
-                result.extend(self.get_field_tokens_from_func_args(args=[arg.function]))
-            elif isinstance(arg, GroupByFunction):
-                result.extend(self.get_field_tokens_from_func_args(args=arg.args))
-                result.extend(self.get_field_tokens_from_func_args(args=arg.by_clauses))
-                result.extend(self.get_field_tokens_from_func_args(args=[arg.filter_]))
-            elif isinstance(arg, JoinFunction):
-                result.extend(self.get_field_tokens_from_func_args(args=arg.condition))
-            elif isinstance(arg, UnionFunction):
-                continue
-            elif isinstance(arg, Function):
-                result.extend(self.get_field_tokens_from_func_args(args=arg.args))
-            elif isinstance(arg, SortArg) and isinstance(arg.field, Field):
-                result.append(arg.field)
-            elif isinstance(arg, RenameArg):
-                result.append(arg.field_)
-            elif isinstance(arg, EvalArg):
-                if isinstance(arg.field_, Field):
-                    result.append(arg.field_)
-                result.extend(self.get_field_tokens_from_func_args(args=arg.expression))
-        return result
 
     @staticmethod
     def set_field_tokens_generic_names_map(

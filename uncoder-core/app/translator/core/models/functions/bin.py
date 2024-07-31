@@ -19,3 +19,7 @@ class BinFunction(Function):
     span: Optional[Span] = None
     field: Optional[Field] = None
     bins: Optional[int] = None
+
+    @property
+    def fields(self) -> list[Field]:
+        return [self.field] if self.field else []

@@ -62,23 +62,17 @@ class PlatformQueryParser(QueryParser, ABC):
             raise TokenizerGeneralException("Can't translate empty query. Please provide more details")
         return self.tokenizer.tokenize(query=query)
 
+    @staticmethod
     def get_field_tokens(
-        self, query_tokens: list[QUERY_TOKEN_TYPE], functions: Optional[list[Function]] = None
+        query_tokens: list[QUERY_TOKEN_TYPE], functions: Optional[list[Function]] = None
     ) -> list[Field]:
         field_tokens = []
         for token in query_tokens:
-            if isinstance(token, FieldValue):
-                field_tokens.append(token.field)
-            elif isinstance(token, FieldField):
-                if token.field_left:
-                    field_tokens.append(token.field_left)
-                if token.field_right:
-                    field_tokens.append(token.field_right)
-            elif isinstance(token, FunctionValue):
-                field_tokens.extend(self.tokenizer.get_field_tokens_from_func_args([token.function]))
+            if isinstance(token, (FieldField, FieldValue, FunctionValue)):
+                field_tokens.extend(token.fields)
 
         if functions:
-            field_tokens.extend(self.tokenizer.get_field_tokens_from_func_args(functions))
+            field_tokens.extend([field for func in functions for field in func.fields])
 
         return field_tokens
 

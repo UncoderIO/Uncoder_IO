@@ -15,3 +15,11 @@ class RenameArg:
 class RenameFunction(Function):
     name: str = FunctionType.rename
     args: list[RenameArg] = None
+
+    @property
+    def fields(self) -> list[Field]:
+        fields = []
+        for arg in self.args:
+            fields.append(arg.field_)
+
+        return fields
