@@ -82,14 +82,15 @@ class LogRhythmAxonRuleRender(LogRhythmAxonQueryRender):
         rule["observationPipeline"]["metadataFields"]["threat.severity"] = _SEVERITIES_MAP.get(
             meta_info.severity, SeverityType.medium
         )
-        if tactics := meta_info.mitre_attack.get("tactics"):
-            rule["observationPipeline"]["metadataFields"]["threat.mitre_tactic"] = ", ".join(
-                f"{i['external_id']}:{i['tactic']}" for i in sorted(tactics, key=lambda x: x["external_id"])
-            )
-        if techniques := meta_info.mitre_attack.get("techniques"):
-            rule["observationPipeline"]["metadataFields"]["threat.mitre_technique"] = ", ".join(
-                f"{i['technique_id']}:{i['technique']}" for i in sorted(techniques, key=lambda x: x["technique_id"])
-            )
+        if mitre_info := meta_info.mitre_attack:
+            if tactics := mitre_info.tactics:
+                rule["observationPipeline"]["metadataFields"]["threat.mitre_tactic"] = ", ".join(
+                    f"{i.external_id}:{i.name}" for i in sorted(tactics, key=lambda x: x.external_id)
+                )
+            if techniques := mitre_info.techniques:
+                rule["observationPipeline"]["metadataFields"]["threat.mitre_technique"] = ", ".join(
+                    f"{i.technique_id}:{i.name}" for i in sorted(techniques, key=lambda x: x.technique_id)
+                )
         if meta_info.output_table_fields:
             rule["observationPipeline"]["pattern"]["operations"][0]["logObserved"]["groupByFields"] = [
                 self.mappings.map_field(field, source_mapping)[0] for field in meta_info.output_table_fields

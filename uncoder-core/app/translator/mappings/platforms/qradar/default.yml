@@ -14,8 +14,6 @@ field_mapping:
     - DstPort
     - DestinationPort
     - remoteport
-  dst-hostname: DstHost
-  src-hostname: SrcHost
   src-port:
     - SourcePort
     - localport
@@ -25,6 +23,7 @@ field_mapping:
     - source_ip
     - SourceIP
     - sourceIP
+    - SrcHost
   dst-ip:
     - DestinationIP
     - destinationip
@@ -32,6 +31,7 @@ field_mapping:
     - destinationIP
     - destinationaddress
     - destination
+    - DstHost
   User:
     - userName
     - EventUserName

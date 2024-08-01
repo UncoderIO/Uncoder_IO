@@ -17,7 +17,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 import re
-from typing import Optional
 
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.parser import PlatformQueryParser
@@ -31,12 +30,12 @@ class SqlQueryParser(PlatformQueryParser):
 
     wrapped_with_comment_pattern = r"^\s*--.*(?:\n|$)"
 
-    def _parse_query(self, query: str) -> tuple[str, dict[str, Optional[str]]]:
-        log_source = {"table": None}
+    def _parse_query(self, query: str) -> tuple[str, dict[str, list[str]]]:
+        log_source = {"table": []}
         if re.search(self.query_delimiter_pattern, query, flags=re.IGNORECASE):
             table_search = re.search(self.table_pattern, query)
             table = table_search.group("table")
-            log_source["table"] = table
+            log_source["table"] = [table]
             return re.split(self.query_delimiter_pattern, query, flags=re.IGNORECASE)[1], log_source
 
         return query, log_source

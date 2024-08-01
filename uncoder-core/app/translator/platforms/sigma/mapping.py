@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
 from app.translator.platforms.sigma.const import sigma_rule_details
@@ -18,7 +18,10 @@ class SigmaLogSourceSignature(LogSourceSignature):
         self._default_source = default_source or {}
 
     def is_suitable(
-        self, service: Optional[list[str]], product: Optional[list[str]], category: Optional[list[str]]
+        self,
+        service: Optional[list[str]] = None,
+        product: Optional[list[str]] = None,
+        category: Optional[list[str]] = None
     ) -> bool:
         product_match = set(product_.lower() for product_ in product or []).issubset(self.products) if product else False
         category_match = set(category_.lower() for category_ in category or []).issubset(self.categories) if category else False
@@ -46,18 +49,18 @@ class SigmaMappings(BasePlatformMappings):
         )
 
     def get_suitable_source_mappings(
-        self, field_names: list[str], product: list[str] = None, service: list[str] = None, category: list[str] = None
+        self, field_names: list[str], log_sources: dict[str, list[Union[int, str]]]
     ) -> list[SourceMapping]:
-        suitable_source_mappings = []
+        source_mappings = []
         for source_mapping in self._source_mappings.values():
             if source_mapping.source_id == DEFAULT_MAPPING_NAME:
                 continue
 
-            source_signature: SigmaLogSourceSignature = source_mapping.log_source_signature
-            if source_signature.is_suitable(product=product, service=service, category=category):
-                suitable_source_mappings.append(source_mapping)
+            log_source_signature: LogSourceSignature = source_mapping.log_source_signature
+            if log_source_signature and log_source_signature.is_suitable(**log_sources):
+                source_mappings.append(source_mapping)
 
-        return suitable_source_mappings or [self._source_mappings[DEFAULT_MAPPING_NAME]]
+        return source_mappings or [self._source_mappings[DEFAULT_MAPPING_NAME]]
 
 
 sigma_rule_mappings = SigmaMappings(platform_dir="sigma", platform_details=sigma_rule_details)

@@ -3,8 +3,10 @@ import os
 import ssl
 import urllib.request
 from json import JSONDecodeError
+from typing import Optional
 from urllib.error import HTTPError
 
+from app.translator.core.models.query_container import MitreInfoContainer, MitreTacticContainer, MitreTechniqueContainer
 from app.translator.tools.singleton_meta import SingletonMeta
 from const import ROOT_PROJECT_PATH
 
@@ -116,9 +118,34 @@ class MitreConfig(metaclass=SingletonMeta):
         except JSONDecodeError:
             self.techniques = {}
 
-    def get_tactic(self, tactic: str) -> dict:
+    def get_tactic(self, tactic: str) -> Optional[MitreTacticContainer]:
         tactic = tactic.replace(".", "_")
-        return self.tactics.get(tactic, {})
+        if tactic_found := self.tactics.get(tactic):
+            return MitreTacticContainer(
+                external_id=tactic_found["external_id"], url=tactic_found["url"], name=tactic_found["tactic"]
+            )
 
-    def get_technique(self, technique_id: str) -> dict:
-        return self.techniques.get(technique_id, {})
+    def get_technique(self, technique_id: str) -> Optional[MitreTechniqueContainer]:
+        if technique_found := self.techniques.get(technique_id):
+            return MitreTechniqueContainer(
+                technique_id=technique_found["technique_id"],
+                name=technique_found["technique"],
+                url=technique_found["url"],
+                tactic=technique_found["tactic"],
+            )
+
+    def get_mitre_info(
+        self, tactics: Optional[list[str]] = None, techniques: Optional[list[str]] = None
+    ) -> MitreInfoContainer:
+        tactics_list = []
+        techniques_list = []
+        for tactic in tactics or []:
+            if tactic_found := self.get_tactic(tactic=tactic.lower()):
+                tactics_list.append(tactic_found)
+        for technique in techniques or []:
+            if technique_found := self.get_technique(technique_id=technique.lower()):
+                techniques_list.append(technique_found)
+        return MitreInfoContainer(
+            tactics=sorted(tactics_list, key=lambda x: x.name),
+            techniques=sorted(techniques_list, key=lambda x: x.technique_id),
+        )

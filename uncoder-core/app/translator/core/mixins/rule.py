@@ -5,10 +5,12 @@ import xmltodict
 import yaml
 
 from app.translator.core.exceptions.core import InvalidJSONStructure, InvalidXMLStructure, InvalidYamlStructure
-from app.translator.core.mitre import MitreConfig
+from app.translator.core.mitre import MitreConfig, MitreInfoContainer
 
 
 class JsonRuleMixin:
+    mitre_config: MitreConfig = MitreConfig()
+
     @staticmethod
     def load_rule(text: str) -> dict:
         try:
@@ -27,18 +29,18 @@ class YamlRuleMixin:
         except yaml.YAMLError as err:
             raise InvalidYamlStructure(error=str(err)) from err
 
-    def parse_mitre_attack(self, tags: list[str]) -> dict[str, list]:
-        result = {"tactics": [], "techniques": []}
+    def parse_mitre_attack(self, tags: list[str]) -> MitreInfoContainer:
+        parsed_techniques = []
+        parsed_tactics = []
         for tag in set(tags):
             tag = tag.lower()
             if tag.startswith("attack."):
                 tag = tag[7::]
             if tag.startswith("t"):
-                if technique := self.mitre_config.get_technique(tag):
-                    result["techniques"].append(technique)
-            elif tactic := self.mitre_config.get_tactic(tag):
-                result["tactics"].append(tactic)
-        return result
+                parsed_techniques.append(tag)
+            else:
+                parsed_tactics.append(tag)
+        return self.mitre_config.get_mitre_info(tactics=parsed_tactics, techniques=parsed_techniques)
 
 
 class XMLRuleMixin:

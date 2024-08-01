@@ -1,6 +1,6 @@
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional
 
 from app.translator.core.const import QUERY_TOKEN_TYPE
@@ -10,6 +10,27 @@ from app.translator.core.models.functions.base import ParsedFunctions
 from app.translator.core.models.query_tokens.field import Field
 
 
+@dataclass
+class MitreTechniqueContainer:
+    technique_id: str
+    name: str
+    url: str
+    tactic: list[str]
+
+
+@dataclass
+class MitreTacticContainer:
+    external_id: str
+    url: str
+    name: str
+
+
+@dataclass
+class MitreInfoContainer:
+    tactics: list[MitreTacticContainer] = field(default_factory=list)
+    techniques: list[MitreTechniqueContainer] = field(default_factory=list)
+
+
 class MetaInfoContainer:
     def __init__(
         self,
@@ -17,7 +38,7 @@ class MetaInfoContainer:
         id_: Optional[str] = None,
         title: Optional[str] = None,
         description: Optional[str] = None,
-        author: Optional[str] = None,
+        author: Optional[list[str]] = None,
         date: Optional[str] = None,
         output_table_fields: Optional[list[Field]] = None,
         query_fields: Optional[list[Field]] = None,
@@ -25,16 +46,18 @@ class MetaInfoContainer:
         severity: Optional[str] = None,
         references: Optional[list[str]] = None,
         tags: Optional[list[str]] = None,
-        mitre_attack: Optional[dict[str, list]] = None,
+        raw_mitre_attack: Optional[list[str]] = None,
         status: Optional[str] = None,
         false_positives: Optional[list[str]] = None,
         source_mapping_ids: Optional[list[str]] = None,
         parsed_logsources: Optional[dict] = None,
+        timeframe: Optional[timedelta] = None,
+        mitre_attack: MitreInfoContainer = MitreInfoContainer(),
     ) -> None:
         self.id = id_ or str(uuid.uuid4())
         self.title = title or ""
         self.description = description or ""
-        self.author = author or ""
+        self.author = [v.strip() for v in author] if author else []
         self.date = date or datetime.now().date().strftime("%Y-%m-%d")
         self.output_table_fields = output_table_fields or []
         self.query_fields = query_fields or []
@@ -42,11 +65,25 @@ class MetaInfoContainer:
         self.severity = severity or SeverityType.low
         self.references = references or []
         self.tags = tags or []
-        self.mitre_attack = mitre_attack or {}
+        self.mitre_attack = mitre_attack or None
+        self.raw_mitre_attack = raw_mitre_attack or []
         self.status = status or "stable"
         self.false_positives = false_positives or []
-        self.source_mapping_ids = source_mapping_ids or [DEFAULT_MAPPING_NAME]
+        self._source_mapping_ids = source_mapping_ids or [DEFAULT_MAPPING_NAME]
         self.parsed_logsources = parsed_logsources or {}
+        self.timeframe = timeframe
+
+    @property
+    def author_str(self) -> str:
+        return ", ".join(self.author)
+
+    @property
+    def source_mapping_ids(self) -> list[str]:
+        return sorted(self._source_mapping_ids)
+
+    @source_mapping_ids.setter
+    def source_mapping_ids(self, source_mapping_ids: list[str]) -> None:
+        self._source_mapping_ids = source_mapping_ids
 
 
 @dataclass
