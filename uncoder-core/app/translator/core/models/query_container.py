@@ -77,6 +77,14 @@ class MetaInfoContainer:
     def author_str(self) -> str:
         return ", ".join(self.author)
 
+    @property
+    def source_mapping_ids(self) -> list[str]:
+        return sorted(self._source_mapping_ids)
+
+    @source_mapping_ids.setter
+    def source_mapping_ids(self, source_mapping_ids: list[str]) -> None:
+        self._source_mapping_ids = source_mapping_ids
+
 
 @dataclass
 class RawQueryContainer:

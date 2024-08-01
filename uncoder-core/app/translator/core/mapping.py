@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional, TypeVar
+from typing import TYPE_CHECKING, Optional, TypeVar, Union
 
 from app.translator.core.exceptions.core import StrictPlatformException
 from app.translator.core.models.platform_details import PlatformDetails
@@ -19,8 +19,13 @@ class LogSourceSignature(ABC):
     wildcard_symbol = "*"
 
     @abstractmethod
-    def is_suitable(self, *args, **kwargs) -> bool:
+    def is_suitable(self, **kwargs) -> bool:
         raise NotImplementedError("Abstract method")
+
+    @staticmethod
+    def _check_conditions(conditions: list[Union[bool, None]]) -> bool:
+        conditions = [condition for condition in conditions if condition is not None]
+        return bool(conditions) and all(conditions)
 
     @abstractmethod
     def __str__(self) -> str:
@@ -70,7 +75,7 @@ class FieldsMapping:
         self.__render_mapping.update(fields_mapping.__render_mapping)
 
     def is_suitable(self, field_names: list[str]) -> bool:
-        return set(field_names).issubset(set(self.__parser_mapping.keys()))
+        return bool(field_names) and set(field_names).issubset(set(self.__parser_mapping.keys()))
 
 
 _LogSourceSignatureType = TypeVar("_LogSourceSignatureType", bound=LogSourceSignature)
@@ -147,9 +152,23 @@ class BasePlatformMappings:
     def prepare_log_source_signature(self, mapping: dict) -> LogSourceSignature:
         raise NotImplementedError("Abstract method")
 
-    @abstractmethod
-    def get_suitable_source_mappings(self, *args, **kwargs) -> list[SourceMapping]:
-        raise NotImplementedError("Abstract method")
+    def get_suitable_source_mappings(
+        self, field_names: list[str], log_sources: dict[str, list[Union[int, str]]]
+    ) -> list[SourceMapping]:
+        by_log_sources_and_fields = []
+        by_fields = []
+        for source_mapping in self._source_mappings.values():
+            if source_mapping.source_id == DEFAULT_MAPPING_NAME:
+                continue
+
+            if source_mapping.fields_mapping.is_suitable(field_names):
+                by_fields.append(source_mapping)
+
+                log_source_signature: LogSourceSignature = source_mapping.log_source_signature
+                if log_source_signature and log_source_signature.is_suitable(**log_sources):
+                    by_log_sources_and_fields.append(source_mapping)
+
+        return by_log_sources_and_fields or by_fields or [self._source_mappings[DEFAULT_MAPPING_NAME]]
 
     def get_source_mapping(self, source_id: str) -> Optional[SourceMapping]:
         return self._source_mappings.get(source_id)

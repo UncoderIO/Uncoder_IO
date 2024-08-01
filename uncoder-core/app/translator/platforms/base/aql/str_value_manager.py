@@ -39,6 +39,7 @@ from app.translator.core.str_value_manager import (
     ReRightParenthesis,
     ReRightSquareBracket,
     ReWhiteSpaceSymbol,
+    ReWordBoundarySymbol,
     ReWordSymbol,
     ReZeroOrMoreQuantifier,
     ReZeroOrOneQuantifier,
@@ -74,6 +75,7 @@ class AQLStrValueManager(StrValueManager):
     escape_manager = aql_escape_manager
     container_spec_symbols_map: ClassVar[dict[type[BaseSpecSymbol], str]] = AQL_CONTAINER_SPEC_SYMBOLS_MAP
     re_str_alpha_num_symbols_map: ClassVar[dict[str, type[BaseSpecSymbol]]] = {
+        "b": ReWordBoundarySymbol,
         "w": ReWordSymbol,
         "d": ReDigitalSymbol,
         "s": ReWhiteSpaceSymbol,
