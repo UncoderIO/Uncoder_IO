@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional, TypeVar
+from typing import TYPE_CHECKING, Optional, TypeVar, Union
 
 from app.translator.core.exceptions.core import StrictPlatformException
 from app.translator.core.models.platform_details import PlatformDetails
