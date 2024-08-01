@@ -13,11 +13,7 @@ field_mapping:
     - URL
     - XForceCategoryByURL
   c-useragent: User Agent
-<<<<<<< HEAD
-  cs-method:
-=======
   cs-method: 
->>>>>>> main
     - HTTP Method
     - Method
   cs-bytes: Bytes Sent

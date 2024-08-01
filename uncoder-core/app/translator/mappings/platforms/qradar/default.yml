@@ -39,11 +39,7 @@ field_mapping:
     - Username
     - Security ID
   CommandLine: Command
-<<<<<<< HEAD
-  Protocol:
-=======
   Protocol: 
->>>>>>> main
     - IPProtocol
     - protocol
   Application:
