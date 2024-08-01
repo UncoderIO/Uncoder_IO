@@ -39,7 +39,11 @@ field_mapping:
     - Username
     - Security ID
   CommandLine: Command
+<<<<<<< HEAD
   Protocol:
+=======
+  Protocol: 
+>>>>>>> main
     - IPProtocol
     - protocol
   Application:
@@ -98,7 +102,7 @@ field_mapping:
     - Filename
     - File Name
     - Encoded Filename
-  RegistryKey:
+  RegistryKey: 
     - Registry Key
     - Target Object
   RegistryValue: RegistryValue
