@@ -17,3 +17,16 @@ class EvalArg:
 class EvalFunction(Function):
     name: str = FunctionType.eval
     args: list[EvalArg] = None
+
+    @property
+    def fields(self) -> list[Field]:
+        fields = []
+        for arg in self.args:
+            if isinstance(arg.field_, Field):
+                fields.append(arg.field_)
+            for el in arg.expression:
+                if isinstance(el, Field):
+                    fields.append(el)
+                if isinstance(el, Function):
+                    fields.extend(el.fields)
+        return fields
