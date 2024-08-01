@@ -24,3 +24,15 @@ class SortLimitFunction(Function):
     name: str = FunctionType.sort_limit
     args: list[SortArg] = None
     limit: str = None
+
+    @property
+    def fields(self) -> list[Field]:
+        fields = []
+        for arg in self.args:
+            if isinstance(arg.field, Field):
+                fields.append(arg.field)
+
+            if arg.function:
+                fields.extend(arg.function.fields)
+
+        return fields

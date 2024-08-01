@@ -83,3 +83,4 @@ class PlatformQueryParser(QueryParser, ABC):
         source_mappings = self.mappings.get_suitable_source_mappings(field_names=field_names, log_sources=log_sources)
         self.tokenizer.set_field_tokens_generic_names_map(field_tokens, source_mappings, self.mappings.default_mapping)
         return source_mappings
+

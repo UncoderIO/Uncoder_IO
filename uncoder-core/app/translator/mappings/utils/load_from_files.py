@@ -6,6 +6,7 @@ import yaml
 from app.translator.const import APP_PATH
 
 COMMON_FIELD_MAPPING_FILE_NAME = "common.yml"
+DEFAULT_FIELD_MAPPING_FILE_NAME = "default.yml"
 
 
 class LoaderFileMappings:
@@ -23,8 +24,9 @@ class LoaderFileMappings:
     def load_platform_mappings(self, platform_dir: str) -> Generator[dict, None, None]:
         platform_path = os.path.join(self.base_mapping_filepath, platform_dir)
         for mapping_file in os.listdir(platform_path):
-            if mapping_file != COMMON_FIELD_MAPPING_FILE_NAME:
+            if mapping_file not in (COMMON_FIELD_MAPPING_FILE_NAME, DEFAULT_FIELD_MAPPING_FILE_NAME):
                 yield self.load_mapping(mapping_file_path=os.path.join(platform_path, mapping_file))
+        yield self.load_mapping(mapping_file_path=os.path.join(platform_path, DEFAULT_FIELD_MAPPING_FILE_NAME))
 
     def load_common_mapping(self, platform_dir: str) -> dict:
         platform_path = os.path.join(self.base_mapping_filepath, platform_dir)

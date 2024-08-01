@@ -145,4 +145,7 @@ class MitreConfig(metaclass=SingletonMeta):
         for technique in techniques or []:
             if technique_found := self.get_technique(technique_id=technique.lower()):
                 techniques_list.append(technique_found)
-        return MitreInfoContainer(tactics=tactics_list, techniques=techniques_list)
+        return MitreInfoContainer(
+            tactics=sorted(tactics_list, key=lambda x: x.name),
+            techniques=sorted(techniques_list, key=lambda x: x.technique_id),
+        )
