@@ -14,6 +14,8 @@ field_mapping:
     - DstPort
     - DestinationPort
     - remoteport
+  dst-hostname: DstHost
+  src-hostname: SrcHost
   src-port:
     - SourcePort
     - localport
@@ -23,7 +25,6 @@ field_mapping:
     - source_ip
     - SourceIP
     - sourceIP
-    - SrcHost
   dst-ip:
     - DestinationIP
     - destinationip
@@ -31,7 +32,6 @@ field_mapping:
     - destinationIP
     - destinationaddress
     - destination
-    - DstHost
   User:
     - userName
     - EventUserName
@@ -71,6 +71,7 @@ field_mapping:
     - SourceMAC
     - MAC
     - sourceMAC
+    - identityMAC
   DestinationMAC: DestinationMAC
   SourceOS:
     - SourceOS
@@ -89,7 +90,9 @@ field_mapping:
     - Alert Blocked Threat Category
   AnalyzerName: Analyzer Name
   Classification: Classification
-  ResultCode: Alert Reason Code
+  ResultCode: 
+    - Alert Reason Code
+    - Error Code
   Technique: Technique
   Action: Action
   Workstation: Machine Identifier
@@ -97,10 +100,9 @@ field_mapping:
   FileName: 
     - Filename
     - File Name
-    - Encoded Filename
   RegistryKey: 
     - Registry Key
     - Target Object
   RegistryValue: RegistryValue
+  RegistryValueData: Registry Value Data
   ProcessPath: Process Path
-  hasIdentity: hasIdentity
