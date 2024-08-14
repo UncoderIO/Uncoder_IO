@@ -16,22 +16,26 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-from typing import Union
+from typing import Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.values import ValueType
+from app.translator.core.exceptions.render import UnsupportedRenderMethod
 from app.translator.core.mapping import LogSourceSignature
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
 from app.translator.managers import render_manager
 from app.translator.platforms.elasticsearch.const import elasticsearch_esql_query_details
-from app.translator.platforms.elasticsearch.mapping import ElasticSearchMappings, elasticsearch_mappings
-from app.translator.platforms.elasticsearch.str_value_manager import ESQLStrValueManager, esql_str_value_manager
+from app.translator.platforms.elasticsearch.mapping import LuceneMappings, esql_query_mappings
+from app.translator.platforms.elasticsearch.str_value_manager import (
+    ESQLQueryStrValueManager,
+    esql_query_str_value_manager,
+)
 
 
 class ESQLFieldValueRender(BaseFieldValueRender):
     details: PlatformDetails = elasticsearch_esql_query_details
-    str_value_manager: ESQLStrValueManager = esql_str_value_manager
+    str_value_manager: ESQLQueryStrValueManager = esql_query_str_value_manager
 
     @staticmethod
     def _make_case_insensitive(value: str) -> str:
@@ -102,11 +106,14 @@ class ESQLFieldValueRender(BaseFieldValueRender):
             value = pre_processed_value
         return f'{field} rlike ".*{value}.*"'
 
+    def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
+        raise UnsupportedRenderMethod(platform_name=self.details.name, method="Keywords")
+
 
 @render_manager.register
 class ESQLQueryRender(PlatformQueryRender):
     details: PlatformDetails = elasticsearch_esql_query_details
-    mappings: ElasticSearchMappings = elasticsearch_mappings
+    mappings: LuceneMappings = esql_query_mappings
     comment_symbol = "//"
 
     or_token = "or"
@@ -114,7 +121,7 @@ class ESQLQueryRender(PlatformQueryRender):
     not_token = "not"
     field_value_render = ESQLFieldValueRender(or_token=or_token)
 
-    def generate_prefix(self, log_source_signature: LogSourceSignature, functions_prefix: str = "") -> str:  # noqa: ARG002
+    def generate_prefix(self, log_source_signature: Optional[LogSourceSignature], functions_prefix: str = "") -> str:  # noqa: ARG002
         table = str(log_source_signature) if str(log_source_signature) else "*"
         return f"FROM {table} metadata _id, _version, _index |"
 
