@@ -54,7 +54,7 @@ class ESQLFieldValueRender(BaseFieldValueRender):
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join([self.equal_modifier(field=field, value=v) for v in value])})"
-        return f"{field} = {self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)}"
+        return f"{field} == {self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)}"
 
     def less_modifier(self, field: str, value: Union[int, str]) -> str:
         return f"{field} < {self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)}"
@@ -123,7 +123,7 @@ class ESQLQueryRender(PlatformQueryRender):
 
     def generate_prefix(self, log_source_signature: Optional[LogSourceSignature], functions_prefix: str = "") -> str:  # noqa: ARG002
         table = str(log_source_signature) if str(log_source_signature) else "*"
-        return f"FROM {table} metadata _id, _version, _index |"
+        return f"FROM {table} |"
 
     @staticmethod
     def _finalize_search_query(query: str) -> str:
