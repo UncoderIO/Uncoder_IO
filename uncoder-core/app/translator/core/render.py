@@ -79,11 +79,20 @@ class BaseFieldValueRender(ABC):
         return value
 
     @staticmethod
+    def _wrap_int_value(value: int) -> str:
+        return f'"{value}"'
+
+    @staticmethod
     def _map_bool_value(value: bool) -> str:
         return "true" if value else "false"
 
     def _pre_process_value(
-        self, field: str, value: Union[int, str, StrValue], value_type: str = ValueType.value, wrap_str: bool = False
+        self,
+        field: str,
+        value: Union[int, str, StrValue],
+        value_type: str = ValueType.value,
+        wrap_str: bool = False,
+        wrap_int: bool = False,
     ) -> Union[int, str]:
         value_type = self._get_value_type(field, value, value_type)
         if isinstance(value, StrValue):
@@ -94,7 +103,8 @@ class BaseFieldValueRender(ABC):
             return self._wrap_str_value(value) if wrap_str else value
         if isinstance(value, bool):
             return self._map_bool_value(value)
-        return value
+        if isinstance(value, int):
+            return self._wrap_int_value(value) if wrap_int else value
 
     def _pre_process_values_list(
         self, field: str, values: list[Union[int, str, StrValue]], value_type: str = ValueType.value
@@ -208,7 +218,7 @@ class QueryRender(ABC):
         return query
 
     def wrap_with_unmapped_fields(self, query: str, fields: Optional[list[str]]) -> str:
-        if fields:
+        if wrap_query_with_meta_info_ctx_var.get() and fields:
             return query + "\n\n" + self.wrap_with_comment(f"{self.unmapped_fields_text}{', '.join(fields)}")
         return query
 
@@ -216,7 +226,9 @@ class QueryRender(ABC):
         return f"{self.comment_symbol} {value}"
 
     @abstractmethod
-    def generate(self, query_container: Union[RawQueryContainer, TokenizedQueryContainer]) -> str:
+    def generate(
+        self, raw_query_container: RawQueryContainer, tokenized_query_container: Optional[TokenizedQueryContainer]
+    ) -> str:
         raise NotImplementedError("Abstract method")
 
 
@@ -318,7 +330,7 @@ class PlatformQueryRender(QueryRender):
             meta_info_dict = {
                 "name: ": meta_info.title,
                 "uuid: ": meta_info.id,
-                "author: ": meta_info.author if meta_info.author else "not defined in query/rule",
+                "author: ": meta_info.author_str or "not defined in query/rule",
                 "licence: ": meta_info.license,
             }
             query_meta_info = "\n".join(
@@ -370,7 +382,7 @@ class PlatformQueryRender(QueryRender):
 
         return result
 
-    def _get_source_mappings(self, source_mapping_ids: list[str]) -> list[SourceMapping]:
+    def _get_source_mappings(self, source_mapping_ids: list[str]) -> Optional[list[SourceMapping]]:
         source_mappings = []
         for source_mapping_id in source_mapping_ids:
             if source_mapping := self.mappings.get_source_mapping(source_mapping_id):
@@ -468,8 +480,9 @@ class PlatformQueryRender(QueryRender):
             raise errors[0]
         return self.finalize(queries_map)
 
-    def generate(self, query_container: Union[RawQueryContainer, TokenizedQueryContainer]) -> str:
-        if isinstance(query_container, RawQueryContainer):
-            return self.generate_from_raw_query_container(query_container)
-
-        return self.generate_from_tokenized_query_container(query_container)
+    def generate(
+        self, raw_query_container: RawQueryContainer, tokenized_query_container: Optional[TokenizedQueryContainer]
+    ) -> str:
+        if tokenized_query_container:
+            return self.generate_from_tokenized_query_container(tokenized_query_container)
+        return self.generate_from_raw_query_container(raw_query_container)
