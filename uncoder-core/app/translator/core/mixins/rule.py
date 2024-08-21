@@ -5,7 +5,12 @@ import toml
 import xmltodict
 import yaml
 
-from app.translator.core.exceptions.core import InvalidJSONStructure, InvalidXMLStructure, InvalidYamlStructure
+from app.translator.core.exceptions.core import (
+    InvalidJSONStructure,
+    InvalidTOMLStructure,
+    InvalidXMLStructure,
+    InvalidYamlStructure,
+)
 from app.translator.core.mitre import MitreConfig, MitreInfoContainer
 
 
@@ -60,5 +65,5 @@ class TOMLRuleMixin:
     def load_rule(text: str) -> dict:
         try:
             return toml.loads(text)
-        except json.JSONDecodeError as err:
-            raise InvalidJSONStructure(error=str(err)) from err
+        except toml.TomlDecodeError as err:
+            raise InvalidTOMLStructure(error=str(err)) from err
