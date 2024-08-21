@@ -54,63 +54,54 @@ class ESQLFieldValueRender(BaseFieldValueRender):
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join([self.equal_modifier(field=field, value=v) for v in value])})"
-        return f"{field} == {self._pre_process_value(
-            field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True
-        )}"
+        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
+        return f"{field} == {value}"
 
     def less_modifier(self, field: str, value: Union[int, str]) -> str:
-        return f"{field} < {self._pre_process_value(
-            field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True
-        )}"
+        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
+        return f"{field} < {value}"
 
     def less_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
-        return f"{field} <= {self._pre_process_value(
-            field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True
-        )}"
+        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
+        return f"{field} <= {value}"
 
     def greater_modifier(self, field: str, value: Union[int, str]) -> str:
-        return f"{field} > {self._pre_process_value(
-            field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True
-        )}"
+        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
+        return f"{field} > {value}"
 
     def greater_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
-        return f"{field} >= {self._pre_process_value(
-            field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True
-        )}"
+        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
+        return f"{field} >= {value}"
 
     def not_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join([self.not_equal_modifier(field=field, value=v) for v in value])})"
-        return f"{field} != {self._pre_process_value(
-            field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True
-        )}"
+        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
+        return f"{field} != {value}"
 
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.contains_modifier(field=field, value=v) for v in value)})"
         if field.endswith(".text"):
             return self.regex_modifier(field=field, value=value)
-        return f'{field} like "*{self._pre_process_value(
-            field, value, value_type=ValueType.value, wrap_str=False, wrap_int=True
-        )}*"'
+        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=False, wrap_int=True)
+        return f'{field} like "*{value}*"'
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if field.endswith(".text"):
             return self.regex_modifier(field=field, value=value)
         if isinstance(value, list):
             return f"({self.or_token.join(self.endswith_modifier(field=field, value=v) for v in value)})"
-        return f"ends_with({field}, {self._pre_process_value(
-            field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True
-        )})"
+        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
+        return f"ends_with({field}, {value})"
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if field.endswith(".text"):
             return self.regex_modifier(field=field, value=value)
         if isinstance(value, list):
             return f"({self.or_token.join(self.startswith_modifier(field=field, value=v) for v in value)})"
-        return f"starts_with({field}, {self._pre_process_value(
-            field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True
-        )})"
+        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
+        return f"starts_with({field}, {value})"
 
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
