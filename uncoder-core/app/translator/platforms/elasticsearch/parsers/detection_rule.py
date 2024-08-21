@@ -68,10 +68,9 @@ class ElasticSearchRuleTOMLParser(ElasticSearchQueryParser, TOMLRuleMixin):
             tactics=[threat_data["tactic"]["name"].replace(" ", "_").lower() for threat_data in rule.get("threat", [])],
             techniques=[threat_data["technique"][0]["id"].lower() for threat_data in rule.get("threat", [])],
         )
+        date = None
         if metadata.get("creation_date"):
             date = datetime.strptime(metadata.get("creation_date"), "%Y/%m/%d").strftime("%Y-%m-%d")
-        else:
-            date = None
         return RawQueryContainer(
             query=rule["query"],
             language=language,
