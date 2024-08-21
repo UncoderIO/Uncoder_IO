@@ -36,7 +36,7 @@ MICROSOFT_SENTINEL_RULE_DETAILS = {
 
 MICROSOFT_SENTINEL_YAML_RULE_DETAILS = {
     "platform_id": "sentinel-kql-yaml-rule",
-    "name": "Microsoft Sentinel Rule",
+    "name": "Microsoft Sentinel YAML Rule",
     "platform_name": "YAML Rule (Kusto)",
     "first_choice": 0,
     **PLATFORM_DETAILS,
