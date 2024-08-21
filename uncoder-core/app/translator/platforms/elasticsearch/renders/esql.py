@@ -51,6 +51,10 @@ class ESQLFieldValueRender(BaseFieldValueRender):
     def _wrap_str_value(value: str) -> str:
         return f'"{value}"'
 
+    @staticmethod
+    def _wrap_int_value(value: int) -> str:
+        return f'"{value}"'
+
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join([self.equal_modifier(field=field, value=v) for v in value])})"
@@ -106,13 +110,9 @@ class ESQLFieldValueRender(BaseFieldValueRender):
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.regex_modifier(field=field, value=v) for v in value)})"
-        pre_processed_value = self._pre_process_value(
-            field, value, value_type=ValueType.regex_value, wrap_str=False, wrap_int=True
-        )
-        if isinstance(pre_processed_value, str):
-            value = self._make_case_insensitive(pre_processed_value)
-        else:
-            value = pre_processed_value
+        value = self._pre_process_value(field, value, value_type=ValueType.regex_value, wrap_str=False, wrap_int=True)
+        if isinstance(value, str):
+            value = self._make_case_insensitive(value)
         return f'{field} rlike ".*{value}.*"'
 
     def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
