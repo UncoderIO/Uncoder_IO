@@ -19,6 +19,17 @@ class TrieNode:
 
 
 class Trie:
+    """
+    Trie (prefix tree) data structure for storing and searching Mitre ATT&CK Techniques and Tactics strings.
+
+    This class handles the insertion and searching of strings related to Mitre ATT&CK Techniques and Tactics, even when
+    the strings have variations in spacing, case, or underscores. By normalizing the text—converting it to lowercase and
+    removing spaces and underscores—different variations of the same logical string are treated as equivalent.
+
+    It means strings 'CredentialAccess', 'credential Access', and 'credential_access' will be processed identically,
+    leading to the same result.
+    """
+
     def __init__(self):
         self.root = TrieNode()
 
@@ -48,12 +59,11 @@ class TacticsTrie(Trie):
 
         for char in normalized_text:
             if char not in node.children:
-                return None
+                return
             node = node.children[char]
 
         if node.is_end_of_word:
             return node.result
-        return None
 
 
 class TechniquesTrie(Trie):
@@ -63,12 +73,11 @@ class TechniquesTrie(Trie):
 
         for char in normalized_text:
             if char not in node.children:
-                return None
+                return
             node = node.children[char]
 
         if node.is_end_of_word:
             return node.result
-        return None
 
 
 class MitreConfig(metaclass=SingletonMeta):
