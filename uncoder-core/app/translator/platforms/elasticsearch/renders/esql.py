@@ -26,7 +26,7 @@ from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
 from app.translator.managers import render_manager
 from app.translator.platforms.elasticsearch.const import elasticsearch_esql_query_details
-from app.translator.platforms.elasticsearch.mapping import ElasticESQLMappings, esql_query_mappings
+from app.translator.platforms.elasticsearch.mapping import LuceneMappings, esql_query_mappings
 from app.translator.platforms.elasticsearch.str_value_manager import (
     ESQLQueryStrValueManager,
     esql_query_str_value_manager,
@@ -54,61 +54,52 @@ class ESQLFieldValueRender(BaseFieldValueRender):
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join([self.equal_modifier(field=field, value=v) for v in value])})"
-        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
-        return f"{field} == {value}"
+        return f"{field} == {self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)}"
 
     def less_modifier(self, field: str, value: Union[int, str]) -> str:
-        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
-        return f"{field} < {value}"
+        return f"{field} < {self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)}"
 
     def less_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
-        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
-        return f"{field} <= {value}"
+        return f"{field} <= {self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)}"
 
     def greater_modifier(self, field: str, value: Union[int, str]) -> str:
-        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
-        return f"{field} > {value}"
+        return f"{field} > {self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)}"
 
     def greater_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
-        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
-        return f"{field} >= {value}"
+        return f"{field} >= {self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)}"
 
     def not_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join([self.not_equal_modifier(field=field, value=v) for v in value])})"
-        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
-        return f"{field} != {value}"
+        return f"{field} != {self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)}"
 
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.contains_modifier(field=field, value=v) for v in value)})"
         if field.endswith(".text"):
             return self.regex_modifier(field=field, value=value)
-        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=False, wrap_int=True)
-        return f'{field} like "*{value}*"'
+        return f'{field} like "*{self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=False)}*"'
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if field.endswith(".text"):
             return self.regex_modifier(field=field, value=value)
         if isinstance(value, list):
             return f"({self.or_token.join(self.endswith_modifier(field=field, value=v) for v in value)})"
-        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
-        return f"ends_with({field}, {value})"
+        return f"ends_with({field}, {self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)})"
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if field.endswith(".text"):
             return self.regex_modifier(field=field, value=value)
         if isinstance(value, list):
             return f"({self.or_token.join(self.startswith_modifier(field=field, value=v) for v in value)})"
-        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
-        return f"starts_with({field}, {value})"
+        return (
+            f"starts_with({field}, {self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)})"
+        )
 
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.regex_modifier(field=field, value=v) for v in value)})"
-        pre_processed_value = self._pre_process_value(
-            field, value, value_type=ValueType.regex_value, wrap_str=False, wrap_int=True
-        )
+        pre_processed_value = self._pre_process_value(field, value, value_type=ValueType.regex_value, wrap_str=False)
         if isinstance(pre_processed_value, str):
             value = self._make_case_insensitive(pre_processed_value)
         else:
@@ -122,7 +113,7 @@ class ESQLFieldValueRender(BaseFieldValueRender):
 @render_manager.register
 class ESQLQueryRender(PlatformQueryRender):
     details: PlatformDetails = elasticsearch_esql_query_details
-    mappings: ElasticESQLMappings = esql_query_mappings
+    mappings: LuceneMappings = esql_query_mappings
     comment_symbol = "//"
 
     or_token = "or"
