@@ -1,4 +1,5 @@
 from app.translator.platforms.elasticsearch.parsers.detection_rule import (
+    ElasticSearchRuleParser,
     ElasticSearchRuleTOMLParser,  # noqa: F401
 )
 from app.translator.platforms.elasticsearch.parsers.elasticsearch import ElasticSearchQueryParser  # noqa: F401

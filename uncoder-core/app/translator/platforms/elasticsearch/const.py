@@ -5,9 +5,9 @@ PLATFORM_DETAILS = {"group_id": "elk stack", "group_name": "Elastic Stack", "alt
 
 _ELASTIC_LUCENE_QUERY = "elastic-lucene-query"
 _ELASTIC_LUCENE_RULE = "elastic-lucene-rule"
+_ELASTIC_LUCENE_RULE_TOML = "elastic-lucene-rule-toml"
 _ELASTIC_KIBANA_RULE = "elastic-kibana-rule"
 _ELASTALERT_LUCENE_RULE = "elastalert-lucene-rule"
-_ELASTALERT_LUCENE_RULE_TOML = "elasticsearch-rule-toml"
 _ELASTIC_WATCHER_RULE = "elastic-watcher-rule"
 
 ELASTIC_QUERY_TYPES = {
@@ -34,7 +34,7 @@ ELASTICSEARCH_RULE_DETAILS = {
 }
 
 ELASTICSEARCH_RULE_TOML_DETAILS = {
-    "platform_id": _ELASTALERT_LUCENE_RULE_TOML,
+    "platform_id": _ELASTIC_LUCENE_RULE_TOML,
     "name": "Elastic Rule TOML",
     "platform_name": "Detection Rule (Lucene) TOML",
     "first_choice": 0,
