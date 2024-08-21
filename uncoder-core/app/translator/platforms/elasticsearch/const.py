@@ -7,6 +7,7 @@ _ELASTIC_LUCENE_QUERY = "elastic-lucene-query"
 _ELASTIC_LUCENE_RULE = "elastic-lucene-rule"
 _ELASTIC_KIBANA_RULE = "elastic-kibana-rule"
 _ELASTALERT_LUCENE_RULE = "elastalert-lucene-rule"
+_ELASTALERT_LUCENE_RULE_TOML = "elasticsearch-rule-toml"
 _ELASTIC_WATCHER_RULE = "elastic-watcher-rule"
 
 ELASTIC_QUERY_TYPES = {
@@ -28,6 +29,14 @@ ELASTICSEARCH_RULE_DETAILS = {
     "platform_id": _ELASTIC_LUCENE_RULE,
     "name": "Elastic Rule",
     "platform_name": "Detection Rule (Lucene)",
+    "first_choice": 0,
+    **PLATFORM_DETAILS,
+}
+
+ELASTICSEARCH_RULE_TOML_DETAILS = {
+    "platform_id": _ELASTALERT_LUCENE_RULE_TOML,
+    "name": "Elastic Rule TOML",
+    "platform_name": "Detection Rule (Lucene) TOML",
     "first_choice": 0,
     **PLATFORM_DETAILS,
 }
@@ -58,6 +67,7 @@ XPACK_WATCHER_DETAILS = {
 
 elasticsearch_lucene_query_details = PlatformDetails(**ELASTICSEARCH_LUCENE_QUERY_DETAILS)
 elasticsearch_rule_details = PlatformDetails(**ELASTICSEARCH_RULE_DETAILS)
+elasticsearch_rule_toml_details = PlatformDetails(**ELASTICSEARCH_RULE_TOML_DETAILS)
 elastalert_details = PlatformDetails(**ELASTALERT_DETAILS)
 kibana_rule_details = PlatformDetails(**KIBANA_DETAILS)
 xpack_watcher_details = PlatformDetails(**XPACK_WATCHER_DETAILS)

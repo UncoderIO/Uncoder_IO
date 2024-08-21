@@ -1,6 +1,7 @@
 import json
 from typing import Union
 
+import toml
 import xmltodict
 import yaml
 
@@ -50,3 +51,14 @@ class XMLRuleMixin:
             return xmltodict.parse(text)
         except Exception as err:
             raise InvalidXMLStructure(error=str(err)) from err
+
+
+class TOMLRuleMixin:
+    mitre_config: MitreConfig = MitreConfig()
+
+    @staticmethod
+    def load_rule(text: str) -> dict:
+        try:
+            return toml.loads(text)
+        except json.JSONDecodeError as err:
+            raise InvalidJSONStructure(error=str(err)) from err
