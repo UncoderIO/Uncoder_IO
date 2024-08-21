@@ -23,11 +23,14 @@ from typing import Optional
 import isodate
 from isodate.isoerror import ISO8601Error
 
-from app.translator.core.mixins.rule import JsonRuleMixin
+from app.translator.core.mixins.rule import JsonRuleMixin, YamlRuleMixin
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer
+from app.translator.core.models.query_container import MetaInfoContainer, MitreInfoContainer, RawQueryContainer
 from app.translator.managers import parser_manager
-from app.translator.platforms.microsoft.const import microsoft_sentinel_rule_details
+from app.translator.platforms.microsoft.const import (
+    microsoft_sentinel_rule_details,
+    microsoft_sentinel_yaml_rule_details,
+)
 from app.translator.platforms.microsoft.mapping import MicrosoftSentinelMappings, microsoft_sentinel_rule_mappings
 from app.translator.platforms.microsoft.parsers.microsoft_sentinel import MicrosoftSentinelQueryParser
 from app.translator.tools.utils import parse_rule_description_str
@@ -72,5 +75,45 @@ class MicrosoftSentinelRuleParser(MicrosoftSentinelQueryParser, JsonRuleMixin):
                 license_=parsed_description.get("license"),
                 tags=tags,
                 references=parsed_description.get("references"),
+            ),
+        )
+
+
+@parser_manager.register
+class MicrosoftSentinelYAMLRuleParser(MicrosoftSentinelQueryParser, YamlRuleMixin):
+    details: PlatformDetails = microsoft_sentinel_yaml_rule_details
+    mappings: MicrosoftSentinelMappings = microsoft_sentinel_rule_mappings
+
+    @staticmethod
+    def __parse_timeframe(raw_timeframe: Optional[str]) -> Optional[timedelta]:
+        with suppress(ISO8601Error):
+            return isodate.parse_duration(raw_timeframe)
+
+    def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
+        rule = self.load_rule(text=text)
+        tags = []
+        mitre_attack: MitreInfoContainer = self.mitre_config.get_mitre_info(
+            tactics=[tactic.lower() for tactic in rule.get("tactics", [])],
+            techniques=[technique.lower() for technique in rule.get("relevantTechniques", [])],
+        )
+
+        if mitre_attack:
+            for technique in mitre_attack.techniques:
+                tags.append(technique.technique_id.lower())
+            for tactic in mitre_attack.tactics:
+                tags.append(tactic.name.lower().replace(" ", "_"))
+
+        return RawQueryContainer(
+            query=rule["query"],
+            language=language,
+            meta_info=MetaInfoContainer(
+                id_=rule.get("id"),
+                title=rule.get("name"),
+                description=rule.get("description"),
+                timeframe=self.__parse_timeframe(rule.get("queryFrequency", "")),
+                severity=rule.get("severity", "medium").lower(),
+                mitre_attack=mitre_attack,
+                author=rule.get("metadata", {}).get("author", {}).get("name", "").split(","),
+                tags=tags,
             ),
         )
