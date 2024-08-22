@@ -85,5 +85,11 @@ class ElasticSearchRuleTOMLParser(ElasticSearchQueryParser, TOMLRuleMixin):
                 references=rule.get("references"),
                 tags=rule.get("tags"),
                 mitre_attack=mitre_attack,
+                from_=rule.get("from"),
+                index=rule.get("index"),
+                language=rule.get("language"),
+                risk_score=rule.get("risk_score"),
+                type_=rule.get("type"),
+                interval=rule.get("interval"),
             ),
         )

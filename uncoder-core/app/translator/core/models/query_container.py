@@ -36,6 +36,12 @@ class MetaInfoContainer:
         self,
         *,
         id_: Optional[str] = None,
+        from_: Optional[str] = None,
+        index: Optional[str] = None,
+        language: Optional[str] = None,
+        risk_score: Optional[str] = None,
+        type_: Optional[str] = None,
+        interval: Optional[str] = None,
         title: Optional[str] = None,
         description: Optional[str] = None,
         author: Optional[list[str]] = None,
@@ -56,6 +62,12 @@ class MetaInfoContainer:
     ) -> None:
         self.id = id_ or str(uuid.uuid4())
         self.title = title or ""
+        self.from_ = from_ or ""
+        self.index = index or ""
+        self.language = language or ""
+        self.risk_score = risk_score or ""
+        self.type_ = type_ or ""
+        self.interval = interval or ""
         self.description = description or ""
         self.author = [v.strip() for v in author] if author else []
         self.date = date or datetime.now().date().strftime("%Y-%m-%d")
