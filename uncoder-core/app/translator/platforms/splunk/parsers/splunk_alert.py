@@ -87,6 +87,12 @@ class SplunkAlertYMLParser(SplunkQueryParser, YamlRuleMixin):
         mitre_attack_container = self.mitre_config.get_mitre_info(
             techniques=rule.get("tags", {}).get("mitre_attack_id", [])
         )
+        description = rule.get("description", "")
+        if rule.get("how_to_implement", ""):
+            description = f'{description} {rule.get("how_to_implement", "")}'
+        tags = rule.get("tags", {}).get("analytic_story", [])
+        if rule.get("type"):
+            tags.append(rule.get("type"))
         return RawQueryContainer(
             query=rule.get("search"),
             language=language,
@@ -96,9 +102,10 @@ class SplunkAlertYMLParser(SplunkQueryParser, YamlRuleMixin):
                 date=rule.get("date"),
                 author=rule.get("author").split(", "),
                 status=rule.get("status"),
-                description=rule.get("description"),
+                description=description,
                 false_positives=rule.get("known_false_positives"),
                 references=rule.get("references"),
                 mitre_attack=mitre_attack_container,
+                tags=tags,
             ),
         )
