@@ -24,7 +24,7 @@ from typing import Optional, Union
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.mitre import MitreConfig, MitreInfoContainer
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.models.query_container import MetaInfoContainer
+from app.translator.core.models.query_container import MetaInfoContainer, MitreTechniqueContainer
 from app.translator.managers import render_manager
 from app.translator.platforms.base.lucene.mapping import LuceneMappings
 from app.translator.platforms.elasticsearch.const import ELASTICSEARCH_DETECTION_RULE, elasticsearch_rule_details
@@ -66,8 +66,8 @@ class ElasticSearchRuleRender(ElasticSearchQueryRender):
                 technique_id = technique.technique_id.lower()
                 if "." in technique_id:
                     technique_id = technique_id[: technique.technique_id.index(".")]
-                main_technique = self.mitre.get_technique(technique_id)
-                if tactic.name in main_technique.tactic:
+                main_technique: Optional[MitreTechniqueContainer] = self.mitre.techniques.search(technique_id)
+                if main_technique and tactic.name in main_technique.tactic:
                     sub_threat["technique"].append(
                         {
                             "id": main_technique.technique_id,
