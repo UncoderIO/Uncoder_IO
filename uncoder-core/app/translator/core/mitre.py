@@ -195,6 +195,12 @@ class MitreConfig(metaclass=SingletonMeta):
         except JSONDecodeError:
             print("Unable to load MITRE Techniques")
 
+    def get_tactic(self, tactic: str) -> Optional[MitreTacticContainer]:
+        return self.tactics.search(tactic)
+
+    def get_technique(self, technique_id: str) -> Optional[MitreTechniqueContainer]:
+        return self.techniques.search(technique_id)
+
     def get_mitre_info(
         self, tactics: Optional[list[str]] = None, techniques: Optional[list[str]] = None
     ) -> MitreInfoContainer:
