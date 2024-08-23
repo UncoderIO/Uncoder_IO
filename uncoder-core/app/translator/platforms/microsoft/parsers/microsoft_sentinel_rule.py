@@ -18,7 +18,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
 from contextlib import suppress
 from datetime import timedelta
-from typing import Optional
+from typing import Optional, Union
 
 import isodate
 from isodate.isoerror import ISO8601Error
@@ -33,6 +33,7 @@ from app.translator.platforms.microsoft.const import (
 )
 from app.translator.platforms.microsoft.mapping import MicrosoftSentinelMappings, microsoft_sentinel_rule_mappings
 from app.translator.platforms.microsoft.parsers.microsoft_sentinel import MicrosoftSentinelQueryParser
+from app.translator.platforms.microsoft.query_container import SentinelYamlRuleMetaInfoContainer
 from app.translator.tools.utils import parse_rule_description_str
 
 
@@ -89,6 +90,29 @@ class MicrosoftSentinelYAMLRuleParser(MicrosoftSentinelQueryParser, YamlRuleMixi
         with suppress(ISO8601Error):
             return isodate.parse_duration(raw_timeframe)
 
+    def extract_tags(self, data: Union[dict, list, str]) -> list[str]:
+        tags = []
+        if isinstance(data, dict):
+            for key, value in data.items():
+                tags.extend(self.extract_tags(value))
+        elif isinstance(data, list):
+            for item in data:
+                tags.extend(self.extract_tags(item))
+        elif isinstance(data, str):
+            tags.append(data)
+        return tags
+
+    def __get_tags_from_required_data_connectors(self, required_data_connectors: dict) -> list[str]:
+        return list(self.extract_tags(required_data_connectors))
+
+    def __get_tags_from_metadata(self, metadata: dict) -> list[str]:
+        fields_to_process = {}
+        for k, v in metadata.items():
+            if k.lower() != "author":
+                fields_to_process[k] = v
+
+        return list(self.extract_tags(fields_to_process))
+
     def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
         rule = self.load_rule(text=text)
         tags = []
@@ -103,10 +127,17 @@ class MicrosoftSentinelYAMLRuleParser(MicrosoftSentinelQueryParser, YamlRuleMixi
             for tactic in mitre_attack.tactics:
                 tags.append(tactic.name.lower().replace(" ", "_"))
 
+        tags.extend(self.__get_tags_from_required_data_connectors(rule.get("requiredDataConnectors", {})))
+        tags.extend(self.__get_tags_from_metadata(rule.get("metadata", {})))
+
+        for tag in rule.get("tags", []):
+            if isinstance(tag, str):
+                tags.append(tag)
+
         return RawQueryContainer(
             query=rule["query"],
             language=language,
-            meta_info=MetaInfoContainer(
+            meta_info=SentinelYamlRuleMetaInfoContainer(
                 id_=rule.get("id"),
                 title=rule.get("name"),
                 description=rule.get("description"),
@@ -114,6 +145,10 @@ class MicrosoftSentinelYAMLRuleParser(MicrosoftSentinelQueryParser, YamlRuleMixi
                 severity=rule.get("severity", "medium").lower(),
                 mitre_attack=mitre_attack,
                 author=rule.get("metadata", {}).get("author", {}).get("name", "").split(","),
-                tags=tags,
+                tags=sorted(set(tags)),
+                query_frequency=rule.get("queryFrequency", ""),
+                query_period=rule.get("queryPeriod", ""),
+                trigger_operator=rule.get("triggerOperator", ""),
+                trigger_threshold=rule.get("triggerThreshold", ""),
             ),
         )

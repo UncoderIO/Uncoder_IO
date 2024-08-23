@@ -28,6 +28,7 @@ from app.translator.core.models.query_container import MetaInfoContainer, MitreI
 from app.translator.managers import render_manager
 from app.translator.platforms.microsoft.const import DEFAULT_MICROSOFT_SENTINEL_RULE, microsoft_sentinel_rule_details
 from app.translator.platforms.microsoft.mapping import MicrosoftSentinelMappings, microsoft_sentinel_rule_mappings
+from app.translator.platforms.microsoft.query_container import SentinelYamlRuleMetaInfoContainer
 from app.translator.platforms.microsoft.renders.microsoft_sentinel import (
     MicrosoftSentinelFieldValueRender,
     MicrosoftSentinelQueryRender,
@@ -94,6 +95,11 @@ class MicrosoftSentinelRuleRender(MicrosoftSentinelQueryRender):
         mitre_tactics, mitre_techniques = self.__create_mitre_threat(mitre_attack=meta_info.mitre_attack)
         rule["tactics"] = mitre_tactics
         rule["techniques"] = mitre_techniques
+        if meta_info and isinstance(meta_info, SentinelYamlRuleMetaInfoContainer):
+            rule["queryFrequency"] = meta_info.query_frequency or rule["queryFrequency"]
+            rule["queryPeriod"] = meta_info.query_period or rule["queryPeriod"]
+            rule["triggerOperator"] = meta_info.trigger_operator or rule["triggerOperator"]
+            rule["triggerThreshold"] = meta_info.trigger_threshold or rule["triggerThreshold"]
         json_rule = json.dumps(rule, indent=4, sort_keys=False)
         json_rule = self.wrap_with_unmapped_fields(json_rule, unmapped_fields)
         return self.wrap_with_not_supported_functions(json_rule, not_supported_functions)
