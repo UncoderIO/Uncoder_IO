@@ -64,9 +64,13 @@ class ElasticSearchRuleTOMLParser(ElasticSearchQueryParser, TOMLRuleMixin):
         raw_rule = self.load_rule(text=text)
         rule = raw_rule.get("rule")
         metadata = raw_rule.get("metadata")
+        techniques = []
+        for threat_data in rule.get("threat", []):
+            if threat_data.get("technique") and len(threat_data.get("technique")) > 0:
+                techniques.append(threat_data["technique"][0]["id"].lower())
         mitre_attack = self.mitre_config.get_mitre_info(
             tactics=[threat_data["tactic"]["name"].replace(" ", "_").lower() for threat_data in rule.get("threat", [])],
-            techniques=[threat_data["technique"][0]["id"].lower() for threat_data in rule.get("threat", [])],
+            techniques=techniques,
         )
         date = None
         if metadata.get("creation_date"):
