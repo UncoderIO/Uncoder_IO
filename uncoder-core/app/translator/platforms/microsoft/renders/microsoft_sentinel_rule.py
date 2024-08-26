@@ -19,8 +19,9 @@ limitations under the License.
 
 import copy
 import json
-from datetime import timedelta
 from typing import Optional
+
+import isodate
 
 from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.mapping import SourceMapping
@@ -71,41 +72,16 @@ class MicrosoftSentinelRuleRender(MicrosoftSentinelQueryRender):
         return sorted(tactics), sorted(techniques)
 
     @staticmethod
-    def timedelta_to_iso8601(timedelta_: timedelta) -> str:
-        days = timedelta_.days
-        seconds = timedelta_.seconds
-        microseconds = timedelta_.microseconds
-
-        hours, remainder = divmod(seconds, 3600)
-        minutes, seconds = divmod(remainder, 60)
-
-        duration = "P"
-        if days:
-            duration += f"{days}D"
-
-        if hours or minutes or seconds or microseconds:
-            duration += "T"
-            if hours:
-                duration += f"{hours}H"
-            if minutes:
-                duration += f"{minutes}M"
-            if seconds or microseconds:
-                # Handle the fractional part for seconds
-                if microseconds:
-                    seconds += microseconds / 1_000_000
-                duration += f"{seconds:.6f}S" if microseconds else f"{seconds}S"
-
-        return duration
-
-    def get_query_frequency(self, meta_info: MetaInfoContainer) -> Optional[str]:
+    def get_query_frequency(meta_info: MetaInfoContainer) -> Optional[str]:
         if meta_info.timeframe:
-            return self.timedelta_to_iso8601(meta_info.timeframe)
+            return isodate.duration_isoformat(meta_info.timeframe)
         if meta_info.raw_metainfo_container:
             return meta_info.raw_metainfo_container.query_frequency
 
-    def get_query_period(self, meta_info: MetaInfoContainer) -> Optional[str]:
+    @staticmethod
+    def get_query_period(meta_info: MetaInfoContainer) -> Optional[str]:
         if meta_info.query_period:
-            return self.timedelta_to_iso8601(meta_info.query_period)
+            return isodate.duration_isoformat(meta_info.query_period)
         if meta_info.raw_metainfo_container:
             return meta_info.raw_metainfo_container.query_period
 

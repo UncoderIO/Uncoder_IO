@@ -47,7 +47,7 @@ class MicrosoftSentinelRuleParser(MicrosoftSentinelQueryParser, JsonRuleMixin):
     mappings: MicrosoftSentinelMappings = microsoft_sentinel_rule_mappings
 
     @staticmethod
-    def __parse_timeframe(raw_timeframe: Optional[str]) -> Optional[timedelta]:
+    def _parse_timeframe(raw_timeframe: Optional[str]) -> Optional[timedelta]:
         with suppress(ISO8601Error):
             return isodate.parse_duration(raw_timeframe)
 
@@ -73,7 +73,7 @@ class MicrosoftSentinelRuleParser(MicrosoftSentinelQueryParser, JsonRuleMixin):
                 id_=parsed_description.get("rule_id"),
                 title=rule.get("displayName"),
                 description=parsed_description.get("description") or rule.get("description"),
-                timeframe=self.__parse_timeframe(rule.get("queryFrequency", "")),
+                timeframe=self._parse_timeframe(rule.get("queryFrequency", "")),
                 severity=rule.get("severity", "medium"),
                 mitre_attack=mitre_attack,
                 author=parsed_description.get("author") or [rule.get("author")],
@@ -85,14 +85,9 @@ class MicrosoftSentinelRuleParser(MicrosoftSentinelQueryParser, JsonRuleMixin):
 
 
 @parser_manager.register
-class MicrosoftSentinelYAMLRuleParser(MicrosoftSentinelQueryParser, YamlRuleMixin):
+class MicrosoftSentinelYAMLRuleParser(YamlRuleMixin, MicrosoftSentinelRuleParser):
     details: PlatformDetails = microsoft_sentinel_yaml_rule_details
     mappings: MicrosoftSentinelMappings = microsoft_sentinel_rule_mappings
-
-    @staticmethod
-    def __parse_timeframe(raw_timeframe: Optional[str]) -> Optional[timedelta]:
-        with suppress(ISO8601Error):
-            return isodate.parse_duration(raw_timeframe)
 
     def extract_tags(self, data: Union[dict, list, str]) -> list[str]:
         tags = []
@@ -138,8 +133,8 @@ class MicrosoftSentinelYAMLRuleParser(MicrosoftSentinelQueryParser, YamlRuleMixi
             if isinstance(tag, str):
                 tags.append(tag)
 
-        timeframe = self.__parse_timeframe(rule.get("queryFrequency", ""))
-        query_period = self.__parse_timeframe(rule.get("queryPeriod", ""))
+        timeframe = self._parse_timeframe(rule.get("queryFrequency", ""))
+        query_period = self._parse_timeframe(rule.get("queryPeriod", ""))
 
         return RawQueryContainer(
             query=rule["query"],
@@ -155,10 +150,10 @@ class MicrosoftSentinelYAMLRuleParser(MicrosoftSentinelQueryParser, YamlRuleMixi
                 author=rule.get("metadata", {}).get("author", {}).get("name", "").split(","),
                 tags=sorted(set(tags)),
                 raw_metainfo_container=RawMetaInfoContainer(
-                    trigger_operator=rule.get("triggerOperator", ""),
-                    trigger_threshold=rule.get("triggerThreshold", ""),
-                    query_frequency=rule.get("queryFrequency", "") if not timeframe else None,
-                    query_period=rule.get("queryPeriod", "") if not query_period else None,
+                    trigger_operator=rule.get("triggerOperator"),
+                    trigger_threshold=rule.get("triggerThreshold"),
+                    query_frequency=rule.get("queryFrequency"),
+                    query_period=rule.get("queryPeriod"),
                 ),
             ),
         )
