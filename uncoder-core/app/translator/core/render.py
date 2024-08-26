@@ -80,11 +80,20 @@ class BaseFieldValueRender(ABC):
         return value
 
     @staticmethod
+    def _wrap_int_value(value: int) -> str:
+        return str(value)
+
+    @staticmethod
     def _map_bool_value(value: bool) -> str:
         return "true" if value else "false"
 
     def _pre_process_value(
-        self, field: str, value: Union[int, str, StrValue], value_type: str = ValueType.value, wrap_str: bool = False
+        self,
+        field: str,
+        value: Union[int, str, StrValue],
+        value_type: str = ValueType.value,
+        wrap_str: bool = False,
+        wrap_int: bool = False,
     ) -> Union[int, str]:
         value_type = self._get_value_type(field, value, value_type)
         if isinstance(value, StrValue):
@@ -95,6 +104,8 @@ class BaseFieldValueRender(ABC):
             return self._wrap_str_value(value) if wrap_str else value
         if isinstance(value, bool):
             return self._map_bool_value(value)
+        if isinstance(value, int):
+            return self._wrap_int_value(value) if wrap_int else value
         return value
 
     def _pre_process_values_list(
