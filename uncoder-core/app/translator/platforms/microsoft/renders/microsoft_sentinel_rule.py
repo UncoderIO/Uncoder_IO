@@ -19,6 +19,7 @@ limitations under the License.
 
 import copy
 import json
+from datetime import timedelta
 from typing import Optional
 
 from app.translator.core.custom_types.meta_info import SeverityType
@@ -28,7 +29,6 @@ from app.translator.core.models.query_container import MetaInfoContainer, MitreI
 from app.translator.managers import render_manager
 from app.translator.platforms.microsoft.const import DEFAULT_MICROSOFT_SENTINEL_RULE, microsoft_sentinel_rule_details
 from app.translator.platforms.microsoft.mapping import MicrosoftSentinelMappings, microsoft_sentinel_rule_mappings
-from app.translator.platforms.microsoft.query_container import SentinelYamlRuleMetaInfoContainer
 from app.translator.platforms.microsoft.renders.microsoft_sentinel import (
     MicrosoftSentinelFieldValueRender,
     MicrosoftSentinelQueryRender,
@@ -70,6 +70,55 @@ class MicrosoftSentinelRuleRender(MicrosoftSentinelQueryRender):
 
         return sorted(tactics), sorted(techniques)
 
+    @staticmethod
+    def timedelta_to_iso8601(timedelta_: timedelta) -> str:
+        days = timedelta_.days
+        seconds = timedelta_.seconds
+        microseconds = timedelta_.microseconds
+
+        hours, remainder = divmod(seconds, 3600)
+        minutes, seconds = divmod(remainder, 60)
+
+        duration = "P"
+        if days:
+            duration += f"{days}D"
+
+        if hours or minutes or seconds or microseconds:
+            duration += "T"
+            if hours:
+                duration += f"{hours}H"
+            if minutes:
+                duration += f"{minutes}M"
+            if seconds or microseconds:
+                # Handle the fractional part for seconds
+                if microseconds:
+                    seconds += microseconds / 1_000_000
+                duration += f"{seconds:.6f}S" if microseconds else f"{seconds}S"
+
+        return duration
+
+    def get_query_frequency(self, meta_info: MetaInfoContainer) -> Optional[str]:
+        if meta_info.timeframe:
+            return self.timedelta_to_iso8601(meta_info.timeframe)
+        if meta_info.raw_metainfo_container:
+            return meta_info.raw_metainfo_container.query_frequency
+
+    def get_query_period(self, meta_info: MetaInfoContainer) -> Optional[str]:
+        if meta_info.query_period:
+            return self.timedelta_to_iso8601(meta_info.query_period)
+        if meta_info.raw_metainfo_container:
+            return meta_info.raw_metainfo_container.query_period
+
+    @staticmethod
+    def get_trigger_operator(meta_info: MetaInfoContainer) -> Optional[str]:
+        if meta_info.raw_metainfo_container:
+            return meta_info.raw_metainfo_container.trigger_operator
+
+    @staticmethod
+    def get_trigger_threshold(meta_info: MetaInfoContainer) -> Optional[str]:
+        if meta_info.raw_metainfo_container:
+            return meta_info.raw_metainfo_container.trigger_threshold
+
     def finalize_query(
         self,
         prefix: str,
@@ -95,11 +144,13 @@ class MicrosoftSentinelRuleRender(MicrosoftSentinelQueryRender):
         mitre_tactics, mitre_techniques = self.__create_mitre_threat(mitre_attack=meta_info.mitre_attack)
         rule["tactics"] = mitre_tactics
         rule["techniques"] = mitre_techniques
-        if meta_info and isinstance(meta_info, SentinelYamlRuleMetaInfoContainer):
-            rule["queryFrequency"] = meta_info.query_frequency or rule["queryFrequency"]
-            rule["queryPeriod"] = meta_info.query_period or rule["queryPeriod"]
-            rule["triggerOperator"] = meta_info.trigger_operator or rule["triggerOperator"]
-            rule["triggerThreshold"] = meta_info.trigger_threshold or rule["triggerThreshold"]
+
+        if meta_info:
+            rule["queryFrequency"] = self.get_query_frequency(meta_info=meta_info) or rule["queryFrequency"]
+            rule["queryPeriod"] = self.get_query_period(meta_info=meta_info) or rule["queryPeriod"]
+            rule["triggerOperator"] = self.get_trigger_operator(meta_info=meta_info) or rule["triggerOperator"]
+            rule["triggerThreshold"] = self.get_trigger_threshold(meta_info=meta_info) or rule["triggerThreshold"]
+
         json_rule = json.dumps(rule, indent=4, sort_keys=False)
         json_rule = self.wrap_with_unmapped_fields(json_rule, unmapped_fields)
         return self.wrap_with_not_supported_functions(json_rule, not_supported_functions)

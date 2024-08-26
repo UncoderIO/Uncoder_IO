@@ -31,6 +31,21 @@ class MitreInfoContainer:
     techniques: list[MitreTechniqueContainer] = field(default_factory=list)
 
 
+class RawMetaInfoContainer:
+    def __init__(
+        self,
+        *,
+        trigger_operator: Optional[str] = None,
+        trigger_threshold: Optional[str] = None,
+        query_frequency: Optional[str] = None,
+        query_period: Optional[str] = None,
+    ) -> None:
+        self.trigger_operator = trigger_operator
+        self.trigger_threshold = trigger_threshold
+        self.query_frequency = query_frequency
+        self.query_period = query_period
+
+
 class MetaInfoContainer:
     def __init__(
         self,
@@ -52,7 +67,9 @@ class MetaInfoContainer:
         source_mapping_ids: Optional[list[str]] = None,
         parsed_logsources: Optional[dict] = None,
         timeframe: Optional[timedelta] = None,
+        query_period: Optional[timedelta] = None,
         mitre_attack: MitreInfoContainer = MitreInfoContainer(),
+        raw_metainfo_container: Optional[RawMetaInfoContainer] = None,
     ) -> None:
         self.id = id_ or str(uuid.uuid4())
         self.title = title or ""
@@ -72,6 +89,8 @@ class MetaInfoContainer:
         self._source_mapping_ids = source_mapping_ids or [DEFAULT_MAPPING_NAME]
         self.parsed_logsources = parsed_logsources or {}
         self.timeframe = timeframe
+        self.query_period = query_period
+        self.raw_metainfo_container = raw_metainfo_container
 
     @property
     def author_str(self) -> str:

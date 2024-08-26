@@ -25,7 +25,12 @@ from isodate.isoerror import ISO8601Error
 
 from app.translator.core.mixins.rule import JsonRuleMixin, YamlRuleMixin
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.models.query_container import MetaInfoContainer, MitreInfoContainer, RawQueryContainer
+from app.translator.core.models.query_container import (
+    MetaInfoContainer,
+    MitreInfoContainer,
+    RawMetaInfoContainer,
+    RawQueryContainer,
+)
 from app.translator.managers import parser_manager
 from app.translator.platforms.microsoft.const import (
     microsoft_sentinel_rule_details,
@@ -33,7 +38,6 @@ from app.translator.platforms.microsoft.const import (
 )
 from app.translator.platforms.microsoft.mapping import MicrosoftSentinelMappings, microsoft_sentinel_rule_mappings
 from app.translator.platforms.microsoft.parsers.microsoft_sentinel import MicrosoftSentinelQueryParser
-from app.translator.platforms.microsoft.query_container import SentinelYamlRuleMetaInfoContainer
 from app.translator.tools.utils import parse_rule_description_str
 
 
@@ -134,21 +138,27 @@ class MicrosoftSentinelYAMLRuleParser(MicrosoftSentinelQueryParser, YamlRuleMixi
             if isinstance(tag, str):
                 tags.append(tag)
 
+        timeframe = self.__parse_timeframe(rule.get("queryFrequency", ""))
+        query_period = self.__parse_timeframe(rule.get("queryPeriod", ""))
+
         return RawQueryContainer(
             query=rule["query"],
             language=language,
-            meta_info=SentinelYamlRuleMetaInfoContainer(
+            meta_info=MetaInfoContainer(
                 id_=rule.get("id"),
                 title=rule.get("name"),
                 description=rule.get("description"),
-                timeframe=self.__parse_timeframe(rule.get("queryFrequency", "")),
+                timeframe=timeframe,
+                query_period=query_period,
                 severity=rule.get("severity", "medium").lower(),
                 mitre_attack=mitre_attack,
                 author=rule.get("metadata", {}).get("author", {}).get("name", "").split(","),
                 tags=sorted(set(tags)),
-                query_frequency=rule.get("queryFrequency", ""),
-                query_period=rule.get("queryPeriod", ""),
-                trigger_operator=rule.get("triggerOperator", ""),
-                trigger_threshold=rule.get("triggerThreshold", ""),
+                raw_metainfo_container=RawMetaInfoContainer(
+                    trigger_operator=rule.get("triggerOperator", ""),
+                    trigger_threshold=rule.get("triggerThreshold", ""),
+                    query_frequency=rule.get("queryFrequency", "") if not timeframe else None,
+                    query_period=rule.get("queryPeriod", "") if not query_period else None,
+                ),
             ),
         )
