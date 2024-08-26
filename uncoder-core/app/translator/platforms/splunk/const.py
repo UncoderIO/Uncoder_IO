@@ -43,7 +43,7 @@ SPLUNK_ALERT_DETAILS = {
 }
 
 SPLUNK_ALERT_YML_DETAILS = {
-    "platform_id": "splunk-alert-yml",
+    "platform_id": "splunk-spl-rule-yml",
     "name": "Splunk Alert YML",
     "platform_name": "Alert (SPL) YML",
     "first_choice": 0,
