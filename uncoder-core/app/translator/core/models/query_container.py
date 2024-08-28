@@ -83,7 +83,7 @@ class MetaInfoContainer:
         self.title = title or ""
         self.index = index or []
         self.language = language or ""
-        self.risk_score = risk_score or None
+        self.risk_score = risk_score
         self.type_ = type_ or ""
         self.description = description or ""
         self.author = [v.strip() for v in author] if author else []
