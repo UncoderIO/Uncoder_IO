@@ -9,6 +9,8 @@ _ELASTIC_LUCENE_RULE_TOML = "elastic-lucene-rule-toml"
 _ELASTIC_KIBANA_RULE = "elastic-kibana-rule"
 _ELASTALERT_LUCENE_RULE = "elastalert-lucene-rule"
 _ELASTIC_WATCHER_RULE = "elastic-watcher-rule"
+_ELASTIC_ESQL_QUERY = "elastic-esql-query"
+_ELASTIC_ESQL_RULE = "elastic-esql-rule"
 
 ELASTIC_QUERY_TYPES = {
     _ELASTIC_LUCENE_QUERY,
@@ -16,12 +18,28 @@ ELASTIC_QUERY_TYPES = {
     _ELASTIC_KIBANA_RULE,
     _ELASTALERT_LUCENE_RULE,
     _ELASTIC_WATCHER_RULE,
+    _ELASTIC_ESQL_QUERY,
+    _ELASTIC_ESQL_RULE,
 }
 
 ELASTICSEARCH_LUCENE_QUERY_DETAILS = {
     "platform_id": _ELASTIC_LUCENE_QUERY,
     "name": "Elasticsearch Query",
     "platform_name": "Query (Lucene)",
+    **PLATFORM_DETAILS,
+}
+
+ELASTICSEARCH_ESQL_QUERY_DETAILS = {
+    "platform_id": _ELASTIC_ESQL_QUERY,
+    "name": "Elasticsearch ES|QL Query",
+    "platform_name": "Query (ES|QL)",
+    **PLATFORM_DETAILS,
+}
+
+ELASTICSEARCH_ESQL_RULE_DETAILS = {
+    "platform_id": _ELASTIC_ESQL_RULE,
+    "name": "Elasticsearch ES|QL Rule",
+    "platform_name": "Rule (ES|QL)",
     **PLATFORM_DETAILS,
 }
 
@@ -66,6 +84,8 @@ XPACK_WATCHER_DETAILS = {
 }
 
 elasticsearch_lucene_query_details = PlatformDetails(**ELASTICSEARCH_LUCENE_QUERY_DETAILS)
+elasticsearch_esql_query_details = PlatformDetails(**ELASTICSEARCH_ESQL_QUERY_DETAILS)
+elasticsearch_esql_rule_details = PlatformDetails(**ELASTICSEARCH_ESQL_RULE_DETAILS)
 elasticsearch_rule_details = PlatformDetails(**ELASTICSEARCH_RULE_DETAILS)
 elasticsearch_rule_toml_details = PlatformDetails(**ELASTICSEARCH_RULE_TOML_DETAILS)
 elastalert_details = PlatformDetails(**ELASTALERT_DETAILS)
@@ -176,4 +196,38 @@ XPACK_WATCHER_RULE = {
             },
         }
     },
+}
+
+ESQL_RULE = {
+    "name": "",
+    "tags": [],
+    "interval": "5m",
+    "enabled": True,
+    "revision": 0,
+    "description": "",
+    "risk_score": 21,
+    "severity": "low",
+    "license": "",
+    "output_index": "",
+    "meta": {"from": "1m"},
+    "author": [],
+    "false_positives": [],
+    "from": "now-360s",
+    "rule_id": "",
+    "max_signals": 100,
+    "risk_score_mapping": [],
+    "severity_mapping": [],
+    "threat": [],
+    "to": "now",
+    "references": [],
+    "version": 1,
+    "exceptions_list": [],
+    "immutable": False,
+    "related_integrations": [],
+    "required_fields": [],
+    "setup": "",
+    "type": "esql",
+    "language": "esql",
+    "query": "",
+    "actions": [],
 }
