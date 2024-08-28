@@ -93,6 +93,13 @@ class SplunkAlertYMLParser(SplunkQueryParser, YamlRuleMixin):
         tags = rule.get("tags", {}).get("analytic_story", [])
         if rule.get("type"):
             tags.append(rule.get("type"))
+        false_positives = None
+        if rule.get("known_false_positives"):
+            false_positives = (
+                rule["known_false_positives"]
+                if isinstance(rule["known_false_positives"], list)
+                else [rule["known_false_positives"]]
+            )
         return RawQueryContainer(
             query=rule.get("search"),
             language=language,
@@ -103,7 +110,7 @@ class SplunkAlertYMLParser(SplunkQueryParser, YamlRuleMixin):
                 author=rule.get("author").split(", "),
                 status=rule.get("status"),
                 description=description,
-                false_positives=rule.get("known_false_positives"),
+                false_positives=false_positives,
                 references=rule.get("references"),
                 mitre_attack=mitre_attack_container,
                 tags=tags,
