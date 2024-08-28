@@ -19,7 +19,7 @@ from datetime import datetime
 
 from app.translator.core.mixins.rule import JsonRuleMixin, TOMLRuleMixin
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer
+from app.translator.core.models.query_container import MetaInfoContainer, RawMetaInfoContainer, RawQueryContainer
 from app.translator.managers import parser_manager
 from app.translator.platforms.elasticsearch.const import elasticsearch_rule_details, elasticsearch_rule_toml_details
 from app.translator.platforms.elasticsearch.parsers.elasticsearch import ElasticSearchQueryParser
@@ -89,11 +89,10 @@ class ElasticSearchRuleTOMLParser(ElasticSearchQueryParser, TOMLRuleMixin):
                 references=rule.get("references"),
                 tags=rule.get("tags"),
                 mitre_attack=mitre_attack,
-                from_=rule.get("from"),
                 index=rule.get("index"),
                 language=rule.get("language"),
                 risk_score=rule.get("risk_score"),
                 type_=rule.get("type"),
-                interval=rule.get("interval"),
+                raw_metainfo_container=RawMetaInfoContainer(from_=rule.get("from"), interval=rule.get("interval")),
             ),
         )

@@ -39,11 +39,15 @@ class RawMetaInfoContainer:
         trigger_threshold: Optional[str] = None,
         query_frequency: Optional[str] = None,
         query_period: Optional[str] = None,
+        from_: Optional[str] = None,
+        interval: Optional[str] = None,
     ) -> None:
         self.trigger_operator = trigger_operator
         self.trigger_threshold = trigger_threshold
         self.query_frequency = query_frequency
         self.query_period = query_period
+        self.from_ = from_
+        self.interval = interval
 
 
 class MetaInfoContainer:
@@ -51,12 +55,10 @@ class MetaInfoContainer:
         self,
         *,
         id_: Optional[str] = None,
-        from_: Optional[str] = None,
-        index: Optional[str] = None,
+        index: Optional[list[str]] = None,
         language: Optional[str] = None,
-        risk_score: Optional[str] = None,
+        risk_score: Optional[int] = None,
         type_: Optional[str] = None,
-        interval: Optional[str] = None,
         title: Optional[str] = None,
         description: Optional[str] = None,
         author: Optional[list[str]] = None,
@@ -79,12 +81,10 @@ class MetaInfoContainer:
     ) -> None:
         self.id = id_ or str(uuid.uuid4())
         self.title = title or ""
-        self.from_ = from_ or ""
-        self.index = index or ""
+        self.index = index or []
         self.language = language or ""
-        self.risk_score = risk_score or ""
+        self.risk_score = risk_score or None
         self.type_ = type_ or ""
-        self.interval = interval or ""
         self.description = description or ""
         self.author = [v.strip() for v in author] if author else []
         self.date = date or datetime.now().date().strftime("%Y-%m-%d")
