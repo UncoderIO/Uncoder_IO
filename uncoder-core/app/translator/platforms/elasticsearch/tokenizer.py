@@ -24,7 +24,7 @@ from app.translator.core.models.query_tokens.field_value import FieldValue
 from app.translator.core.models.query_tokens.identifier import Identifier
 from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.platforms.base.lucene.tokenizer import LuceneTokenizer
-from app.translator.platforms.elasticsearch.str_value_manager import elastic_eql_str_value_manager
+from app.translator.platforms.elasticsearch.str_value_manager import eql_str_value_manager
 from app.translator.tools.utils import get_match_group
 
 
@@ -65,7 +65,7 @@ class ElasticSearchEQLTokenizer(QueryTokenizer):
         rf'"(?P<{ValueType.double_quotes_value}>(?:[:a-zA-Z*0-9=+%#\-_/,;`?~‘\'.<>$&^@!\]\[()\s]|\\\"|\\)*)"'  # noqa: RUF001
     )
 
-    str_value_manager = elastic_eql_str_value_manager
+    str_value_manager = eql_str_value_manager
 
     def get_operator_and_value(
         self, match: re.Match, mapped_operator: str = OperatorType.EQ, operator: Optional[str] = None

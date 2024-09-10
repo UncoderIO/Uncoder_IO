@@ -39,7 +39,7 @@ class ESQLQueryStrValueManager(StrValueManager):
     }
 
 
-class ElasticEQLQueryStrValueManager(StrValueManager):
+class EQLQueryStrValueManager(StrValueManager):
     str_spec_symbols_map: ClassVar[dict[str, type[BaseSpecSymbol]]] = {"*": SingleSymbolWildCard}
 
     def from_str_to_container(self, value: str) -> StrValue:
@@ -48,4 +48,4 @@ class ElasticEQLQueryStrValueManager(StrValueManager):
 
 
 esql_query_str_value_manager = ESQLQueryStrValueManager()
-elastic_eql_str_value_manager = ElasticEQLQueryStrValueManager()
+eql_str_value_manager = EQLQueryStrValueManager()
