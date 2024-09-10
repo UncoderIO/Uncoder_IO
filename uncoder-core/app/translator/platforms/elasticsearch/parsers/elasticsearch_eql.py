@@ -6,7 +6,7 @@ from app.translator.core.parser import PlatformQueryParser
 from app.translator.managers import parser_manager
 from app.translator.platforms.base.lucene.mapping import LuceneMappings
 from app.translator.platforms.elasticsearch.const import elastic_eql_query_details
-from app.translator.platforms.elasticsearch.mapping import elasticsearch_lucene_query_mappings
+from app.translator.platforms.elasticsearch.mapping import elastic_eql_query_mappings
 from app.translator.platforms.elasticsearch.tokenizer import ElasticSearchEQLTokenizer
 
 
@@ -14,7 +14,7 @@ from app.translator.platforms.elasticsearch.tokenizer import ElasticSearchEQLTok
 class ElasticSearchEQLQueryParser(PlatformQueryParser):
     details: PlatformDetails = elastic_eql_query_details
     tokenizer = ElasticSearchEQLTokenizer()
-    mappings: LuceneMappings = elasticsearch_lucene_query_mappings
+    mappings: LuceneMappings = elastic_eql_query_mappings
     query_delimiter_pattern = r"\swhere\s"
 
     def _parse_query(self, query: str) -> tuple[str, dict[str, list[str]]]:
