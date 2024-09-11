@@ -1,10 +1,6 @@
 from typing import Optional
 
 
-class NotImplementedException(BaseException):
-    ...
-
-
 class BasePlatformException(BaseException):
     ...
 

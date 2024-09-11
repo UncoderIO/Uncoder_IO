@@ -27,8 +27,9 @@ from app.translator.core.context_vars import return_only_first_query_ctx_var, wr
 from app.translator.core.custom_types.tokens import LogicalOperatorType, OperatorType
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.escape_manager import EscapeManager
-from app.translator.core.exceptions.core import NotImplementedException, StrictPlatformException
+from app.translator.core.exceptions.core import StrictPlatformException
 from app.translator.core.exceptions.parser import UnsupportedOperatorException
+from app.translator.core.exceptions.render import UnsupportedRenderMethod
 from app.translator.core.functions import PlatformFunctions
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
 from app.translator.core.models.functions.base import Function, RenderedFunctions
@@ -122,55 +123,55 @@ class BaseFieldValueRender(ABC):
         return processed
 
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
-        raise NotImplementedException
+        raise UnsupportedRenderMethod(platform_name=self.details.name, method=OperatorType.EQ.capitalize())
 
     def not_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
-        raise NotImplementedException
+        raise UnsupportedRenderMethod(platform_name=self.details.name, method=OperatorType.NOT_EQ.capitalize())
 
     def less_modifier(self, field: str, value: Union[int, str]) -> str:  # noqa: ARG002
-        raise NotImplementedException
+        raise UnsupportedRenderMethod(platform_name=self.details.name, method=OperatorType.LT.capitalize())
 
     def less_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:  # noqa: ARG002
-        raise NotImplementedException
+        raise UnsupportedRenderMethod(platform_name=self.details.name, method=OperatorType.LTE.capitalize())
 
     def greater_modifier(self, field: str, value: Union[int, str]) -> str:  # noqa: ARG002
-        raise NotImplementedException
+        raise UnsupportedRenderMethod(platform_name=self.details.name, method=OperatorType.GT.capitalize())
 
     def greater_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:  # noqa: ARG002
-        raise NotImplementedException
+        raise UnsupportedRenderMethod(platform_name=self.details.name, method=OperatorType.GTE.capitalize())
 
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
-        raise NotImplementedException
+        raise UnsupportedRenderMethod(platform_name=self.details.name, method=OperatorType.CONTAINS.capitalize())
 
     def not_contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
-        raise NotImplementedException
+        raise UnsupportedRenderMethod(platform_name=self.details.name, method=OperatorType.NOT_CONTAINS.capitalize())
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
-        raise NotImplementedException
+        raise UnsupportedRenderMethod(platform_name=self.details.name, method=OperatorType.ENDSWITH.capitalize())
 
     def not_endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
-        raise NotImplementedException
+        raise UnsupportedRenderMethod(platform_name=self.details.name, method=OperatorType.NOT_ENDSWITH.capitalize())
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
-        raise NotImplementedException
+        raise UnsupportedRenderMethod(platform_name=self.details.name, method=OperatorType.STARTSWITH.capitalize())
 
     def not_startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
-        raise NotImplementedException
+        raise UnsupportedRenderMethod(platform_name=self.details.name, method=OperatorType.NOT_STARTSWITH.capitalize())
 
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
-        raise NotImplementedException
+        raise UnsupportedRenderMethod(platform_name=self.details.name, method=OperatorType.REGEX.capitalize())
 
     def not_regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
-        raise NotImplementedException
+        raise UnsupportedRenderMethod(platform_name=self.details.name, method=OperatorType.NOT_REGEX.capitalize())
 
     def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
-        raise NotImplementedException
+        raise UnsupportedRenderMethod(platform_name=self.details.name, method=OperatorType.KEYWORD.capitalize())
 
     def is_none(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
-        raise NotImplementedException
+        raise UnsupportedRenderMethod(platform_name=self.details.name, method=OperatorType.IS_NONE.capitalize())
 
     def is_not_none(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
-        raise NotImplementedException
+        raise UnsupportedRenderMethod(platform_name=self.details.name, method=OperatorType.IS_NOT_NONE.capitalize())
 
     def apply_value(self, value: Union[str, int], value_type: str = ValueType.value) -> Union[str, int]:
         return self.escape_manager.escape(value, value_type)

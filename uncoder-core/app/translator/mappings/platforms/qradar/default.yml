@@ -14,8 +14,11 @@ field_mapping:
     - DstPort
     - DestinationPort
     - remoteport
+<<<<<<< HEAD
   dst-hostname: DstHost
   src-hostname: SrcHost
+=======
+>>>>>>> main
   src-port:
     - SourcePort
     - localport
@@ -25,6 +28,7 @@ field_mapping:
     - source_ip
     - SourceIP
     - sourceIP
+    - SrcHost
   dst-ip:
     - DestinationIP
     - destinationip
@@ -32,6 +36,10 @@ field_mapping:
     - destinationIP
     - destinationaddress
     - destination
+<<<<<<< HEAD
+=======
+    - DstHost
+>>>>>>> main
   User:
     - userName
     - EventUserName
@@ -97,8 +105,10 @@ field_mapping:
   FileName: 
     - Filename
     - File Name
+    - Encoded Filename
   RegistryKey: 
     - Registry Key
     - Target Object
   RegistryValue: RegistryValue
   ProcessPath: Process Path
+  hasIdentity: hasIdentity

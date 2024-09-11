@@ -42,6 +42,10 @@ class ReEndOfStrSymbol(BaseSpecSymbol):
     ...
 
 
+class ReWordBoundarySymbol(BaseSpecSymbol):
+    ...
+
+
 class ReWordSymbol(BaseSpecSymbol):
     ...
 
@@ -130,6 +134,7 @@ CONTAINER_SPEC_SYMBOLS_MAP = {
     SingleSymbolWildCard: "?",
     UnboundLenWildCard: "*",
     ReAnySymbol: ".",
+    ReWordBoundarySymbol: r"\b",
     ReWordSymbol: r"\w",
     ReDigitalSymbol: r"\d",
     ReWhiteSpaceSymbol: r"\s",

@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+from abc import ABC, abstractmethod
+>>>>>>> main
 from typing import Optional
 
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, SourceMapping
@@ -37,3 +41,13 @@ class Field:
 class PredefinedField:
     def __init__(self, name: str):
         self.name = name
+<<<<<<< HEAD
+=======
+
+
+class BaseFieldsGetter(ABC):
+    @property
+    @abstractmethod
+    def fields(self) -> list[Field]:
+        raise NotImplementedError("Abstract method")
+>>>>>>> main

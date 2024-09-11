@@ -25,11 +25,11 @@ from app.translator.core.str_value_manager import (
     ReWordSymbol,
     StrValueManager,
 )
-from app.translator.platforms.elasticsearch.escape_manager import ESQLEscapeManager, esql_escape_manager
+from app.translator.platforms.elasticsearch.escape_manager import ESQLQueryEscapeManager, esql_query_escape_manager
 
 
-class ESQLStrValueManager(StrValueManager):
-    escape_manager: ESQLEscapeManager = esql_escape_manager
+class ESQLQueryStrValueManager(StrValueManager):
+    escape_manager: ESQLQueryEscapeManager = esql_query_escape_manager
     re_str_alpha_num_symbols_map: ClassVar[dict[str, type[BaseSpecSymbol]]] = {
         "w": ReWordSymbol,
         "d": ReDigitalSymbol,
@@ -37,4 +37,4 @@ class ESQLStrValueManager(StrValueManager):
     }
 
 
-esql_str_value_manager = ESQLStrValueManager()
+esql_query_str_value_manager = ESQLQueryStrValueManager()

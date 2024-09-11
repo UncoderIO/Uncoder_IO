@@ -1,12 +1,6 @@
 from typing import Optional, Union
 
-from app.translator.core.mapping import (
-    DEFAULT_MAPPING_NAME,
-    BasePlatformMappings,
-    FieldsMapping,
-    LogSourceSignature,
-    SourceMapping,
-)
+from app.translator.core.mapping import BasePlatformMappings, FieldsMapping, LogSourceSignature, SourceMapping
 from app.translator.platforms.palo_alto.const import cortex_xql_query_details
 
 
@@ -16,8 +10,12 @@ class CortexXQLLogSourceSignature(LogSourceSignature):
         self.dataset = dataset
         self._default_source = default_source or {}
 
-    def is_suitable(self, preset: str, dataset: str) -> bool:
-        return preset == self.preset or dataset == self.dataset
+    def is_suitable(self, preset: Optional[list[str]] = None, dataset: Optional[list[str]] = None) -> bool:
+        conditions = [
+            set(preset).issubset(self.preset) if preset else None,
+            set(dataset).issubset(self.dataset) if dataset else None,
+        ]
+        return self._check_conditions(conditions)
 
     @staticmethod
     def __prepare_log_source_for_render(logsource: Union[str, list[str]], model: str = "datamodel") -> str:
@@ -38,7 +36,7 @@ class CortexXQLLogSourceSignature(LogSourceSignature):
         if dataset_data := self._default_source.get("dataset"):
             dataset = self.__prepare_log_source_for_render(logsource=dataset_data, model="dataset")
             return f"{self.__datamodel_scheme}{dataset}"
-        return "datamodel"
+        return "datamodel dataset = *"
 
 
 class CortexXQLMappings(BasePlatformMappings):
@@ -52,26 +50,6 @@ class CortexXQLMappings(BasePlatformMappings):
         dataset = mapping.get("log_source", {}).get("dataset")
         default_log_source = mapping["default_log_source"]
         return CortexXQLLogSourceSignature(preset=preset, dataset=dataset, default_source=default_log_source)
-
-    def get_suitable_source_mappings(
-        self, field_names: list[str], preset: Optional[str], dataset: Optional[str]
-    ) -> list[SourceMapping]:
-        suitable_source_mappings = []
-        for source_mapping in self._source_mappings.values():
-            if source_mapping.source_id == DEFAULT_MAPPING_NAME:
-                continue
-
-            log_source_signature: CortexXQLLogSourceSignature = source_mapping.log_source_signature
-            if (preset or dataset) and log_source_signature.is_suitable(preset=preset, dataset=dataset):
-                if source_mapping.fields_mapping.is_suitable(field_names):
-                    suitable_source_mappings.append(source_mapping)
-            elif source_mapping.fields_mapping.is_suitable(field_names):
-                suitable_source_mappings.append(source_mapping)
-
-        if not suitable_source_mappings:
-            suitable_source_mappings = [self._source_mappings[DEFAULT_MAPPING_NAME]]
-
-        return suitable_source_mappings
 
 
 cortex_xql_query_mappings = CortexXQLMappings(

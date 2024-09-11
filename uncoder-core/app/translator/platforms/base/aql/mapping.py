@@ -1,6 +1,6 @@
 from typing import Optional
 
-from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
+from app.translator.core.mapping import BasePlatformMappings, LogSourceSignature
 
 
 class AQLLogSourceSignature(LogSourceSignature):
@@ -20,22 +20,18 @@ class AQLLogSourceSignature(LogSourceSignature):
 
     def is_suitable(
         self,
-        devicetype: Optional[list[int]],
-        category: Optional[list[int]],
-        qid: Optional[list[int]],
-        qideventcategory: Optional[list[int]],
+        devicetype: Optional[list[int]] = None,
+        category: Optional[list[int]] = None,
+        qid: Optional[list[int]] = None,
+        qideventcategory: Optional[list[int]] = None,
     ) -> bool:
-        device_type_match = set(devicetype).issubset(self.device_types) if devicetype else None
-        category_match = set(category).issubset(self.categories) if category else None
-        qid_match = set(qid).issubset(self.qids) if qid else None
-        qid_event_category_match = (
-            set(qideventcategory).issubset(self.qid_event_categories) if qideventcategory else None
-        )
-        return all(
-            condition
-            for condition in (device_type_match, category_match, qid_match, qid_event_category_match)
-            if condition is not None
-        )
+        conditions = [
+            set(devicetype).issubset(self.device_types) if devicetype else None,
+            set(category).issubset(self.categories) if category else None,
+            set(qid).issubset(self.qids) if qid else None,
+            set(qideventcategory).issubset(self.qid_event_categories) if qideventcategory else None,
+        ]
+        return self._check_conditions(conditions)
 
     def __str__(self) -> str:
         return self._default_source.get("table", "events")
@@ -60,6 +56,7 @@ class AQLMappings(BasePlatformMappings):
             qid_event_categories=log_source.get("qideventcategory"),
             default_source=default_log_source,
         )
+<<<<<<< HEAD
 
     def get_suitable_source_mappings(
         self,
@@ -90,3 +87,5 @@ class AQLMappings(BasePlatformMappings):
             suitable_source_mappings = [self._source_mappings[DEFAULT_MAPPING_NAME]]
 
         return suitable_source_mappings
+=======
+>>>>>>> main

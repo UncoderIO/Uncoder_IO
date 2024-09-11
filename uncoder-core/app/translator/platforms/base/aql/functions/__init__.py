@@ -16,25 +16,31 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
 
+import os.path
 import re
 from typing import Optional, Union
 
 from app.translator.core.custom_types.functions import FunctionType
 from app.translator.core.exceptions.functions import InvalidFunctionSignature, NotSupportedFunctionException
 from app.translator.core.functions import PlatformFunctions
-from app.translator.core.models.field import Field
 from app.translator.core.models.functions.base import Function, ParsedFunctions
 from app.translator.core.models.functions.sort import SortLimitFunction
+from app.translator.core.models.query_tokens.field import Field
 from app.translator.platforms.base.aql.const import TABLE_PATTERN
-from app.translator.platforms.base.aql.functions.const import func_aliases_ctx_var, AGGREGATION_FUNCTIONS_MAP
-from app.translator.platforms.base.aql.functions.const import AQLFunctionType
-from app.translator.platforms.base.aql.functions.manager import AQLFunctionsManager
+from app.translator.platforms.base.aql.functions.const import (
+    AGGREGATION_FUNCTIONS_MAP,
+    AQLFunctionType,
+    func_aliases_ctx_var,
+)
+from app.translator.platforms.base.aql.functions.manager import AQLFunctionsManager, aql_functions_manager
 
 
 class AQLFunctions(PlatformFunctions):
+    dir_path: str = os.path.abspath(os.path.dirname(__file__))
+
     function_delimiter = ""
     functions_pattern = r"\s(?P<function_name>(group by|order by|last))"
-    manager = AQLFunctionsManager()
+    manager: AQLFunctionsManager = aql_functions_manager
 
     def parse(self, query: str) -> tuple[str, ParsedFunctions]:
         parsed = []
@@ -56,7 +62,7 @@ class AQLFunctions(PlatformFunctions):
             agg_functions = query[search.start() :]
             query = query[: search.start()]
             self._parse_function(
-                function_name=AQLFunctionType.aggregation_data_parser,
+                function_name=AQLFunctionType.aggregation_data_function,
                 function=agg_functions,
                 parsed=parsed,
                 not_supported=not_supported,
@@ -108,6 +114,7 @@ class AQLFunctions(PlatformFunctions):
         if len(funcs) == 2:  # noqa: PLR2004
             funcs[1].args = funcs[1].args or funcs[0].args
             funcs[1].limit = funcs[1].limit or funcs[0].limit
+            funcs[1].raw = f"{funcs[1].raw} {funcs[0].raw}"
             functions.pop(indices[0])
 
         return functions
@@ -116,7 +123,7 @@ class AQLFunctions(PlatformFunctions):
         self, function: str, function_name: str, parsed: list[Function], not_supported: list[str], invalid: list[str]
     ) -> None:
         try:
-            function_parser = self.manager.get_parser(function_name)
+            function_parser = self.manager.get_hof_parser(function_name)
             function_token = function_parser.parse(func_body=function, raw=function)
             if isinstance(function_token, list):
                 parsed.extend(function_token)

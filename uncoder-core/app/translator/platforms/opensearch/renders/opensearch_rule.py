@@ -19,7 +19,7 @@ limitations under the License.
 
 import copy
 import json
-from typing import Optional, Union
+from typing import Optional
 
 from app.translator.core.const import QUERY_TOKEN_TYPE
 from app.translator.core.custom_types.meta_info import SeverityType
@@ -87,6 +87,10 @@ class OpenSearchRuleRender(OpenSearchQueryRender):
                 self.fields.update({field: f"{{ctx.results.0.hits.hits.0._source.{field}}}"})
         return super().apply_token(token, source_mapping)
 
-    def generate(self, query_container: Union[RawQueryContainer, TokenizedQueryContainer]) -> str:
+    def generate(
+        self, raw_query_container: RawQueryContainer, tokenized_query_container: Optional[TokenizedQueryContainer]
+    ) -> str:
         self.fields = {}
-        return super().generate(query_container)
+        return super().generate(
+            raw_query_container=raw_query_container, tokenized_query_container=tokenized_query_container
+        )

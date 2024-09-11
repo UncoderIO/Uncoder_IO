@@ -62,30 +62,24 @@ class PlatformQueryParser(QueryParser, ABC):
             raise TokenizerGeneralException("Can't translate empty query. Please provide more details")
         return self.tokenizer.tokenize(query=query)
 
+    @staticmethod
     def get_field_tokens(
-        self, query_tokens: list[QUERY_TOKEN_TYPE], functions: Optional[list[Function]] = None
+        query_tokens: list[QUERY_TOKEN_TYPE], functions: Optional[list[Function]] = None
     ) -> list[Field]:
         field_tokens = []
         for token in query_tokens:
-            if isinstance(token, FieldValue):
-                field_tokens.append(token.field)
-            elif isinstance(token, FieldField):
-                if token.field_left:
-                    field_tokens.append(token.field_left)
-                if token.field_right:
-                    field_tokens.append(token.field_right)
-            elif isinstance(token, FunctionValue):
-                field_tokens.extend(self.tokenizer.get_field_tokens_from_func_args([token.function]))
+            if isinstance(token, (FieldField, FieldValue, FunctionValue)):
+                field_tokens.extend(token.fields)
 
         if functions:
-            field_tokens.extend(self.tokenizer.get_field_tokens_from_func_args(functions))
+            field_tokens.extend([field for func in functions for field in func.fields])
 
         return field_tokens
 
     def get_source_mappings(
-        self, field_tokens: list[Field], log_sources: dict[str, Union[str, list[str]]]
+        self, field_tokens: list[Field], log_sources: dict[str, list[Union[int, str]]]
     ) -> list[SourceMapping]:
         field_names = [field.source_name for field in field_tokens]
-        source_mappings = self.mappings.get_suitable_source_mappings(field_names=field_names, **log_sources)
+        source_mappings = self.mappings.get_suitable_source_mappings(field_names=field_names, log_sources=log_sources)
         self.tokenizer.set_field_tokens_generic_names_map(field_tokens, source_mappings, self.mappings.default_mapping)
         return source_mappings

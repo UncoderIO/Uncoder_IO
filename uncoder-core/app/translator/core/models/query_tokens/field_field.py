@@ -1,8 +1,16 @@
+<<<<<<< HEAD
 from app.translator.core.models.query_tokens.field import Alias, Field
 from app.translator.core.models.query_tokens.identifier import Identifier
 
 
 class FieldField:
+=======
+from app.translator.core.models.query_tokens.field import Alias, BaseFieldsGetter, Field
+from app.translator.core.models.query_tokens.identifier import Identifier
+
+
+class FieldField(BaseFieldsGetter):
+>>>>>>> main
     def __init__(
         self,
         source_name_left: str,
@@ -16,3 +24,16 @@ class FieldField:
         self.operator = operator
         self.field_right = Field(source_name=source_name_right) if not is_alias_right else None
         self.alias_right = Alias(name=source_name_right) if is_alias_right else None
+<<<<<<< HEAD
+=======
+
+    @property
+    def fields(self) -> list[Field]:
+        fields = []
+        if self.field_left:
+            fields.append(self.field_left)
+        if self.field_right:
+            fields.append(self.field_right)
+
+        return fields
+>>>>>>> main

@@ -1,14 +1,16 @@
+import os.path
 import re
 
 from app.translator.core.exceptions.functions import InvalidFunctionSignature, NotSupportedFunctionException
 from app.translator.core.functions import PlatformFunctions
 from app.translator.core.models.functions.base import ParsedFunctions
 from app.translator.platforms.logscale.functions.const import LogScaleFunctionType
-from app.translator.platforms.logscale.functions.manager import LogScaleFunctionsManager
+from app.translator.platforms.logscale.functions.manager import LogScaleFunctionsManager, log_scale_functions_manager
 
 
 class LogScaleFunctions(PlatformFunctions):
-    manager = LogScaleFunctionsManager()
+    dir_path: str = os.path.abspath(os.path.dirname(__file__))
+    manager: LogScaleFunctionsManager = log_scale_functions_manager
 
     def parse(self, query: str) -> tuple[ParsedFunctions, str]:
         parsed = []
@@ -28,7 +30,7 @@ class LogScaleFunctions(PlatformFunctions):
             func = func.strip()
             func_body = func[len(func_name) + 1 : len(func) - 1]
             try:
-                func_parser = self.manager.get_parser(self.manager.get_generic_func_name(func_name))
+                func_parser = self.manager.get_hof_parser(func_name)
                 parsed.append(func_parser.parse(func_body, func))
             except NotSupportedFunctionException:
                 not_supported.append(func)
