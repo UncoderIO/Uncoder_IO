@@ -20,15 +20,6 @@ limitations under the License.
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
-<<<<<<< HEAD
-from app.translator.core.exceptions.render import UnsupportedRenderMethod
-from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
-from app.translator.platforms.base.spl.escape_manager import spl_escape_manager
-
-
-class SplFieldValueRender(BaseFieldValueRender):
-    escape_manager = spl_escape_manager
-=======
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
 from app.translator.core.str_value_manager import StrValue
@@ -47,7 +38,6 @@ class SplFieldValueRender(BaseFieldValueRender):
     ) -> Union[int, str]:
         value = super()._pre_process_value(field, value, value_type=value_type, wrap_str=wrap_str)
         return self._wrap_str_value(str(value)) if not isinstance(value, str) else value
->>>>>>> main
 
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):

@@ -16,9 +16,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
 
-<<<<<<< HEAD
-from app.translator.core.mixins.rule import JsonRuleMixin
-=======
 from contextlib import suppress
 from datetime import timedelta
 from typing import Optional, Union
@@ -27,7 +24,6 @@ import isodate
 from isodate.isoerror import ISO8601Error
 
 from app.translator.core.mixins.rule import JsonRuleMixin, YamlRuleMixin
->>>>>>> main
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import (
     MetaInfoContainer,
@@ -36,14 +32,10 @@ from app.translator.core.models.query_container import (
     RawQueryContainer,
 )
 from app.translator.managers import parser_manager
-<<<<<<< HEAD
-from app.translator.platforms.microsoft.const import microsoft_sentinel_rule_details
-=======
 from app.translator.platforms.microsoft.const import (
     microsoft_sentinel_rule_details,
     microsoft_sentinel_yaml_rule_details,
 )
->>>>>>> main
 from app.translator.platforms.microsoft.mapping import MicrosoftSentinelMappings, microsoft_sentinel_rule_mappings
 from app.translator.platforms.microsoft.parsers.microsoft_sentinel import MicrosoftSentinelQueryParser
 from app.translator.tools.utils import parse_rule_description_str
@@ -53,14 +45,11 @@ from app.translator.tools.utils import parse_rule_description_str
 class MicrosoftSentinelRuleParser(MicrosoftSentinelQueryParser, JsonRuleMixin):
     details: PlatformDetails = microsoft_sentinel_rule_details
     mappings: MicrosoftSentinelMappings = microsoft_sentinel_rule_mappings
-<<<<<<< HEAD
-=======
 
     @staticmethod
     def _parse_timeframe(raw_timeframe: Optional[str]) -> Optional[timedelta]:
         with suppress(ISO8601Error):
             return isodate.parse_duration(raw_timeframe)
->>>>>>> main
 
     def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
         rule = self.load_rule(text=text)

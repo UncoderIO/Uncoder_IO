@@ -1,10 +1,6 @@
 from typing import Optional
 
-<<<<<<< HEAD
-from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
-=======
 from app.translator.core.mapping import BasePlatformMappings, LogSourceSignature
->>>>>>> main
 from app.translator.platforms.microsoft.const import (
     microsoft_defender_query_details,
     microsoft_sentinel_query_details,
@@ -31,19 +27,6 @@ class MicrosoftSentinelMappings(BasePlatformMappings):
         return MicrosoftSentinelLogSourceSignature(tables=tables, default_source=default_log_source)
 
 
-<<<<<<< HEAD
-            log_source_signature: MicrosoftSentinelLogSourceSignature = source_mapping.log_source_signature
-            if log_source_signature.is_suitable(table=table) and source_mapping.fields_mapping.is_suitable(field_names):
-                suitable_source_mappings.append(source_mapping)
-
-        if not suitable_source_mappings:
-            suitable_source_mappings = [self._source_mappings[DEFAULT_MAPPING_NAME]]
-
-        return suitable_source_mappings
-
-
-=======
->>>>>>> main
 microsoft_sentinel_query_mappings = MicrosoftSentinelMappings(
     platform_dir="microsoft_sentinel", platform_details=microsoft_sentinel_query_details
 )

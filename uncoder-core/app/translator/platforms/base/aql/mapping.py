@@ -48,7 +48,7 @@ class AQLMappings(BasePlatformMappings):
 
     def prepare_log_source_signature(self, mapping: dict) -> AQLLogSourceSignature:
         log_source = mapping.get("log_source", {})
-        default_log_source = mapping["default_log_source"]
+        default_log_source = mapping.get("default_log_source")
         return AQLLogSourceSignature(
             device_types=log_source.get("devicetype"),
             categories=log_source.get("category"),
@@ -56,36 +56,3 @@ class AQLMappings(BasePlatformMappings):
             qid_event_categories=log_source.get("qideventcategory"),
             default_source=default_log_source,
         )
-<<<<<<< HEAD
-
-    def get_suitable_source_mappings(
-        self,
-        field_names: list[str],
-        devicetype: Optional[list[int]] = None,
-        category: Optional[list[int]] = None,
-        qid: Optional[list[int]] = None,
-        qideventcategory: Optional[list[int]] = None,
-    ) -> list[SourceMapping]:
-        suitable_source_mappings = []
-        for source_mapping in self._source_mappings.values():
-            if source_mapping.source_id == DEFAULT_MAPPING_NAME:
-                continue
-
-            log_source_signature: AQLLogSourceSignature = source_mapping.log_source_signature
-            if log_source_signature.is_suitable(devicetype, category, qid, qideventcategory):  # noqa: SIM102
-                if source_mapping.fields_mapping.is_suitable(field_names):
-                    suitable_source_mappings.append(source_mapping)
-
-        if not suitable_source_mappings:
-            for source_mapping in self._source_mappings.values():
-                if source_mapping.source_id == DEFAULT_MAPPING_NAME:
-                    continue
-                if source_mapping.fields_mapping.is_suitable(field_names):
-                    suitable_source_mappings.append(source_mapping)
-
-        if not suitable_source_mappings:
-            suitable_source_mappings = [self._source_mappings[DEFAULT_MAPPING_NAME]]
-
-        return suitable_source_mappings
-=======
->>>>>>> main

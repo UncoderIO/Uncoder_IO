@@ -8,8 +8,6 @@ from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME
 from app.translator.core.models.functions.base import ParsedFunctions
 from app.translator.core.models.query_tokens.field import Field
-<<<<<<< HEAD
-=======
 
 
 @dataclass
@@ -46,7 +44,6 @@ class RawMetaInfoContainer:
         self.trigger_threshold = trigger_threshold
         self.query_frequency = query_frequency
         self.query_period = query_period
->>>>>>> main
 
 
 class MetaInfoContainer:

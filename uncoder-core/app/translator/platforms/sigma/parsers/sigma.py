@@ -17,13 +17,8 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 
-<<<<<<< HEAD
-from typing import Union
-=======
 from datetime import timedelta
-from re import I
 from typing import Optional, Union
->>>>>>> main
 
 from app.translator.core.exceptions.core import SigmaRuleValidationException
 from app.translator.core.mixins.rule import YamlRuleMixin
@@ -96,10 +91,7 @@ class SigmaParser(QueryParser, YamlRuleMixin):
             false_positives=self.__parse_false_positives(rule.get("falsepositives")),
             source_mapping_ids=source_mapping_ids,
             parsed_logsources=parsed_logsources,
-<<<<<<< HEAD
-=======
             timeframe=self.__parse_timeframe(rule.get('detection', {}).get('timeframe'))
->>>>>>> main
         )
 
     def __validate_rule(self, rule: dict):
@@ -135,10 +127,6 @@ class SigmaParser(QueryParser, YamlRuleMixin):
                 source_mapping_ids=[source_mapping.source_id for source_mapping in source_mappings],
                 sigma_fields_tokens=sigma_fields_tokens,
                 parsed_logsources=log_sources,
-<<<<<<< HEAD
-                fields_tokens=field_tokens,
-=======
                 fields_tokens=field_tokens
->>>>>>> main
             ),
         )

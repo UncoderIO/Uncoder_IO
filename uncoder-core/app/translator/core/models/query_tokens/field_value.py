@@ -1,21 +1,13 @@
 from typing import Union
 
 from app.translator.core.custom_types.tokens import STR_SEARCH_OPERATORS
-<<<<<<< HEAD
-from app.translator.core.models.query_tokens.field import Alias, Field, PredefinedField
-=======
 from app.translator.core.models.query_tokens.field import Alias, BaseFieldsGetter, Field, PredefinedField
->>>>>>> main
 from app.translator.core.models.query_tokens.identifier import Identifier
 from app.translator.core.models.query_tokens.value import Value
 from app.translator.core.str_value_manager import StrValue
 
 
-<<<<<<< HEAD
-class FieldValue(Value):
-=======
 class FieldValue(BaseFieldsGetter, Value):
->>>>>>> main
     def __init__(
         self,
         source_name: str,
@@ -41,10 +33,7 @@ class FieldValue(BaseFieldsGetter, Value):
             return f"{self.predefined_field.name} {self.operator.token_type} {self.values}"
 
         return f"{self.field.source_name} {self.operator.token_type} {self.values}"
-<<<<<<< HEAD
-=======
 
     @property
     def fields(self) -> list[Field]:
         return [self.field] if self.field else []
->>>>>>> main
