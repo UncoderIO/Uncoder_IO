@@ -1,0 +1,8 @@
+platform: ElasticSearch ES|QL
+source: default
+
+
+default_log_source:
+  index: "logs-*"
+
+

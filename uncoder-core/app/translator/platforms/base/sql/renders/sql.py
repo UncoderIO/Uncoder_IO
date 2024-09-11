@@ -20,7 +20,6 @@ limitations under the License.
 from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
-from app.translator.core.exceptions.render import UnsupportedRenderMethod
 from app.translator.core.mapping import LogSourceSignature
 from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
 
@@ -67,9 +66,6 @@ class SqlFieldValueRender(BaseFieldValueRender):
         if isinstance(value, list):
             return f"({self.or_token.join(self.regex_modifier(field=field, value=v) for v in value)})"
         return f"{field} ILIKE '{value}'  ESCAPE '\\'"
-
-    def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
-        raise UnsupportedRenderMethod(platform_name=self.details.name, method="Keywords")
 
 
 class SqlQueryRender(PlatformQueryRender):
