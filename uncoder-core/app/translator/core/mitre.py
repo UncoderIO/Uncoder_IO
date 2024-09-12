@@ -189,7 +189,7 @@ class MitreConfig(metaclass=SingletonMeta):
                         technique_id=technique_data["technique_id"],
                         name=technique_data["technique"],
                         url=technique_data["url"],
-                        tactic=technique_data["tactic"],
+                        tactic=technique_data.get("tactic", []),
                     )
                     self.techniques.insert(technique_id, technique)
         except JSONDecodeError:

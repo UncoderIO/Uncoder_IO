@@ -11,6 +11,13 @@ def execute_module(path: str) -> None:
         spec.loader.exec_module(init_module)
 
 
+def execute_module(path: str) -> None:
+    with suppress(FileNotFoundError):
+        spec = importlib.util.spec_from_file_location("__init__", path)
+        init_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(init_module)
+
+
 def get_match_group(match: re.Match, group_name: str) -> Optional[str]:
     try:
         return match.group(group_name)

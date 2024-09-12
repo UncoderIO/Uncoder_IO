@@ -116,7 +116,7 @@ class BasePlatformMappings:
         default_mapping = SourceMapping(source_id=DEFAULT_MAPPING_NAME)
         for mapping_dict in self._loader.load_platform_mappings(self._platform_dir):
             log_source_signature = self.prepare_log_source_signature(mapping=mapping_dict)
-            if (source_id := mapping_dict["source"]) == DEFAULT_MAPPING_NAME:
+            if (source_id := mapping_dict.get("source")) == DEFAULT_MAPPING_NAME:
                 default_mapping.log_source_signature = log_source_signature
                 if self.skip_load_default_mappings:
                     continue
