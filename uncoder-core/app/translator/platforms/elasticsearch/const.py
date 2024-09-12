@@ -5,6 +5,7 @@ PLATFORM_DETAILS = {"group_id": "elk stack", "group_name": "Elastic Stack", "alt
 
 _ELASTIC_LUCENE_QUERY = "elastic-lucene-query"
 _ELASTIC_LUCENE_RULE = "elastic-lucene-rule"
+_ELASTIC_LUCENE_RULE_TOML = "elastic-lucene-rule-toml"
 _ELASTIC_KIBANA_RULE = "elastic-kibana-rule"
 _ELASTALERT_LUCENE_RULE = "elastalert-lucene-rule"
 _ELASTIC_WATCHER_RULE = "elastic-watcher-rule"
@@ -50,6 +51,14 @@ ELASTICSEARCH_RULE_DETAILS = {
     **PLATFORM_DETAILS,
 }
 
+ELASTICSEARCH_RULE_TOML_DETAILS = {
+    "platform_id": _ELASTIC_LUCENE_RULE_TOML,
+    "name": "Elastic Rule TOML",
+    "platform_name": "Detection Rule (Lucene) TOML",
+    "first_choice": 0,
+    **PLATFORM_DETAILS,
+}
+
 KIBANA_DETAILS = {
     "platform_id": _ELASTIC_KIBANA_RULE,
     "name": "Elastic Kibana Saved Search",
@@ -78,6 +87,7 @@ elasticsearch_lucene_query_details = PlatformDetails(**ELASTICSEARCH_LUCENE_QUER
 elasticsearch_esql_query_details = PlatformDetails(**ELASTICSEARCH_ESQL_QUERY_DETAILS)
 elasticsearch_esql_rule_details = PlatformDetails(**ELASTICSEARCH_ESQL_RULE_DETAILS)
 elasticsearch_rule_details = PlatformDetails(**ELASTICSEARCH_RULE_DETAILS)
+elasticsearch_rule_toml_details = PlatformDetails(**ELASTICSEARCH_RULE_TOML_DETAILS)
 elastalert_details = PlatformDetails(**ELASTALERT_DETAILS)
 kibana_rule_details = PlatformDetails(**KIBANA_DETAILS)
 xpack_watcher_details = PlatformDetails(**XPACK_WATCHER_DETAILS)

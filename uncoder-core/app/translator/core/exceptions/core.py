@@ -84,5 +84,9 @@ class InvalidJSONStructure(InvalidRuleStructure):
     rule_type: str = "JSON"
 
 
+class InvalidTOMLStructure(InvalidRuleStructure):
+    rule_type: str = "TOML"
+
+
 class InvalidXMLStructure(InvalidRuleStructure):
     rule_type: str = "XML"
