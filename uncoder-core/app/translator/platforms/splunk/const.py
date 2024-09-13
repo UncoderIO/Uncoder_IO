@@ -42,5 +42,14 @@ SPLUNK_ALERT_DETAILS = {
     **PLATFORM_DETAILS,
 }
 
+SPLUNK_ALERT_YML_DETAILS = {
+    "platform_id": "splunk-spl-rule-yml",
+    "name": "Splunk Alert YML",
+    "platform_name": "Alert (SPL) YML",
+    "first_choice": 0,
+    **PLATFORM_DETAILS,
+}
+
 splunk_query_details = PlatformDetails(**SPLUNK_QUERY_DETAILS)
 splunk_alert_details = PlatformDetails(**SPLUNK_ALERT_DETAILS)
+splunk_alert_yml_details = PlatformDetails(**SPLUNK_ALERT_YML_DETAILS)

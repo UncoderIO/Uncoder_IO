@@ -1,10 +1,6 @@
 from typing import Optional
 
 
-class NotImplementedException(BaseException):
-    ...
-
-
 class BasePlatformException(BaseException):
     ...
 
@@ -86,6 +82,10 @@ class InvalidYamlStructure(InvalidRuleStructure):
 
 class InvalidJSONStructure(InvalidRuleStructure):
     rule_type: str = "JSON"
+
+
+class InvalidTOMLStructure(InvalidRuleStructure):
+    rule_type: str = "TOML"
 
 
 class InvalidXMLStructure(InvalidRuleStructure):

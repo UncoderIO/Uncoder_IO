@@ -48,7 +48,7 @@ class AQLMappings(BasePlatformMappings):
 
     def prepare_log_source_signature(self, mapping: dict) -> AQLLogSourceSignature:
         log_source = mapping.get("log_source", {})
-        default_log_source = mapping["default_log_source"]
+        default_log_source = mapping.get("default_log_source")
         return AQLLogSourceSignature(
             device_types=log_source.get("devicetype"),
             categories=log_source.get("category"),

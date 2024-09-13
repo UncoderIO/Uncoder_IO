@@ -21,7 +21,6 @@ from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.values import ValueType
-from app.translator.core.exceptions.render import UnsupportedRenderMethod
 from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
 from app.translator.core.str_value_manager import StrValue
 from app.translator.platforms.base.spl.str_value_manager import spl_str_value_manager
@@ -81,9 +80,6 @@ class SplFieldValueRender(BaseFieldValueRender):
         if isinstance(value, list):
             return f"({self.or_token.join(self.keywords(field=field, value=v) for v in value)})"
         return f"{self._pre_process_value(field, value, wrap_str=True)}"
-
-    def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
-        raise UnsupportedRenderMethod(platform_name=self.details.name, method="Regex Expression")
 
 
 class SplQueryRender(PlatformQueryRender):

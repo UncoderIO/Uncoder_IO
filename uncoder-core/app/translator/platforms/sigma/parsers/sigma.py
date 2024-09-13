@@ -18,7 +18,6 @@ limitations under the License.
 """
 
 from datetime import timedelta
-from re import I
 from typing import Optional, Union
 
 from app.translator.core.exceptions.core import SigmaRuleValidationException
