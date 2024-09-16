@@ -38,6 +38,7 @@ class LuceneTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
         ":>": OperatorType.GT,
         ":<": OperatorType.LT,
         ":": OperatorType.EQ,
+        "==": OperatorType.EQ,
     }
     multi_value_operators_map: ClassVar[dict[str, str]] = {":": OperatorType.EQ}
 
@@ -61,7 +62,7 @@ class LuceneTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
 
     multi_value_pattern = rf"""\((?P<{ValueType.multi_value}>[:a-zA-Z\"\*0-9=+%#№;\-_\/\\'\,.$&^@!\(\[\]\s|]+)\)"""
     multi_value_check_pattern = r"___field___\s*___operator___\s*\("
-    multi_value_delimiter_pattern = r"\s+OR\s+"
+    multi_value_delimiter_pattern = r"\s+OR|or\s+"
 
     escape_manager = lucene_escape_manager
 
@@ -77,7 +78,9 @@ class LuceneTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
 
     @staticmethod
     def clean_multi_value(value: str) -> str:
-        return value.strip('"') if value.startswith('"') and value.endswith('"') else value
+        value = value.strip('"') if value.startswith('"') and value.endswith('"') else value
+        value = value.replace("\n", "").replace("  ", "")
+        return value.strip()
 
     def get_operator_and_value(  # noqa: PLR0911
         self, match: re.Match, mapped_operator: str = OperatorType.EQ, operator: Optional[str] = None
