@@ -1,0 +1,11 @@
+platform: Palo Alto Cortex XSIAM
+source: okta_okta
+
+
+default_log_source:
+  datamodel: datamodel
+  dataset: okta_okta_raw
+
+field_mapping:
+  eventType: xdm.event.type
+  eventtype: xdm.event.type
