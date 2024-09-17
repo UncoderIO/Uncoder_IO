@@ -90,7 +90,7 @@ class BaseFieldValueRender(ABC):
     def _pre_process_value(
         self,
         field: str,
-        value: Union[int, str, StrValue],
+        value: Union[bool, int, str, StrValue],
         value_type: str = ValueType.value,
         wrap_str: bool = False,
         wrap_int: bool = False,
