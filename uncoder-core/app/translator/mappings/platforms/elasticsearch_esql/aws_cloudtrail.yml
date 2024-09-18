@@ -39,19 +39,3 @@ field_mapping:
   userIdentity.type: aws.cloudtrail.user_identity.type
   userIdentity.userName: user.name
   vpcEndpointId: aws.cloudtrail.vpc_endpoint_id
-overrides:
-  - field: event.outcome
-    value: failure
-    regexes:
-      - (\(\(aws.cloudtrail.error_message.keyword:.* event.action:\"ConsoleLogin\"\)\))
-      - (\(\(aws.cloudtrail.error_code.keyword:.* event.action:\"ConsoleLogin\"\)\))
-      - (\(\(aws.cloudtrail.error_message.keyword:.* aws.cloudtrail.response_elements.keyword:\*Failure\*\)\))
-      - (\(\(aws.cloudtrail.error_code.keyword:.* aws.cloudtrail.response_elements.keyword:\*Failure\*\)\))
-      - (\(\(event.action:\"ConsoleLogin\".* aws.cloudtrail.error_message.keyword:\*\)\))
-      - (\(\(event.action:\"ConsoleLogin\".* aws.cloudtrail.error_code.keyword:\*\)\))
-      - (\(\(aws.cloudtrail.response_elements.keyword:\*Failure\*.* aws.cloudtrail.error_message.keyword:\*\)\))
-      - (\(\(aws.cloudtrail.response_elements.keyword:\*Failure\*.* aws.cloudtrail.error_code.keyword:\*\)\))
-  - field: event.outcome
-    value: success
-    literals:
-      - 'NOT (event.outcome:failure)'
