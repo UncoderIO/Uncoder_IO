@@ -34,15 +34,15 @@ from app.translator.core.str_value_manager import (
     StrValueManager,
     UnboundLenWildCard,
 )
-from app.translator.platforms.base.aql.escape_manager import aql_escape_manager
+from app.translator.platforms.base.sql.escape_manager import sql_escape_manager
 
-AQL_CONTAINER_SPEC_SYMBOLS_MAP = copy.copy(CONTAINER_SPEC_SYMBOLS_MAP)
-AQL_CONTAINER_SPEC_SYMBOLS_MAP.update({SingleSymbolWildCard: "_", UnboundLenWildCard: "%"})
+SQL_CONTAINER_SPEC_SYMBOLS_MAP = copy.copy(CONTAINER_SPEC_SYMBOLS_MAP)
+SQL_CONTAINER_SPEC_SYMBOLS_MAP.update({SingleSymbolWildCard: "_", UnboundLenWildCard: "%"})
 
 
-class AQLStrValueManager(StrValueManager):
-    escape_manager = aql_escape_manager
-    container_spec_symbols_map: ClassVar[dict[type[BaseSpecSymbol], str]] = AQL_CONTAINER_SPEC_SYMBOLS_MAP
+class SQLStrValueManager(StrValueManager):
+    escape_manager = sql_escape_manager
+    container_spec_symbols_map: ClassVar[dict[type[BaseSpecSymbol], str]] = SQL_CONTAINER_SPEC_SYMBOLS_MAP
     re_str_alpha_num_symbols_map: ClassVar[dict[str, type[BaseSpecSymbol]]] = {
         "b": ReWordBoundarySymbol,
         "w": ReWordSymbol,
@@ -97,4 +97,4 @@ class AQLStrValueManager(StrValueManager):
         return result
 
 
-aql_str_value_manager = AQLStrValueManager()
+sql_str_value_manager = SQLStrValueManager()
