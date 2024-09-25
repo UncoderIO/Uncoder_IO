@@ -1,0 +1,61 @@
+platform: Palo Alto Cortex XSIAM
+source: windows_sysmon
+
+
+default_log_source:
+  preset: xdr_event_log
+
+field_mapping:
+  EventID: action_evtlog_event_id
+  OriginalFileName: actor_process_file_original_name
+  Description: action_evtlog_description
+
+raw_log_fields:
+  CommandLine: regex
+  Image: regex
+  ParentImage: regex
+  CallTrace: regex
+  Company: regex
+  CurrentDirectory: regex
+  DestinationHostname: regex
+  DestinationIp: regex
+  DestinationIsIpv6: regex
+  DestinationPort: regex
+  DestinationPortName: regex
+  Hashes: regex
+  Initiated: regex
+  IntegrityLevel: regex
+  ParentCommandLine: regex
+  Product: regex
+  Protocol: regex
+  RuleName: regex
+  SourceHostname: regex
+  SourceIp: regex
+  SourceIsIpv6: regex
+  SourcePort: regex
+  SourcePortName: regex
+  TargetFilename: regex
+  User: regex
+  Signed: regex
+  Signature: regex
+  SignatureStatus: regex
+  TargetObject: regex
+  Details: regex
+  QueryName: regex
+  QueryResults: regex
+  QueryStatus: regex
+  IsExecutable: regex
+  PipeName: regex
+  ImageLoaded: regex
+  ImagePath: regex
+  Imphash: regex
+  SourceImage: regex
+  StartModule: regex
+  TargetImage: regex
+  Device: regex
+  ProcessID: regex
+  FileVersion: regex
+  StartAddress: regex
+  StartFunction: regex
+  EventType: regex
+  GrantedAccess: regex

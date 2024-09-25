@@ -48,7 +48,7 @@ class SigmaMappings(BasePlatformMappings):
             product=product, service=service, category=category, default_source=default_log_source
         )
 
-    def get_suitable_source_mappings(
+    def get_source_mappings_by_fields_and_log_sources(
         self, field_names: list[str], log_sources: dict[str, list[Union[int, str]]]
     ) -> list[SourceMapping]:
         source_mappings = []

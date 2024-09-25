@@ -29,7 +29,7 @@ from app.translator.platforms.elasticsearch.const import elasticsearch_esql_quer
 from app.translator.platforms.elasticsearch.mapping import ElasticESQLMappings, esql_query_mappings
 from app.translator.platforms.elasticsearch.str_value_manager import (
     ESQLQueryStrValueManager,
-    esql_query_str_value_manager,
+    esql_query_str_value_manager
 )
 
 
