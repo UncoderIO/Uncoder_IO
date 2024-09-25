@@ -139,3 +139,4 @@ field_mapping:
   Workstation: xdm.source.host.hostname
   RegistryKey: xdm.target.registry.key
   RegistryValue: xdm.target.registry.value
+  RegistryValueData: xdm.target.registry.data
