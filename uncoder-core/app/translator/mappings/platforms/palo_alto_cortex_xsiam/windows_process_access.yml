@@ -1,0 +1,20 @@
+platform: Palo Alto Cortex XSIAM
+source: windows_process_access
+
+default_log_source:
+  preset: xdr_event_log
+
+field_mapping:
+  User: action_process_username
+  SourceUser: action_process_username
+
+raw_log_fields:
+  SourceProcessGUID: regex
+  SourceProcessId: regex
+  SourceThreadId: regex
+  SourceImage: regex
+  TargetProcessGUID: regex
+  TargerProcessId: regex
+  TargetImage: regex
+  GrantedAccess: regex
+  CallTrace: regex

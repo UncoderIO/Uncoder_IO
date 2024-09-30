@@ -19,23 +19,23 @@ limitations under the License.
 
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.managers import render_manager
-from app.translator.platforms.palo_alto.const import cortex_xsiam_xql_query_details
-from app.translator.platforms.palo_alto.functions import cortex_xsiam_xql_functions
-from app.translator.platforms.palo_alto.mapping import CortexXSIAMXQLMappings, cortex_xsiam_xql_query_mappings
+from app.translator.platforms.palo_alto.const import cortex_xdr_xql_query_details
+from app.translator.platforms.palo_alto.functions import cortex_xdr_xql_functions
+from app.translator.platforms.palo_alto.mapping import CortexXDRXQLMappings, cortex_xdr_xql_query_mappings
 from app.translator.platforms.palo_alto.renders.base import CortexXQLFieldValueRender, CortexXQLQueryRender
 
 
-class CortexXSIAMXQLFieldValueRender(CortexXQLFieldValueRender):
-    details: PlatformDetails = cortex_xsiam_xql_query_details
+class CortexXDRXQLFieldValueRender(CortexXQLFieldValueRender):
+    details: PlatformDetails = cortex_xdr_xql_query_details
 
 
 @render_manager.register
-class CortexXSIAMXQLQueryRender(CortexXQLQueryRender):
-    details: PlatformDetails = cortex_xsiam_xql_query_details
-    mappings: CortexXSIAMXQLMappings = cortex_xsiam_xql_query_mappings
+class CortexXDRXQLQueryRender(CortexXQLQueryRender):
+    details: PlatformDetails = cortex_xdr_xql_query_details
+    mappings: CortexXDRXQLMappings = cortex_xdr_xql_query_mappings
 
-    field_value_render = CortexXSIAMXQLFieldValueRender(CortexXQLQueryRender.or_token)
+    field_value_render = CortexXDRXQLFieldValueRender(CortexXQLQueryRender.or_token)
 
     def init_platform_functions(self) -> None:
-        self.platform_functions = cortex_xsiam_xql_functions
+        self.platform_functions = cortex_xdr_xql_functions
         self.platform_functions.platform_query_render = self

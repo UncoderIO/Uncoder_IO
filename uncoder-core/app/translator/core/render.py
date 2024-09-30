@@ -31,7 +31,7 @@ from app.translator.core.exceptions.core import StrictPlatformException
 from app.translator.core.exceptions.parser import UnsupportedOperatorException
 from app.translator.core.exceptions.render import UnsupportedRenderMethod
 from app.translator.core.functions import PlatformFunctions
-from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
+from app.translator.core.mapping import BasePlatformMappings, LogSourceSignature, SourceMapping
 from app.translator.core.models.functions.base import Function, RenderedFunctions
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer, TokenizedQueryContainer
@@ -90,7 +90,7 @@ class BaseFieldValueRender(ABC):
     def _pre_process_value(
         self,
         field: str,
-        value: Union[int, str, StrValue],
+        value: Union[bool, int, str, StrValue],
         value_type: str = ValueType.value,
         wrap_str: bool = False,
         wrap_int: bool = False,
@@ -384,17 +384,6 @@ class PlatformQueryRender(QueryRender):
 
         return result
 
-    def _get_source_mappings(self, source_mapping_ids: list[str]) -> Optional[list[SourceMapping]]:
-        source_mappings = []
-        for source_mapping_id in source_mapping_ids:
-            if source_mapping := self.mappings.get_source_mapping(source_mapping_id):
-                source_mappings.append(source_mapping)
-
-        if not source_mappings:
-            source_mappings = [self.mappings.get_source_mapping(DEFAULT_MAPPING_NAME)]
-
-        return source_mappings
-
     def generate_from_raw_query_container(self, query_container: RawQueryContainer) -> str:
         return self.finalize_query(
             prefix="", query=query_container.query, functions="", meta_info=query_container.meta_info
@@ -464,7 +453,7 @@ class PlatformQueryRender(QueryRender):
     def generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
         queries_map = {}
         errors = []
-        source_mappings = self._get_source_mappings(query_container.meta_info.source_mapping_ids)
+        source_mappings = self.mappings.get_source_mappings_by_ids(query_container.meta_info.source_mapping_ids)
 
         for source_mapping in source_mappings:
             try:
