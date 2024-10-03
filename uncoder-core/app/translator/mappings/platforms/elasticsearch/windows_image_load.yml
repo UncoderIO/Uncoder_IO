@@ -1,6 +1,10 @@
 platform: ElasticSearch
 source: windows_image_load
 
+conditions:
+  event.action:
+    - 'Image loaded (rule: ImageLoad)'
+    - 'load'
 
 log_source:
   index: [winlogbeat-*, logs-*]
