@@ -19,6 +19,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 import re
 
 from app.translator.core.exceptions.parser import TokenizerGeneralException
+from app.translator.core.mitre import MitreConfig, MitreInfoContainer
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer
 from app.translator.managers import parser_manager
@@ -37,6 +38,7 @@ class ChronicleRuleParser(ChronicleQueryParser):
     event_name_pattern = r"condition:\n\s*(?P<event_name>\$[a-zA-Z_0-9]+)\n"
     mappings: ChronicleMappings = chronicle_rule_mappings
     tokenizer = ChronicleRuleTokenizer()
+    mitre_config: MitreConfig = MitreConfig()
 
     def __parse_rule(self, rule: str) -> tuple[str, str, str]:
         if (rule_name_search := re.search(self.rule_name_pattern, rule)) is None:
@@ -63,28 +65,52 @@ class ChronicleRuleParser(ChronicleQueryParser):
         return " ".join(name.split("_")).title()
 
     @staticmethod
-    def __parse_meta_info(meta_info_str: str) -> tuple[str, list[str], list[str]]:
-        references = tags = []
-        description = None
+    def __parse_meta_info(meta_info_str: str) -> dict:
+        parsed_meta_info = {}
+
         for info in meta_info_str.strip(" ").strip("\n").split("\n"):
             key, value = info.split(" = ")
             key = key.strip(" ")
-            if key == "description":
-                description = value.strip(" ")
+            if key in ("description", "license", "version", "sigma_id", "status", "severity", "created"):
+                parsed_meta_info[key] = value.strip(" ").strip('"')
             elif key == "reference":
-                references = [value.strip(" ").strip('"')]
-            elif key == "tags":
-                tags = [i.strip(" ").strip('"') for i in value.split(",")]
+                parsed_meta_info[key] = [value.strip(" ").strip('"')]
+            elif key in ("tags", "author"):
+                parsed_meta_info[key] = [i.strip(" ").strip('"') for i in value.split(",")]
 
-        return description, references, tags
+        return parsed_meta_info
+
+    def parse_mitre_attack_from_tags(self, tags: list) -> MitreInfoContainer:
+        parsed_techniques = []
+        parsed_tactics = []
+        for tag in set(tags):
+            tag = tag.lower()
+            if tag.startswith("attack."):
+                tag = tag[7::]
+            if tag.startswith("t"):
+                parsed_techniques.append(tag)
+            else:
+                parsed_tactics.append(tag)
+        return self.mitre_config.get_mitre_info(tactics=parsed_tactics, techniques=parsed_techniques)
 
     def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
         query, rule_name, meta_info_str = self.__parse_rule(text)
-        description, references, tags = self.__parse_meta_info(meta_info_str)
+        parsed_meta_info = self.__parse_meta_info(meta_info_str)
+
         return RawQueryContainer(
             query=query,
             language=language,
             meta_info=MetaInfoContainer(
-                title=self.__prepare_title(rule_name), description=description, references=references, tags=tags
+                id_=parsed_meta_info.get("sigma_id"),
+                title=self.__prepare_title(rule_name),
+                description=parsed_meta_info.get("description"),
+                author=parsed_meta_info.get("author"),
+                date=parsed_meta_info.get("created"),
+                license_=parsed_meta_info.get("license"),
+                severity=parsed_meta_info.get("severity"),
+                references=parsed_meta_info.get("reference"),
+                tags=parsed_meta_info.get("tags"),
+                status=parsed_meta_info.get("status"),
+                mitre_attack=self.parse_mitre_attack_from_tags(parsed_meta_info.get("tags") or []),
             ),
         )
