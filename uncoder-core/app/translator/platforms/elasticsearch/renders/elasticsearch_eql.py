@@ -32,7 +32,7 @@ class ElasticSearchEQLFieldValue(BaseFieldValueRender):
 
     def apply_field(self, field: str) -> str:
         if field.count("-") > 0 or field.count(" ") > 0 or field[0].isdigit():
-            return "`%s`" % field
+            return f"`{field}`"
         if field.endswith(".text"):
             return field[:-5]
         return field
@@ -132,9 +132,7 @@ class ElasticSearchEQLQueryRender(PlatformQueryRender):
         return "any where "
 
     def in_brackets(self, raw_list: list) -> list:
-        l_paren = Identifier(token_type=GroupType.L_PAREN)
-        r_paren = Identifier(token_type=GroupType.R_PAREN)
-        return [l_paren, *raw_list, r_paren]
+        return [Identifier(token_type=GroupType.L_PAREN), *raw_list, Identifier(token_type=GroupType.R_PAREN)]
 
     def _generate_from_tokenized_query_container_by_source_mapping(
         self, query_container: TokenizedQueryContainer, source_mapping: SourceMapping
