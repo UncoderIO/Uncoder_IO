@@ -87,7 +87,7 @@ class ChronicleRuleParser(ChronicleQueryParser):
             tag = tag.lower()
             if tag.startswith("attack."):
                 tag = tag[7::]
-            if tag.startswith("t"):
+            if tag[-1].isdigit():
                 parsed_techniques.append(tag)
             else:
                 parsed_tactics.append(tag)

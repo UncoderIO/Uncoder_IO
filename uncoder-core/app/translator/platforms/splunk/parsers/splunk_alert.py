@@ -52,8 +52,8 @@ class SplunkAlertParser(SplunkQueryParser):
         if mitre_attack_match := re.search(r"'mitre_attack':\s*\[(.*?)\]", text):
             raw_mitre_attack = [attack.strip().strip("'") for attack in mitre_attack_match.group(1).split(",")]
             mitre_attack_container = self.mitre_config.get_mitre_info(
-                tactics=[i.lower() for i in raw_mitre_attack if not i.lower().startswith("t")],
-                techniques=[i.lower() for i in raw_mitre_attack if i.lower().startswith("t")],
+                tactics=[i.lower() for i in raw_mitre_attack if not i[-1].isdigit()],
+                techniques=[i.lower() for i in raw_mitre_attack if i[-1].isdigit()],
             )
 
         if rule_id_match := re.search(r"Rule ID:\s*([\w-]+)", text):
