@@ -16,6 +16,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 -----------------------------------------------------------------
 """
 
+from typing import Optional, Union
+
 from app.translator.core.models.functions.base import ParsedFunctions
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
@@ -36,7 +38,7 @@ class MicrosoftSentinelQueryParser(PlatformQueryParser):
 
     wrapped_with_comment_pattern = r"^\s*//.*(?:\n|$)"
 
-    def _parse_query(self, query: str) -> tuple[str, dict[str, list[str]], ParsedFunctions]:
+    def _parse_query(self, query: str) -> tuple[str, dict[str, Union[list[str], list[int]]], Optional[ParsedFunctions]]:
         table, query, functions = self.platform_functions.parse(query)
         log_sources = {"table": [table]}
         return query, log_sources, functions

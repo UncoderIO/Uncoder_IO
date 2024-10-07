@@ -8,3 +8,5 @@ from app.translator.core.models.query_tokens.identifier import Identifier
 from app.translator.core.models.query_tokens.keyword import Keyword
 
 QUERY_TOKEN_TYPE = Union[FieldField, FieldValue, FunctionValue, Keyword, Identifier, Field, Alias]
+
+DEFAULT_MAPPING_ID = "default"

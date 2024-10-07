@@ -20,10 +20,11 @@ import re
 
 from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.mitre import MitreConfig
+from app.translator.core.mixins.rule import YamlRuleMixin
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, MitreInfoContainer, RawQueryContainer
 from app.translator.managers import parser_manager
-from app.translator.platforms.splunk.const import splunk_alert_details
+from app.translator.platforms.splunk.const import splunk_alert_details, splunk_alert_yml_details
 from app.translator.platforms.splunk.mapping import SplunkMappings, splunk_alert_mappings
 from app.translator.platforms.splunk.parsers.splunk import SplunkQueryParser
 
@@ -48,11 +49,11 @@ class SplunkAlertParser(SplunkQueryParser):
             }
             severity = level_map.get(str(severity_match.group(1)), "low")
 
-        if mitre_attack_match := re.search(r"'mitre_attack':\s*\[(.*?)\]", text):
+        if mitre_attack_match := re.search(r'"mitre_attack":\s*\["([^"]+)"\]', text):
             raw_mitre_attack = [attack.strip().strip("'") for attack in mitre_attack_match.group(1).split(",")]
             mitre_attack_container = self.mitre_config.get_mitre_info(
-                tactics=[i.lower() for i in raw_mitre_attack if not i.lower().startswith("t")],
-                techniques=[i.lower() for i in raw_mitre_attack if i.lower().startswith("t")],
+                tactics=[i.lower() for i in raw_mitre_attack if not i[-1].isdigit()],
+                techniques=[i.lower() for i in raw_mitre_attack if i[-1].isdigit()],
             )
 
         if rule_id_match := re.search(r"Rule ID:\s*([\w-]+)", text):
@@ -71,5 +72,47 @@ class SplunkAlertParser(SplunkQueryParser):
                 description=description,
                 severity=severity,
                 mitre_attack=mitre_attack_container,
+            ),
+        )
+
+
+@parser_manager.register
+class SplunkAlertYMLParser(SplunkQueryParser, YamlRuleMixin):
+    details: PlatformDetails = splunk_alert_yml_details
+    mappings: SplunkMappings = splunk_alert_mappings
+    mitre_config: MitreConfig = MitreConfig()
+
+    def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
+        rule = self.load_rule(text)
+        mitre_attack_container = self.mitre_config.get_mitre_info(
+            techniques=rule.get("tags", {}).get("mitre_attack_id", [])
+        )
+        description = rule.get("description", "")
+        if rule.get("how_to_implement", ""):
+            description = f'{description} {rule.get("how_to_implement", "")}'
+        tags = rule.get("tags", {}).get("analytic_story", [])
+        if rule.get("type"):
+            tags.append(rule.get("type"))
+        false_positives = None
+        if rule.get("known_false_positives"):
+            false_positives = (
+                rule["known_false_positives"]
+                if isinstance(rule["known_false_positives"], list)
+                else [rule["known_false_positives"]]
+            )
+        return RawQueryContainer(
+            query=rule.get("search"),
+            language=language,
+            meta_info=MetaInfoContainer(
+                id_=rule.get("id"),
+                title=rule.get("name"),
+                date=rule.get("date"),
+                author=rule.get("author").split(", "),
+                status=rule.get("status"),
+                description=description,
+                false_positives=false_positives,
+                references=rule.get("references"),
+                mitre_attack=mitre_attack_container,
+                tags=tags,
             ),
         )

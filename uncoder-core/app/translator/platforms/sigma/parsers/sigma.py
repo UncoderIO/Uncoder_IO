@@ -18,7 +18,6 @@ limitations under the License.
 """
 
 from datetime import timedelta
-from re import I
 from typing import Optional, Union
 
 from app.translator.core.exceptions.core import SigmaRuleValidationException
@@ -113,7 +112,9 @@ class SigmaParser(QueryParser, YamlRuleMixin):
         tokens = self.tokenizer.tokenize(detection=sigma_rule.get("detection"))
         field_tokens = [token.field for token in QueryTokenizer.filter_tokens(tokens, FieldValue)]
         field_names = [field.source_name for field in field_tokens]
-        source_mappings = self.mappings.get_suitable_source_mappings(field_names=field_names, log_sources=log_sources)
+        source_mappings = self.mappings.get_source_mappings_by_fields_and_log_sources(
+            field_names=field_names, log_sources=log_sources
+        )
         QueryTokenizer.set_field_tokens_generic_names_map(field_tokens, source_mappings, self.mappings.default_mapping)
         sigma_fields_tokens = None
         if sigma_fields := sigma_rule.get("fields"):

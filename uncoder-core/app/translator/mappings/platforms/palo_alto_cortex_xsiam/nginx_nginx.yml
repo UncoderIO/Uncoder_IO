@@ -1,0 +1,16 @@
+platform: Palo Alto Cortex XSIAM
+source: nginx_nginx
+
+
+default_log_source:
+  datamodel: datamodel
+  dataset: nginx_nginx_raw
+
+field_mapping:
+  c-uri: xdm.network.http.url
+  c-useragent: User_agent
+  cs-method: xdm.network.http.method
+  cs-bytes: xdm.target.sent_bytes
+  c-uri-query: xdm.network.http.url
+  cs-referrer: xdm.event.description
+  sc-status: xdm.network.http.response_code

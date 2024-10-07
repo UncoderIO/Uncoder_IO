@@ -22,7 +22,6 @@ from app.translator.core.const import QUERY_TOKEN_TYPE
 from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.custom_types.tokens import GroupType, LogicalOperatorType, OperatorType
 from app.translator.core.custom_types.values import ValueType
-from app.translator.core.exceptions.render import UnsupportedRenderMethod
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.mitre import MitreInfoContainer
 from app.translator.core.models.platform_details import PlatformDetails
@@ -166,21 +165,6 @@ class FortiSiemFieldValueRender(BaseFieldValueRender):
 
         value = self.__prepare_regex_value(value)
         return f'{field} NOT REGEXP "{value}"'
-
-    def less_modifier(self, field: str, value: Union[int, str]) -> str:  # noqa: ARG002
-        raise UnsupportedRenderMethod(platform_name=self.details.name, method="<")
-
-    def less_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:  # noqa: ARG002
-        raise UnsupportedRenderMethod(platform_name=self.details.name, method="<=")
-
-    def greater_modifier(self, field: str, value: Union[int, str]) -> str:  # noqa: ARG002
-        raise UnsupportedRenderMethod(platform_name=self.details.name, method=">")
-
-    def greater_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:  # noqa: ARG002
-        raise UnsupportedRenderMethod(platform_name=self.details.name, method=">=")
-
-    def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
-        raise UnsupportedRenderMethod(platform_name=self.details.name, method="Keywords")
 
 
 @render_manager.register

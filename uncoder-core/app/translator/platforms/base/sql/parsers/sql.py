@@ -17,7 +17,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 import re
+from typing import Optional, Union
 
+from app.translator.core.models.functions.base import ParsedFunctions
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.parser import PlatformQueryParser
 from app.translator.platforms.base.sql.tokenizer import SqlTokenizer
@@ -30,18 +32,18 @@ class SqlQueryParser(PlatformQueryParser):
 
     wrapped_with_comment_pattern = r"^\s*--.*(?:\n|$)"
 
-    def _parse_query(self, query: str) -> tuple[str, dict[str, list[str]]]:
+    def _parse_query(self, query: str) -> tuple[str, dict[str, Union[list[str], list[int]]], Optional[ParsedFunctions]]:
         log_source = {"table": []}
         if re.search(self.query_delimiter_pattern, query, flags=re.IGNORECASE):
             table_search = re.search(self.table_pattern, query)
             table = table_search.group("table")
             log_source["table"] = [table]
-            return re.split(self.query_delimiter_pattern, query, flags=re.IGNORECASE)[1], log_source
+            return re.split(self.query_delimiter_pattern, query, flags=re.IGNORECASE)[1], log_source, None
 
-        return query, log_source
+        return query, log_source, None
 
     def parse(self, raw_query_container: RawQueryContainer) -> TokenizedQueryContainer:
-        query, log_sources = self._parse_query(raw_query_container.query)
+        query, log_sources, _ = self._parse_query(raw_query_container.query)
         query_tokens = self.get_query_tokens(query)
         field_tokens = self.get_field_tokens(query_tokens)
         source_mappings = self.get_source_mappings(field_tokens, log_sources)

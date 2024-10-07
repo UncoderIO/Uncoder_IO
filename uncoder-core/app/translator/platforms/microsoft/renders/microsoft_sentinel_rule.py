@@ -21,6 +21,8 @@ import copy
 import json
 from typing import Optional
 
+import isodate
+
 from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.platform_details import PlatformDetails
@@ -69,6 +71,30 @@ class MicrosoftSentinelRuleRender(MicrosoftSentinelQueryRender):
 
         return sorted(tactics), sorted(techniques)
 
+    @staticmethod
+    def get_query_frequency(meta_info: MetaInfoContainer) -> Optional[str]:
+        if meta_info.timeframe:
+            return isodate.duration_isoformat(meta_info.timeframe)
+        if meta_info.raw_metainfo_container:
+            return meta_info.raw_metainfo_container.query_frequency
+
+    @staticmethod
+    def get_query_period(meta_info: MetaInfoContainer) -> Optional[str]:
+        if meta_info.query_period:
+            return isodate.duration_isoformat(meta_info.query_period)
+        if meta_info.raw_metainfo_container:
+            return meta_info.raw_metainfo_container.query_period
+
+    @staticmethod
+    def get_trigger_operator(meta_info: MetaInfoContainer) -> Optional[str]:
+        if meta_info.raw_metainfo_container:
+            return meta_info.raw_metainfo_container.trigger_operator
+
+    @staticmethod
+    def get_trigger_threshold(meta_info: MetaInfoContainer) -> Optional[str]:
+        if meta_info.raw_metainfo_container:
+            return meta_info.raw_metainfo_container.trigger_threshold
+
     def finalize_query(
         self,
         prefix: str,
@@ -94,6 +120,13 @@ class MicrosoftSentinelRuleRender(MicrosoftSentinelQueryRender):
         mitre_tactics, mitre_techniques = self.__create_mitre_threat(mitre_attack=meta_info.mitre_attack)
         rule["tactics"] = mitre_tactics
         rule["techniques"] = mitre_techniques
+
+        if meta_info:
+            rule["queryFrequency"] = self.get_query_frequency(meta_info=meta_info) or rule["queryFrequency"]
+            rule["queryPeriod"] = self.get_query_period(meta_info=meta_info) or rule["queryPeriod"]
+            rule["triggerOperator"] = self.get_trigger_operator(meta_info=meta_info) or rule["triggerOperator"]
+            rule["triggerThreshold"] = self.get_trigger_threshold(meta_info=meta_info) or rule["triggerThreshold"]
+
         json_rule = json.dumps(rule, indent=4, sort_keys=False)
         json_rule = self.wrap_with_unmapped_fields(json_rule, unmapped_fields)
         return self.wrap_with_not_supported_functions(json_rule, not_supported_functions)

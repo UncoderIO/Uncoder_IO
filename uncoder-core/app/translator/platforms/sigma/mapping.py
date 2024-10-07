@@ -48,7 +48,7 @@ class SigmaMappings(BasePlatformMappings):
             product=product, service=service, category=category, default_source=default_log_source
         )
 
-    def get_suitable_source_mappings(
+    def get_source_mappings_by_fields_and_log_sources(
         self, field_names: list[str], log_sources: dict[str, list[Union[int, str]]]
     ) -> list[SourceMapping]:
         source_mappings = []
@@ -61,6 +61,5 @@ class SigmaMappings(BasePlatformMappings):
                 source_mappings.append(source_mapping)
 
         return source_mappings or [self._source_mappings[DEFAULT_MAPPING_NAME]]
-
 
 sigma_rule_mappings = SigmaMappings(platform_dir="sigma", platform_details=sigma_rule_details)

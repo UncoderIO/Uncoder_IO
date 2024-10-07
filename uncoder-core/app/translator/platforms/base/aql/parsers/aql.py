@@ -17,7 +17,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 import re
-from typing import Union
+from typing import Optional, Union
 
 from app.translator.core.exceptions.parser import TokenizerGeneralException
 from app.translator.core.models.functions.base import ParsedFunctions
@@ -37,13 +37,13 @@ class AQLQueryParser(PlatformQueryParser):
     log_source_functions = ("LOGSOURCENAME", "LOGSOURCEGROUPNAME")
     log_source_function_pattern = r"\(?(?P<key>___func_name___\([a-zA-Z]+\))(?:\s+like\s+|\s+ilike\s+|\s*=\s*)'(?P<value>[%a-zA-Z\s]+)'\s*\)?\s+(?:and|or)?\s"  # noqa: E501
 
-    log_source_key_types = ("devicetype", "category", "qid", "qideventcategory", *LOG_SOURCE_FUNCTIONS_MAP.keys())
+    log_source_key_types = ("devicetype", "qideventcategory", "category", "qid", *LOG_SOURCE_FUNCTIONS_MAP.keys())
     log_source_pattern = rf"___source_type___(?:\s+like\s+|\s+ilike\s+|\s*=\s*)(?:{SINGLE_QUOTES_VALUE_PATTERN}|{NUM_VALUE_PATTERN})(?:\s+(?:and|or)\s+|\s+)?"  # noqa: E501
     num_value_pattern = r"[0-9]+"
     multi_num_log_source_pattern = (
         rf"___source_type___\s+in\s+\((?P<value>(?:{num_value_pattern}(?:\s*,\s*)?)+)\)(?:\s+(?:and|or)\s+|\s+)?"
     )
-    str_value_pattern = r"""(?:')(?P<s_q_value>(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{\}\s]|'')+)(?:')"""
+    str_value_pattern = r"""'(?P<s_q_value>(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{\}\s]|'')+)'"""
     multi_str_log_source_pattern = (
         rf"""___source_type___\s+in\s+\((?P<value>(?:{str_value_pattern}(?:\s*,\s*)?)+)\)(?:\s+(?:and|or)\s+|\s+)?"""
     )
@@ -105,8 +105,8 @@ class AQLQueryParser(PlatformQueryParser):
 
         return log_sources, query
 
-    def _parse_query(self, text: str) -> tuple[str, dict[str, Union[list[str], list[int]]], ParsedFunctions]:
-        query = self.__clean_query(text)
+    def _parse_query(self, query: str) -> tuple[str, dict[str, Union[list[str], list[int]]], Optional[ParsedFunctions]]:
+        query = self.__clean_query(query)
         self.__check_table(query)
         query, functions = self.platform_functions.parse(query)
         log_sources, query = self.__parse_log_sources(query)

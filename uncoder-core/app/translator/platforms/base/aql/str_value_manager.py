@@ -23,26 +23,12 @@ from typing import ClassVar
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.str_value_manager import (
     CONTAINER_SPEC_SYMBOLS_MAP,
+    RE_STR_SPEC_SYMBOLS_MAP,
     BaseSpecSymbol,
-    ReAnySymbol,
-    ReCaretSymbol,
-    ReCommaSymbol,
     ReDigitalSymbol,
-    ReEndOfStrSymbol,
-    ReHyphenSymbol,
-    ReLeftCurlyBracket,
-    ReLeftParenthesis,
-    ReLeftSquareBracket,
-    ReOneOrMoreQuantifier,
-    ReOrOperator,
-    ReRightCurlyBracket,
-    ReRightParenthesis,
-    ReRightSquareBracket,
     ReWhiteSpaceSymbol,
     ReWordBoundarySymbol,
     ReWordSymbol,
-    ReZeroOrMoreQuantifier,
-    ReZeroOrOneQuantifier,
     SingleSymbolWildCard,
     StrValue,
     StrValueManager,
@@ -50,23 +36,6 @@ from app.translator.core.str_value_manager import (
 )
 from app.translator.platforms.base.aql.escape_manager import aql_escape_manager
 
-RE_STR_SPEC_SYMBOLS_MAP = {
-    "?": ReZeroOrOneQuantifier,
-    "*": ReZeroOrMoreQuantifier,
-    "+": ReOneOrMoreQuantifier,
-    "^": ReCaretSymbol,
-    "$": ReEndOfStrSymbol,
-    ".": ReAnySymbol,
-    "[": ReLeftSquareBracket,
-    "]": ReRightSquareBracket,
-    "(": ReLeftParenthesis,
-    ")": ReRightParenthesis,
-    "{": ReLeftCurlyBracket,
-    "}": ReRightCurlyBracket,
-    "|": ReOrOperator,
-    ",": ReCommaSymbol,
-    "-": ReHyphenSymbol,
-}
 AQL_CONTAINER_SPEC_SYMBOLS_MAP = copy.copy(CONTAINER_SPEC_SYMBOLS_MAP)
 AQL_CONTAINER_SPEC_SYMBOLS_MAP.update({SingleSymbolWildCard: "_", UnboundLenWildCard: "%"})
 

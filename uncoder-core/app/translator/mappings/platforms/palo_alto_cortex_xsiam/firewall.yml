@@ -1,0 +1,56 @@
+platform: Palo Alto Cortex XSIAM
+source: firewall
+
+log_source:
+  preset: network_story
+
+default_log_source:
+  preset: network_story
+
+field_mapping:
+  DestinationPort:
+    - action_local_port
+    - action_remote_port
+  DestinationIp:
+    - action_local_ip
+    - action_remote_ip
+  SourcePort:
+    - action_local_port
+    - action_remote_port
+  SourceIp:
+    - action_local_ip
+    - action_remote_ip
+  dst-ip:
+    - action_local_ip
+    - action_remote_ip
+  dst-port:
+    - action_local_port
+    - action_remote_port
+  src-ip:
+    - action_local_ip
+    - action_remote_ip
+  src-port:
+    - action_local_port
+    - action_remote_port
+  Protocol: action_network_protocol
+  DestinationHostname: action_external_hostname
+  SourceHostname: agent_hostname
+  User: actor_effective_username
+  CommandLine: actor_process_image_command_line
+  Image: actor_process_image_path
+  LogonId: actor_process_logon_id
+  Product: actor_process_signature_product
+  Company: actor_process_signature_vendor
+  IntegrityLevel: actor_process_integrity_level
+  CurrentDirectory: actor_process_cwd
+  ProcessId: actor_process_os_id
+  ParentProcessId: causality_actor_process_os_id
+  ParentCommandLine: causality_actor_process_command_line
+  ParentImage: causality_actor_process_image_path
+  ParentUser: causality_actor_effective_username
+  ParentIntegrityLevel: causality_actor_process_integrity_level
+  ParentLogonId: causality_actor_process_logon_id
+  ParentProduct: causality_actor_process_signature_product
+  ParentCompany: causality_actor_process_signature_vendor
+  Application: xdm.network.application_protocol
+  application: xdm.network.application_protocol

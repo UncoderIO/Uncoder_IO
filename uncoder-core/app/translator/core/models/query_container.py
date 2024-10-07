@@ -31,11 +31,34 @@ class MitreInfoContainer:
     techniques: list[MitreTechniqueContainer] = field(default_factory=list)
 
 
+class RawMetaInfoContainer:
+    def __init__(
+        self,
+        *,
+        trigger_operator: Optional[str] = None,
+        trigger_threshold: Optional[str] = None,
+        query_frequency: Optional[str] = None,
+        query_period: Optional[str] = None,
+        from_: Optional[str] = None,
+        interval: Optional[str] = None,
+    ) -> None:
+        self.trigger_operator = trigger_operator
+        self.trigger_threshold = trigger_threshold
+        self.query_frequency = query_frequency
+        self.query_period = query_period
+        self.from_ = from_
+        self.interval = interval
+
+
 class MetaInfoContainer:
     def __init__(
         self,
         *,
         id_: Optional[str] = None,
+        index: Optional[list[str]] = None,
+        language: Optional[str] = None,
+        risk_score: Optional[int] = None,
+        type_: Optional[str] = None,
         title: Optional[str] = None,
         description: Optional[str] = None,
         author: Optional[list[str]] = None,
@@ -52,10 +75,16 @@ class MetaInfoContainer:
         source_mapping_ids: Optional[list[str]] = None,
         parsed_logsources: Optional[dict] = None,
         timeframe: Optional[timedelta] = None,
-        mitre_attack: MitreInfoContainer = MitreInfoContainer(),
+        query_period: Optional[timedelta] = None,
+        mitre_attack: Optional[MitreInfoContainer] = None,
+        raw_metainfo_container: Optional[RawMetaInfoContainer] = None,
     ) -> None:
         self.id = id_ or str(uuid.uuid4())
         self.title = title or ""
+        self.index = index or []
+        self.language = language or ""
+        self.risk_score = risk_score
+        self.type_ = type_ or ""
         self.description = description or ""
         self.author = [v.strip() for v in author] if author else []
         self.date = date or datetime.now().date().strftime("%Y-%m-%d")
@@ -65,13 +94,15 @@ class MetaInfoContainer:
         self.severity = severity or SeverityType.low
         self.references = references or []
         self.tags = tags or []
-        self.mitre_attack = mitre_attack or None
+        self.mitre_attack = mitre_attack or MitreInfoContainer()
         self.raw_mitre_attack = raw_mitre_attack or []
         self.status = status or "stable"
         self.false_positives = false_positives or []
         self._source_mapping_ids = source_mapping_ids or [DEFAULT_MAPPING_NAME]
         self.parsed_logsources = parsed_logsources or {}
         self.timeframe = timeframe
+        self.query_period = query_period
+        self.raw_metainfo_container = raw_metainfo_container or RawMetaInfoContainer()
 
     @property
     def author_str(self) -> str:

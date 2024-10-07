@@ -1,14 +1,15 @@
 import logging
+from collections import Counter
 from typing import Optional, Union
 
 from app.translator.core.exceptions.core import UnsupportedPlatform
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
-from app.translator.core.parser import PlatformQueryParser
+from app.translator.core.parser import PlatformQueryParser, QueryParser
 from app.translator.core.render import QueryRender
 from app.translator.managers import ParserManager, RenderManager, parser_manager, render_manager
 from app.translator.platforms.elasticsearch.const import ELASTIC_QUERY_TYPES
 from app.translator.platforms.roota.parsers.roota import RootAParser
-from app.translator.platforms.sigma.parsers.sigma import SigmaParser
+from app.translator.platforms.sigma.mapping import sigma_rule_mappings
 from app.translator.tools.decorators import handle_translation_exceptions
 
 
@@ -19,7 +20,7 @@ class Translator:
     def __init__(self):
         self.logger = logging.getLogger("translator")
 
-    def __get_parser(self, source: str) -> Union[PlatformQueryParser, RootAParser, SigmaParser]:
+    def __get_parser(self, source: str) -> QueryParser:
         parser = self.parser_manager.get(source)
         if not parser:
             raise UnsupportedPlatform(platform=source, is_parser=True)
@@ -41,13 +42,34 @@ class Translator:
 
         return False
 
+    def parse_raw_query(
+        self, text: str, source: str
+    ) -> tuple[Union[PlatformQueryParser, RootAParser], RawQueryContainer]:
+        parser = self.__get_parser(source)
+        text = parser.remove_comments(text)
+        return parser, parser.parse_raw_query(text, language=source)
+
+    def parse_meta_info(self, text: str, source: str) -> Union[dict, RawQueryContainer]:
+        parser, raw_query_container = self.parse_raw_query(text=text, source=source)
+        source_mappings = parser.get_source_mapping_ids_by_logsources(raw_query_container.query)
+        log_sources = {"product": Counter(), "service": Counter(), "category": Counter()}
+        sigma_source_mappings = sigma_rule_mappings.get_source_mappings_by_ids(
+            [source_mapping.source_id for source_mapping in source_mappings], return_default=False
+        )
+        for sigma_source_mapping in sigma_source_mappings:
+            if product := sigma_source_mapping.log_source_signature.log_sources.get("product"):
+                log_sources["product"][product] += 1
+            if service := sigma_source_mapping.log_source_signature.log_sources.get("service"):
+                log_sources["service"][service] += 1
+            if category := sigma_source_mapping.log_source_signature.log_sources.get("category"):
+                log_sources["category"][category] += 1
+        return log_sources, raw_query_container
+
     @handle_translation_exceptions
     def __parse_incoming_data(
         self, text: str, source: str, target: Optional[str] = None
     ) -> tuple[RawQueryContainer, Optional[TokenizedQueryContainer]]:
-        parser = self.__get_parser(source)
-        text = parser.remove_comments(text)
-        raw_query_container = parser.parse_raw_query(text, language=source)
+        parser, raw_query_container = self.parse_raw_query(text=text, source=source)
         tokenized_query_container = None
         if not (target and self.__is_one_vendor_translation(raw_query_container.language, target)):
             tokenized_query_container = parser.parse(raw_query_container)
@@ -117,3 +139,6 @@ class Translator:
 
     def get_renders(self) -> list:
         return self.render_manager.get_platforms_details
+
+
+app_translator = Translator()
