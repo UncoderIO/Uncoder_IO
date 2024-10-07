@@ -49,6 +49,7 @@ class SigmaStrValueManager(StrValueManager):
             if char == "\\":
                 if prev_char == "\\":
                     split.append(char)
+                    prev_char = None
                     continue
             elif char in self.str_spec_symbols_map:
                 if prev_char == "\\":
