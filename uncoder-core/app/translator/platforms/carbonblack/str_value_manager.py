@@ -16,12 +16,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-from app.translator.core.str_value_manager import StrValueManager
-from app.translator.platforms.carbonblack.escape_manager import carbon_black_escape_manager, CarbonBlackEscapeManager
+from app.translator.core.custom_types.values import ValueType
+from app.translator.core.str_value_manager import StrValue, StrValueManager
+from app.translator.platforms.carbonblack.escape_manager import CarbonBlackEscapeManager, carbon_black_escape_manager
 
 
 class CarbonBlackStrValueManager(StrValueManager):
     escape_manager: CarbonBlackEscapeManager = carbon_black_escape_manager
+
+    def from_container_to_str(self, container: StrValue, value_type: str = ValueType.value) -> str:
+        return self.escape_manager.escape(container, value_type)
 
 
 carbon_black_str_value_manager = CarbonBlackStrValueManager()

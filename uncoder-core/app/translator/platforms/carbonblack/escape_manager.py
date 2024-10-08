@@ -8,7 +8,10 @@ from app.translator.core.models.escape_details import EscapeDetails
 class CarbonBlackEscapeManager(EscapeManager):
     escape_map: ClassVar[dict[str, list[EscapeDetails]]] = {
         ValueType.value: [
-            EscapeDetails(pattern='([\s+\\-=&?!|(){}.\\[\\]^"~:/]|(?<!\\\\)\\\\(?![*?\\\\])|\\\\u|&&|\\|\\|)')
+            EscapeDetails(
+                pattern='([\s+\\-=&?!|(){}.\\[\\]^"~:/]|(?<!\\\\)\\\\(?![*?\\\\])|\\\\u|&&|\\|\\|)',
+                escape_symbols="\\\\\g<1>",
+            )
         ]
     }
 
