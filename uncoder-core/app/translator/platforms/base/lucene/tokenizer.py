@@ -78,8 +78,8 @@ class LuceneTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
 
     @staticmethod
     def clean_multi_value(value: str) -> str:
-        value = value.strip('"') if value.startswith('"') and value.endswith('"') else value
         value = value.replace("\n", "").replace("  ", "")
+        value = value.strip('"') if value.startswith('"') and value.endswith('"') else value
         return value.strip()
 
     def get_operator_and_value(  # noqa: PLR0911
