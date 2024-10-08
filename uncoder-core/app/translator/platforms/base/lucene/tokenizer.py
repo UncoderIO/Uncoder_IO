@@ -62,7 +62,7 @@ class LuceneTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
 
     multi_value_pattern = rf"""\((?P<{ValueType.multi_value}>[:a-zA-Z\"\*0-9=+%#№;\-_\/\\'\,.$&^@!\(\[\]\s|]+)\)"""
     multi_value_check_pattern = r"___field___\s*___operator___\s*\("
-    multi_value_delimiter_pattern = r"\s+OR|or\s+"
+    multi_value_delimiter_pattern = r"\s+(?:OR|or)\s+"
 
     escape_manager = lucene_escape_manager
 
