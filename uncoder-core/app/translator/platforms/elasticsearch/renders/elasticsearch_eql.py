@@ -132,7 +132,7 @@ class ElasticSearchEQLQueryRender(PlatformQueryRender):
     def generate_prefix(self, log_source_signature: Optional[LogSourceSignature], functions_prefix: str = "") -> str:  # noqa: ARG002
         return "any where "
 
-    def in_brackets(self, raw_list: list) -> list[QUERY_TOKEN_TYPE]:
+    def in_brackets(self, raw_list: list[QUERY_TOKEN_TYPE]) -> list[QUERY_TOKEN_TYPE]:
         return [Identifier(token_type=GroupType.L_PAREN), *raw_list, Identifier(token_type=GroupType.R_PAREN)]
 
     def _generate_from_tokenized_query_container_by_source_mapping(
