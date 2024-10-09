@@ -18,7 +18,6 @@ limitations under the License.
 """
 from typing import ClassVar
 
-from app.translator.core.custom_types.values import ValueType
 from app.translator.core.str_value_manager import (
     BaseSpecSymbol,
     ReDigitalSymbol,
@@ -52,9 +51,6 @@ class EQLStrValueManager(StrValueManager):
     def from_str_to_container(self, value: str) -> StrValue:
         split = [self.str_spec_symbols_map[char]() if char in self.str_spec_symbols_map else char for char in value]
         return StrValue(value, self._concat(split))
-
-    def from_container_to_str(self, container: StrValue, value_type: str = ValueType.value) -> str:
-        return self.escape_manager.escape(container, value_type)
 
 
 esql_str_value_manager = ESQLStrValueManager()
