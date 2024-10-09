@@ -1,6 +1,7 @@
 from typing import Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
+from app.translator.core.const import QUERY_TOKEN_TYPE
 from app.translator.core.custom_types.tokens import GroupType, LogicalOperatorType, OperatorType
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.mapping import LogSourceSignature, SourceMapping
@@ -131,7 +132,7 @@ class ElasticSearchEQLQueryRender(PlatformQueryRender):
     def generate_prefix(self, log_source_signature: Optional[LogSourceSignature], functions_prefix: str = "") -> str:  # noqa: ARG002
         return "any where "
 
-    def in_brackets(self, raw_list: list) -> list:
+    def in_brackets(self, raw_list: list) -> list[QUERY_TOKEN_TYPE]:
         return [Identifier(token_type=GroupType.L_PAREN), *raw_list, Identifier(token_type=GroupType.R_PAREN)]
 
     def _generate_from_tokenized_query_container_by_source_mapping(
