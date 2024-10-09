@@ -69,11 +69,13 @@ class CarbonBlackFieldValueRender(BaseFieldValueRender):
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.regex_modifier(field=field, value=v) for v in value)})"
+        value = self.str_value_manager.from_container_to_str(value, value_type=ValueType.regex_value)
         return f"{field}:/{value}/"
 
     def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.keywords(field=field, value=v) for v in value)})"
+        value = self._pre_process_value(field, value, value_type=ValueType.value)
         return f"(*{value}*)"
 
     def is_none(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:

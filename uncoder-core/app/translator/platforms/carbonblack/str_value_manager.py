@@ -16,12 +16,23 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-from app.translator.core.str_value_manager import StrValueManager
+from typing import ClassVar
+
+from app.translator.core.str_value_manager import (
+    BaseSpecSymbol,
+    SingleSymbolWildCard,
+    StrValueManager,
+    UnboundLenWildCard,
+)
 from app.translator.platforms.carbonblack.escape_manager import CarbonBlackEscapeManager, carbon_black_escape_manager
 
 
 class CarbonBlackStrValueManager(StrValueManager):
     escape_manager: CarbonBlackEscapeManager = carbon_black_escape_manager
+    str_spec_symbols_map: ClassVar[dict[str, type[BaseSpecSymbol]]] = {
+        "?": SingleSymbolWildCard,
+        "*": UnboundLenWildCard,
+    }
 
 
 carbon_black_str_value_manager = CarbonBlackStrValueManager()

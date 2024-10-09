@@ -12,7 +12,8 @@ class CarbonBlackEscapeManager(EscapeManager):
                 pattern='([\s+\\-=&?!|(){}.\\[\\]^"~:/]|(?<!\\\\)\\\\(?![*?\\\\])|\\\\u|&&|\\|\\|)',
                 escape_symbols="\\\\\g<1>",
             )
-        ]
+        ],
+        ValueType.regex_value: [EscapeDetails(pattern=r"([$^*+()\[\]{}|.?\-\\])", escape_symbols=r"\\\1")],
     }
 
 
