@@ -18,3 +18,4 @@ SENTINEL_ONE_POWER_QUERY_DETAILS = {
 }
 
 sentinel_one_events_query_details = PlatformDetails(**SENTINEL_ONE_EVENTS_QUERY_DETAILS)
+sentinel_one_power_query_details = PlatformDetails(**SENTINEL_ONE_POWER_QUERY_DETAILS)

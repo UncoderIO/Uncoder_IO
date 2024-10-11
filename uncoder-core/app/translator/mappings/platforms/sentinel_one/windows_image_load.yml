@@ -1,0 +1,9 @@
+platform: Sentinel One Power Query
+source: windows_image_load
+
+field_mapping:
+  Image: Image
+  ImageLoaded: ImageLoaded
+  SignatureStatus: SignatureStatus
+  OriginalFileName: OriginalFileName
+  Signed: Signed

@@ -1,0 +1,21 @@
+platform: Sentinel One Power Query
+source: windows_process_creation
+
+field_mapping:
+  ProcessId: tgt.process.pid
+  Image: tgt.process.image.path
+  Description: tgt.process.displayName
+  Publisher:  tgt.process.publisher
+  Product: tgt.process.displayName
+  Company: tgt.process.publisher
+  CommandLine: tgt.process.cmdline
+  CurrentDirectory: tgt.process.image.path
+  User: tgt.process.user
+  TerminalSessionId: tgt.process.sessionid
+  IntegrityLevel: tgt.process.integrityLevel
+  md5: tgt.process.image.md5
+  sha1: tgt.process.image.sha1
+  sha256: tgt.process.image.sha256
+  ParentProcessId: src.process.pid
+  ParentImage: src.process.image.path
+  ParentCommandLine: src.process.cmdline
