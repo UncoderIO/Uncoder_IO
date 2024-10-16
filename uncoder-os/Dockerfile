@@ -1,4 +1,4 @@
-FROM node:20.8.1-alpine3.18
+FROM node:21-alpine3.20
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json tsconfig.json webpack.config.js .env ./
