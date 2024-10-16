@@ -17,6 +17,12 @@ class StrictPlatformException(BasePlatformException):
         super().__init__(message)
 
 
+class UnsupportedMappingsException(BasePlatformException):
+    def __init__(self, platform_name: str, mappings: list[str]):
+        message = f"Platform {platform_name} does not support these mappings: {mappings}."
+        super().__init__(message)
+
+
 class StrictPlatformFieldException(BasePlatformException):
     def __init__(self, platform_name: str, field_name: str):
         message = f"Source field `{field_name}` has no mapping for platform {platform_name}."

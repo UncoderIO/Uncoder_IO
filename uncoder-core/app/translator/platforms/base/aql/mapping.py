@@ -39,7 +39,12 @@ class AQLLogSourceSignature(LogSourceSignature):
     @property
     def extra_condition(self) -> str:
         default_source = self._default_source
-        return " AND ".join((f"{key}={value}" for key, value in default_source.items() if key != "table" and value))
+        extra = []
+        for key, value in default_source.items():
+            if key != "table" and value:
+                _condition = f"{key}={value}" if isinstance(value, int) else f"{key}='{value}'"
+                extra.append(_condition)
+        return " AND ".join(extra)
 
 
 class AQLMappings(BasePlatformMappings):
@@ -48,7 +53,7 @@ class AQLMappings(BasePlatformMappings):
 
     def prepare_log_source_signature(self, mapping: dict) -> AQLLogSourceSignature:
         log_source = mapping.get("log_source", {})
-        default_log_source = mapping.get("default_log_source")
+        default_log_source = mapping["default_log_source"]
         return AQLLogSourceSignature(
             device_types=log_source.get("devicetype"),
             categories=log_source.get("category"),

@@ -37,13 +37,13 @@ class AQLQueryParser(PlatformQueryParser):
     log_source_functions = ("LOGSOURCENAME", "LOGSOURCEGROUPNAME")
     log_source_function_pattern = r"\(?(?P<key>___func_name___\([a-zA-Z]+\))(?:\s+like\s+|\s+ilike\s+|\s*=\s*)'(?P<value>[%a-zA-Z\s]+)'\s*\)?\s+(?:and|or)?\s"  # noqa: E501
 
-    log_source_key_types = ("devicetype", "category", "qid", "qideventcategory", *LOG_SOURCE_FUNCTIONS_MAP.keys())
+    log_source_key_types = ("devicetype", "qideventcategory", "category", "qid", *LOG_SOURCE_FUNCTIONS_MAP.keys())
     log_source_pattern = rf"___source_type___(?:\s+like\s+|\s+ilike\s+|\s*=\s*)(?:{SINGLE_QUOTES_VALUE_PATTERN}|{NUM_VALUE_PATTERN})(?:\s+(?:and|or)\s+|\s+)?"  # noqa: E501
     num_value_pattern = r"[0-9]+"
     multi_num_log_source_pattern = (
         rf"___source_type___\s+in\s+\((?P<value>(?:{num_value_pattern}(?:\s*,\s*)?)+)\)(?:\s+(?:and|or)\s+|\s+)?"
     )
-    str_value_pattern = r"""(?:')(?P<s_q_value>(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{\}\s]|'')+)(?:')"""
+    str_value_pattern = r"""'(?P<s_q_value>(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{\}\s]|'')+)'"""
     multi_str_log_source_pattern = (
         rf"""___source_type___\s+in\s+\((?P<value>(?:{str_value_pattern}(?:\s*,\s*)?)+)\)(?:\s+(?:and|or)\s+|\s+)?"""
     )

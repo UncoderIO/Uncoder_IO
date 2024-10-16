@@ -1,0 +1,34 @@
+platform: Palo Alto Cortex XSIAM
+source: azure_m365
+
+
+default_log_source:
+  dataset: msft_azure_raw
+
+field_mapping:
+  ClientInfoString: properties.clientInfoString
+  LogonError: properties.logonError
+  ModifiedProperties: properties.modifiedProperties
+  OfficeObjectId: properties.officeObjectId
+  OfficeWorkload: properties.officeWorkload
+  Operation: properties.operation
+  Parameters: properties.parameters
+  RecordType: properties.recordType
+  ResultStatus: properties.resultStatus
+  SourceFileExtension: properties.sourceFileExtension
+  SourceFileName: properties.sourceFileName
+  UserAgent: properties.userAgent
+
+raw_log_fields:
+  properties.clientInfoString: object
+  properties.logonError: object
+  properties.modifiedProperties: object
+  properties.officeObjectId: object
+  properties.officeWorkload: object
+  properties.operation: object
+  properties.parameters: object
+  properties.recordType: object
+  properties.resultStatus: object
+  properties.sourceFileExtension: object
+  properties.sourceFileName: object
+  properties.userAgent: object

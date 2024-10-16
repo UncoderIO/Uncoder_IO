@@ -18,49 +18,17 @@ limitations under the License.
 """
 
 from app.translator.core.str_value_manager import (
-    ReAnySymbol,
-    ReCaretSymbol,
-    ReCommaSymbol,
+    RE_STR_SPEC_SYMBOLS_MAP,
     ReDigitalSymbol,
-    ReEndOfStrSymbol,
-    ReHyphenSymbol,
-    ReLeftCurlyBracket,
-    ReLeftParenthesis,
-    ReLeftSquareBracket,
-    ReOneOrMoreQuantifier,
-    ReOrOperator,
-    ReRightCurlyBracket,
-    ReRightParenthesis,
-    ReRightSquareBracket,
     ReWhiteSpaceSymbol,
     ReWordBoundarySymbol,
     ReWordSymbol,
-    ReZeroOrMoreQuantifier,
-    ReZeroOrOneQuantifier,
     SingleSymbolWildCard,
     StrValue,
     StrValueManager,
-    UnboundLenWildCard,
+    UnboundLenWildCard
 )
 from app.translator.platforms.sigma.escape_manager import sigma_escape_manager
-
-RE_STR_SPEC_SYMBOLS_MAP = {
-    "?": ReZeroOrOneQuantifier,
-    "*": ReZeroOrMoreQuantifier,
-    "+": ReOneOrMoreQuantifier,
-    "^": ReCaretSymbol,
-    "$": ReEndOfStrSymbol,
-    ".": ReAnySymbol,
-    "[": ReLeftSquareBracket,
-    "]": ReRightSquareBracket,
-    "(": ReLeftParenthesis,
-    ")": ReRightParenthesis,
-    "{": ReLeftCurlyBracket,
-    "}": ReRightCurlyBracket,
-    "|": ReOrOperator,
-    ",": ReCommaSymbol,
-    "-": ReHyphenSymbol,
-}
 
 
 class SigmaStrValueManager(StrValueManager):

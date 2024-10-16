@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Optional, TypeVar, Union
 
-from app.translator.core.exceptions.core import StrictPlatformException
+from app.translator.core.exceptions.core import StrictPlatformException, UnsupportedMappingsException
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.mappings.utils.load_from_files import LoaderFileMappings
 
@@ -116,7 +116,7 @@ class BasePlatformMappings:
         default_mapping = SourceMapping(source_id=DEFAULT_MAPPING_NAME)
         for mapping_dict in self._loader.load_platform_mappings(self._platform_dir):
             log_source_signature = self.prepare_log_source_signature(mapping=mapping_dict)
-            if (source_id := mapping_dict.get("source")) == DEFAULT_MAPPING_NAME:
+            if (source_id := mapping_dict["source"]) == DEFAULT_MAPPING_NAME:
                 default_mapping.log_source_signature = log_source_signature
                 if self.skip_load_default_mappings:
                     continue
@@ -152,7 +152,7 @@ class BasePlatformMappings:
     def prepare_log_source_signature(self, mapping: dict) -> LogSourceSignature:
         raise NotImplementedError("Abstract method")
 
-    def get_suitable_source_mappings(
+    def get_source_mappings_by_fields_and_log_sources(
         self, field_names: list[str], log_sources: dict[str, list[Union[int, str]]]
     ) -> list[SourceMapping]:
         by_log_sources_and_fields = []
@@ -169,6 +169,17 @@ class BasePlatformMappings:
                     by_log_sources_and_fields.append(source_mapping)
 
         return by_log_sources_and_fields or by_fields or [self._source_mappings[DEFAULT_MAPPING_NAME]]
+
+    def get_source_mappings_by_ids(self, source_mapping_ids: list[str]) -> list[SourceMapping]:
+        source_mappings = []
+        for source_mapping_id in source_mapping_ids:
+            if source_mapping := self.get_source_mapping(source_mapping_id):
+                source_mappings.append(source_mapping)
+
+        if not source_mappings:
+            source_mappings = [self.get_source_mapping(DEFAULT_MAPPING_NAME)]
+
+        return source_mappings
 
     def get_source_mapping(self, source_id: str) -> Optional[SourceMapping]:
         return self._source_mappings.get(source_id)
@@ -216,5 +227,20 @@ class BaseCommonPlatformMappings(ABC, BasePlatformMappings):
             source_mappings[source_id] = SourceMapping(
                 source_id=source_id, log_source_signature=log_source_signature, fields_mapping=fields_mapping
             )
+
+        return source_mappings
+
+
+class BaseStrictLogSourcesPlatformMappings(ABC, BasePlatformMappings):
+    def get_source_mappings_by_ids(self, source_mapping_ids: list[str]) -> list[SourceMapping]:
+        source_mappings = []
+        for source_mapping_id in source_mapping_ids:
+            if source_mapping_id == DEFAULT_MAPPING_NAME:
+                continue
+            if source_mapping := self.get_source_mapping(source_mapping_id):
+                source_mappings.append(source_mapping)
+
+        if not source_mappings:
+            raise UnsupportedMappingsException(platform_name=self.details.name, mappings=source_mapping_ids)
 
         return source_mappings

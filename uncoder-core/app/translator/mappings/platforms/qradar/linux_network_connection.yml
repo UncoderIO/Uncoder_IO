@@ -8,7 +8,7 @@ log_source:
 
 default_log_source:
   devicetype: 11
-  category: [4012]
+  category: 4012
 
 field_mapping:
   CommandLine: Command

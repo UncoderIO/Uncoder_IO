@@ -1,0 +1,12 @@
+platform: Palo Alto Cortex XSIAM
+source: windows_pipe_created
+
+default_log_source:
+  preset: xdr_event_log
+
+field_mapping:
+  EventID: action_evtlog_event_id
+
+raw_log_fields:
+  PipeName: regex
+  Image: regex
