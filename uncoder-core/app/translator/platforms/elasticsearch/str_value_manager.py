@@ -23,6 +23,8 @@ from app.translator.core.str_value_manager import (
     ReDigitalSymbol,
     ReWhiteSpaceSymbol,
     ReWordSymbol,
+    SingleSymbolWildCard,
+    StrValue,
     StrValueManager,
 )
 from app.translator.platforms.elasticsearch.escape_manager import ESQLQueryEscapeManager, esql_query_escape_manager
@@ -37,4 +39,13 @@ class ESQLQueryStrValueManager(StrValueManager):
     }
 
 
-esql_query_str_value_manager = ESQLQueryStrValueManager()
+class EQLStrValueManager(StrValueManager):
+    str_spec_symbols_map: ClassVar[dict[str, type[BaseSpecSymbol]]] = {"*": SingleSymbolWildCard}
+
+    def from_str_to_container(self, value: str) -> StrValue:
+        split = [self.str_spec_symbols_map[char]() if char in self.str_spec_symbols_map else char for char in value]
+        return StrValue(value, self._concat(split))
+
+
+esql_str_value_manager = ESQLQueryStrValueManager()
+eql_str_value_manager = EQLStrValueManager()
