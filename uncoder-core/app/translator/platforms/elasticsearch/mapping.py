@@ -29,3 +29,13 @@ class ElasticESQLMappings(LuceneMappings):
 esql_query_mappings = ElasticESQLMappings(
     platform_dir="elasticsearch_esql", platform_details=elasticsearch_esql_query_details
 )
+
+
+class ElasticESQLMappings(LuceneMappings):
+    is_strict_mapping: bool = True
+    skip_load_default_mappings = True
+
+
+esql_query_mappings = ElasticESQLMappings(
+    platform_dir="elasticsearch_esql", platform_details=elasticsearch_esql_query_details
+)

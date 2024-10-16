@@ -176,6 +176,17 @@ class BasePlatformMappings:
 
         return by_log_sources_and_fields or by_fields or [self._source_mappings[DEFAULT_MAPPING_NAME]]
 
+    def get_source_mappings_by_ids(self, source_mapping_ids: list[str]) -> list[SourceMapping]:
+        source_mappings = []
+        for source_mapping_id in source_mapping_ids:
+            if source_mapping := self.get_source_mapping(source_mapping_id):
+                source_mappings.append(source_mapping)
+
+        if not source_mappings:
+            source_mappings = [self.get_source_mapping(DEFAULT_MAPPING_NAME)]
+
+        return source_mappings
+
     def get_source_mapping(self, source_id: str) -> Optional[SourceMapping]:
         return self._source_mappings.get(source_id)
 

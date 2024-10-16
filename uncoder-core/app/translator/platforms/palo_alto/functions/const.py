@@ -11,6 +11,7 @@ class CortexXQLFunctionType(CustomEnum):
     values = "values"
 
     divide = "divide"
+    multiply = "multiply"
 
     lower = "lowercase"
     split = "split"
@@ -26,18 +27,21 @@ class CortexXQLFunctionType(CustomEnum):
     config = "config"
     fields = "fields"
     filter = "filter"
+    iploc = "iploc"
+    join = "join"
     limit = "limit"
     sort = "sort"
     timeframe = "timeframe"
+    timestamp_diff = "timestamp_diff"
     union = "union"
 
 
-class XqlSortOrderType(CustomEnum):
+class CortexXQLSortOrderType(CustomEnum):
     asc = "asc"
     desc = "desc"
 
 
-class XqlTimeFrameType(CustomEnum):
+class CortexXQLTimeFrameType(CustomEnum):
     years = "y"
     months = "mo"
     days = "d"

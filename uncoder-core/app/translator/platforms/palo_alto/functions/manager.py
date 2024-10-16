@@ -5,4 +5,5 @@ class CortexXQLFunctionsManager(PlatformFunctionsManager):
     ...
 
 
-cortex_xql_functions_manager = CortexXQLFunctionsManager()
+cortex_xsiam_xql_functions_manager = CortexXQLFunctionsManager()
+cortex_xdr_xql_functions_manager = CortexXQLFunctionsManager()
