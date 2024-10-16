@@ -1,0 +1,9 @@
+platform: Sentinel One Power Query
+source: windows_pipe_created
+
+field_mapping:
+  PipeName: namedPipe.name
+  Image: src.process.image.path
+  CommandLine: src.process.cmdline
+  ParentImage: src.process.parent.image.path
+  ParentCommandLine: src.process.parent.cmdline

@@ -1,0 +1,12 @@
+platform: Sentinel One Power Query
+source: dns
+
+field_mapping:
+  Image: src.process.image.path
+  CommandLine: src.process.cmdline
+  ParentImage: src.process.parent.image.path
+  ParentCommandLine: src.process.parent.cmdline
+  query: event.dns.request
+  answer: event.dns.response
+  QueryName: event.dns.request
+  record_type: event.dns.response

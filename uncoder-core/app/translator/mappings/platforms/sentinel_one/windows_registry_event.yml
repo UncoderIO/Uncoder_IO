@@ -1,0 +1,10 @@
+platform: Sentinel One Power Query
+source: windows_registry_event
+
+field_mapping:
+  Image: src.process.image.path
+  CommandLine: src.process.cmdline
+  ParentImage: src.process.parent.image.path
+  ParentCommandLine: src.process.parent.cmdline
+  TargetObject: registry.keyPath
+  Details: registry.value
