@@ -1,0 +1,16 @@
+platform: Palo Alto Cortex XSIAM
+source: azure_aadnoninteractiveusersigninlogs
+
+
+default_log_source:
+  dataset: msft_azure_raw
+
+field_mapping:
+  UserAgent: properties.userAgent
+  Type: properties.type
+  AuthenticationProcessingDetails: properties.authenticationProcessingDetails
+
+raw_log_fields:
+ properties.userAgent: object
+ properties.type: object
+ properties.authenticationProcessingDetails: list
