@@ -3,6 +3,7 @@ from app.translator.platforms.elasticsearch.parsers.detection_rule import (
     ElasticSearchRuleTOMLParser,  # noqa: F401
 )
 from app.translator.platforms.elasticsearch.parsers.elasticsearch import ElasticSearchQueryParser  # noqa: F401
+from app.translator.platforms.elasticsearch.parsers.elasticsearch_eql import ElasticSearchEQLQueryParser  # noqa: F401
 from app.translator.platforms.elasticsearch.renders.detection_rule import ElasticSearchRuleRender  # noqa: F401
 from app.translator.platforms.elasticsearch.renders.elast_alert import ElastAlertRuleRender  # noqa: F401
 from app.translator.platforms.elasticsearch.renders.elasticsearch import ElasticSearchQueryRender  # noqa: F401

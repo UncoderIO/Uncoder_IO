@@ -55,8 +55,8 @@ class MicrosoftSentinelRuleParser(MicrosoftSentinelQueryParser, JsonRuleMixin):
         rule = self.load_rule(text=text)
         tags = []
         mitre_attack = self.mitre_config.get_mitre_info(
-            tactics=[tactic.lower() for tactic in rule.get("tactics", [])],
-            techniques=[technique.lower() for technique in rule.get("techniques", [])],
+            tactics=[tactic.lower() for tactic in rule.get("tactics") or []],
+            techniques=[technique.lower() for technique in rule.get("techniques") or []],
         )
 
         if mitre_attack:
@@ -116,8 +116,8 @@ class MicrosoftSentinelYAMLRuleParser(YamlRuleMixin, MicrosoftSentinelRuleParser
         rule = self.load_rule(text=text)
         tags = []
         mitre_attack: MitreInfoContainer = self.mitre_config.get_mitre_info(
-            tactics=[tactic.lower() for tactic in rule.get("tactics", [])],
-            techniques=[technique.lower() for technique in rule.get("relevantTechniques", [])],
+            tactics=[tactic.lower() for tactic in rule.get("tactics") or []],
+            techniques=[technique.lower() for technique in rule.get("relevantTechniques") or []],
         )
 
         if mitre_attack:

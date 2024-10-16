@@ -1,0 +1,8 @@
+platform: CarbonBlack
+source: windows_file_event
+
+
+field_mapping:
+  User:
+    - childproc_username
+    - process_username

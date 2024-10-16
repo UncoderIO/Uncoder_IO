@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.routers.assistance import assistance_router, lifespan
 from app.routers.ioc_translate import iocs_router
+from app.routers.meta_info import meta_info_router
 from app.routers.translate import st_router
 
 app = FastAPI(title="Siem Converter API", version="0.1.0", lifespan=lifespan)
@@ -17,6 +18,7 @@ app.add_middleware(
 app.include_router(st_router)
 app.include_router(iocs_router)
 app.include_router(assistance_router)
+app.include_router(meta_info_router)
 
 
 if __name__ == "__main__":

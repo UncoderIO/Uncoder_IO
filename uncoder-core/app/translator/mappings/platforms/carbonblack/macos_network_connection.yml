@@ -1,0 +1,9 @@
+platform: CarbonBlack
+source: macos_network_connection
+
+
+field_mapping:
+  DestinationHostname:
+    - netconn_domain
+    - netconn_proxy_domain
+  DestinationPort: netconn_port

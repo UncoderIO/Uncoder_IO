@@ -62,5 +62,4 @@ class SigmaMappings(BasePlatformMappings):
 
         return source_mappings or [self._source_mappings[DEFAULT_MAPPING_NAME]]
 
-
 sigma_rule_mappings = SigmaMappings(platform_dir="sigma", platform_details=sigma_rule_details)

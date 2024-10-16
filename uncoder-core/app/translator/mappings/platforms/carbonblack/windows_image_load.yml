@@ -1,0 +1,6 @@
+platform: CarbonBlack
+source: windows_image_load
+
+
+field_mapping:
+  OriginalFileName: process_original_filename

@@ -31,3 +31,4 @@ field_mapping:
   StartModule: target.resource.name
   TargetImage: target.process.file.full_path
   StartFunction: ScriptBlockText
+  event.Technique: security_result.detection_fields.value

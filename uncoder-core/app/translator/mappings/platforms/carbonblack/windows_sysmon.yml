@@ -1,0 +1,51 @@
+platform: CarbonBlack
+source: windows_sysmon
+
+
+
+field_mapping:
+  CommandLine: process_cmdline
+  Image: process_name
+  ParentImage: parent_name
+  Company: process_publisher
+  Description:
+    - process_product_name
+    - process_product_version
+    - process_publisher
+    - process_file_description
+  DestinationHostname:
+    - netconn_domain
+    - netconn_proxy_domain
+  DestinationIp:
+    - netconn_ipv4
+    - netconn_ipv6
+  DestinationIsIpv6: ipaddr
+  Hashes:
+    - md5
+    - filewrite_md5
+    - childproc_md5
+    - parent_md5
+  IntegrityLevel: process_integrity_level
+  ParentCommandLine: parent_cmdline
+  Product:
+    - process_product_name
+    - process_file_description
+  SourceIp:
+    - netconn_ipv4
+    - netconn_ipv6
+    - netconn_local_ipv4
+    - netconn_local_ipv6
+  SourcePort: netconn_port
+  TargetFilename: filemod_name
+  User: childproc_username;process_username
+  OriginalFileName: process_original_filename
+  Signature:
+    - childproc_publisher
+    - filemod_publisher
+    - modload_publisher
+    - parent_publisher
+    - process_publisher
+  ImageLoaded: modload_name
+  StartModule: modload_name
+  TargetImage: filemod_name
+  FileVersion: process_product_version
