@@ -1,6 +1,8 @@
 platform: ElasticSearch
 source: windows_process_creation
 
+conditions:
+  event.category: 'process'
 
 log_source:
   index: [winlogbeat-*, logs-*]

@@ -1,6 +1,8 @@
 platform: ElasticSearch
 source: windows_security
 
+conditions:
+  winlog.channel : "Security"
 
 log_source:
   index: [winlogbeat-*, logs-*]
