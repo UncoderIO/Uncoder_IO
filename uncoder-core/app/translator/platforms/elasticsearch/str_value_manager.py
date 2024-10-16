@@ -30,7 +30,7 @@ from app.translator.core.str_value_manager import (
 from app.translator.platforms.elasticsearch.escape_manager import ESQLQueryEscapeManager, esql_query_escape_manager
 
 
-class ESQLStrValueManager(StrValueManager):
+class ESQLQueryStrValueManager(StrValueManager):
     escape_manager: ESQLQueryEscapeManager = esql_query_escape_manager
     re_str_alpha_num_symbols_map: ClassVar[dict[str, type[BaseSpecSymbol]]] = {
         "w": ReWordSymbol,
@@ -47,5 +47,5 @@ class EQLStrValueManager(StrValueManager):
         return StrValue(value, self._concat(split))
 
 
-esql_str_value_manager = ESQLStrValueManager()
+esql_str_value_manager = ESQLQueryStrValueManager()
 eql_str_value_manager = EQLStrValueManager()

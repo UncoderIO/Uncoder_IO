@@ -1,14 +1,12 @@
 import logging
-from typing import Optional, Union
+from typing import Optional
 
 from app.translator.core.exceptions.core import UnsupportedPlatform
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
-from app.translator.core.parser import PlatformQueryParser
+from app.translator.core.parser import QueryParser
 from app.translator.core.render import QueryRender
 from app.translator.managers import ParserManager, RenderManager, parser_manager, render_manager
 from app.translator.platforms.elasticsearch.const import ELASTIC_QUERY_TYPES
-from app.translator.platforms.roota.parsers.roota import RootAParser
-from app.translator.platforms.sigma.parsers.sigma import SigmaParser
 from app.translator.tools.decorators import handle_translation_exceptions
 
 
@@ -19,7 +17,7 @@ class Translator:
     def __init__(self):
         self.logger = logging.getLogger("translator")
 
-    def __get_parser(self, source: str) -> Union[PlatformQueryParser, RootAParser, SigmaParser]:
+    def __get_parser(self, source: str) -> QueryParser:
         parser = self.parser_manager.get(source)
         if not parser:
             raise UnsupportedPlatform(platform=source, is_parser=True)
@@ -41,13 +39,16 @@ class Translator:
 
         return False
 
+    def parse_raw_query(self, text: str, source: str) -> tuple[QueryParser, RawQueryContainer]:
+        parser = self.__get_parser(source)
+        text = parser.remove_comments(text)
+        return parser, parser.parse_raw_query(text, language=source)
+
     @handle_translation_exceptions
     def __parse_incoming_data(
         self, text: str, source: str, target: Optional[str] = None
     ) -> tuple[RawQueryContainer, Optional[TokenizedQueryContainer]]:
-        parser = self.__get_parser(source)
-        text = parser.remove_comments(text)
-        raw_query_container = parser.parse_raw_query(text, language=source)
+        parser, raw_query_container = self.parse_raw_query(text=text, source=source)
         tokenized_query_container = None
         if not (target and self.__is_one_vendor_translation(raw_query_container.language, target)):
             tokenized_query_container = parser.parse(raw_query_container)
@@ -117,3 +118,6 @@ class Translator:
 
     def get_renders(self) -> list:
         return self.render_manager.get_platforms_details
+
+
+app_translator = Translator()

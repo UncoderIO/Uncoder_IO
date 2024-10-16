@@ -1,0 +1,5 @@
+platform: Anomali
+source: default
+
+
+default_log_source: {}

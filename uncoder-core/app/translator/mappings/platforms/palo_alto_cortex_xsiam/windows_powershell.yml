@@ -1,0 +1,20 @@
+platform: Palo Alto Cortex XSIAM
+source: windows_powershell
+
+
+default_log_source:
+  preset: xdr_event_log
+
+field_mapping:
+  EventID: action_evtlog_event_id
+
+
+raw_log_fields:
+  CommandLine: regex
+  ScriptBlockText: regex
+  Payload: regex
+  HostApplication: regex
+  ContextInfo: regex
+  HostName: regex
+  EngineVersion: regex
+  Path: regex

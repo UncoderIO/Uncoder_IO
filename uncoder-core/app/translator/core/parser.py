@@ -80,7 +80,8 @@ class PlatformQueryParser(QueryParser, ABC):
         self, field_tokens: list[Field], log_sources: dict[str, list[Union[int, str]]]
     ) -> list[SourceMapping]:
         field_names = [field.source_name for field in field_tokens]
-        source_mappings = self.mappings.get_suitable_source_mappings(field_names=field_names, log_sources=log_sources)
+        source_mappings = self.mappings.get_source_mappings_by_fields_and_log_sources(
+            field_names=field_names, log_sources=log_sources
+        )
         self.tokenizer.set_field_tokens_generic_names_map(field_tokens, source_mappings, self.mappings.default_mapping)
         return source_mappings
-

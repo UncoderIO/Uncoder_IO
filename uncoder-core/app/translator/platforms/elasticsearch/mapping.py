@@ -1,8 +1,8 @@
 from app.translator.platforms.base.lucene.mapping import LuceneMappings
 from app.translator.platforms.elasticsearch.const import (
     elastalert_details,
-    elastic_eql_query_details,
     elasticsearch_esql_query_details,
+    elastic_eql_query_details,
     elasticsearch_lucene_query_details,
     elasticsearch_rule_details,
     kibana_rule_details,

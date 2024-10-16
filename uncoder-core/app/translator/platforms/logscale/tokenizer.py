@@ -57,7 +57,7 @@ class LogScaleTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
             return mapped_operator, num_value
 
         if (d_q_value := get_match_group(match, group_name=ValueType.double_quotes_value)) is not None:
-            return mapped_operator, d_q_value
+            return mapped_operator, self.escape_manager.remove_escape(d_q_value)
 
         if (re_value := get_match_group(match, group_name=ValueType.regex_value)) is not None:
             return OperatorType.REGEX, re_value

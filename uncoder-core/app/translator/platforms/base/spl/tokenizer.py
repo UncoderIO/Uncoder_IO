@@ -29,7 +29,7 @@ from app.translator.platforms.base.spl.const import FIELD_PATTERN
 from app.translator.platforms.base.spl.const import NO_QUOTES_VALUES_PATTERN as NO_Q_V_PATTERN
 from app.translator.platforms.base.spl.const import NUM_VALUE_PATTERN as N_V_PATTERN
 from app.translator.platforms.base.spl.const import SINGLE_QUOTES_VALUE_PATTERN as S_Q_V_PATTERN
-from app.translator.platforms.base.spl.escape_manager import spl_escape_manager
+from app.translator.platforms.base.spl.str_value_manager import spl_str_value_manager
 from app.translator.tools.utils import get_match_group
 
 
@@ -57,7 +57,7 @@ class SplTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
 
     wildcard_symbol = "*"
 
-    escape_manager = spl_escape_manager
+    str_value_manager = spl_str_value_manager
 
     def get_operator_and_value(
         self, match: re.Match, mapped_operator: str = OperatorType.EQ, operator: Optional[str] = None
@@ -66,13 +66,13 @@ class SplTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
             return mapped_operator, num_value
 
         if (no_q_value := get_match_group(match, group_name=ValueType.no_quotes_value)) is not None:
-            return mapped_operator, no_q_value
+            return mapped_operator, self.str_value_manager.from_str_to_container(no_q_value)
 
         if (d_q_value := get_match_group(match, group_name=ValueType.double_quotes_value)) is not None:
-            return mapped_operator, self.escape_manager.remove_escape(d_q_value)
+            return mapped_operator, self.str_value_manager.from_str_to_container(d_q_value)
 
         if (s_q_value := get_match_group(match, group_name=ValueType.single_quotes_value)) is not None:
-            return mapped_operator, self.escape_manager.remove_escape(s_q_value)
+            return mapped_operator, self.str_value_manager.from_str_to_container(s_q_value)
 
         return super().get_operator_and_value(match, mapped_operator, operator)
 

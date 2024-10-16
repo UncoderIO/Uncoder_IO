@@ -1,10 +1,6 @@
 from typing import Optional
 
 
-class NotImplementedException(BaseException):
-    ...
-
-
 class BasePlatformException(BaseException):
     ...
 
@@ -18,6 +14,12 @@ class StrictPlatformException(BasePlatformException):
             if mapping
             else ""
         )
+        super().__init__(message)
+
+
+class UnsupportedMappingsException(BasePlatformException):
+    def __init__(self, platform_name: str, mappings: list[str]):
+        message = f"Platform {platform_name} does not support these mappings: {mappings}."
         super().__init__(message)
 
 
@@ -86,6 +88,10 @@ class InvalidYamlStructure(InvalidRuleStructure):
 
 class InvalidJSONStructure(InvalidRuleStructure):
     rule_type: str = "JSON"
+
+
+class InvalidTOMLStructure(InvalidRuleStructure):
+    rule_type: str = "TOML"
 
 
 class InvalidXMLStructure(InvalidRuleStructure):
