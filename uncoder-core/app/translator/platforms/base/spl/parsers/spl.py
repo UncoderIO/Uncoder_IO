@@ -29,6 +29,7 @@ TSTATS_FUNC = "tstats"
 
 class SplQueryParser(PlatformQueryParser):
     log_source_pattern = r"^___source_type___\s*=\s*(?:\"(?P<d_q_value>[%a-zA-Z_*:0-9\-/]+)\"|(?P<value>[%a-zA-Z_*:0-9\-/]+))(?:\s+(?:and|or)\s+|\s+)?"  # noqa: E501
+    rule_name_pattern = r"`(?P<name>(?:[:a-zA-Z*0-9=+%#\-_/,;`?~‘\'.<>$&^@!\]\[()\s])*)`"
     log_source_key_types = ("index", "source", "sourcetype", "sourcecategory")
 
     platform_functions: SplFunctions = None
@@ -53,6 +54,9 @@ class SplQueryParser(PlatformQueryParser):
         return log_sources, query
 
     def _parse_query(self, query: str) -> tuple[str, dict[str, list[str]], ParsedFunctions]:
+        if re.match(self.rule_name_pattern, query):
+            search = re.search(self.rule_name_pattern, query, flags=re.IGNORECASE)
+            query = query[:search.start()] + query[search.end():]
         query = query.strip()
         log_sources, query = self._parse_log_sources(query)
         query, functions = self.platform_functions.parse(query)
