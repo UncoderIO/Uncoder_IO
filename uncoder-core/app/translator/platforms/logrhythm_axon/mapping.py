@@ -1,6 +1,7 @@
 from typing import Optional
 
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, BasePlatformMappings, LogSourceSignature, SourceMapping
+from app.translator.platforms.logrhythm_axon.const import logrhythm_axon_query_details, logrhythm_axon_rule_details
 
 
 class LogRhythmAxonLogSourceSignature(LogSourceSignature):
@@ -15,6 +16,8 @@ class LogRhythmAxonLogSourceSignature(LogSourceSignature):
 
 
 class LogRhythmAxonMappings(BasePlatformMappings):
+    is_strict_mapping = True
+
     def prepare_mapping(self) -> dict[str, SourceMapping]:
         source_mappings = {}
         for mapping_dict in self._loader.load_platform_mappings(self._platform_dir):
@@ -29,19 +32,10 @@ class LogRhythmAxonMappings(BasePlatformMappings):
         default_log_source = mapping.get("default_log_source")
         return LogRhythmAxonLogSourceSignature(default_source=default_log_source)
 
-    def get_suitable_source_mappings(self, field_names: list[str]) -> list[SourceMapping]:
-        suitable_source_mappings = []
-        for source_mapping in self._source_mappings.values():
-            if source_mapping.source_id == DEFAULT_MAPPING_NAME:
-                continue
 
-            if source_mapping.fields_mapping.is_suitable(field_names):
-                suitable_source_mappings.append(source_mapping)
-
-        if not suitable_source_mappings:
-            suitable_source_mappings = [self._source_mappings[DEFAULT_MAPPING_NAME]]
-
-        return suitable_source_mappings
-
-
-logrhythm_axon_mappings = LogRhythmAxonMappings(platform_dir="logrhythm_axon")
+logrhythm_axon_query_mappings = LogRhythmAxonMappings(
+    platform_dir="logrhythm_axon", platform_details=logrhythm_axon_query_details
+)
+logrhythm_axon_rule_mappings = LogRhythmAxonMappings(
+    platform_dir="logrhythm_axon", platform_details=logrhythm_axon_rule_details
+)

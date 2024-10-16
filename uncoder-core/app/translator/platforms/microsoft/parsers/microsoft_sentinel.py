@@ -23,14 +23,14 @@ from app.translator.core.parser import PlatformQueryParser
 from app.translator.managers import parser_manager
 from app.translator.platforms.microsoft.const import microsoft_sentinel_query_details
 from app.translator.platforms.microsoft.functions import MicrosoftFunctions, microsoft_sentinel_functions
-from app.translator.platforms.microsoft.mapping import MicrosoftSentinelMappings, microsoft_sentinel_mappings
+from app.translator.platforms.microsoft.mapping import MicrosoftSentinelMappings, microsoft_sentinel_query_mappings
 from app.translator.platforms.microsoft.tokenizer import MicrosoftSentinelTokenizer
 
 
 @parser_manager.register_supported_by_roota
 class MicrosoftSentinelQueryParser(PlatformQueryParser):
     platform_functions: MicrosoftFunctions = microsoft_sentinel_functions
-    mappings: MicrosoftSentinelMappings = microsoft_sentinel_mappings
+    mappings: MicrosoftSentinelMappings = microsoft_sentinel_query_mappings
     tokenizer = MicrosoftSentinelTokenizer()
     details: PlatformDetails = microsoft_sentinel_query_details
 
@@ -43,10 +43,10 @@ class MicrosoftSentinelQueryParser(PlatformQueryParser):
 
     def parse(self, raw_query_container: RawQueryContainer) -> TokenizedQueryContainer:
         query, log_sources, functions = self._parse_query(query=raw_query_container.query)
-        tokens, source_mappings = self.get_tokens_and_source_mappings(query, log_sources)
-        fields_tokens = self.get_fields_tokens(tokens=tokens)
-        self.set_functions_fields_generic_names(functions=functions, source_mappings=source_mappings)
+        query_tokens = self.get_query_tokens(query)
+        field_tokens = self.get_field_tokens(query_tokens, functions.functions)
+        source_mappings = self.get_source_mappings(field_tokens, log_sources)
         meta_info = raw_query_container.meta_info
-        meta_info.query_fields = fields_tokens
+        meta_info.query_fields = field_tokens
         meta_info.source_mapping_ids = [source_mapping.source_id for source_mapping in source_mappings]
-        return TokenizedQueryContainer(tokens=tokens, meta_info=meta_info, functions=functions)
+        return TokenizedQueryContainer(tokens=query_tokens, meta_info=meta_info, functions=functions)

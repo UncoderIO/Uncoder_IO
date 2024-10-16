@@ -6,3 +6,5 @@ colorama~=0.4.6
 ruff==0.1.13
 ujson==5.9.0
 xmltodict~=0.13.0
+isodate==0.6.1
+toml==0.10.2

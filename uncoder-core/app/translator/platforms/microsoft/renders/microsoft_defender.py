@@ -19,28 +19,26 @@ limitations under the License.
 
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.managers import render_manager
-from app.translator.platforms.microsoft.const import microsoft_defender_details
+from app.translator.platforms.microsoft.const import microsoft_defender_query_details
 from app.translator.platforms.microsoft.functions import MicrosoftFunctions, microsoft_defender_functions
-from app.translator.platforms.microsoft.mapping import MicrosoftDefenderMappings, microsoft_defender_mappings
+from app.translator.platforms.microsoft.mapping import MicrosoftDefenderMappings, microsoft_defender_query_mappings
 from app.translator.platforms.microsoft.renders.microsoft_sentinel import (
-    MicrosoftSentinelFieldValue,
+    MicrosoftSentinelFieldValueRender,
     MicrosoftSentinelQueryRender,
 )
 
 
-class MicrosoftDefenderFieldValue(MicrosoftSentinelFieldValue):
-    details: PlatformDetails = microsoft_defender_details
+class MicrosoftDefenderFieldValueRender(MicrosoftSentinelFieldValueRender):
+    details: PlatformDetails = microsoft_defender_query_details
 
 
 @render_manager.register
 class MicrosoftDefenderQueryRender(MicrosoftSentinelQueryRender):
-    mappings: MicrosoftDefenderMappings = microsoft_defender_mappings
-    details: PlatformDetails = microsoft_defender_details
+    mappings: MicrosoftDefenderMappings = microsoft_defender_query_mappings
+    details: PlatformDetails = microsoft_defender_query_details
     platform_functions: MicrosoftFunctions = None
     or_token = "or"
-    field_value_map = MicrosoftDefenderFieldValue(or_token=or_token)
-
-    is_strict_mapping = True
+    field_value_render = MicrosoftDefenderFieldValueRender(or_token=or_token)
 
     def init_platform_functions(self) -> None:
         self.platform_functions = microsoft_defender_functions

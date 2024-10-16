@@ -22,15 +22,15 @@ from typing import Union
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.mapping import LogSourceSignature
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
+from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
 from app.translator.managers import render_manager
 from app.translator.platforms.microsoft.const import microsoft_sentinel_query_details
 from app.translator.platforms.microsoft.escape_manager import microsoft_escape_manager
 from app.translator.platforms.microsoft.functions import MicrosoftFunctions, microsoft_sentinel_functions
-from app.translator.platforms.microsoft.mapping import MicrosoftSentinelMappings, microsoft_sentinel_mappings
+from app.translator.platforms.microsoft.mapping import MicrosoftSentinelMappings, microsoft_sentinel_query_mappings
 
 
-class MicrosoftSentinelFieldValue(BaseQueryFieldValue):
+class MicrosoftSentinelFieldValueRender(BaseFieldValueRender):
     details: PlatformDetails = microsoft_sentinel_query_details
     escape_manager = microsoft_escape_manager
 
@@ -128,9 +128,9 @@ class MicrosoftSentinelQueryRender(PlatformQueryRender):
     and_token = "and"
     not_token = "not"
 
-    field_value_map = MicrosoftSentinelFieldValue(or_token=or_token)
+    field_value_render = MicrosoftSentinelFieldValueRender(or_token=or_token)
 
-    mappings: MicrosoftSentinelMappings = microsoft_sentinel_mappings
+    mappings: MicrosoftSentinelMappings = microsoft_sentinel_query_mappings
     comment_symbol = "//"
     is_single_line_comment = True
 

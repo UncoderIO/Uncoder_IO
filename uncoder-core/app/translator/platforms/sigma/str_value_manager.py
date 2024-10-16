@@ -18,54 +18,28 @@ limitations under the License.
 """
 
 from app.translator.core.str_value_manager import (
-    ReAnySymbol,
-    ReCaretSymbol,
-    ReCommaSymbol,
+    RE_STR_SPEC_SYMBOLS_MAP,
     ReDigitalSymbol,
-    ReEndOfStrSymbol,
-    ReHyphenSymbol,
-    ReLeftCurlyBracket,
-    ReLeftParenthesis,
-    ReLeftSquareBracket,
-    ReOneOrMoreQuantifier,
-    ReOrOperator,
-    ReRightCurlyBracket,
-    ReRightParenthesis,
-    ReRightSquareBracket,
     ReWhiteSpaceSymbol,
+    ReWordBoundarySymbol,
     ReWordSymbol,
-    ReZeroOrMoreQuantifier,
-    ReZeroOrOneQuantifier,
     SingleSymbolWildCard,
     StrValue,
     StrValueManager,
-    UnboundLenWildCard,
+    UnboundLenWildCard
 )
 from app.translator.platforms.sigma.escape_manager import sigma_escape_manager
-
-RE_STR_SPEC_SYMBOLS_MAP = {
-    "?": ReZeroOrOneQuantifier,
-    "*": ReZeroOrMoreQuantifier,
-    "+": ReOneOrMoreQuantifier,
-    "^": ReCaretSymbol,
-    "$": ReEndOfStrSymbol,
-    ".": ReAnySymbol,
-    "[": ReLeftSquareBracket,
-    "]": ReRightSquareBracket,
-    "(": ReLeftParenthesis,
-    ")": ReRightParenthesis,
-    "{": ReLeftCurlyBracket,
-    "}": ReRightCurlyBracket,
-    "|": ReOrOperator,
-    ",": ReCommaSymbol,
-    "-": ReHyphenSymbol,
-}
 
 
 class SigmaStrValueManager(StrValueManager):
     escape_manager = sigma_escape_manager
     str_spec_symbols_map = {"?": SingleSymbolWildCard, "*": UnboundLenWildCard}
-    re_str_alpha_num_symbols_map = {"w": ReWordSymbol, "d": ReDigitalSymbol, "s": ReWhiteSpaceSymbol}
+    re_str_alpha_num_symbols_map = {
+        "b": ReWordBoundarySymbol,
+        "w": ReWordSymbol,
+        "d": ReDigitalSymbol,
+        "s": ReWhiteSpaceSymbol
+    }
     re_str_spec_symbols_map = RE_STR_SPEC_SYMBOLS_MAP
 
     def from_str_to_container(self, value: str) -> StrValue:

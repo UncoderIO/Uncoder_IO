@@ -25,8 +25,8 @@ from typing import TYPE_CHECKING, Any, ClassVar, Optional, Union
 
 from app.translator.core.exceptions.functions import NotSupportedFunctionException
 from app.translator.core.mapping import SourceMapping
-from app.translator.core.models.field import Alias, Field
 from app.translator.core.models.functions.base import Function, ParsedFunctions, RenderedFunctions
+from app.translator.core.models.query_tokens.field import Alias, Field, PredefinedField
 from app.translator.tools.utils import execute_module
 from settings import INIT_FUNCTIONS
 
@@ -83,7 +83,6 @@ class HigherOrderFunctionParser(BaseFunctionParser):  # for highest level functi
 class FunctionRender(ABC):
     function_names_map: ClassVar[dict[str, str]] = {}
     order_to_render: int = 0
-    in_query_render: bool = False
     render_to_prefix: bool = False
     manager: PlatformFunctionsManager = None
 
@@ -95,17 +94,19 @@ class FunctionRender(ABC):
     def render(self, function: Function, source_mapping: SourceMapping) -> str:
         raise NotImplementedError
 
-    @staticmethod
-    def map_field(field: Union[Alias, Field], source_mapping: SourceMapping) -> str:
+    def map_field(self, field: Union[Alias, Field], source_mapping: SourceMapping) -> str:
         if isinstance(field, Alias):
             return field.name
 
-        generic_field_name = field.get_generic_field_name(source_mapping.source_id)
-        mapped_field = source_mapping.fields_mapping.get_platform_field_name(generic_field_name=generic_field_name)
-        if isinstance(mapped_field, list):
-            mapped_field = mapped_field[0]
+        if isinstance(field, Field):
+            mappings = self.manager.platform_functions.platform_query_render.mappings
+            mapped_fields = mappings.map_field(field, source_mapping)
+            return mapped_fields[0]
 
-        return mapped_field if mapped_field else field.source_name
+        if isinstance(field, PredefinedField):
+            return self.manager.platform_functions.platform_query_render.map_predefined_field(field)
+
+        raise NotSupportedFunctionException
 
 
 class PlatformFunctionsManager:
@@ -117,7 +118,6 @@ class PlatformFunctionsManager:
         self._parsers_map: dict[str, FunctionParser] = {}  # {platform_func_name: FunctionParser}
 
         self._renders_map: dict[str, FunctionRender] = {}  # {generic_func_name: FunctionRender}
-        self._in_query_renders_map: dict[str, FunctionRender] = {}  # {generic_func_name: FunctionRender}
         self._order_to_render: dict[str, int] = {}  # {generic_func_name: int}
 
     def register_render(self, render_class: type[FunctionRender]) -> type[FunctionRender]:
@@ -126,8 +126,6 @@ class PlatformFunctionsManager:
         for generic_function_name in render.function_names_map:
             self._renders_map[generic_function_name] = render
             self._order_to_render[generic_function_name] = render.order_to_render
-            if render.in_query_render:
-                self._in_query_renders_map[generic_function_name] = render
 
         return render_class
 
@@ -149,20 +147,12 @@ class PlatformFunctionsManager:
 
         raise NotSupportedFunctionException
 
-    def get_parser(self, platform_func_name: str) -> FunctionParser:
+    def get_parser(self, platform_func_name: str) -> Optional[FunctionParser]:
         if INIT_FUNCTIONS and (parser := self._parsers_map.get(platform_func_name)):
             return parser
 
-        raise NotSupportedFunctionException
-
     def get_render(self, generic_func_name: str) -> FunctionRender:
         if INIT_FUNCTIONS and (render := self._renders_map.get(generic_func_name)):
-            return render
-
-        raise NotSupportedFunctionException
-
-    def get_in_query_render(self, generic_func_name: str) -> FunctionRender:
-        if INIT_FUNCTIONS and (render := self._in_query_renders_map.get(generic_func_name)):
             return render
 
         raise NotSupportedFunctionException

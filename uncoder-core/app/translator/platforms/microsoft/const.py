@@ -34,6 +34,14 @@ MICROSOFT_SENTINEL_RULE_DETAILS = {
     **PLATFORM_DETAILS,
 }
 
+MICROSOFT_SENTINEL_YAML_RULE_DETAILS = {
+    "platform_id": "sentinel-kql-yaml-rule",
+    "name": "Microsoft Sentinel YAML Rule",
+    "platform_name": "YAML Rule (Kusto)",
+    "first_choice": 0,
+    **PLATFORM_DETAILS,
+}
+
 MICROSOFT_DEFENDER_DETAILS = {
     "platform_id": "mde-kql-query",
     "group_name": "Microsoft Defender for Endpoint",
@@ -42,6 +50,7 @@ MICROSOFT_DEFENDER_DETAILS = {
     "group_id": "microsoft-defender",
 }
 
-microsoft_defender_details = PlatformDetails(**MICROSOFT_DEFENDER_DETAILS)
+microsoft_defender_query_details = PlatformDetails(**MICROSOFT_DEFENDER_DETAILS)
 microsoft_sentinel_query_details = PlatformDetails(**MICROSOFT_SENTINEL_QUERY_DETAILS)
 microsoft_sentinel_rule_details = PlatformDetails(**MICROSOFT_SENTINEL_RULE_DETAILS)
+microsoft_sentinel_yaml_rule_details = PlatformDetails(**MICROSOFT_SENTINEL_YAML_RULE_DETAILS)

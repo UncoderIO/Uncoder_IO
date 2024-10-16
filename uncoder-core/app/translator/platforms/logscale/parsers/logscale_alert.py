@@ -21,17 +21,27 @@ from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer
 from app.translator.managers import parser_manager
 from app.translator.platforms.logscale.const import logscale_alert_details
+from app.translator.platforms.logscale.mapping import LogScaleMappings, logscale_alert_mappings
 from app.translator.platforms.logscale.parsers.logscale import LogScaleQueryParser
+from app.translator.tools.utils import parse_rule_description_str
 
 
 @parser_manager.register
 class LogScaleAlertParser(LogScaleQueryParser, JsonRuleMixin):
     details: PlatformDetails = logscale_alert_details
+    mappings: LogScaleMappings = logscale_alert_mappings
 
     def parse_raw_query(self, text: str, language: str) -> RawQueryContainer:
         rule = self.load_rule(text=text)
+        parsed_description = parse_rule_description_str(rule["description"])
         return RawQueryContainer(
             query=rule["query"]["queryString"],
             language=language,
-            meta_info=MetaInfoContainer(title=rule["name"], description=rule["description"]),
+            meta_info=MetaInfoContainer(
+                id_=parsed_description.get("rule_id"),
+                author=parsed_description.get("author"),
+                references=parsed_description.get("references"),
+                title=rule.get("name"),
+                description=parsed_description.get("description") or rule.get("description"),
+            ),
         )

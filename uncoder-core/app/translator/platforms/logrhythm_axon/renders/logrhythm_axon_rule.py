@@ -28,8 +28,9 @@ from app.translator.core.models.query_container import MetaInfoContainer
 from app.translator.managers import render_manager
 from app.translator.platforms.logrhythm_axon.const import DEFAULT_LOGRHYTHM_AXON_RULE, logrhythm_axon_rule_details
 from app.translator.platforms.logrhythm_axon.escape_manager import logrhythm_rule_escape_manager
+from app.translator.platforms.logrhythm_axon.mapping import LogRhythmAxonMappings, logrhythm_axon_rule_mappings
 from app.translator.platforms.logrhythm_axon.renders.logrhythm_axon_query import (
-    LogRhythmAxonFieldValue,
+    LogRhythmAxonFieldValueRender,
     LogRhythmAxonQueryRender,
 )
 from app.translator.tools.utils import get_rule_description_str
@@ -44,7 +45,7 @@ _SEVERITIES_MAP = {
 }
 
 
-class LogRhythmAxonRuleFieldValue(LogRhythmAxonFieldValue):
+class LogRhythmAxonRuleFieldValueRender(LogRhythmAxonFieldValueRender):
     details: PlatformDetails = logrhythm_axon_rule_details
     escape_manager = logrhythm_rule_escape_manager
 
@@ -52,8 +53,9 @@ class LogRhythmAxonRuleFieldValue(LogRhythmAxonFieldValue):
 @render_manager.register
 class LogRhythmAxonRuleRender(LogRhythmAxonQueryRender):
     details: PlatformDetails = logrhythm_axon_rule_details
+    mappings: LogRhythmAxonMappings = logrhythm_axon_rule_mappings
     or_token = "or"
-    field_value_map = LogRhythmAxonRuleFieldValue(or_token=or_token)
+    field_value_render = LogRhythmAxonRuleFieldValueRender(or_token=or_token)
 
     def finalize_query(
         self,
@@ -63,6 +65,7 @@ class LogRhythmAxonRuleRender(LogRhythmAxonQueryRender):
         meta_info: Optional[MetaInfoContainer] = None,
         source_mapping: Optional[SourceMapping] = None,
         not_supported_functions: Optional[list] = None,
+        unmapped_fields: Optional[list[str]] = None,
         *args,  # noqa: ARG002
         **kwargs,  # noqa: ARG002
     ) -> str:
@@ -79,21 +82,20 @@ class LogRhythmAxonRuleRender(LogRhythmAxonQueryRender):
         rule["observationPipeline"]["metadataFields"]["threat.severity"] = _SEVERITIES_MAP.get(
             meta_info.severity, SeverityType.medium
         )
-        if tactics := meta_info.mitre_attack.get("tactics"):
-            rule["observationPipeline"]["metadataFields"]["threat.mitre_tactic"] = ", ".join(
-                f"{i['external_id']}:{i['tactic']}" for i in sorted(tactics, key=lambda x: x["external_id"])
-            )
-        if techniques := meta_info.mitre_attack.get("techniques"):
-            rule["observationPipeline"]["metadataFields"]["threat.mitre_technique"] = ", ".join(
-                f"{i['technique_id']}:{i['technique']}" for i in sorted(techniques, key=lambda x: x["technique_id"])
-            )
+        if mitre_info := meta_info.mitre_attack:
+            if tactics := mitre_info.tactics:
+                rule["observationPipeline"]["metadataFields"]["threat.mitre_tactic"] = ", ".join(
+                    f"{i.external_id}:{i.name}" for i in sorted(tactics, key=lambda x: x.external_id)
+                )
+            if techniques := mitre_info.techniques:
+                rule["observationPipeline"]["metadataFields"]["threat.mitre_technique"] = ", ".join(
+                    f"{i.technique_id}:{i.name}" for i in sorted(techniques, key=lambda x: x.technique_id)
+                )
         if meta_info.output_table_fields:
             rule["observationPipeline"]["pattern"]["operations"][0]["logObserved"]["groupByFields"] = [
-                self.map_field(field, source_mapping)[0] for field in meta_info.output_table_fields
+                self.mappings.map_field(field, source_mapping)[0] for field in meta_info.output_table_fields
             ]
 
         json_rule = json.dumps(rule, indent=4, sort_keys=False)
-        if not_supported_functions:
-            rendered_not_supported = self.render_not_supported_functions(not_supported_functions)
-            return json_rule + rendered_not_supported
-        return json_rule
+        json_rule = self.wrap_with_unmapped_fields(json_rule, unmapped_fields)
+        return self.wrap_with_not_supported_functions(json_rule, not_supported_functions)

@@ -18,12 +18,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.managers import parser_manager
+from app.translator.platforms.base.lucene.mapping import LuceneMappings
 from app.translator.platforms.base.lucene.parsers.lucene import LuceneQueryParser
-from app.translator.platforms.graylog.const import graylog_details
-from app.translator.platforms.graylog.mapping import GraylogMappings, graylog_mappings
+from app.translator.platforms.graylog.const import graylog_query_details
+from app.translator.platforms.graylog.mapping import graylog_query_mappings
 
 
 @parser_manager.register_supported_by_roota
 class GraylogQueryParser(LuceneQueryParser):
-    details: PlatformDetails = graylog_details
-    mappings: GraylogMappings = graylog_mappings
+    details: PlatformDetails = graylog_query_details
+    mappings: LuceneMappings = graylog_query_mappings

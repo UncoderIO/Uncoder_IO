@@ -17,21 +17,19 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 
-from typing import Optional, Union
+from typing import Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
-from app.translator.core.mapping import SourceMapping
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.models.query_container import MetaInfoContainer
-from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
+from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
 from app.translator.managers import render_manager
 from app.translator.platforms.logscale.const import logscale_query_details
 from app.translator.platforms.logscale.escape_manager import logscale_escape_manager
 from app.translator.platforms.logscale.functions import LogScaleFunctions, log_scale_functions
-from app.translator.platforms.logscale.mapping import LogScaleMappings, logscale_mappings
+from app.translator.platforms.logscale.mapping import LogScaleMappings, logscale_query_mappings
 
 
-class LogScaleFieldValue(BaseQueryFieldValue):
+class LogScaleFieldValueRender(BaseFieldValueRender):
     details: PlatformDetails = logscale_query_details
     escape_manager = logscale_escape_manager
 
@@ -95,14 +93,14 @@ class LogScaleFieldValue(BaseQueryFieldValue):
 @render_manager.register
 class LogScaleQueryRender(PlatformQueryRender):
     details: PlatformDetails = logscale_query_details
-    mappings: LogScaleMappings = logscale_mappings
+    mappings: LogScaleMappings = logscale_query_mappings
     platform_functions: LogScaleFunctions = None
 
     or_token = "or"
     and_token = ""
     not_token = "not"
 
-    field_value_map = LogScaleFieldValue(or_token=or_token)
+    field_value_render = LogScaleFieldValueRender(or_token=or_token)
 
     def init_platform_functions(self) -> None:
         self.platform_functions = log_scale_functions
@@ -110,21 +108,3 @@ class LogScaleQueryRender(PlatformQueryRender):
 
     def wrap_with_comment(self, value: str) -> str:
         return f"/* {value} */"
-
-    def finalize_query(
-        self,
-        prefix: str,
-        query: str,
-        functions: str,
-        meta_info: Optional[MetaInfoContainer] = None,
-        source_mapping: Optional[SourceMapping] = None,  # noqa: ARG002
-        not_supported_functions: Optional[list] = None,
-        *args,  # noqa: ARG002
-        **kwargs,  # noqa: ARG002
-    ) -> str:
-        query = super().finalize_query(prefix=prefix, query=query, functions=functions)
-        query = self.wrap_query_with_meta_info(meta_info=meta_info, query=query)
-        if not_supported_functions:
-            rendered_not_supported = self.render_not_supported_functions(not_supported_functions)
-            return query + rendered_not_supported
-        return query

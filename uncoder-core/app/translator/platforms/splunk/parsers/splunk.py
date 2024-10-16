@@ -21,15 +21,14 @@ from app.translator.managers import parser_manager
 from app.translator.platforms.base.spl.parsers.spl import SplQueryParser
 from app.translator.platforms.splunk.const import splunk_query_details
 from app.translator.platforms.splunk.functions import SplunkFunctions, splunk_functions
-from app.translator.platforms.splunk.mapping import SplunkMappings, splunk_mappings
+from app.translator.platforms.splunk.mapping import SplunkMappings, splunk_query_mappings
 
 
 @parser_manager.register_supported_by_roota
 class SplunkQueryParser(SplQueryParser):
     details: PlatformDetails = splunk_query_details
+    mappings: SplunkMappings = splunk_query_mappings
+    platform_functions: SplunkFunctions = splunk_functions
 
     log_source_pattern = r"^___source_type___\s*=\s*(?:\"(?P<d_q_value>[%a-zA-Z_*:0-9\-/]+)\"|(?P<value>[%a-zA-Z_*:0-9\-/]+))(?:\s+(?:and|or)\s+|\s+)?"  # noqa: E501
     log_source_key_types = ("index", "source", "sourcetype", "sourcecategory")
-
-    mappings: SplunkMappings = splunk_mappings
-    platform_functions: SplunkFunctions = splunk_functions

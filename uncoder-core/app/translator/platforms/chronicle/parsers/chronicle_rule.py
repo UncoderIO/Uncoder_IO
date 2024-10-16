@@ -23,7 +23,7 @@ from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer
 from app.translator.managers import parser_manager
 from app.translator.platforms.chronicle.const import chronicle_rule_details
-from app.translator.platforms.chronicle.mapping import ChronicleMappings, chronicle_mappings
+from app.translator.platforms.chronicle.mapping import ChronicleMappings, chronicle_rule_mappings
 from app.translator.platforms.chronicle.parsers.chronicle import ChronicleQueryParser
 from app.translator.platforms.chronicle.tokenizer import ChronicleRuleTokenizer
 
@@ -31,11 +31,11 @@ from app.translator.platforms.chronicle.tokenizer import ChronicleRuleTokenizer
 @parser_manager.register
 class ChronicleRuleParser(ChronicleQueryParser):
     details: PlatformDetails = chronicle_rule_details
-    rule_name_pattern = "rule\s(?P<rule_name>[a-z0-9_]+)\s{"
-    meta_info_pattern = "meta:\n(?P<meta_info>[a-zA-Z0-9_\\\.*,>–<—~#$’`:;%+^\|?!@\s\"/=\-&'\(\)\[\]]+)\n\s+events:"  # noqa: RUF001
-    rule_pattern = "events:\n\s*(?P<query>[a-zA-Z\w0-9_%{}\|\.,!#^><:~\s\"\/=+?\-–&;$()`\*@\[\]'\\\]+)\n\s+condition:"  # noqa: RUF001
-    event_name_pattern = "condition:\n\s*(?P<event_name>\$[a-zA-Z_0-9]+)\n"
-    mappings: ChronicleMappings = chronicle_mappings
+    rule_name_pattern = r"rule\s+(?P<rule_name>[a-zA-Z0-9_]+)\s+{"
+    meta_info_pattern = r"meta:\n(?P<meta_info>[a-zA-Z0-9_\\\.*,>–<—~#$’`:;%+^\|?!@\s\"/=\-&'\(\)\[\]]+)\n\s+events:"  # noqa: RUF001
+    rule_pattern = r"events:\n\s*(?P<query>[a-zA-Z\w0-9_%{}\|\.,!#^><:~\s\"\/=+?\-–&;$()`\*@\[\]'\\]+)\n\s+condition:"  # noqa: RUF001
+    event_name_pattern = r"condition:\n\s*(?P<event_name>\$[a-zA-Z_0-9]+)\n"
+    mappings: ChronicleMappings = chronicle_rule_mappings
     tokenizer = ChronicleRuleTokenizer()
 
     def __parse_rule(self, rule: str) -> tuple[str, str, str]:

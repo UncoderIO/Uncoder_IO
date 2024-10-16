@@ -17,27 +17,29 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 
-from typing import Union
+from datetime import timedelta
+from typing import Optional, Union
 
 from app.translator.core.exceptions.core import SigmaRuleValidationException
 from app.translator.core.mixins.rule import YamlRuleMixin
-from app.translator.core.models.field import Field, FieldValue
+from app.translator.core.models.query_tokens.field import Field
+from app.translator.core.models.query_tokens.field_value import FieldValue
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import MetaInfoContainer, RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.parser import QueryParser
 from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.managers import parser_manager
-from app.translator.platforms.sigma.const import SIGMA_RULE_DETAILS
-from app.translator.platforms.sigma.mapping import SigmaMappings, sigma_mappings
+from app.translator.platforms.sigma.const import sigma_rule_details
+from app.translator.platforms.sigma.mapping import SigmaMappings, sigma_rule_mappings
 from app.translator.platforms.sigma.tokenizer import SigmaConditionTokenizer, SigmaTokenizer
 
 
 @parser_manager.register_main
 class SigmaParser(QueryParser, YamlRuleMixin):
-    details: PlatformDetails = PlatformDetails(**SIGMA_RULE_DETAILS)
+    details: PlatformDetails = sigma_rule_details
     condition_tokenizer = SigmaConditionTokenizer()
     tokenizer: SigmaTokenizer = SigmaTokenizer()
-    mappings: SigmaMappings = sigma_mappings
+    mappings: SigmaMappings = sigma_rule_mappings
     mandatory_fields = {"title", "description", "logsource", "detection"}
 
     wrapped_with_comment_pattern = r"^\s*#.*(?:\n|$)"
@@ -47,6 +49,22 @@ class SigmaParser(QueryParser, YamlRuleMixin):
         if isinstance(false_positives, str):
             return [i.strip() for i in false_positives.split(",")]
         return false_positives
+
+    @staticmethod
+    def __parse_timeframe(raw_timeframe: Optional[str] = None) -> Optional[timedelta]:
+        if raw_timeframe:
+            time_unit = raw_timeframe[-1].lower()
+            time_value = raw_timeframe[:-1]
+
+            if time_value.isdigit():
+                if time_unit == 's':
+                    return timedelta(seconds=int(time_value))
+                if time_unit == 'm':
+                    return timedelta(minutes=int(time_value))
+                if time_unit == 'h':
+                    return timedelta(hours=int(time_value))
+                if time_unit == 'd':
+                    return timedelta(days=int(time_value))
 
     def _get_meta_info(
         self,
@@ -60,7 +78,7 @@ class SigmaParser(QueryParser, YamlRuleMixin):
             title=rule.get("title"),
             id_=rule.get("id"),
             description=rule.get("description"),
-            author=rule.get("author"),
+            author=rule.get("author", '').split(', '),
             date=rule.get("date"),
             output_table_fields=sigma_fields_tokens,
             query_fields=fields_tokens,
@@ -73,6 +91,7 @@ class SigmaParser(QueryParser, YamlRuleMixin):
             false_positives=self.__parse_false_positives(rule.get("falsepositives")),
             source_mapping_ids=source_mapping_ids,
             parsed_logsources=parsed_logsources,
+            timeframe=self.__parse_timeframe(rule.get('detection', {}).get('timeframe'))
         )
 
     def __validate_rule(self, rule: dict):
@@ -93,7 +112,9 @@ class SigmaParser(QueryParser, YamlRuleMixin):
         tokens = self.tokenizer.tokenize(detection=sigma_rule.get("detection"))
         field_tokens = [token.field for token in QueryTokenizer.filter_tokens(tokens, FieldValue)]
         field_names = [field.source_name for field in field_tokens]
-        source_mappings = self.mappings.get_suitable_source_mappings(field_names=field_names, **log_sources)
+        source_mappings = self.mappings.get_source_mappings_by_fields_and_log_sources(
+            field_names=field_names, log_sources=log_sources
+        )
         QueryTokenizer.set_field_tokens_generic_names_map(field_tokens, source_mappings, self.mappings.default_mapping)
         sigma_fields_tokens = None
         if sigma_fields := sigma_rule.get("fields"):
@@ -108,6 +129,6 @@ class SigmaParser(QueryParser, YamlRuleMixin):
                 source_mapping_ids=[source_mapping.source_id for source_mapping in source_mappings],
                 sigma_fields_tokens=sigma_fields_tokens,
                 parsed_logsources=log_sources,
-                fields_tokens=field_tokens,
+                fields_tokens=field_tokens
             ),
         )

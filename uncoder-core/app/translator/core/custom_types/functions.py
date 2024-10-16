@@ -15,19 +15,21 @@ class FunctionType(CustomEnum):
     latest = "latest"
 
     divide = "divide"
+    multiply = "multiply"
 
     lower = "lower"
     split = "split"
     upper = "upper"
 
     array_length = "array_length"
-    compare = "compare"
     extract_time = "extract_time"
     ipv4_is_in_range = "ipv4_is_in_range"
 
     bin = "bin"
     eval = "eval"
     fields = "fields"
+    iploc = "iploc"
+    join = "join"
     rename = "rename"
     search = "search"
     sort_limit = "sort_limit"

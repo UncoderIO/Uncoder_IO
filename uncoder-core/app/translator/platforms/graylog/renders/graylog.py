@@ -19,19 +19,20 @@ limitations under the License.
 
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.managers import render_manager
-from app.translator.platforms.base.lucene.renders.lucene import LuceneFieldValue, LuceneQueryRender
-from app.translator.platforms.graylog.const import graylog_details
-from app.translator.platforms.graylog.mapping import GraylogMappings, graylog_mappings
+from app.translator.platforms.base.lucene.mapping import LuceneMappings
+from app.translator.platforms.base.lucene.renders.lucene import LuceneFieldValueRender, LuceneQueryRender
+from app.translator.platforms.graylog.const import graylog_query_details
+from app.translator.platforms.graylog.mapping import graylog_query_mappings
 
 
-class GraylogFieldValue(LuceneFieldValue):
-    details: PlatformDetails = graylog_details
+class GraylogFieldValue(LuceneFieldValueRender):
+    details: PlatformDetails = graylog_query_details
 
 
 @render_manager.register
 class GraylogQueryRender(LuceneQueryRender):
-    details: PlatformDetails = graylog_details
-    mappings: GraylogMappings = graylog_mappings
+    details: PlatformDetails = graylog_query_details
+    mappings: LuceneMappings = graylog_query_mappings
 
     or_token = "OR"
-    field_value_map = GraylogFieldValue(or_token=or_token)
+    field_value_render = GraylogFieldValue(or_token=or_token)

@@ -21,13 +21,13 @@ from typing import Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.values import ValueType
-from app.translator.core.render import BaseQueryFieldValue, PlatformQueryRender
+from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
 from app.translator.core.str_value_manager import StrValue
 from app.translator.platforms.base.lucene.mapping import LuceneLogSourceSignature
 from app.translator.platforms.base.lucene.str_value_manager import lucene_str_value_manager
 
 
-class LuceneFieldValue(BaseQueryFieldValue):
+class LuceneFieldValueRender(BaseFieldValueRender):
     str_value_manager = lucene_str_value_manager
 
     @staticmethod

@@ -1,28 +1,25 @@
 from typing import Optional
 
 
-class NotImplementedException(BaseException):
-    ...
-
-
 class BasePlatformException(BaseException):
     ...
 
 
 class StrictPlatformException(BasePlatformException):
-    field_name: str = None
-
-    def __init__(
-        self, platform_name: str, field_name: str, mapping: Optional[str] = None, detected_fields: Optional[list] = None
-    ):
+    def __init__(self, platform_name: str, fields: list[str], mapping: Optional[str] = None):
         message = (
             f"Platform {platform_name} has strict mapping. "
-            f"Source fields: {', '.join(detected_fields) if detected_fields else field_name} has no mapping."
+            f"Source fields: {', '.join(fields)} have no mapping."
             f" Mapping file: {mapping}."
             if mapping
             else ""
         )
-        self.field_name = field_name
+        super().__init__(message)
+
+
+class UnsupportedMappingsException(BasePlatformException):
+    def __init__(self, platform_name: str, mappings: list[str]):
+        message = f"Platform {platform_name} does not support these mappings: {mappings}."
         super().__init__(message)
 
 
@@ -91,6 +88,10 @@ class InvalidYamlStructure(InvalidRuleStructure):
 
 class InvalidJSONStructure(InvalidRuleStructure):
     rule_type: str = "JSON"
+
+
+class InvalidTOMLStructure(InvalidRuleStructure):
+    rule_type: str = "TOML"
 
 
 class InvalidXMLStructure(InvalidRuleStructure):

@@ -42,6 +42,10 @@ class ReEndOfStrSymbol(BaseSpecSymbol):
     ...
 
 
+class ReWordBoundarySymbol(BaseSpecSymbol):
+    ...
+
+
 class ReWordSymbol(BaseSpecSymbol):
     ...
 
@@ -126,10 +130,30 @@ class StrValue(str):
         return any(isinstance(el, BaseSpecSymbol) for el in self.split_value)
 
 
+RE_STR_SPEC_SYMBOLS_MAP = {
+    "?": ReZeroOrOneQuantifier,
+    "*": ReZeroOrMoreQuantifier,
+    "+": ReOneOrMoreQuantifier,
+    "^": ReCaretSymbol,
+    "$": ReEndOfStrSymbol,
+    ".": ReAnySymbol,
+    "[": ReLeftSquareBracket,
+    "]": ReRightSquareBracket,
+    "(": ReLeftParenthesis,
+    ")": ReRightParenthesis,
+    "{": ReLeftCurlyBracket,
+    "}": ReRightCurlyBracket,
+    "|": ReOrOperator,
+    ",": ReCommaSymbol,
+    "-": ReHyphenSymbol,
+}
+
+
 CONTAINER_SPEC_SYMBOLS_MAP = {
     SingleSymbolWildCard: "?",
     UnboundLenWildCard: "*",
     ReAnySymbol: ".",
+    ReWordBoundarySymbol: r"\b",
     ReWordSymbol: r"\w",
     ReDigitalSymbol: r"\d",
     ReWhiteSpaceSymbol: r"\s",

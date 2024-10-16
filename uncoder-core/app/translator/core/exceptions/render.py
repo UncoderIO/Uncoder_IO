@@ -14,5 +14,5 @@ class FunctionRenderException(BaseRenderException):
 
 class UnsupportedRenderMethod(BaseRenderException):
     def __init__(self, platform_name: str, method: str):
-        message = f"Cannot translate. {platform_name} backend does not support {method}."
+        message = f'Cannot translate. {platform_name} backend does not support "{method}".'
         super().__init__(message)

@@ -1,3 +1,4 @@
+@use "sass:color"
 @import ../../assets/sass/helpers/variables
 @import ../../assets/sass/helpers/mixins
 
@@ -5,7 +6,7 @@
   border-radius: 4px
   border: 1px solid rgba($borderGray, .3)
   background-color: $backgroundBlueLight
-  box-shadow: 0 6px 12px transparentize($black, .8), 0 24px 40px transparentize($black, .8)
+  box-shadow: 0 6px 12px color.scale($black, $alpha: -80%), 0 24px 40px color.scale($black, $alpha: -80%)
   &__scroll
     overflow-x: auto
     max-width: 100%

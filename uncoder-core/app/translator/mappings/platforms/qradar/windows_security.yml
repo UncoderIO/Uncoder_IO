@@ -12,6 +12,7 @@ field_mapping:
   EventID:
     - Event ID
     - EventID
+    - qidEventId
   ParentImage: Parent Process Path
   AccessMask: AccessMask
   AccountName: Account Name
@@ -190,4 +191,3 @@ field_mapping:
   UserID: UserID
   ParentProcessName: Parent Process Name
   Service: Service
-  hasIdentity: hasIdentity

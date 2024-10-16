@@ -19,25 +19,25 @@ limitations under the License.
 
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.managers import render_manager
-from app.translator.platforms.base.spl.renders.spl import SplFieldValue, SplQueryRender
+from app.translator.platforms.base.spl.renders.spl import SplFieldValueRender, SplQueryRender
 from app.translator.platforms.splunk.const import splunk_query_details
 from app.translator.platforms.splunk.functions import SplunkFunctions, splunk_functions
-from app.translator.platforms.splunk.mapping import SplunkMappings, splunk_mappings
+from app.translator.platforms.splunk.mapping import SplunkMappings, splunk_query_mappings
 
 
-class SplunkFieldValue(SplFieldValue):
+class SplunkFieldValueRender(SplFieldValueRender):
     details: PlatformDetails = splunk_query_details
 
 
 @render_manager.register
 class SplunkQueryRender(SplQueryRender):
     details: PlatformDetails = splunk_query_details
+    mappings: SplunkMappings = splunk_query_mappings
+    platform_functions: SplunkFunctions = None
 
     or_token = "OR"
 
-    field_value_map = SplunkFieldValue(or_token=or_token)
-    mappings: SplunkMappings = splunk_mappings
-    platform_functions: SplunkFunctions = None
+    field_value_render = SplunkFieldValueRender(or_token=or_token)
 
     def init_platform_functions(self) -> None:
         self.platform_functions = splunk_functions
