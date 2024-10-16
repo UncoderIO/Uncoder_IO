@@ -29,13 +29,13 @@ from app.translator.platforms.elasticsearch.const import elasticsearch_esql_quer
 from app.translator.platforms.elasticsearch.mapping import ElasticESQLMappings, esql_query_mappings
 from app.translator.platforms.elasticsearch.str_value_manager import (
     ESQLQueryStrValueManager,
-    esql_query_str_value_manager
+    esql_str_value_manager
 )
 
 
 class ESQLFieldValueRender(BaseFieldValueRender):
     details: PlatformDetails = elasticsearch_esql_query_details
-    str_value_manager: ESQLQueryStrValueManager = esql_query_str_value_manager
+    str_value_manager: ESQLQueryStrValueManager = esql_str_value_manager
 
     @staticmethod
     def _make_case_insensitive(value: str) -> str:
