@@ -65,6 +65,8 @@ class SQLStrValueManager(StrValueManager):
                 if char == "'":
                     if prev_char == "'":
                         split.append(char)
+                        prev_char = None
+                        continue
                     prev_char = char
                     continue
                 split.append(char)
