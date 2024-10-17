@@ -105,6 +105,3 @@ class SentinelOnePowerQueryRender(PlatformQueryRender):
     not_token = "not"
     comment_symbol = "//"
     field_value_render = SentinelOnePowerQueryFieldValue(or_token=or_token)
-
-    def generate_prefix(self, log_source_signature: Optional[LogSourceSignature], functions_prefix: str = "") -> str:
-        return "| columns "
