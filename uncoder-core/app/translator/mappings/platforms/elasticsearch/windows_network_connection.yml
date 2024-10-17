@@ -1,6 +1,8 @@
 platform: ElasticSearch
 source: windows_network_connection
 
+conditions:
+  event.category: 'network'
 
 log_source:
   index: [winlogbeat-*, logs-*]

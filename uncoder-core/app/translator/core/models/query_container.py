@@ -65,6 +65,8 @@ class MetaInfoContainer:
         date: Optional[str] = None,
         output_table_fields: Optional[list[Field]] = None,
         query_fields: Optional[list[Field]] = None,
+        function_fields: Optional[list[Field]] = None,
+        function_fields_map: Optional[dict[str, list[Field]]] = None,
         license_: Optional[str] = None,
         severity: Optional[str] = None,
         references: Optional[list[str]] = None,
@@ -76,7 +78,7 @@ class MetaInfoContainer:
         parsed_logsources: Optional[dict] = None,
         timeframe: Optional[timedelta] = None,
         query_period: Optional[timedelta] = None,
-        mitre_attack: MitreInfoContainer = MitreInfoContainer(),
+        mitre_attack: Optional[MitreInfoContainer] = None,
         raw_metainfo_container: Optional[RawMetaInfoContainer] = None,
     ) -> None:
         self.id = id_ or str(uuid.uuid4())
@@ -90,11 +92,13 @@ class MetaInfoContainer:
         self.date = date or datetime.now().date().strftime("%Y-%m-%d")
         self.output_table_fields = output_table_fields or []
         self.query_fields = query_fields or []
+        self.function_fields = function_fields or []
+        self.function_fields_map = function_fields_map or {}
         self.license = license_ or "DRL 1.1"
         self.severity = severity or SeverityType.low
         self.references = references or []
         self.tags = tags or []
-        self.mitre_attack = mitre_attack or None
+        self.mitre_attack = mitre_attack or MitreInfoContainer()
         self.raw_mitre_attack = raw_mitre_attack or []
         self.status = status or "stable"
         self.false_positives = false_positives or []
@@ -102,7 +106,7 @@ class MetaInfoContainer:
         self.parsed_logsources = parsed_logsources or {}
         self.timeframe = timeframe
         self.query_period = query_period
-        self.raw_metainfo_container = raw_metainfo_container
+        self.raw_metainfo_container = raw_metainfo_container or RawMetaInfoContainer()
 
     @property
     def author_str(self) -> str:

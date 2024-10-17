@@ -17,7 +17,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 import re
+from typing import Optional, Union
 
+from app.translator.core.models.functions.base import ParsedFunctions
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.parser import PlatformQueryParser
 from app.translator.platforms.base.lucene.tokenizer import LuceneTokenizer
@@ -31,7 +33,7 @@ class LuceneQueryParser(PlatformQueryParser):
 
     wrapped_with_comment_pattern = r"^\s*//.*(?:\n|$)"
 
-    def _parse_query(self, query: str) -> tuple[str, dict[str, list[str]]]:
+    def _parse_query(self, query: str) -> tuple[str, dict[str, Union[list[str], list[int]]], Optional[ParsedFunctions]]:
         log_sources = {}
         for source_type in self.log_source_key_types:
             pattern = self.log_source_pattern.replace("___source_type___", source_type)
@@ -43,14 +45,14 @@ class LuceneQueryParser(PlatformQueryParser):
                 pos_end = search.end()
                 query = query[:pos_start] + query[pos_end:]
 
-        return query, log_sources
+        return query, log_sources, None
 
     def parse(self, raw_query_container: RawQueryContainer) -> TokenizedQueryContainer:
-        query, log_sources = self._parse_query(raw_query_container.query)
+        query, log_sources, _ = self._parse_query(raw_query_container.query)
         query_tokens = self.get_query_tokens(query)
-        field_tokens = self.get_field_tokens(query_tokens)
-        source_mappings = self.get_source_mappings(field_tokens, log_sources)
+        query_field_tokens, _, _ = self.get_field_tokens(query_tokens)
+        source_mappings = self.get_source_mappings(query_field_tokens, log_sources)
         meta_info = raw_query_container.meta_info
-        meta_info.query_fields = field_tokens
+        meta_info.query_fields = query_field_tokens
         meta_info.source_mapping_ids = [source_mapping.source_id for source_mapping in source_mappings]
         return TokenizedQueryContainer(tokens=query_tokens, meta_info=meta_info)
