@@ -24,6 +24,7 @@ from app.translator.core.custom_types.values import ValueType
 from app.translator.core.models.query_tokens.field_value import FieldValue
 from app.translator.core.models.query_tokens.identifier import Identifier
 from app.translator.core.tokenizer import QueryTokenizer
+from app.translator.platforms.base.sql.str_value_manager import sql_str_value_manager
 from app.translator.tools.utils import get_match_group
 
 
@@ -51,6 +52,8 @@ class SqlTokenizer(QueryTokenizer):
 
     wildcard_symbol = "%"
 
+    str_value_manager = sql_str_value_manager
+
     @staticmethod
     def should_process_value_wildcards(operator: Optional[str]) -> bool:
         return operator and operator.lower() in ("like",)
@@ -65,7 +68,7 @@ class SqlTokenizer(QueryTokenizer):
             return mapped_operator, bool_value
 
         if (s_q_value := get_match_group(match, group_name=ValueType.single_quotes_value)) is not None:
-            return mapped_operator, s_q_value
+            return mapped_operator, self.str_value_manager.from_str_to_container(s_q_value)
 
         return super().get_operator_and_value(match, mapped_operator, operator)
 
