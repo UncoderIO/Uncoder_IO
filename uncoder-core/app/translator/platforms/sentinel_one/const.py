@@ -1,6 +1,5 @@
 from app.translator.core.models.platform_details import PlatformDetails
 
-
 PLATFORM_DETAILS = {"group_id": "sentinel-one", "group_name": "SentinelOne"}
 
 SENTINEL_ONE_EVENTS_QUERY_DETAILS = {
