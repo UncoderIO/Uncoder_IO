@@ -33,19 +33,19 @@ class SentinelOnePowerQueryFieldValue(BaseFieldValueRender):
         return f"{field} = {value}"
 
     def less_modifier(self, field: str, value: Union[int, str]) -> str:
-        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
+        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)
         return f"{field} < {value}"
 
     def less_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
-        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
+        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)
         return f"{field} <= {value}"
 
     def greater_modifier(self, field: str, value: Union[int, str]) -> str:
-        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
+        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)
         return f"{field} > {value}"
 
     def greater_or_equal_modifier(self, field: str, value: Union[int, str]) -> str:
-        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
+        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)
         return f"{field} >= {value}"
 
     def not_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
@@ -77,15 +77,11 @@ class SentinelOnePowerQueryFieldValue(BaseFieldValueRender):
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             values = self.list_token.join(
-                self.str_value_manager.escape_manager.escape(
-                    self._pre_process_value(field, v, value_type=ValueType.regex_value, wrap_str=True, wrap_int=True),
-                    ValueType.regex_value,
-                )
+                self._pre_process_value(field, v, value_type=ValueType.regex_value, wrap_str=True, wrap_int=True)
                 for v in value
             )
             return f"{field} matches ({values})"
         value = self._pre_process_value(field, value, value_type=ValueType.regex_value, wrap_str=True, wrap_int=True)
-        value = self.str_value_manager.escape_manager.escape(value, ValueType.regex_value)
         return f"{field} matches {value}"
 
     def is_none(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
