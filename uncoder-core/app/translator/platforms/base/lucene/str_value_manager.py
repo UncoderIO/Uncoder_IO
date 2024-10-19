@@ -17,7 +17,7 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 
-from typing import ClassVar
+from typing import ClassVar, Optional
 
 from app.translator.core.str_value_manager import (
     BaseSpecSymbol,
@@ -68,7 +68,7 @@ class LuceneStrValueManager(StrValueManager):
     }
     re_str_spec_symbols_map = RE_STR_SPEC_SYMBOLS_MAP
 
-    def from_str_to_container(self, value: str) -> StrValue:
+    def from_str_to_container(self, value: str, escape_symbol: Optional[str] = None) -> StrValue:  # noqa: ARG002
         split = []
         prev_char = None
         for char in value:

@@ -21,6 +21,7 @@ from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.mapping import LogSourceSignature
 from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
+from app.translator.platforms.base.sql.custom_types.values import SQLValueType
 from app.translator.platforms.base.sql.str_value_manager import sql_str_value_manager
 
 
@@ -56,17 +57,23 @@ class SqlFieldValueRender(BaseFieldValueRender):
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.contains_modifier(field=field, value=v) for v in value)})"
-        return f"{field} like '%{self._pre_process_value(field, value)}%'"
+
+        value = f"'%{self._pre_process_value(field, value, value_type=SQLValueType.like_value)}%' escape '\\'"
+        return f"{field} like {value}"
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.endswith_modifier(field=field, value=v) for v in value)})"
-        return f"{field} like '%{self._pre_process_value(field, value)}'"
+
+        value = f"'%{self._pre_process_value(field, value, value_type=SQLValueType.like_value)}' escape '\\'"
+        return f"{field} like {value}"
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.startswith_modifier(field=field, value=v) for v in value)})"
-        return f"{field} like '{self._pre_process_value(field, value)}%'"
+
+        value = f"'{self._pre_process_value(field, value, value_type=SQLValueType.like_value)}%' escape '\\'"
+        return f"{field} like {value}"
 
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):

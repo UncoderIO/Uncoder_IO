@@ -18,7 +18,7 @@ limitations under the License.
 """
 
 import copy
-from typing import ClassVar
+from typing import ClassVar, Optional
 
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.str_value_manager import (
@@ -55,7 +55,7 @@ class AQLStrValueManager(StrValueManager):
         "%": UnboundLenWildCard,
     }
 
-    def from_str_to_container(self, value: str) -> StrValue:
+    def from_str_to_container(self, value: str, escape_symbol: Optional[str] = None) -> StrValue:  # noqa: ARG002
         split = []
         prev_char = None
         for char in value:

@@ -29,6 +29,8 @@ from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.platforms.base.sql.str_value_manager import sql_str_value_manager
 from app.translator.tools.utils import get_match_group
 
+_ESCAPE_SYMBOL_GROUP_NAME = "escape_symbol"
+
 
 class SqlTokenizer(QueryTokenizer):
     single_value_operators_map: ClassVar[dict[str, str]] = {
@@ -46,9 +48,7 @@ class SqlTokenizer(QueryTokenizer):
     field_pattern = r'(?P<field_name>"[a-zA-Z\._\-\s]+"|[a-zA-Z\._\-]+)'
     num_value_pattern = rf"(?P<{ValueType.number_value}>\d+(?:\.\d+)*)\s*"
     bool_value_pattern = rf"(?P<{ValueType.bool_value}>true|false)\s*"
-    single_quotes_value_pattern = (
-        rf"""'(?P<{ValueType.single_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{{\}}\s]|'')*)'"""
-    )
+    single_quotes_value_pattern = rf"""'(?P<{ValueType.single_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-\/,_".$&^@!\(\)\{{\}}\s]|''|\\\'|\\\%|\\\_|\\\\)*)'(?:\s+escape\s+'(?P<{_ESCAPE_SYMBOL_GROUP_NAME}>.)')?"""  # noqa: E501
     _value_pattern = rf"{num_value_pattern}|{bool_value_pattern}|{single_quotes_value_pattern}"
     multi_value_pattern = rf"""\((?P<{ValueType.multi_value}>\d+(?:,\s*\d+)*|'(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{{\}}\s]|'')*'(?:,\s*'(?:[:a-zA-Z\*0-9=+%#\-\/\\,_".$&^@!\(\)\{{\}}\s]|'')*')*)\)"""  # noqa: E501
     re_field_value_pattern = rf"""regexp_like\({field_pattern},\s*'(?P<{ValueType.regex_value}>(?:[:a-zA-Z\*\?0-9=+%#№;\-_,"\.$&^@!\{{\}}\[\]\s?<>|]|\\\'|\\)+)'\)"""  # noqa: E501
@@ -71,7 +71,8 @@ class SqlTokenizer(QueryTokenizer):
             return mapped_operator, bool_value
 
         if (s_q_value := get_match_group(match, group_name=ValueType.single_quotes_value)) is not None:
-            return mapped_operator, self.str_value_manager.from_str_to_container(s_q_value)
+            escape_symbol = get_match_group(match, group_name=_ESCAPE_SYMBOL_GROUP_NAME)
+            return mapped_operator, self.str_value_manager.from_str_to_container(s_q_value, escape_symbol=escape_symbol)
 
         return super().get_operator_and_value(match, mapped_operator, operator)
 
@@ -87,10 +88,6 @@ class SqlTokenizer(QueryTokenizer):
             value = self.str_value_manager.from_re_str_to_container(group_dict[ValueType.regex_value])
             operator = Identifier(token_type=OperatorType.REGEX)
             return self.create_field_value(field_name, operator, value), query[match.end() :]
-
-    def tokenize(self, query: str) -> list:
-        query = re.sub(r"\s*ESCAPE\s*'.'", "", query)  # remove `ESCAPE 'escape_char'` in LIKE expr
-        return super().tokenize(query)
 
     def _get_next_token(
         self, query: str

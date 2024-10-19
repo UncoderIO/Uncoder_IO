@@ -18,7 +18,7 @@ limitations under the License.
 """
 
 import copy
-from typing import ClassVar
+from typing import ClassVar, Optional
 
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.str_value_manager import (
@@ -55,20 +55,28 @@ class SQLStrValueManager(StrValueManager):
         "%": UnboundLenWildCard,
     }
 
-    def from_str_to_container(self, value: str) -> StrValue:
+    def from_str_to_container(self, value: str, escape_symbol: Optional[str] = None) -> StrValue:
         split = []
         prev_char = None
         for char in value:
-            if char in self.str_spec_symbols_map:
-                split.append(self.str_spec_symbols_map[char]())
-            else:
-                if char == "'":
-                    if prev_char == "'":
-                        split.append(char)
-                        prev_char = None
-                        continue
-                    prev_char = char
+            if escape_symbol and char == escape_symbol:
+                if prev_char == escape_symbol:
+                    split.append(char)
+                    prev_char = None
                     continue
+                prev_char = char
+                continue
+            if not escape_symbol and char == "'":
+                if prev_char == "'":
+                    split.append(char)
+                    prev_char = None
+                    continue
+            elif char in ("'", "_", "%"):
+                if escape_symbol and prev_char == escape_symbol:
+                    split.append(char)
+                elif char in self.str_spec_symbols_map:
+                    split.append(self.str_spec_symbols_map[char]())
+            else:
                 split.append(char)
 
             prev_char = char

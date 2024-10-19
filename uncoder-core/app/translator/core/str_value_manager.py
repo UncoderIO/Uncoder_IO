@@ -182,7 +182,7 @@ class StrValueManager:
     container_spec_symbols_map: ClassVar[dict[type[BaseSpecSymbol], str]] = CONTAINER_SPEC_SYMBOLS_MAP
 
     @staticmethod
-    def from_str_to_container(value: str) -> StrValue:
+    def from_str_to_container(value: str, escape_symbol: Optional[str] = None) -> StrValue:  # noqa: ARG004
         return StrValue(value=value, split_value=[value])
 
     def from_re_str_to_container(self, value: str) -> StrValue:
