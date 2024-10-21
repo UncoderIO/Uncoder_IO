@@ -20,7 +20,6 @@ limitations under the License.
 import copy
 from typing import ClassVar, Optional
 
-from app.translator.core.custom_types.values import ValueType
 from app.translator.core.str_value_manager import (
     CONTAINER_SPEC_SYMBOLS_MAP,
     RE_STR_SPEC_SYMBOLS_MAP,
@@ -34,6 +33,7 @@ from app.translator.core.str_value_manager import (
     StrValueManager,
     UnboundLenWildCard,
 )
+from app.translator.platforms.base.sql.custom_types.values import SQLValueType
 from app.translator.platforms.base.sql.escape_manager import sql_escape_manager
 
 SQL_CONTAINER_SPEC_SYMBOLS_MAP = copy.copy(CONTAINER_SPEC_SYMBOLS_MAP)
@@ -55,7 +55,9 @@ class SQLStrValueManager(StrValueManager):
         "%": UnboundLenWildCard,
     }
 
-    def from_str_to_container(self, value: str, escape_symbol: Optional[str] = None) -> StrValue:
+    def from_str_to_container(
+        self, value: str, value_type: str = SQLValueType.value, escape_symbol: Optional[str] = None
+    ) -> StrValue:
         split = []
         prev_char = None
         for char in value:
@@ -71,7 +73,7 @@ class SQLStrValueManager(StrValueManager):
                     split.append(char)
                     prev_char = None
                     continue
-            elif char in ("'", "_", "%"):
+            elif char in ("'", "_", "%") and value_type == SQLValueType.like_value:
                 if escape_symbol and prev_char == escape_symbol:
                     split.append(char)
                 elif char in self.str_spec_symbols_map:
@@ -87,13 +89,13 @@ class SQLStrValueManager(StrValueManager):
         value = value.replace("''", "'")
         return super().from_re_str_to_container(value)
 
-    def from_container_to_str(self, container: StrValue, value_type: str = ValueType.value) -> str:
+    def from_container_to_str(self, container: StrValue, value_type: str = SQLValueType.value) -> str:
         result = ""
         for el in container.split_value:
             if isinstance(el, str):
                 result += self.escape_manager.escape(el, value_type)
             elif isinstance(el, BaseSpecSymbol):
-                if value_type == ValueType.regex_value:
+                if value_type == SQLValueType.regex_value:
                     if isinstance(el, SingleSymbolWildCard):
                         result += "."
                         continue

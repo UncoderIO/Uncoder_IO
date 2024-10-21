@@ -55,7 +55,12 @@ class AQLStrValueManager(StrValueManager):
         "%": UnboundLenWildCard,
     }
 
-    def from_str_to_container(self, value: str, escape_symbol: Optional[str] = None) -> StrValue:  # noqa: ARG002
+    def from_str_to_container(
+        self,
+        value: str,
+        value_type: str = ValueType.value,  # noqa: ARG002
+        escape_symbol: Optional[str] = None,  # noqa: ARG002
+    ) -> StrValue:
         split = []
         prev_char = None
         for char in value:

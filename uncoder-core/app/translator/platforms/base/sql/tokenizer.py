@@ -26,6 +26,7 @@ from app.translator.core.models.query_tokens.function_value import FunctionValue
 from app.translator.core.models.query_tokens.identifier import Identifier
 from app.translator.core.models.query_tokens.keyword import Keyword
 from app.translator.core.tokenizer import QueryTokenizer
+from app.translator.platforms.base.sql.custom_types.values import SQLValueType
 from app.translator.platforms.base.sql.str_value_manager import sql_str_value_manager
 from app.translator.tools.utils import get_match_group
 
@@ -72,7 +73,11 @@ class SqlTokenizer(QueryTokenizer):
 
         if (s_q_value := get_match_group(match, group_name=ValueType.single_quotes_value)) is not None:
             escape_symbol = get_match_group(match, group_name=_ESCAPE_SYMBOL_GROUP_NAME)
-            return mapped_operator, self.str_value_manager.from_str_to_container(s_q_value, escape_symbol=escape_symbol)
+            should_process_value_wildcards = self.should_process_value_wildcards(operator)
+            value_type = SQLValueType.like_value if should_process_value_wildcards else SQLValueType.value
+            return mapped_operator, self.str_value_manager.from_str_to_container(
+                s_q_value, value_type=value_type, escape_symbol=escape_symbol
+            )
 
         return super().get_operator_and_value(match, mapped_operator, operator)
 
