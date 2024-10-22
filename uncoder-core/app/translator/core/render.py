@@ -76,7 +76,7 @@ class BaseFieldValueRender(ABC):
         return value_type or ValueType.value
 
     @staticmethod
-    def _wrap_str_value(value: str) -> str:
+    def _wrap_str_value(value: str, value_type: str = ValueType.value) -> str:  # noqa: ARG004
         return value
 
     @staticmethod
@@ -98,10 +98,10 @@ class BaseFieldValueRender(ABC):
         value_type = self._get_value_type(field, value, value_type)
         if isinstance(value, StrValue):
             value = self.str_value_manager.from_container_to_str(value, value_type)
-            return self._wrap_str_value(value) if wrap_str else value
+            return self._wrap_str_value(value, value_type) if wrap_str else value
         if isinstance(value, str):
             value = self.str_value_manager.escape_manager.escape(value, value_type)
-            return self._wrap_str_value(value) if wrap_str else value
+            return self._wrap_str_value(value, value_type) if wrap_str else value
         if isinstance(value, bool):
             return self._map_bool_value(value)
         if isinstance(value, int):
@@ -428,14 +428,18 @@ class PlatformQueryRender(QueryRender):
         self, query_container: TokenizedQueryContainer, source_mapping: SourceMapping
     ) -> str:
         unmapped_fields = self.mappings.check_fields_mapping_existence(
-            query_container.meta_info.query_fields, source_mapping
+            query_container.meta_info.query_fields,
+            query_container.meta_info.function_fields_map,
+            self.platform_functions.manager.supported_render_names,
+            source_mapping,
         )
         rendered_functions = self.generate_functions(query_container.functions.functions, source_mapping)
         prefix = self.generate_prefix(source_mapping.log_source_signature, rendered_functions.rendered_prefix)
 
         if source_mapping.raw_log_fields:
             defined_raw_log_fields = self.generate_raw_log_fields(
-                fields=query_container.meta_info.query_fields, source_mapping=source_mapping
+                fields=query_container.meta_info.query_fields + query_container.meta_info.function_fields,
+                source_mapping=source_mapping,
             )
             prefix += f"\n{defined_raw_log_fields}"
         query = self.generate_query(tokens=query_container.tokens, source_mapping=source_mapping)

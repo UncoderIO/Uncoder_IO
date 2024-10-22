@@ -23,7 +23,7 @@ from app.translator.core.str_value_manager import BaseSpecSymbol, StrValue, StrV
 from app.translator.platforms.base.spl.escape_manager import spl_escape_manager
 
 
-class SplStrValueManager(StrValueManager):
+class SPLStrValueManager(StrValueManager):
     escape_manager = spl_escape_manager
     str_spec_symbols_map: ClassVar[dict[str, type[BaseSpecSymbol]]] = {"*": UnboundLenWildCard}
 
@@ -58,4 +58,4 @@ class SplStrValueManager(StrValueManager):
         return StrValue(self.escape_manager.remove_escape(value), self._concat(split))
 
 
-spl_str_value_manager = SplStrValueManager()
+spl_str_value_manager = SPLStrValueManager()

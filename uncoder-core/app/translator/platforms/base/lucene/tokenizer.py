@@ -52,8 +52,8 @@ class LuceneTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
         rf"(?P<{ValueType.no_quotes_value}>(?:[a-zA-Z\*\?0-9=%#№!;_/,\'\.$@|]|\\[*?\"-_=%#№!;,\.$@/\s\\])+)\s*"
     )
     re_value_pattern = rf"/(?P<{ValueType.regex_value}>(?:[:a-zA-Z\*\?0-9=+%#№;\\\-_\,\"\'\.$&^@!\(\)\{{\}}\[\]\s?<>|]|\\\/)+)/(?=\s+|\)|$)"  # noqa: E501
-    gte_value_pattern = rf"\[\s*(?P<{ValueType.greater_than_or_equal}>{_num_value_pattern})\s+TO\s+\*\s*\]"
-    lte_value_pattern = rf"\[\s*\*\s+TO\s+(?P<{ValueType.less_than_or_equal}>{_num_value_pattern})\s*\]"
+    gte_value_pattern = rf"\[\s*(?P<{ValueType.gte_value}>{_num_value_pattern})\s+TO\s+\*\s*\]"
+    lte_value_pattern = rf"\[\s*\*\s+TO\s+(?P<{ValueType.lte_value}>{_num_value_pattern})\s*\]"
     range_value_pattern = rf"{gte_value_pattern}|{lte_value_pattern}"
     _value_pattern = rf"{num_value_pattern}|{re_value_pattern}|{no_quotes_value_pattern}|{double_quotes_value_pattern}|{range_value_pattern}"  # noqa: E501
     keyword_pattern = (
@@ -97,10 +97,10 @@ class LuceneTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
         if (d_q_value := get_match_group(match, group_name=ValueType.double_quotes_value)) is not None:
             return mapped_operator, lucene_str_value_manager.from_str_to_container(d_q_value)
 
-        if (gte_value := get_match_group(match, group_name=ValueType.greater_than_or_equal)) is not None:
+        if (gte_value := get_match_group(match, group_name=ValueType.gte_value)) is not None:
             return OperatorType.GTE, StrValue(gte_value, split_value=[gte_value])
 
-        if (lte_value := get_match_group(match, group_name=ValueType.less_than_or_equal)) is not None:
+        if (lte_value := get_match_group(match, group_name=ValueType.lte_value)) is not None:
             return OperatorType.LTE, StrValue(lte_value, split_value=[lte_value])
 
         return super().get_operator_and_value(match, mapped_operator, operator)

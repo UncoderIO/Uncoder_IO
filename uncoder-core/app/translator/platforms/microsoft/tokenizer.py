@@ -21,9 +21,10 @@ from typing import Any, ClassVar, Optional
 
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.mixins.operator import OperatorBasedMixin
+from app.translator.core.str_value_manager import StrValue
 from app.translator.core.tokenizer import QueryTokenizer
-from app.translator.platforms.microsoft.custom_types.values import MicrosoftValueType
-from app.translator.platforms.microsoft.escape_manager import microsoft_escape_manager
+from app.translator.platforms.microsoft.custom_types.values import KQLValueType
+from app.translator.platforms.microsoft.str_value_manager import microsoft_kql_str_value_manager
 from app.translator.tools.utils import get_match_group
 
 
@@ -40,49 +41,60 @@ class MicrosoftSentinelTokenizer(QueryTokenizer, OperatorBasedMixin):
         "contains": OperatorType.CONTAINS,
         "startswith": OperatorType.STARTSWITH,
         "endswith": OperatorType.ENDSWITH,
+        "matches regex": OperatorType.REGEX,
     }
     multi_value_operators_map: ClassVar[dict[str, str]] = {"in~": OperatorType.EQ, "in": OperatorType.EQ}
 
     field_pattern = r"(?P<field_name>[a-zA-Z\.\-_]+)"
-    bool_value_pattern = rf"(?P<{MicrosoftValueType.bool_value}>true|false)\s*"
-    num_value_pattern = rf"(?P<{MicrosoftValueType.number_value}>\d+(?:\.\d+)*)\s*"
-    double_quotes_value_pattern = rf'"(?P<{MicrosoftValueType.double_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{{\}}\[\];<>?`~\s]|\\\"|\\\\)*)"\s*'  # noqa: E501
-    single_quotes_value_pattern = rf"'(?P<{MicrosoftValueType.single_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\"\.$&^@!\(\)\{{\}}\[\];<>?`~\s]|\\\'|\\\\)*)'\s*"  # noqa: E501
-    verbatim_double_quotes_value_pattern = rf'@"(?P<{MicrosoftValueType.verbatim_double_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{{\}}\[\];<>?`~\s\\]|"")*)"\s*'  # noqa: E501
-    verbatim_single_quotes_value_pattern = rf"@'(?P<{MicrosoftValueType.verbatim_single_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\"\.$&^@!\(\)\{{\}}\[\];<>?`~\s\\]|'')*)'\s*"  # noqa: E501
+    bool_value_pattern = rf"(?P<{KQLValueType.bool_value}>true|false)\s*"
+    num_value_pattern = rf"(?P<{KQLValueType.number_value}>\d+(?:\.\d+)*)\s*"
+    double_quotes_value_pattern = rf'"(?P<{KQLValueType.double_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{{\}}\[\];<>?`~\s]|\\\"|\\\\)*)"\s*'  # noqa: E501
+    single_quotes_value_pattern = rf"'(?P<{KQLValueType.single_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\"\.$&^@!\(\)\{{\}}\[\];<>?`~\s]|\\\'|\\\\)*)'\s*"  # noqa: E501
+    verbatim_double_quotes_value_pattern = rf'@"(?:\(i\?\))?(?P<{KQLValueType.verbatim_double_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\'\.$&^@!\(\)\{{\}}\[\];<>?`~\s\\]|"")*)"\s*'  # noqa: E501
+    verbatim_single_quotes_value_pattern = rf"@'(?:\(i\?\))?(?P<{KQLValueType.verbatim_single_quotes_value}>(?:[:a-zA-Z\*0-9=+%#\-_/,\"\.$&^@!\(\)\{{\}}\[\];<>?`~\s\\]|'')*)'\s*"  # noqa: E501
     str_value_pattern = rf"""{double_quotes_value_pattern}|{single_quotes_value_pattern}|{verbatim_double_quotes_value_pattern}|{verbatim_single_quotes_value_pattern}"""  # noqa: E501
     _value_pattern = rf"""{bool_value_pattern}|{num_value_pattern}|{str_value_pattern}"""
-    multi_value_pattern = (
-        rf"""\((?P<{MicrosoftValueType.multi_value}>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\[\];<>?`~\s]+)\)"""
-    )
+    multi_value_pattern = rf"""\((?P<{KQLValueType.multi_value}>[:a-zA-Z\"\*0-9=+%#\-_\/\\'\,.&^@!\(\[\];<>?`~\s]+)\)"""
     keyword_pattern = rf"\*\s+contains\s+(?:{str_value_pattern})"
 
-    escape_manager = microsoft_escape_manager
+    str_value_manager = microsoft_kql_str_value_manager
 
     def get_operator_and_value(  # noqa: PLR0911
         self, match: re.Match, mapped_operator: str = OperatorType.EQ, operator: Optional[str] = None
     ) -> tuple[str, Any]:
-        if (num_value := get_match_group(match, group_name=MicrosoftValueType.number_value)) is not None:
+        if (num_value := get_match_group(match, group_name=KQLValueType.number_value)) is not None:
             return mapped_operator, num_value
 
-        if (bool_value := get_match_group(match, group_name=MicrosoftValueType.bool_value)) is not None:
-            return mapped_operator, bool_value
+        if (bool_value := get_match_group(match, group_name=KQLValueType.bool_value)) is not None:
+            mapped_bool_value = bool_value == "true"
+            return mapped_operator, mapped_bool_value
 
-        if (d_q_value := get_match_group(match, group_name=MicrosoftValueType.double_quotes_value)) is not None:
-            return mapped_operator, self.escape_manager.remove_escape(d_q_value)
+        if (d_q_value := get_match_group(match, group_name=KQLValueType.double_quotes_value)) is not None:
+            if mapped_operator == OperatorType.REGEX:
+                value_type = KQLValueType.double_quotes_regex_value
+                return mapped_operator, self.str_value_manager.from_re_str_to_container(d_q_value, value_type)
+            return mapped_operator, self._str_to_container(d_q_value, KQLValueType.double_quotes_value)
 
-        if (s_q_value := get_match_group(match, group_name=MicrosoftValueType.single_quotes_value)) is not None:
-            return mapped_operator, self.escape_manager.remove_escape(s_q_value)
+        if (s_q_value := get_match_group(match, group_name=KQLValueType.single_quotes_value)) is not None:
+            if mapped_operator == OperatorType.REGEX:
+                value_type = KQLValueType.single_quotes_regex_value
+                return mapped_operator, self.str_value_manager.from_re_str_to_container(s_q_value, value_type)
+            return mapped_operator, self._str_to_container(s_q_value, KQLValueType.single_quotes_value)
 
-        group_name = MicrosoftValueType.verbatim_double_quotes_value
-        if (v_d_q_value := get_match_group(match, group_name=group_name)) is not None:
-            return mapped_operator, v_d_q_value
+        if (v_d_q_value := get_match_group(match, group_name=KQLValueType.verbatim_double_quotes_value)) is not None:
+            if mapped_operator == OperatorType.REGEX:
+                return mapped_operator, self.str_value_manager.from_re_str_to_container(v_d_q_value)
+            return mapped_operator, self._str_to_container(v_d_q_value, KQLValueType.verbatim_double_quotes_value)
 
-        group_name = MicrosoftValueType.verbatim_single_quotes_value
-        if (v_s_q_value := get_match_group(match, group_name=group_name)) is not None:
-            return mapped_operator, v_s_q_value
+        if (v_s_q_value := get_match_group(match, group_name=KQLValueType.verbatim_single_quotes_value)) is not None:
+            if mapped_operator == OperatorType.REGEX:
+                return mapped_operator, self.str_value_manager.from_re_str_to_container(v_s_q_value)
+            return mapped_operator, self._str_to_container(v_s_q_value, KQLValueType.verbatim_single_quotes_value)
 
         return super().get_operator_and_value(match, mapped_operator, operator)
+
+    def _str_to_container(self, value: str, value_type: str) -> StrValue:
+        return self.str_value_manager.from_str_to_container(value, value_type)
 
     def clean_multi_value(self, value: str) -> str:
         value = value.strip(" ")

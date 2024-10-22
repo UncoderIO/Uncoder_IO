@@ -22,10 +22,10 @@ from app.translator.core.render import PlatformQueryRender
 from app.translator.managers import render_manager
 from app.translator.platforms.anomali.const import anomali_query_details
 from app.translator.platforms.anomali.mapping import AnomaliMappings, anomali_query_mappings
-from app.translator.platforms.base.sql.renders.sql import SqlFieldValueRender
+from app.translator.platforms.base.sql.renders.sql import SQLFieldValueRender
 
 
-class AnomaliFieldValueRender(SqlFieldValueRender):
+class AnomaliFieldValueRender(SQLFieldValueRender):
     details: PlatformDetails = anomali_query_details
 
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:

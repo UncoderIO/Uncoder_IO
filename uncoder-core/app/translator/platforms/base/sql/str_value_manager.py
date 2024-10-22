@@ -22,12 +22,9 @@ from typing import ClassVar, Optional
 
 from app.translator.core.str_value_manager import (
     CONTAINER_SPEC_SYMBOLS_MAP,
+    RE_STR_ALPHA_NUM_SYMBOLS_MAP,
     RE_STR_SPEC_SYMBOLS_MAP,
     BaseSpecSymbol,
-    ReDigitalSymbol,
-    ReWhiteSpaceSymbol,
-    ReWordBoundarySymbol,
-    ReWordSymbol,
     SingleSymbolWildCard,
     StrValue,
     StrValueManager,
@@ -43,12 +40,7 @@ SQL_CONTAINER_SPEC_SYMBOLS_MAP.update({SingleSymbolWildCard: "_", UnboundLenWild
 class SQLStrValueManager(StrValueManager):
     escape_manager = sql_escape_manager
     container_spec_symbols_map: ClassVar[dict[type[BaseSpecSymbol], str]] = SQL_CONTAINER_SPEC_SYMBOLS_MAP
-    re_str_alpha_num_symbols_map: ClassVar[dict[str, type[BaseSpecSymbol]]] = {
-        "b": ReWordBoundarySymbol,
-        "w": ReWordSymbol,
-        "d": ReDigitalSymbol,
-        "s": ReWhiteSpaceSymbol,
-    }
+    re_str_alpha_num_symbols_map = RE_STR_ALPHA_NUM_SYMBOLS_MAP
     re_str_spec_symbols_map = RE_STR_SPEC_SYMBOLS_MAP
     str_spec_symbols_map: ClassVar[dict[str, type[BaseSpecSymbol]]] = {
         "_": SingleSymbolWildCard,
@@ -85,7 +77,7 @@ class SQLStrValueManager(StrValueManager):
 
         return StrValue(value, self._concat(split))
 
-    def from_re_str_to_container(self, value: str) -> StrValue:
+    def from_re_str_to_container(self, value: str, value_type: str = SQLValueType.regex_value) -> StrValue:  # noqa: ARG002
         value = value.replace("''", "'")
         return super().from_re_str_to_container(value)
 
