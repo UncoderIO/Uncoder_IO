@@ -16,8 +16,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-from typing import ClassVar
+from typing import ClassVar, Optional
 
+from app.translator.core.custom_types.values import ValueType
 from app.translator.core.str_value_manager import BaseSpecSymbol, StrValue, StrValueManager, UnboundLenWildCard
 from app.translator.platforms.base.spl.escape_manager import spl_escape_manager
 
@@ -26,7 +27,12 @@ class SplStrValueManager(StrValueManager):
     escape_manager = spl_escape_manager
     str_spec_symbols_map: ClassVar[dict[str, type[BaseSpecSymbol]]] = {"*": UnboundLenWildCard}
 
-    def from_str_to_container(self, value: str) -> StrValue:
+    def from_str_to_container(
+        self,
+        value: str,
+        value_type: str = ValueType.value,  # noqa: ARG002
+        escape_symbol: Optional[str] = None,  # noqa: ARG002
+    ) -> StrValue:
         split = []
         prev_char = None
         for char in value:
