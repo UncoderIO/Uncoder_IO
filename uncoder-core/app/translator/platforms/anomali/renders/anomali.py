@@ -28,6 +28,27 @@ from app.translator.platforms.base.sql.renders.sql import SqlFieldValueRender
 class AnomaliFieldValueRender(SqlFieldValueRender):
     details: PlatformDetails = anomali_query_details
 
+    def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+        if isinstance(value, list):
+            return f"({self.or_token.join(self.contains_modifier(field=field, value=v) for v in value)})"
+
+        value = f"'%{self._pre_process_value(field, value)}%'"
+        return f"{field} like {value}"
+
+    def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+        if isinstance(value, list):
+            return f"({self.or_token.join(self.endswith_modifier(field=field, value=v) for v in value)})"
+
+        value = f"'%{self._pre_process_value(field, value)}'"
+        return f"{field} like {value}"
+
+    def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+        if isinstance(value, list):
+            return f"({self.or_token.join(self.startswith_modifier(field=field, value=v) for v in value)})"
+
+        value = f"'{self._pre_process_value(field, value)}%'"
+        return f"{field} like {value}"
+
     def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         return f'message contains "{self._pre_process_value(field, value)}"'
 
