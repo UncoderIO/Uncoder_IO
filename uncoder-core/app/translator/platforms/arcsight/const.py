@@ -1,3 +1,5 @@
+from app.translator.core.models.platform_details import PlatformDetails
+
 ARCSIGHT_QUERY_DETAILS = {
     "platform_id": "arcsight",
     "name": "ArcSight Query",
@@ -6,3 +8,5 @@ ARCSIGHT_QUERY_DETAILS = {
     "platform_name": "Query",
     "alt_platform_name": "CEF",
 }
+
+arcsight_query_details =  PlatformDetails(**ARCSIGHT_QUERY_DETAILS)

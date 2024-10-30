@@ -1,0 +1,13 @@
+platform: ArcSight
+source: windows_create_remote_thread
+
+
+default_log_source: {}
+
+
+field_mapping:
+  SourceImage: sourceProcessName
+  TargetImage: destinationProcessName
+  StartModule: deviceCustomString3
+  StartAddress: deviceCustomString3
+  StartFunction: deviceCustomString3
