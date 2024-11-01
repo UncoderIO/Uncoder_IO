@@ -403,6 +403,9 @@ class PlatformQueryRender(QueryRender):
         if raw_log_field_type := source_mapping.raw_log_fields.get(field):
             return [self.process_raw_log_field(field=field, field_type=raw_log_field_type)]
 
+    def generate_extra_conditions(self, source_mapping: SourceMapping, tokens: list) -> list:  # noqa: ARG002
+        return tokens
+
     def generate_raw_log_fields(self, fields: list[Field], source_mapping: SourceMapping) -> str:
         if not self.raw_log_field_patterns_map:
             return ""
@@ -428,16 +431,24 @@ class PlatformQueryRender(QueryRender):
         self, query_container: TokenizedQueryContainer, source_mapping: SourceMapping
     ) -> str:
         unmapped_fields = self.mappings.check_fields_mapping_existence(
-            query_container.meta_info.query_fields, source_mapping
+            query_container.meta_info.query_fields,
+            query_container.meta_info.function_fields_map,
+            self.platform_functions.manager.supported_render_names,
+            source_mapping,
         )
         rendered_functions = self.generate_functions(query_container.functions.functions, source_mapping)
         prefix = self.generate_prefix(source_mapping.log_source_signature, rendered_functions.rendered_prefix)
 
         if source_mapping.raw_log_fields:
             defined_raw_log_fields = self.generate_raw_log_fields(
-                fields=query_container.meta_info.query_fields, source_mapping=source_mapping
+                fields=query_container.meta_info.query_fields + query_container.meta_info.function_fields,
+                source_mapping=source_mapping,
             )
             prefix += f"\n{defined_raw_log_fields}"
+        if source_mapping.conditions:
+            query_container.tokens = self.generate_extra_conditions(
+                source_mapping=source_mapping, tokens=query_container.tokens
+            )
         query = self.generate_query(tokens=query_container.tokens, source_mapping=source_mapping)
         not_supported_functions = query_container.functions.not_supported + rendered_functions.not_supported
         return self.finalize_query(

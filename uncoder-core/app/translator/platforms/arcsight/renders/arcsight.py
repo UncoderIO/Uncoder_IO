@@ -1,11 +1,10 @@
 from typing import Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
-from app.translator.core.custom_types.tokens import GroupType, OperatorType, LogicalOperatorType
+from app.translator.core.custom_types.tokens import OperatorType, LogicalOperatorType
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.mapping import LogSourceSignature, SourceMapping
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.models.query_container import TokenizedQueryContainer
 from app.translator.core.models.query_tokens.field_value import FieldValue
 from app.translator.core.models.query_tokens.identifier import Identifier
 from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
@@ -31,25 +30,25 @@ class ArcSightFieldValue(BaseFieldValueRender):
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.equal_modifier(field, val) for val in value)})"
-        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
+        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)
         return f"{field} = {value}"
 
     def less_modifier(self, field: str, value: Union[int, str, StrValue]) -> str:
-        return f"{field} < {self._pre_process_value(field, value)}"
+        return f"{field} < {self._pre_process_value(field, value, wrap_str=True)}"
 
     def less_or_equal_modifier(self, field: str, value: Union[int, str, StrValue]) -> str:
-        return f"{field} <= {self._pre_process_value(field, value)}"
+        return f"{field} <= {self._pre_process_value(field, value, wrap_str=True)}"
 
     def greater_modifier(self, field: str, value: Union[int, str, StrValue]) -> str:
-        return f"{field} > {self._pre_process_value(field, value)}"
+        return f"{field} > {self._pre_process_value(field, value, wrap_str=True)}"
 
     def greater_or_equal_modifier(self, field: str, value: Union[int, str, StrValue]) -> str:
-        return f"{field} > {self._pre_process_value(field, value)}"
+        return f"{field} > {self._pre_process_value(field, value, wrap_str=True)}"
 
     def not_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.not_equal_modifier(field, val) for val in value)})"
-        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
+        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True)
         return f"{field} != {value}"
 
     def is_none(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
@@ -65,23 +64,26 @@ class ArcSightFieldValue(BaseFieldValueRender):
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.contains_modifier(field, val) for val in value)})"
-        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
+        value = self._wrap_str_value(value)
         return f"{field} CONTAINS {value}"
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.endswith_modifier(field, val) for val in value)})"
-        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
+        value = self._wrap_str_value(value)
         return f"{field} ENDSWITH {value}"
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.startswith_modifier(field, val) for val in value)})"
-        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
+        value = self._wrap_str_value(value)
         return f"{field} STARTSWITH {value}"
 
-    # def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
-
+    def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
+        if isinstance(value, list):
+            return f"({self.or_token.join(self.regex_modifier(field, val) for val in value)})"
+        value = self._wrap_str_value(value)
+        return f"{field} CONTAINS {value}"
 
 @render_manager.register
 class ArcSightQueryRender(PlatformQueryRender):
@@ -99,45 +101,11 @@ class ArcSightQueryRender(PlatformQueryRender):
     def generate_prefix(self, log_source_signature: Optional[LogSourceSignature], functions_prefix: str = "") -> str:  # noqa: ARG002
         return ""
 
-    def in_brackets(self, raw_list: list) -> list:
-        l_paren = Identifier(token_type=GroupType.L_PAREN)
-        r_paren = Identifier(token_type=GroupType.R_PAREN)
-        return [l_paren, *raw_list, r_paren]
-
-    def _generate_from_tokenized_query_container_by_source_mapping(
-        self, query_container: TokenizedQueryContainer, source_mapping: SourceMapping
-    ) -> str:
-        unmapped_fields = self.mappings.check_fields_mapping_existence(
-            query_container.meta_info.query_fields,
-            query_container.meta_info.function_fields_map,
-            self.platform_functions.manager.supported_render_names,
-            source_mapping,
-        )
-        rendered_functions = self.generate_functions(query_container.functions.functions, source_mapping)
-        prefix = self.generate_prefix(source_mapping.log_source_signature, rendered_functions.rendered_prefix)
-
-        if source_mapping.raw_log_fields:
-            defined_raw_log_fields = self.generate_raw_log_fields(
-                fields=query_container.meta_info.query_fields + query_container.meta_info.function_fields,
-                source_mapping=source_mapping,
-            )
-            prefix += f"\n{defined_raw_log_fields}"
-        if source_mapping.conditions:
-            extra_tokens = []
-            for field, value in source_mapping.conditions.items():
-                extra_tokens.extend([
-                    FieldValue(source_name=field, operator=Identifier(token_type=OperatorType.EQ), value=value),
-                    Identifier(token_type=LogicalOperatorType.AND)
-                ])
-            query_container.tokens = [*extra_tokens, *query_container.tokens]
-        query = self.generate_query(tokens=query_container.tokens, source_mapping=source_mapping)
-        not_supported_functions = query_container.functions.not_supported + rendered_functions.not_supported
-        return self.finalize_query(
-            prefix=prefix,
-            query=query,
-            functions=rendered_functions.rendered,
-            not_supported_functions=not_supported_functions,
-            unmapped_fields=unmapped_fields,
-            meta_info=query_container.meta_info,
-            source_mapping=source_mapping,
-        )
+    def generate_extra_conditions(self, source_mapping: SourceMapping, tokens: list) -> list:
+        extra_tokens = []
+        for field, value in source_mapping.conditions.items():
+            extra_tokens.extend([
+                FieldValue(source_name=field, operator=Identifier(token_type=OperatorType.EQ), value=value),
+                Identifier(token_type=LogicalOperatorType.AND)
+            ])
+        return [*extra_tokens, *tokens]
