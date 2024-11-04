@@ -41,6 +41,7 @@ from app.translator.core.models.query_tokens.field_value import FieldValue
 from app.translator.core.models.query_tokens.function_value import FunctionValue
 from app.translator.core.models.query_tokens.identifier import Identifier
 from app.translator.core.models.query_tokens.keyword import Keyword
+from app.translator.core.models.query_tokens.value import Value
 from app.translator.core.str_value_manager import StrValue, StrValueManager
 
 
@@ -403,7 +404,7 @@ class PlatformQueryRender(QueryRender):
         if raw_log_field_type := source_mapping.raw_log_fields.get(field):
             return [self.process_raw_log_field(field=field, field_type=raw_log_field_type)]
 
-    def generate_extra_conditions(self, source_mapping: SourceMapping) -> list:  # noqa: ARG002
+    def generate_extra_conditions(self, source_mapping: SourceMapping) -> list[Union[Value, Identifier]]:  # noqa: ARG002
         return []
 
     def generate_raw_log_fields(self, fields: list[Field], source_mapping: SourceMapping) -> str:
