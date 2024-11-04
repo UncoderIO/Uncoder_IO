@@ -1,5 +1,4 @@
-from app.translator.core.mapping import LogSourceSignature, \
-    BaseStrictLogSourcesPlatformMappings
+from app.translator.core.mapping import BaseStrictLogSourcesPlatformMappings, LogSourceSignature
 from app.translator.platforms.arcsight.const import arcsight_query_details
 
 

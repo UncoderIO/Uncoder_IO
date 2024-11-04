@@ -403,8 +403,8 @@ class PlatformQueryRender(QueryRender):
         if raw_log_field_type := source_mapping.raw_log_fields.get(field):
             return [self.process_raw_log_field(field=field, field_type=raw_log_field_type)]
 
-    def generate_extra_conditions(self, source_mapping: SourceMapping, tokens: list) -> list:  # noqa: ARG002
-        return tokens
+    def generate_extra_conditions(self, source_mapping: SourceMapping) -> list:  # noqa: ARG002
+        return []
 
     def generate_raw_log_fields(self, fields: list[Field], source_mapping: SourceMapping) -> str:
         if not self.raw_log_field_patterns_map:
@@ -446,9 +446,8 @@ class PlatformQueryRender(QueryRender):
             )
             prefix += f"\n{defined_raw_log_fields}"
         if source_mapping.conditions:
-            query_container.tokens = self.generate_extra_conditions(
-                source_mapping=source_mapping, tokens=query_container.tokens
-            )
+            extra_tokens = self.generate_extra_conditions(source_mapping=source_mapping)
+            query_container.tokens = [*extra_tokens, *query_container.tokens]
         query = self.generate_query(tokens=query_container.tokens, source_mapping=source_mapping)
         not_supported_functions = query_container.functions.not_supported + rendered_functions.not_supported
         return self.finalize_query(

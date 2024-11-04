@@ -1,17 +1,15 @@
 from typing import Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
-from app.translator.core.custom_types.tokens import OperatorType, LogicalOperatorType
 from app.translator.core.custom_types.values import ValueType
-from app.translator.core.mapping import LogSourceSignature, SourceMapping
+from app.translator.core.mapping import LogSourceSignature
+from app.translator.core.mixins.tokens import ExtraConditionMixin
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.models.query_tokens.field_value import FieldValue
-from app.translator.core.models.query_tokens.identifier import Identifier
 from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
-from app.translator.core.str_value_manager import StrValueManager, StrValue
+from app.translator.core.str_value_manager import StrValue, StrValueManager
 from app.translator.managers import render_manager
 from app.translator.platforms.arcsight.const import arcsight_query_details
-from app.translator.platforms.arcsight.mapping import arcsight_query_mappings, ArcSightMappings
+from app.translator.platforms.arcsight.mapping import ArcSightMappings, arcsight_query_mappings
 from app.translator.platforms.arcsight.str_value_manager import arcsight_str_value_manager
 
 
@@ -85,8 +83,9 @@ class ArcSightFieldValue(BaseFieldValueRender):
         value = self._wrap_str_value(value)
         return f"{field} CONTAINS {value}"
 
+
 @render_manager.register
-class ArcSightQueryRender(PlatformQueryRender):
+class ArcSightQueryRender(ExtraConditionMixin, PlatformQueryRender):
     details: PlatformDetails = arcsight_query_details
     mappings: ArcSightMappings = arcsight_query_mappings
 
@@ -100,12 +99,3 @@ class ArcSightQueryRender(PlatformQueryRender):
 
     def generate_prefix(self, log_source_signature: Optional[LogSourceSignature], functions_prefix: str = "") -> str:  # noqa: ARG002
         return ""
-
-    def generate_extra_conditions(self, source_mapping: SourceMapping, tokens: list) -> list:
-        extra_tokens = []
-        for field, value in source_mapping.conditions.items():
-            extra_tokens.extend([
-                FieldValue(source_name=field, operator=Identifier(token_type=OperatorType.EQ), value=value),
-                Identifier(token_type=LogicalOperatorType.AND)
-            ])
-        return [*extra_tokens, *tokens]

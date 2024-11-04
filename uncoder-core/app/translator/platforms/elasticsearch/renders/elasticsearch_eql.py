@@ -2,11 +2,11 @@ from typing import Optional, Union
 
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.const import QUERY_TOKEN_TYPE
-from app.translator.core.custom_types.tokens import GroupType, LogicalOperatorType, OperatorType
+from app.translator.core.custom_types.tokens import GroupType
 from app.translator.core.custom_types.values import ValueType
-from app.translator.core.mapping import LogSourceSignature, SourceMapping
+from app.translator.core.mapping import LogSourceSignature
+from app.translator.core.mixins.tokens import ExtraConditionMixin
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.models.query_tokens.field_value import FieldValue
 from app.translator.core.models.query_tokens.identifier import Identifier
 from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
 from app.translator.core.str_value_manager import StrValueManager
@@ -119,7 +119,7 @@ class ElasticSearchEQLFieldValue(BaseFieldValueRender):
 
 
 @render_manager.register
-class ElasticSearchEQLQueryRender(PlatformQueryRender):
+class ElasticSearchEQLQueryRender(ExtraConditionMixin, PlatformQueryRender):
     details: PlatformDetails = elastic_eql_query_details
     mappings: LuceneMappings = elastic_eql_query_mappings
     or_token = "or"
@@ -133,13 +133,3 @@ class ElasticSearchEQLQueryRender(PlatformQueryRender):
 
     def in_brackets(self, raw_list: list[QUERY_TOKEN_TYPE]) -> list[QUERY_TOKEN_TYPE]:
         return [Identifier(token_type=GroupType.L_PAREN), *raw_list, Identifier(token_type=GroupType.R_PAREN)]
-
-    def generate_extra_conditions(self, source_mapping: SourceMapping, tokens: list) -> list:
-        for field, value in source_mapping.conditions.items():
-            tokens = self.in_brackets(tokens)
-            extra_tokens = [
-                FieldValue(source_name=field, operator=Identifier(token_type=OperatorType.EQ), value=value),
-                Identifier(token_type=LogicalOperatorType.AND),
-            ]
-            tokens = self.in_brackets([*extra_tokens, *tokens])
-        return tokens

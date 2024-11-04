@@ -9,4 +9,4 @@ ARCSIGHT_QUERY_DETAILS = {
     "alt_platform_name": "CEF",
 }
 
-arcsight_query_details =  PlatformDetails(**ARCSIGHT_QUERY_DETAILS)
+arcsight_query_details = PlatformDetails(**ARCSIGHT_QUERY_DETAILS)

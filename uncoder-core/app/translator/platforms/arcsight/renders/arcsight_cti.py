@@ -1,7 +1,7 @@
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
 from app.translator.managers import render_cti_manager
-from app.translator.platforms.arcsight.const import ARCSIGHT_QUERY_DETAILS, arcsight_query_details
+from app.translator.platforms.arcsight.const import arcsight_query_details
 from app.translator.platforms.arcsight.mappings.arcsight_cti import DEFAULT_ARCSIGHT_MAPPING
 
 
