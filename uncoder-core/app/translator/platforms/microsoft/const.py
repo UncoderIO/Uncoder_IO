@@ -50,6 +50,31 @@ MICROSOFT_DEFENDER_DETAILS = {
     "group_id": "microsoft-defender",
 }
 
+DEFAULT_MICROSOFT_DEFENDER_CTI_MAPPING = {
+    "DestinationIP": "RemoteIP",
+    "SourceIP": "LocalIP",
+    "HashSha256": "InitiatingProcessSHA256",
+    "HashMd5": "InitiatingProcessMD5",
+    "Emails": "SenderFromAddress",
+    "Domain": "RemoteUrl",
+    "HashSha1": "InitiatingProcessSHA1",
+    "Files": "FileName",
+    "URL": "RemoteUrl",
+}
+
+DEFAULT_MICROSOFT_SENTINEL_CTI_MAPPING = {
+    "DestinationIP": "DestinationIp",
+    "SourceIP": "SourceIp",
+    "HashSha512": "FileHashSha512",
+    "HashSha256": "FileHashSha256",
+    "HashMd5": "FileHashMd5",
+    "Emails": "SenderFromAddress",
+    "Domain": "DestinationHostname",
+    "HashSha1": "FileHashSha1",
+    "Files": "TargetFileName",
+    "URL": "URL",
+}
+
 microsoft_defender_query_details = PlatformDetails(**MICROSOFT_DEFENDER_DETAILS)
 microsoft_sentinel_query_details = PlatformDetails(**MICROSOFT_SENTINEL_QUERY_DETAILS)
 microsoft_sentinel_rule_details = PlatformDetails(**MICROSOFT_SENTINEL_RULE_DETAILS)

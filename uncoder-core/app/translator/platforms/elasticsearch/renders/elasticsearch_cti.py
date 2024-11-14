@@ -20,8 +20,10 @@ limitations under the License.
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
 from app.translator.managers import render_cti_manager
-from app.translator.platforms.elasticsearch.const import elasticsearch_lucene_query_details
-from app.translator.platforms.elasticsearch.mappings.elasticsearch_cti_cti import DEFAULT_ELASTICSEARCH_MAPPING
+from app.translator.platforms.elasticsearch.const import (
+    DEFAULT_ELASTICSEARCH_CTI_MAPPING,
+    elasticsearch_lucene_query_details,
+)
 
 
 @render_cti_manager.register
@@ -35,4 +37,4 @@ class ElasticsearchCTI(RenderCTI):
     result_join: str = ""
     final_result_for_many: str = "({result})\n"
     final_result_for_one: str = "{result}\n"
-    default_mapping = DEFAULT_ELASTICSEARCH_MAPPING
+    default_mapping = DEFAULT_ELASTICSEARCH_CTI_MAPPING

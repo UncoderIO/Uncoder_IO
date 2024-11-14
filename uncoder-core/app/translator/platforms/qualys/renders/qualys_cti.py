@@ -17,8 +17,7 @@ limitations under the License.
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
 from app.translator.managers import render_cti_manager
-from app.translator.platforms.qualys.const import QUALYS_QUERY_DETAILS
-from app.translator.platforms.qualys.mappings.qualys_cti import DEFAULT_QUALYS_MAPPING
+from app.translator.platforms.qualys.const import DEFAULT_QUALYS_CTI_MAPPING, QUALYS_QUERY_DETAILS
 
 
 @render_cti_manager.register
@@ -32,4 +31,4 @@ class QualysCTI(RenderCTI):
     result_join: str = ""
     final_result_for_many: str = "({result})\n"
     final_result_for_one: str = "{result}\n"
-    default_mapping = DEFAULT_QUALYS_MAPPING
+    default_mapping = DEFAULT_QUALYS_CTI_MAPPING
