@@ -53,7 +53,7 @@ MICROSOFT_DEFENDER_DETAILS = {
     "group_id": "microsoft-defender",
 }
 
-MICROSOFT_QUERY_TYPES = {_SENTINEL_KQL_QUERY, _SENTINEL_KQL_RULE}
+MICROSOFT_SENTINEL_QUERY_TYPES = {_SENTINEL_KQL_QUERY, _SENTINEL_KQL_RULE}
 
 microsoft_defender_query_details = PlatformDetails(**MICROSOFT_DEFENDER_DETAILS)
 microsoft_sentinel_query_details = PlatformDetails(**MICROSOFT_SENTINEL_QUERY_DETAILS)
