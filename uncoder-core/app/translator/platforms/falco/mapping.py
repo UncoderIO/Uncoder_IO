@@ -1,4 +1,4 @@
-from app.translator.core.mapping import BasePlatformMappings, LogSourceSignature
+from app.translator.core.mapping import BaseStrictLogSourcesPlatformMappings, LogSourceSignature
 from app.translator.platforms.falco.const import falco_rule_details
 
 
@@ -10,7 +10,7 @@ class FalcoRuleLogSourceSignature(LogSourceSignature):
         return True
 
 
-class FalcoRuleMappings(BasePlatformMappings):
+class FalcoRuleMappings(BaseStrictLogSourcesPlatformMappings):
     def prepare_log_source_signature(self, mapping: dict) -> FalcoRuleLogSourceSignature:  # noqa: ARG002
         return FalcoRuleLogSourceSignature()
 
