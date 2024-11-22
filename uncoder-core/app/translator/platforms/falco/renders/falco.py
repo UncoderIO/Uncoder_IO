@@ -124,12 +124,13 @@ class FalcoRuleRender(PlatformQueryRender):
         return ""
 
     def generate_output(self, fields: list[Field], unmapped_fields: list[str], source_mapping: SourceMapping) -> str:
-        extra_fields = [
-            field.source_name
-            if field.source_name in unmapped_fields
-            else source_mapping.fields_mapping.get_platform_field_name(generic_field_name=field.source_name)
-            for field in fields
-        ]
+        extra_fields = []
+        for field in fields:
+            if field.source_name in unmapped_fields:
+                extra_fields.append(field.source_name)
+            elif generic_field_name:=field.get_generic_field_name(source_mapping.source_id):
+                if extra_field:=source_mapping.fields_mapping.get_platform_field_name(generic_field_name):
+                    extra_fields.append(extra_field)
         extra_fields = [f"{field.replace('.', '_')}=%{field}" for field in extra_fields]
         return f"shell in a container (container_name=%container.name {' '.join(extra_fields)})"
 
