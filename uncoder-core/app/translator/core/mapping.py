@@ -188,13 +188,22 @@ class BasePlatformMappings:
     def default_mapping(self) -> SourceMapping:
         return self._source_mappings[DEFAULT_MAPPING_NAME]
 
-    def check_fields_mapping_existence(self, field_tokens: list[Field], source_mapping: SourceMapping) -> list[str]:
+    def check_fields_mapping_existence(
+        self,
+        query_field_tokens: list[Field],
+        function_field_tokens_map: dict[str, list[Field]],
+        supported_func_render_names: set[str],
+        source_mapping: SourceMapping,
+    ) -> list[str]:
         unmapped = []
-        for field in field_tokens:
-            generic_field_name = field.get_generic_field_name(source_mapping.source_id)
-            mapped_field = source_mapping.fields_mapping.get_platform_field_name(generic_field_name=generic_field_name)
-            if not mapped_field and field.source_name not in unmapped:
-                unmapped.append(field.source_name)
+
+        for field in query_field_tokens:
+            self._check_field_mapping_existence(field, source_mapping, unmapped)
+
+        for func_name, function_field_tokens in function_field_tokens_map.items():
+            if func_name in supported_func_render_names:
+                for field in function_field_tokens:
+                    self._check_field_mapping_existence(field, source_mapping, unmapped)
 
         if self.is_strict_mapping and unmapped:
             raise StrictPlatformException(
@@ -202,6 +211,13 @@ class BasePlatformMappings:
             )
 
         return unmapped
+
+    @staticmethod
+    def _check_field_mapping_existence(field: Field, source_mapping: SourceMapping, unmapped: list[str]) -> None:
+        generic_field_name = field.get_generic_field_name(source_mapping.source_id)
+        mapped_field = source_mapping.fields_mapping.get_platform_field_name(generic_field_name=generic_field_name)
+        if not mapped_field and field.source_name not in unmapped:
+            unmapped.append(field.source_name)
 
     @staticmethod
     def map_field(field: Field, source_mapping: SourceMapping) -> list[str]:
