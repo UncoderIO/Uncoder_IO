@@ -1,5 +1,7 @@
+from app.translator.core.models.platform_details import PlatformDetails
+
 ARCSIGHT_QUERY_DETAILS = {
-    "platform_id": "arcsight",
+    "platform_id": "arcsight-query",
     "name": "ArcSight Query",
     "group_name": "ArcSight",
     "group_id": "arcsight",
@@ -20,3 +22,5 @@ DEFAULT_ARCSIGHT_CTI_MAPPING = {
     "Emails": "sender-address",
     "Files": "winlog.event_data.TargetFilename",
 }
+
+arcsight_query_details = PlatformDetails(**ARCSIGHT_QUERY_DETAILS)
