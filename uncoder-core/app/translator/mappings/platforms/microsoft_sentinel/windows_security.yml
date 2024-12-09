@@ -14,7 +14,7 @@ field_mapping:
   AccessMask: AccessMask
   AccountName: AccountName
   AllowedToDelegateTo: AllowedToDelegateTo
-  AttributeLDAPDisplayName:
+  AttributeLDAPDisplayName: AttributeLDAPDisplayName
   AuditPolicyChanges: AuditPolicyChanges
   AuthenticationPackageName: AuthenticationPackageName
   CallingProcessName: CallingProcessName
@@ -22,8 +22,8 @@ field_mapping:
   ComputerName: Computer
   EventType: EventType
   FailureReason: FailureReason
-  FileName: FilePath
-  GrantedAccess:
+  FileName: FileName
+  GrantedAccess: GrantedAccess
   Hashes: FileHash
   HiveName: HiveName
   IpAddress: IpAddress
@@ -48,12 +48,12 @@ field_mapping:
   TaskContent: TaskContent
   ServiceSid: ServiceSid
   CertThumbprint: CertThumbprint
-  ClassName: duplicate
-  NotificationPackageName: ClassName
+  ClassName: ClassName
+  NotificationPackageName: NotificationPackageName
   NewSd: NewSd
   TestSigning: TestSigning
   TargetInfo: TargetInfo
-  ClientProcessId: TargetInfo
+  ClientProcessId: ClientProcessId
   ParentProcessId: ParentProcessId
   AccessList: AccessList
   GroupMembership: GroupMembership
@@ -61,70 +61,70 @@ field_mapping:
   ChangeType: ChangeType
   LayerName: LayerName
   ServiceAccount: ServiceAccount
-  AttributeValue: ServiceAccount
+  AttributeValue: AttributeValue
   SessionName: SessionName
   TaskName: TaskName
-  ObjectDN: SessionName
+  ObjectDN: ObjectDN
   TemplateContent: TemplateContent
   NewTemplateContent: NewTemplateContent
-  SourcePort: TemplateContent
+  SourcePort: SourcePort
   PasswordLastSet: PasswordLastSet
   PrivilegeList: PrivilegeList
-  DeviceDescription: PasswordLastSet
-  TargetServerName: PrivilegeList
-  NewTargetUserName: DeviceDescription
-  OperationType: TargetServerName
+  DeviceDescription: DeviceDescription
+  TargetServerName: TargetServerName
+  NewTargetUserName: NewTargetUserName
+  OperationType: OperationType
   DestPort: DestPort
-  ServiceStartType: OperationType
+  ServiceStartType: ServiceStartType
   OldTargetUserName: OldTargetUserName
-  UserPrincipalName: ServiceStartType
+  UserPrincipalName: UserPrincipalName
   Accesses: Accesses
-  DnsHostName: UserPrincipalName
-  DisableIntegrityChecks: AccessList
+  DnsHostName: DnsHostName
+  DisableIntegrityChecks: DisableIntegrityChecks
   AuditSourceName: AuditSourceName
   Workstation: Workstation
   DestAddress: DestAddress
-  PreAuthType: Workstation
+  PreAuthType: PreAuthType
   SecurityPackageName: SecurityPackageName
   SubjectLogonId: SubjectLogonId
   NewUacValue: NewUacValue
-  EnabledPrivilegeList: SubjectLogonId
-  RelativeTargetName: NewUacValue
+  EnabledPrivilegeList: EnabledPrivilegeList
+  RelativeTargetName: RelativeTargetName
   CertSerialNumber: CertSerialNumber
-  SidHistory: RelativeTargetName
+  SidHistory: SidHistory
   TargetLogonId: TargetLogonId
-  KernelDebug: SidHistory
-  CallerProcessName: TargetLogonId
+  KernelDebug: KernelDebug
+  CallerProcessName: CallerProcessName
   ProcessName: ProcessName
-  Properties: CallerProcessName
-  UserAccountControl: ProcessName
-  RegistryValue: Properties
-  SecurityID: UserAccountControl
+  Properties: Properties
+  UserAccountControl: UserAccountControl
+  RegistryValue: RegistryValue
+  SecurityID: SecurityID
   ServiceFileName: ServiceFileName
-  SecurityDescriptor: SecurityID
-  ServiceName: ServiceFileName
-  ShareName: SecurityDescriptor
-  NewValue: ServiceName
-  Source: ShareName
-  Status: NewValue
+  SecurityDescriptor: SecurityDescriptor
+  ServiceName: ServiceName
+  ShareName: ShareName
+  NewValue: NewValue
+  Source: Source
+  Status: Status
   SubjectDomainName: SubjectDomainName
-  SubjectUserName: Status
-  SubjectUserSid: SubjectDomainName
-  SourceAddr: SubjectUserName
-  SourceAddress: SubjectUserSid
+  SubjectUserName: SubjectUserName
+  SubjectUserSid: SubjectUserSid
+  SourceAddr: SourceAddr
+  SourceAddress: SourceAddress
   TargetName: TargetName
   ServicePrincipalNames: ServicePrincipalNames
-  TargetDomainName: TargetName
+  TargetDomainName: TargetDomainName
   TargetSid: TargetSid
-  TargetUserName: TargetDomainName
-  ObjectServer: TargetSid
-  TargetUserSid: TargetUserName
-  TicketEncryptionType: ObjectServer
-  TicketOptions: TargetUserSid
+  TargetUserName: TargetUserName
+  ObjectServer: ObjectServer
+  TargetUserSid: TargetUserSid
+  TicketEncryptionType: TicketEncryptionType
+  TicketOptions: TicketOptions
   WorkstationName: WorkstationName
   TransmittedServices: TransmittedServices
-  AuthenticationAlgorithm: WorkstationName
-  LayerRTID: TransmittedServices
+  AuthenticationAlgorithm: AuthenticationAlgorithm
+  LayerRTID: LayerRTID
   BSSID: BSSID
   BSSType: BSSType
   CipherAlgorithm: CipherAlgorithm
@@ -139,7 +139,7 @@ field_mapping:
   Domain: Domain
   ServiceType: ServiceType
   SourceName: SourceName
-  StartType: ServiceType
+  StartType: StartType
   UserID: UserID
   ParentProcessName: ParentProcessName
   Service: Service
