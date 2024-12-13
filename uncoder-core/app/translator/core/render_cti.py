@@ -16,6 +16,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+from abc import abstractmethod
 
 from app.translator.core.models.iocs import IocsChunkValue
 from app.translator.core.models.platform_details import PlatformDetails
@@ -45,6 +46,10 @@ class RenderCTI:
             else:
                 final_result.append(self.final_result_for_one.format(result=data_values[0]))
         return final_result
+
+    @abstractmethod
+    def generate(self, data: dict[str, list[list[IocsChunkValue]]], **kwargs) -> list[str]:
+        raise NotImplementedError("Abstract method")
 
     def collect_data_values(self, chunk: list[IocsChunkValue]) -> list[str]:
         data_values = []
