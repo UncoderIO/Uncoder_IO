@@ -1,0 +1,23 @@
+platform: Anomali
+source: windows_process_creation
+
+
+log_source:
+  product: [windows]
+  category: [process_creation]
+
+default_log_source:
+  product: windows
+  category: process_creation
+
+field_mapping:
+  CommandLine: command_line
+  #CurrentDirectory: CurrentDirectory
+  Hashes: file_hash
+  Image: image
+  #IntegrityLevel: IntegrityLevel
+  ParentCommandLine: parent_command_line
+  ParentImage: parent_image
+  #ParentUser: ParentUser
+  #Product: Product
+  User: user
