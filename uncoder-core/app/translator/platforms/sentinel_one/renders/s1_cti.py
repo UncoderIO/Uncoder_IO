@@ -20,13 +20,12 @@ limitations under the License.
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
 from app.translator.managers import render_cti_manager
-from app.translator.platforms.sentinel_one.const import SENTINEL_ONE_EVENTS_QUERY_DETAILS
-from app.translator.platforms.sentinel_one.mappings.s1_cti import DEFAULT_S1EVENTS_MAPPING
+from app.translator.platforms.sentinel_one.const import DEFAULT_S1EVENTS_CTI_MAPPING, sentinel_one_events_query_details
 
 
 @render_cti_manager.register
 class S1EventsCTI(RenderCTI):
-    details: PlatformDetails = PlatformDetails(**SENTINEL_ONE_EVENTS_QUERY_DETAILS)
+    details: PlatformDetails = sentinel_one_events_query_details
 
     field_value_template: str = '"{value}"'
     or_operator: str = ", "
@@ -35,4 +34,4 @@ class S1EventsCTI(RenderCTI):
     result_join: str = ""
     final_result_for_many: str = "({result})\n"
     final_result_for_one: str = "{result}\n"
-    default_mapping = DEFAULT_S1EVENTS_MAPPING
+    default_mapping = DEFAULT_S1EVENTS_CTI_MAPPING

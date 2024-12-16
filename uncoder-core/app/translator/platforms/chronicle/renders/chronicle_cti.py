@@ -20,8 +20,7 @@ limitations under the License.
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
 from app.translator.managers import render_cti_manager
-from app.translator.platforms.chronicle.const import chronicle_query_details
-from app.translator.platforms.chronicle.mappings.chronicle_cti import DEFAULT_CHRONICLE_MAPPING
+from app.translator.platforms.chronicle.const import DEFAULT_CHRONICLE_CTI_MAPPING, chronicle_query_details
 
 
 @render_cti_manager.register
@@ -35,4 +34,4 @@ class ChronicleQueryCTI(RenderCTI):
     result_join: str = ""
     final_result_for_many: str = "{result}\n"
     final_result_for_one: str = "{result}\n"
-    default_mapping = DEFAULT_CHRONICLE_MAPPING
+    default_mapping = DEFAULT_CHRONICLE_CTI_MAPPING

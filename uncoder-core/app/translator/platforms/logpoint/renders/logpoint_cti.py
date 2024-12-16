@@ -20,8 +20,7 @@ limitations under the License.
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
 from app.translator.managers import render_cti_manager
-from app.translator.platforms.logpoint.const import LOGPOINT_QUERY_DETAILS
-from app.translator.platforms.logpoint.mappings.logpoint_cti import DEFAULT_LOGPOINT_MAPPING
+from app.translator.platforms.logpoint.const import DEFAULT_LOGPOINT_CTI_MAPPING, LOGPOINT_QUERY_DETAILS
 
 
 @render_cti_manager.register
@@ -35,4 +34,4 @@ class LogpointCTI(RenderCTI):
     result_join: str = ""
     final_result_for_many: str = "({result})\n"
     final_result_for_one: str = "{result}\n"
-    default_mapping = DEFAULT_LOGPOINT_MAPPING
+    default_mapping = DEFAULT_LOGPOINT_CTI_MAPPING

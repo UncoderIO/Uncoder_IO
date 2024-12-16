@@ -19,15 +19,18 @@ DEFAULT_MICROSOFT_SENTINEL_RULE = {
 
 PLATFORM_DETAILS = {"group_id": "sentinel", "group_name": "Microsoft Sentinel"}
 
+_SENTINEL_KQL_QUERY = "sentinel-kql-query"
+_SENTINEL_KQL_RULE = "sentinel-kql-rule"
+
 MICROSOFT_SENTINEL_QUERY_DETAILS = {
-    "platform_id": "sentinel-kql-query",
+    "platform_id": _SENTINEL_KQL_QUERY,
     "name": "Microsoft Sentinel Query",
     "platform_name": "Query (Kusto)",
     **PLATFORM_DETAILS,
 }
 
 MICROSOFT_SENTINEL_RULE_DETAILS = {
-    "platform_id": "sentinel-kql-rule",
+    "platform_id": _SENTINEL_KQL_RULE,
     "name": "Microsoft Sentinel Rule",
     "platform_name": "Rule (Kusto)",
     "first_choice": 0,
@@ -49,6 +52,35 @@ MICROSOFT_DEFENDER_DETAILS = {
     "platform_name": "Query (Kusto)",
     "group_id": "microsoft-defender",
 }
+
+
+DEFAULT_MICROSOFT_DEFENDER_CTI_MAPPING = {
+    "DestinationIP": "RemoteIP",
+    "SourceIP": "LocalIP",
+    "HashSha256": "InitiatingProcessSHA256",
+    "HashMd5": "InitiatingProcessMD5",
+    "Emails": "SenderFromAddress",
+    "Domain": "RemoteUrl",
+    "HashSha1": "InitiatingProcessSHA1",
+    "Files": "FileName",
+    "URL": "RemoteUrl",
+}
+
+DEFAULT_MICROSOFT_SENTINEL_CTI_MAPPING = {
+    "DestinationIP": "DestinationIp",
+    "SourceIP": "SourceIp",
+    "HashSha512": "FileHashSha512",
+    "HashSha256": "FileHashSha256",
+    "HashMd5": "FileHashMd5",
+    "Emails": "SenderFromAddress",
+    "Domain": "DestinationHostname",
+    "HashSha1": "FileHashSha1",
+    "Files": "TargetFileName",
+    "URL": "URL",
+}
+
+MICROSOFT_SENTINEL_QUERY_TYPES = {_SENTINEL_KQL_QUERY, _SENTINEL_KQL_RULE}
+
 
 microsoft_defender_query_details = PlatformDetails(**MICROSOFT_DEFENDER_DETAILS)
 microsoft_sentinel_query_details = PlatformDetails(**MICROSOFT_SENTINEL_QUERY_DETAILS)
