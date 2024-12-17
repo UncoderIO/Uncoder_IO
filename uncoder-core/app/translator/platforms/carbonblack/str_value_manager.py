@@ -16,22 +16,23 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+from typing import ClassVar
 
-from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.render_cti import RenderCTI
-from app.translator.managers import render_cti_manager
-from app.translator.platforms.carbonblack.const import DEFAULT_CARBONBLACK_CTI_MAPPING, carbonblack_query_details
+from app.translator.core.str_value_manager import (
+    BaseSpecSymbol,
+    SingleSymbolWildCard,
+    StrValueManager,
+    UnboundLenWildCard,
+)
+from app.translator.platforms.carbonblack.escape_manager import CarbonBlackEscapeManager, carbon_black_escape_manager
 
 
-@render_cti_manager.register
-class CarbonBlackCTI(RenderCTI):
-    details: PlatformDetails = carbonblack_query_details
+class CarbonBlackStrValueManager(StrValueManager):
+    escape_manager: CarbonBlackEscapeManager = carbon_black_escape_manager
+    str_spec_symbols_map: ClassVar[dict[str, type[BaseSpecSymbol]]] = {
+        "?": SingleSymbolWildCard,
+        "*": UnboundLenWildCard,
+    }
 
-    field_value_template: str = "{key}:{value}"
-    or_operator: str = " OR "
-    group_or_operator: str = " OR "
-    or_group: str = "({or_group})"
-    result_join: str = ""
-    final_result_for_many: str = "({result})\n"
-    final_result_for_one: str = "{result}\n"
-    default_mapping = DEFAULT_CARBONBLACK_CTI_MAPPING
+
+carbon_black_str_value_manager = CarbonBlackStrValueManager()
