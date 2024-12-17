@@ -8,6 +8,7 @@ CARBON_BLACK_QUERY_DETAILS = {
     "platform_name": "Query (Cloud)",
 }
 
+
 DEFAULT_CARBONBLACK_CTI_MAPPING = {
     "SourceIP": "netconn_local_ipv4",
     "DestinationIP": "netconn_ipv4",

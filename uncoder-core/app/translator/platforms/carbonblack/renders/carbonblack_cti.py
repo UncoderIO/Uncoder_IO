@@ -23,6 +23,7 @@ from app.translator.managers import render_cti_manager
 from app.translator.platforms.carbonblack.const import DEFAULT_CARBONBLACK_CTI_MAPPING, carbonblack_query_details
 
 
+
 @render_cti_manager.register
 class CarbonBlackCTI(RenderCTI):
     details: PlatformDetails = carbonblack_query_details
