@@ -17,7 +17,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 import re
-from typing import Optional, Union
+from typing import Union
 
 from app.translator.core.exceptions.parser import TokenizerGeneralException
 from app.translator.core.models.functions.base import ParsedFunctions
@@ -105,7 +105,7 @@ class AQLQueryParser(PlatformQueryParser):
 
         return log_sources, query
 
-    def _parse_query(self, query: str) -> tuple[str, dict[str, Union[list[str], list[int]]], Optional[ParsedFunctions]]:
+    def _parse_query(self, text: str) -> tuple[str, dict[str, Union[list[str], list[int]]], ParsedFunctions]:
         query = self.__clean_query(query)
         self.__check_table(query)
         query, functions = self.platform_functions.parse(query)
