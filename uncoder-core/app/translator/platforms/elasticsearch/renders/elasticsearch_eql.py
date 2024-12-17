@@ -119,6 +119,7 @@ class ElasticSearchEQLFieldValue(BaseFieldValueRender):
 
 
 @render_manager.register
+
 class ElasticSearchEQLQueryRender(ExtraConditionMixin, PlatformQueryRender):
     details: PlatformDetails = elastic_eql_query_details
     mappings: LuceneMappings = elastic_eql_query_mappings
@@ -133,3 +134,4 @@ class ElasticSearchEQLQueryRender(ExtraConditionMixin, PlatformQueryRender):
 
     def in_brackets(self, raw_list: list[QUERY_TOKEN_TYPE]) -> list[QUERY_TOKEN_TYPE]:
         return [Identifier(token_type=GroupType.L_PAREN), *raw_list, Identifier(token_type=GroupType.R_PAREN)]
+

@@ -1,9 +1,19 @@
 platform: Anomali
-description: Common field mapping
+source: proxy
 
 field_mapping:
   c-uri-query: url
   c-useragent: user_agent
+  c-uri: url
+  cs-method: http_method
+  cs-bytes: bytes_out
+  cs-referrer: http_referrer
+  sc-status: return_code
+
+  dns-query: query
+  dns-answer: answer
+  dns-record: record_type
+
   CommandLine: command_line
   DestinationHostname: dest
   DestinationIp: dest_ip
