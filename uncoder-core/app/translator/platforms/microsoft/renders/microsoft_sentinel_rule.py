@@ -105,7 +105,7 @@ class MicrosoftSentinelRuleRender(MicrosoftSentinelQueryRender):
         not_supported_functions: Optional[list] = None,
         unmapped_fields: Optional[list[str]] = None,
         *args,  # noqa: ARG002
-        **kwargs,  # noqa: ARG002
+        **kwargs,
     ) -> str:
         if not kwargs.get("raw_query", False):
             query = super().finalize_query(prefix=prefix, query=query, functions=functions)

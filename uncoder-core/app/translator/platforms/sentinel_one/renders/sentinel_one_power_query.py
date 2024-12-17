@@ -65,7 +65,7 @@ class SentinelOnePowerQueryFieldValue(BaseFieldValueRender):
                 for v in value
             )
             return f"{field} contains ({values})"
-        value = self._pre_process_value(field, value, value_type=ValueType.value)
+        value = self._pre_process_value(field, value, value_type=ValueType.value, wrap_str=True, wrap_int=True)
         return f"{field} contains {value}"
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
@@ -77,11 +77,14 @@ class SentinelOnePowerQueryFieldValue(BaseFieldValueRender):
     def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             values = self.list_token.join(
-                self._pre_process_value(field, v, value_type=ValueType.regex_value, wrap_str=True, wrap_int=True)
+                self.str_value_manager.escape_manager.escape(
+                    self._pre_process_value(field, v, value_type=ValueType.regex_value, wrap_str=True, wrap_int=True)
+                )
                 for v in value
             )
             return f"{field} matches ({values})"
         value = self._pre_process_value(field, value, value_type=ValueType.regex_value, wrap_str=True, wrap_int=True)
+        value = self.str_value_manager.escape_manager.escape(value)
         return f"{field} matches {value}"
 
     def is_none(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:  # noqa: ARG002
