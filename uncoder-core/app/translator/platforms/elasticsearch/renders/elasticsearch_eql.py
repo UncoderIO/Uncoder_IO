@@ -133,3 +133,4 @@ class ElasticSearchEQLQueryRender(ExtraConditionMixin, PlatformQueryRender):
 
     def in_brackets(self, raw_list: list[QUERY_TOKEN_TYPE]) -> list[QUERY_TOKEN_TYPE]:
         return [Identifier(token_type=GroupType.L_PAREN), *raw_list, Identifier(token_type=GroupType.R_PAREN)]
+

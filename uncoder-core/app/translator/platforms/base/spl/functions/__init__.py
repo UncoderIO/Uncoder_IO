@@ -26,7 +26,8 @@ class SplFunctions(PlatformFunctions):
         functions = query.split(self.function_delimiter)
         result_query = self.prepare_query(functions[0])
         for func in functions[1:]:
-            split_func = func.strip().split(" ")
+            func = func.strip()
+            split_func = func.split(" ")
             func_name, func_body = split_func[0], " ".join(split_func[1:])
             try:
                 func_parser = self.manager.get_hof_parser(func_name)
