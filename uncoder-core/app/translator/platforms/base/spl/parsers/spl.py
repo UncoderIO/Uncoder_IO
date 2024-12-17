@@ -29,6 +29,7 @@ TSTATS_FUNC = "tstats"
 
 class SplQueryParser(PlatformQueryParser):
     log_source_pattern = r"^___source_type___\s*=\s*(?:\"(?P<d_q_value>[%a-zA-Z_*:0-9\-/]+)\"|(?P<value>[%a-zA-Z_*:0-9\-/]+))(?:\s+(?:and|or)\s+|\s+)?"  # noqa: E501
+    rule_name_pattern = r"`(?P<name>(?:[:a-zA-Z*0-9=+%#\-_/,;`?~‘\'.<>$&^@!\]\[()\s])*)`"  # noqa: RUF001
     log_source_key_types = ("index", "source", "sourcetype", "sourcecategory")
 
     platform_functions: SplFunctions = None
@@ -53,6 +54,9 @@ class SplQueryParser(PlatformQueryParser):
         return log_sources, query
 
     def _parse_query(self, query: str) -> tuple[str, dict[str, list[str]], ParsedFunctions]:
+        if re.match(self.rule_name_pattern, query):
+            search = re.search(self.rule_name_pattern, query, flags=re.IGNORECASE)
+            query = query[: search.start()] + query[search.end() :]
         query = query.strip()
         log_sources, query = self._parse_log_sources(query)
         query, functions = self.platform_functions.parse(query)
@@ -68,9 +72,13 @@ class SplQueryParser(PlatformQueryParser):
 
         query, log_sources, functions = self._parse_query(raw_query_container.query)
         query_tokens = self.get_query_tokens(query)
-        field_tokens = self.get_field_tokens(query_tokens, functions.functions)
-        source_mappings = self.get_source_mappings(field_tokens, log_sources)
+        query_field_tokens, function_field_tokens, function_field_tokens_map = self.get_field_tokens(
+            query_tokens, functions.functions
+        )
+        source_mappings = self.get_source_mappings(query_field_tokens + function_field_tokens, log_sources)
         meta_info = raw_query_container.meta_info
-        meta_info.query_fields = field_tokens
+        meta_info.query_fields = query_field_tokens
+        meta_info.function_fields = function_field_tokens
+        meta_info.function_fields_map = function_field_tokens_map
         meta_info.source_mapping_ids = [source_mapping.source_id for source_mapping in source_mappings]
         return TokenizedQueryContainer(tokens=query_tokens, meta_info=meta_info, functions=functions)

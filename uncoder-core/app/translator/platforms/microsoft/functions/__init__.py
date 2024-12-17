@@ -22,7 +22,8 @@ class MicrosoftFunctions(PlatformFunctions):
         table = split_query[0].strip()
         query_parts = []
         for func in split_query[1:]:
-            split_func = func.strip(" ").split(" ")
+            func = func.strip()
+            split_func = func.split(" ")
             func_name, func_body = split_func[0], " ".join(split_func[1:])
             if func_name == KQLFunctionType.where:
                 query_parts.append(func_body)

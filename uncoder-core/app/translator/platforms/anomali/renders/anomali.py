@@ -17,65 +17,37 @@ limitations under the License.
 -----------------------------------------------------------------
 """
 from app.translator.const import DEFAULT_VALUE_TYPE
-from app.translator.core.custom_types.values import ValueType
 from app.translator.core.models.platform_details import PlatformDetails
-from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
+from app.translator.core.render import PlatformQueryRender
 from app.translator.managers import render_manager
 from app.translator.platforms.anomali.const import anomali_query_details
 from app.translator.platforms.anomali.mapping import AnomaliMappings, anomali_query_mappings
-from app.translator.platforms.base.sql.str_value_manager import sql_str_value_manager
+from app.translator.platforms.base.sql.renders.sql import SqlFieldValueRender
 
 
-class AnomaliFieldValueRender(BaseFieldValueRender):
+class AnomaliFieldValueRender(SqlFieldValueRender):
     details: PlatformDetails = anomali_query_details
-    str_value_manager = sql_str_value_manager
-
-    @staticmethod
-    def _wrap_str_value(value: str) -> str:
-        return f"'{value}'"
-
-    def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
-        if isinstance(value, list):
-            return f"({self.or_token.join([self.equal_modifier(field=field, value=v) for v in value])})"
-        return f"{field} = {self._pre_process_value(field, value, wrap_str=True)}"
-
-    def not_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
-        if isinstance(value, list):
-            return f"({self.or_token.join([self.not_equal_modifier(field=field, value=v) for v in value])})"
-        return f"{field} != {self._pre_process_value(field, value, wrap_str=True)}"
-
-    def less_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
-        return f"{field} < {self._pre_process_value(field, value, wrap_str=True)}"
-
-    def less_or_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
-        return f"{field} <= {self._pre_process_value(field, value, wrap_str=True)}"
-
-    def greater_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
-        return f"{field} > {self._pre_process_value(field, value, wrap_str=True)}"
-
-    def greater_or_equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
-        return f"{field} >= {self._pre_process_value(field, value, wrap_str=True)}"
 
     def contains_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.contains_modifier(field=field, value=v) for v in value)})"
-        return f"{field} like '%{self._pre_process_value(field, value)}%'"
+
+        value = f"'%{self._pre_process_value(field, value)}%'"
+        return f"{field} like {value}"
 
     def endswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.endswith_modifier(field=field, value=v) for v in value)})"
-        return f"{field} like '%{self._pre_process_value(field, value)}'"
+
+        value = f"'%{self._pre_process_value(field, value)}'"
+        return f"{field} like {value}"
 
     def startswith_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
             return f"({self.or_token.join(self.startswith_modifier(field=field, value=v) for v in value)})"
-        return f"{field} like '{self._pre_process_value(field, value)}%'"
 
-    def regex_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
-        if isinstance(value, list):
-            return f"({self.or_token.join(self.regex_modifier(field=field, value=v) for v in value)})"
-        regex_str = self._pre_process_value(field, value, value_type=ValueType.regex_value, wrap_str=True)
-        return f"regexp_like({field}, {regex_str})"
+        value = f"'{self._pre_process_value(field, value)}%'"
+        return f"{field} like {value}"
 
     def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         return f'message contains "{self._pre_process_value(field, value)}"'

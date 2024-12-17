@@ -1,25 +1,29 @@
+@use "variables" as variables
+@use "mixins" as mixins
+@use "helpers" as helpers
+
 html,
 body
-  background-color: $backgroundDarkBlue
+  background-color: variables.$backgroundDarkBlue
 
 body
   min-width: 375px
-  font-family: $inter
+  font-family: variables.$inter
   font-size: 14px
   font-weight: 400
-  color: $textDefault
-  +scrollbars
+  color: variables.$textDefault
+  +mixins.scrollbars
 
 .inner
   margin: 0 auto
   padding: 0 32px
   width: 100%
   max-width: 1920px
-  +md
+  +helpers.md
     padding: 0 12px
   &--xl
     max-width: 1650px
-    +xlMin
+    +helpers.xlMin
       max-width: 1920px
   &--md
     max-width: 1110px
@@ -31,7 +35,7 @@ body
 .simplebar-track
   .simplebar-scrollbar
     &::before
-      background-color: $backgroundSilverBlue
+      background-color: variables.$backgroundSilverBlue
 
 .three-dots
   max-width: 100%
@@ -65,7 +69,7 @@ body
     left: 0
     width: 100%
     height: 1px
-    background-color: $backgroundWhite
+    background-color: variables.$backgroundWhite
     transform: scaleX(0)
     transition: transform .15s
   &:hover
@@ -77,15 +81,15 @@ body
   &--white
     &,
     &:hover
-      color: $textDefault
+      color: variables.$textDefault
       &::after
-        background-color: $backgroundWhite
+        background-color: variables.$backgroundWhite
   &--green
     &,
     &:hover
-      color: $textSuccess
+      color: variables.$textSuccess
       &::after
-        background-color: $backgroundSuccess
+        background-color: variables.$backgroundSuccess
   &--underline
     &::after
       transform: scaleX(1)
