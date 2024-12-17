@@ -1,0 +1,9 @@
+platform: ArcSight
+source: macos_network_connection
+
+
+default_log_source: {}
+
+
+field_mapping:
+  SourceHostname: sourceHostName

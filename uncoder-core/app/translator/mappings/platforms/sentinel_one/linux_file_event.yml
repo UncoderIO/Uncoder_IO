@@ -1,0 +1,11 @@
+platform: Sentinel One Power Query
+source: linux_file_event
+
+field_mapping:
+  Image: src.process.image.path
+  CommandLine: src.process.cmdline
+  ParentImage: src.process.parent.image.path
+  ParentCommandLine: src.process.parent.cmdline
+  TargetFilename: tgt.file.path
+  SourceFilename: tgt.file.oldPath
+  User: src.process.use

@@ -65,16 +65,19 @@ class PlatformQueryParser(QueryParser, ABC):
     @staticmethod
     def get_field_tokens(
         query_tokens: list[QUERY_TOKEN_TYPE], functions: Optional[list[Function]] = None
-    ) -> list[Field]:
-        field_tokens = []
+    ) -> tuple[list[Field], list[Field], dict[str, list[Field]]]:
+        query_field_tokens = []
+        function_field_tokens = []
+        function_field_tokens_map = {}
         for token in query_tokens:
             if isinstance(token, (FieldField, FieldValue, FunctionValue)):
-                field_tokens.extend(token.fields)
+                query_field_tokens.extend(token.fields)
 
-        if functions:
-            field_tokens.extend([field for func in functions for field in func.fields])
+        for func in functions or []:
+            function_field_tokens.extend(func.fields)
+            function_field_tokens_map[func.name] = func.fields
 
-        return field_tokens
+        return query_field_tokens, function_field_tokens, function_field_tokens_map
 
     def get_source_mappings(
         self, field_tokens: list[Field], log_sources: dict[str, list[Union[int, str]]]
