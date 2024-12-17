@@ -16,5 +16,19 @@ SENTINEL_ONE_POWER_QUERY_DETAILS = {
     **PLATFORM_DETAILS,
 }
 
+DEFAULT_S1EVENTS_CTI_MAPPING = {
+    "SourceIP": "SrcIP",
+    "DestinationIP": "DstIP",
+    "Domain": "DNS",
+    "URL": "Url",
+    "HashMd5": "Md5",
+    "HashSha1": "Sha1",
+    "HashSha256": "Sha256",
+    "HashSha512": "Sha512",
+    "Emails": "emails",
+    "Files": "TgtFilePath",
+}
+
+
 sentinel_one_events_query_details = PlatformDetails(**SENTINEL_ONE_EVENTS_QUERY_DETAILS)
 sentinel_one_power_query_details = PlatformDetails(**SENTINEL_ONE_POWER_QUERY_DETAILS)
