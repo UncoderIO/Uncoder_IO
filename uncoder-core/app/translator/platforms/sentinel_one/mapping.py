@@ -1,4 +1,4 @@
-from app.translator.core.mapping import LogSourceSignature, BaseStrictLogSourcesPlatformMappings
+from app.translator.core.mapping import BaseStrictLogSourcesPlatformMappings, LogSourceSignature
 from app.translator.platforms.sentinel_one.const import sentinel_one_power_query_details
 
 
