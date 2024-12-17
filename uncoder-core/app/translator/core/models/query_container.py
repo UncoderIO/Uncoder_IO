@@ -88,7 +88,7 @@ class MetaInfoContainer:
         self.risk_score = risk_score
         self.type_ = type_ or ""
         self.description = description or ""
-        self.author = [v.strip() for v in author] if author else []
+        self.author = [v.strip() for v in author] if author and author != [None] else []
         self.date = date or datetime.now().date().strftime("%Y-%m-%d")
         self.output_table_fields = output_table_fields or []
         self.query_fields = query_fields or []

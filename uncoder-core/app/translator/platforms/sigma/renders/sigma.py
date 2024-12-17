@@ -23,6 +23,7 @@ import yaml
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.custom_types.meta_info import SeverityType
 from app.translator.core.custom_types.tokens import OperatorType
+from app.translator.core.custom_types.values import ValueType
 from app.translator.core.mapping import DEFAULT_MAPPING_NAME, SourceMapping
 from app.translator.core.models.query_tokens.field_value import FieldValue
 from app.translator.core.models.query_tokens.keyword import Keyword
@@ -211,18 +212,26 @@ class SigmaRender(QueryRender):
         ):
             field_name = f"{field_name}|{data.operator.token_type}"
 
-        values = self.__pre_process_values(data.values)
+        value_type_map = {
+            OperatorType.REGEX: ValueType.regex_value
+        }
+        value_type = value_type_map.get(data.operator.token_type, ValueType.value)
+        values = self.__pre_process_values(data.values, value_type)
         if len(values) == 1:
             return {field_name: values[0]}
         elif len(values) == 0:
             return {field_name: ""}
         return {field_name: values}
 
-    def __pre_process_values(self, values: DEFAULT_VALUE_TYPE) -> list[Union[int, str]]:
+    def __pre_process_values(
+        self,
+        values: DEFAULT_VALUE_TYPE,
+        value_type: str = ValueType.value
+    ) -> list[Union[int, str]]:
         processed = []
         for v in values:
             if isinstance(v, StrValue):
-                processed.append(self.str_value_manager.from_container_to_str(v))
+                processed.append(self.str_value_manager.from_container_to_str(v, value_type=value_type))
             elif isinstance(v, str):
                 processed.append(v)
             else:

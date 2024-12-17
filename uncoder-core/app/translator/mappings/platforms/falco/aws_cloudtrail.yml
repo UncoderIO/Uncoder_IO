@@ -1,0 +1,8 @@
+platform: Falco
+source: aws_cloudtrail
+
+field_mapping:
+  eventSource: ct.src
+  eventName: ct.name
+  errorCode: ct.error
+  RequestParameters: json.value[/requestParameters]
