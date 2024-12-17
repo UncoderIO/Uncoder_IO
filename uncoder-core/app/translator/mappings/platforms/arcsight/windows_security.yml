@@ -1,0 +1,54 @@
+platform: ArcSight
+source: windows_security
+
+
+default_log_source: {}
+
+conditions:
+  deviceVendor: Microsoft
+  deviceProduct: Microsoft Windows
+
+
+field_mapping:
+  EventID: externalId
+  AccessMask: deviceCustomString1
+  AccountName: destinationUserName
+  AuditPolicyChanges: deviceAction
+  AuthenticationPackageName: deviceCustomString5
+  EventType: deviceSeverity
+  FailureReason: deviceCustomString4
+  IpAddress: sourceAddress
+  IpPort: sourcePort
+  LogonProcessName:
+    - destinationProcessName
+    - sourceProcessName
+  LogonType: deviceCustomNumber1
+  MemberName: destinationUserId
+  MemberSid: destinationUserName
+  NewProcessName: destinationProcessName
+  ObjectClass: deviceCustomString5
+  ObjectName: fileName
+  ObjectType: fileType
+  ObjectValueName: deviceCustomString6
+  CommandLine: deviceCustomString4
+  ProcessName: destinationProcessName
+  Properties: deviceCustomString6
+  ServiceFileName: filePath
+  ServiceName: destinationServiceName
+  ShareName:
+    - filePath
+    - deviceCustomString6
+  Status: eventOutcome
+  SubjectDomainName: destinationNTDomain
+  SubjectUserName: destinationUserName
+  SubjectUserSid: destinationUserName
+  TargetDomainName: destinationNTDomain
+  TargetSid: destinationNTDomain
+  TargetUserName: destinationUserName
+  TargetUserSid: destinationUserName
+  TicketEncryptionType: deviceCustomString5
+  TicketOptions: deviceCustomString1
+  WorkstationName: sourceHostName
+  ServiceType: fileType
+  StartType: deviceCustomString5
+  ParentProcessName: filePath

@@ -1,0 +1,17 @@
+platform: CarbonBlack
+source: windows_security
+
+
+field_mapping:
+  AccountName:
+    - process_username
+    - childproc_username
+  ComputerName: device_name
+  NewProcessName: process_name
+  DeviceDescription:
+    - process_product_name
+    - process_product_version
+    - process_publisher
+    - process_file_description
+  DestPort: netconn_port
+  UserID: parent_name

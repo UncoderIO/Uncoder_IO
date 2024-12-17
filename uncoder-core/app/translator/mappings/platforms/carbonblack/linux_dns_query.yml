@@ -1,0 +1,8 @@
+platform: CarbonBlack
+source: linux_dns_query
+
+
+field_mapping:
+  User:
+    - childproc_username
+    - process_username

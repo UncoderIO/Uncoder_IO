@@ -1,0 +1,6 @@
+platform: Falco
+source: default
+
+
+field_mapping:
+  {}

@@ -27,8 +27,14 @@ from app.translator.core.str_value_manager import (
     SingleSymbolWildCard,
     StrValue,
     StrValueManager,
+    UnboundLenWildCard,
 )
-from app.translator.platforms.elasticsearch.escape_manager import ESQLQueryEscapeManager, esql_query_escape_manager
+from app.translator.platforms.elasticsearch.escape_manager import (
+    EQLQueryEscapeManager,
+    ESQLQueryEscapeManager,
+    eql_query_escape_manager,
+    esql_query_escape_manager,
+)
 
 
 class ESQLStrValueManager(StrValueManager):
@@ -41,7 +47,11 @@ class ESQLStrValueManager(StrValueManager):
 
 
 class EQLStrValueManager(StrValueManager):
-    str_spec_symbols_map: ClassVar[dict[str, type[BaseSpecSymbol]]] = {"*": SingleSymbolWildCard}
+    escape_manager: EQLQueryEscapeManager = eql_query_escape_manager
+    str_spec_symbols_map: ClassVar[dict[str, type[BaseSpecSymbol]]] = {
+        "?": SingleSymbolWildCard,
+        "*": UnboundLenWildCard,
+    }
 
     def from_str_to_container(
         self,
