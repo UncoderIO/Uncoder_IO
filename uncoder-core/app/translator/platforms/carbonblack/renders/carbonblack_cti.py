@@ -20,8 +20,8 @@ limitations under the License.
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
 from app.translator.managers import render_cti_manager
-from app.translator.platforms.carbonblack.const import carbonblack_query_details
-from app.translator.platforms.carbonblack.mappings.carbonblack_cti import DEFAULT_CARBONBLACK_MAPPING
+from app.translator.platforms.carbonblack.const import DEFAULT_CARBONBLACK_CTI_MAPPING, carbonblack_query_details
+
 
 
 @render_cti_manager.register
@@ -35,4 +35,4 @@ class CarbonBlackCTI(RenderCTI):
     result_join: str = ""
     final_result_for_many: str = "({result})\n"
     final_result_for_one: str = "{result}\n"
-    default_mapping = DEFAULT_CARBONBLACK_MAPPING
+    default_mapping = DEFAULT_CARBONBLACK_CTI_MAPPING
