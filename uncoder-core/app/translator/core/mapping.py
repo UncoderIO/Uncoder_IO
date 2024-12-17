@@ -22,6 +22,12 @@ class LogSourceSignature(ABC):
     def is_suitable(self, **kwargs) -> bool:
         raise NotImplementedError("Abstract method")
 
+    def is_probably_suitable(self, **kwargs) -> bool:
+        """
+        Performs check with more options, but the result is less accurate than the "is_suitable" method
+        """
+        raise NotImplementedError("Abstract method")
+
     @staticmethod
     def _check_conditions(conditions: list[Union[bool, None]]) -> bool:
         conditions = [condition for condition in conditions if condition is not None]
@@ -88,11 +94,13 @@ class SourceMapping:
         log_source_signature: _LogSourceSignatureType = None,
         fields_mapping: Optional[FieldsMapping] = None,
         raw_log_fields: Optional[dict] = None,
+        conditions: Optional[dict] = None,
     ):
         self.source_id = source_id
         self.log_source_signature = log_source_signature
         self.fields_mapping = fields_mapping or FieldsMapping([])
         self.raw_log_fields = raw_log_fields
+        self.conditions = conditions
 
 
 class BasePlatformMappings:
@@ -123,6 +131,7 @@ class BasePlatformMappings:
 
             field_mappings_dict = mapping_dict.get("field_mapping", {})
             raw_log_fields = mapping_dict.get("raw_log_fields", {})
+            conditions = mapping_dict.get("conditions", {})
             field_mappings_dict.update({field: field for field in raw_log_fields})
             fields_mapping = self.prepare_fields_mapping(field_mapping=field_mappings_dict)
             self.update_default_source_mapping(default_mapping=default_mapping, fields_mapping=fields_mapping)
@@ -131,6 +140,7 @@ class BasePlatformMappings:
                 log_source_signature=log_source_signature,
                 fields_mapping=fields_mapping,
                 raw_log_fields=raw_log_fields,
+                conditions=conditions,
             )
 
         if self.skip_load_default_mappings:
@@ -170,19 +180,26 @@ class BasePlatformMappings:
 
         return by_log_sources_and_fields or by_fields or [self._source_mappings[DEFAULT_MAPPING_NAME]]
 
-    def get_source_mappings_by_ids(self, source_mapping_ids: list[str]) -> list[SourceMapping]:
+    def get_source_mapping(self, source_id: str) -> Optional[SourceMapping]:
+        return self._source_mappings.get(source_id)
+
+    def get_source_mappings_by_ids(
+        self, source_mapping_ids: list[str], return_default: bool = True
+    ) -> list[SourceMapping]:
         source_mappings = []
         for source_mapping_id in source_mapping_ids:
+            if source_mapping_id == DEFAULT_MAPPING_NAME:
+                continue
             if source_mapping := self.get_source_mapping(source_mapping_id):
                 source_mappings.append(source_mapping)
 
-        if not source_mappings:
+        if not source_mappings and return_default:
             source_mappings = [self.get_source_mapping(DEFAULT_MAPPING_NAME)]
 
         return source_mappings
 
-    def get_source_mapping(self, source_id: str) -> Optional[SourceMapping]:
-        return self._source_mappings.get(source_id)
+    def get_source_mappings_by_log_sources(self, log_sources: dict) -> Optional[list[str]]:
+        raise NotImplementedError("Abstract method")
 
     @property
     def default_mapping(self) -> SourceMapping:

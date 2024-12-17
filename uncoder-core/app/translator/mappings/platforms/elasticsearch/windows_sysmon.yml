@@ -1,6 +1,8 @@
 platform: ElasticSearch
 source: windows_sysmon
 
+conditions:
+  winlog.channel: 'Microsoft-Windows-Sysmon/Operational'
 
 log_source:
   index: [winlogbeat-*, logs-*]

@@ -1,0 +1,9 @@
+platform: CarbonBlack
+source: windows_registry_event
+
+
+field_mapping:
+  TargetObject: regmod_name
+  User:
+    - childproc_username
+    - process_username
