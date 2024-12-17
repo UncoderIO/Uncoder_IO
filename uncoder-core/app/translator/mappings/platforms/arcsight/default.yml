@@ -1,0 +1,5 @@
+platform: ArcSight
+source: default
+
+
+default_log_source: {}

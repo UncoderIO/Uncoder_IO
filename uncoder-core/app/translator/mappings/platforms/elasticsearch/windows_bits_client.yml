@@ -1,6 +1,8 @@
 platform: ElasticSearch
 source: windows_bits_client
 
+conditions:
+  winlog.channel: 'Microsoft-Windows-Bits-Client/Operational'
 
 log_source:
   index: [winlogbeat-*, logs-*]

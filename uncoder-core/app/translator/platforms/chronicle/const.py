@@ -20,18 +20,18 @@ DEFAULT_CHRONICLE_SECURITY_RULE = """rule <title_place_holder> {
     $e
 }"""
 
-PLATFORM_DETAILS = {"group_id": "chronicle-pack", "group_name": "Chronicle Security", "alt_platform_name": "UDM"}
+PLATFORM_DETAILS = {"group_id": "chronicle-pack", "group_name": "Google SecOps", "alt_platform_name": "UDM"}
 
 CHRONICLE_QUERY_DETAILS = {
     "platform_id": "chronicle-yaral-query",
-    "name": "Chronicle Security Query",
+    "name": "Google SecOps Query",
     "platform_name": "Query (UDM)",
     **PLATFORM_DETAILS,
 }
 
 CHRONICLE_RULE_DETAILS = {
     "platform_id": "chronicle-yaral-rule",
-    "name": "Chronicle Security Rule",
+    "name": "Google SecOps Rule",
     "platform_name": "Rule (YARA-L)",
     "first_choice": 0,
     **PLATFORM_DETAILS,
