@@ -22,6 +22,7 @@ from typing import Union
 from app.translator.const import DEFAULT_VALUE_TYPE
 from app.translator.core.mapping import LogSourceSignature
 from app.translator.core.models.platform_details import PlatformDetails
+from app.translator.core.models.query_container import RawQueryContainer
 from app.translator.core.render import BaseFieldValueRender, PlatformQueryRender
 from app.translator.managers import render_manager
 from app.translator.platforms.microsoft.const import microsoft_sentinel_query_details
@@ -144,3 +145,6 @@ class MicrosoftSentinelQueryRender(PlatformQueryRender):
     @staticmethod
     def _finalize_search_query(query: str) -> str:
         return f"| where {query}" if query else ""
+
+    def generate_from_raw_query_container(self, query_container: RawQueryContainer) -> str:
+        return query_container.query

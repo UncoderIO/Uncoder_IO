@@ -1,0 +1,9 @@
+platform: ArcSight
+source: windows_process_creation
+
+
+default_log_source: {}
+
+
+field_mapping:
+  OriginalFileName: oldFileName

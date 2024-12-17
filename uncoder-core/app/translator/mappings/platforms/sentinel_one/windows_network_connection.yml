@@ -1,0 +1,21 @@
+platform: Sentinel One Power Query
+source: windows_network_connection
+
+field_mapping:
+  Image: src.process.image.path
+  CommandLine: src.process.cmdline
+  ParentImage: src.process.parent.image.path
+  ParentCommandLine: src.process.parent.cmdline
+  DestinationHostname:
+    - url.address
+    - event.dns.request
+  DestinationPort: dst.port.number
+  DestinationIp: dst.ip.address
+  User: src.process.user
+  SourceIp: src.ip.address
+  SourcePort: src.port.number
+  Protocol: NetProtocolName
+  dst_ip: dst.ip.address
+  src_ip: src.ip.address
+  dst_port: dst.port.number
+  src_port: src.port.number

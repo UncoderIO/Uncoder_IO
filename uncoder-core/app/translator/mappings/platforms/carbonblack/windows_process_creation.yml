@@ -1,0 +1,14 @@
+platform: CarbonBlack
+source: windows_process_creation
+
+
+field_mapping:
+  Hashes:
+    - md5
+    - filewrite_md5
+    - childproc_md5
+    - parent_md5
+  User:
+    - childproc_username
+    - process_username
+  OriginalFileName: process_original_filename
