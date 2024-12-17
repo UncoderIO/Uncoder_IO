@@ -37,5 +37,17 @@ CHRONICLE_RULE_DETAILS = {
     **PLATFORM_DETAILS,
 }
 
+DEFAULT_CHRONICLE_CTI_MAPPING = {
+    "DestinationIP": "target.ip",
+    "SourceIP": "principal.ip",
+    "HashSha256": "target.file.sha256",
+    "HashMd5": "target.file.md5",
+    "Emails": "network.email.from",
+    "Domain": "target.hostname",
+    "HashSha1": "target.file.sha1",
+    "Files": "target.file.full_path",
+    "URL": "target.url",
+}
+
 chronicle_query_details = PlatformDetails(**CHRONICLE_QUERY_DETAILS)
 chronicle_rule_details = PlatformDetails(**CHRONICLE_RULE_DETAILS)

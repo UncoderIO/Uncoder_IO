@@ -4,11 +4,10 @@ from fastapi import APIRouter, Body
 
 from app.models.ioc_translation import CTIPlatform, OneTranslationCTIData
 from app.models.translation import InfoMessage
-from app.translator.cti_translator import CTITranslator
+from app.translator.cti_translator import cti_translator
 from app.translator.tools.const import HashType, IocParsingRule, IOCType
 
 iocs_router = APIRouter()
-cti_translator = CTITranslator()
 
 
 @iocs_router.post("/iocs/translate", description="Parse IOCs from text.")

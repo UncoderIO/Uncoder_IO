@@ -20,8 +20,7 @@ limitations under the License.
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
 from app.translator.managers import render_cti_manager
-from app.translator.platforms.graylog.const import GRAYLOG_QUERY_DETAILS
-from app.translator.platforms.graylog.mappings.graylog_cti import DEFAULT_GRAYLOG_MAPPING
+from app.translator.platforms.graylog.const import DEFAULT_GRAYLOG_CTI_MAPPING, GRAYLOG_QUERY_DETAILS
 
 
 @render_cti_manager.register
@@ -35,4 +34,4 @@ class GraylogCTI(RenderCTI):
     result_join: str = ""
     final_result_for_many: str = "({result})\n"
     final_result_for_one: str = "{result}\n"
-    default_mapping = DEFAULT_GRAYLOG_MAPPING
+    default_mapping = DEFAULT_GRAYLOG_CTI_MAPPING

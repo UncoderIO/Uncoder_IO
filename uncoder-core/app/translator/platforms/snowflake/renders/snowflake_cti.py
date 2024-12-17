@@ -20,8 +20,7 @@ limitations under the License.
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
 from app.translator.managers import render_cti_manager
-from app.translator.platforms.snowflake.const import SNOWFLAKE_QUERY_DETAILS
-from app.translator.platforms.snowflake.mappings.snowflake_cti import DEFAULT_SNOWFLAKE_MAPPING
+from app.translator.platforms.snowflake.const import DEFAULT_SNOWFLAKE_CTI_MAPPING, SNOWFLAKE_QUERY_DETAILS
 
 
 @render_cti_manager.register
@@ -35,4 +34,4 @@ class SnowflakeCTI(RenderCTI):
     result_join: str = ""
     final_result_for_many: str = "SELECT * FROM table WHERE {result}\n"
     final_result_for_one: str = "SELECT * FROM table WHERE {result}\n"
-    default_mapping = DEFAULT_SNOWFLAKE_MAPPING
+    default_mapping = DEFAULT_SNOWFLAKE_CTI_MAPPING

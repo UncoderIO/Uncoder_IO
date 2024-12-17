@@ -119,7 +119,6 @@ class ElasticSearchEQLFieldValue(BaseFieldValueRender):
 
 
 @render_manager.register
-
 class ElasticSearchEQLQueryRender(ExtraConditionMixin, PlatformQueryRender):
     details: PlatformDetails = elastic_eql_query_details
     mappings: LuceneMappings = elastic_eql_query_mappings
