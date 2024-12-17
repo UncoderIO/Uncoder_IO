@@ -94,11 +94,13 @@ class SourceMapping:
         log_source_signature: _LogSourceSignatureType = None,
         fields_mapping: Optional[FieldsMapping] = None,
         raw_log_fields: Optional[dict] = None,
+        conditions: Optional[dict] = None,
     ):
         self.source_id = source_id
         self.log_source_signature = log_source_signature
         self.fields_mapping = fields_mapping or FieldsMapping([])
         self.raw_log_fields = raw_log_fields
+        self.conditions = conditions
 
 
 class BasePlatformMappings:
@@ -129,6 +131,7 @@ class BasePlatformMappings:
 
             field_mappings_dict = mapping_dict.get("field_mapping", {})
             raw_log_fields = mapping_dict.get("raw_log_fields", {})
+            conditions = mapping_dict.get("conditions", {})
             field_mappings_dict.update({field: field for field in raw_log_fields})
             fields_mapping = self.prepare_fields_mapping(field_mapping=field_mappings_dict)
             self.update_default_source_mapping(default_mapping=default_mapping, fields_mapping=fields_mapping)
@@ -137,6 +140,7 @@ class BasePlatformMappings:
                 log_source_signature=log_source_signature,
                 fields_mapping=fields_mapping,
                 raw_log_fields=raw_log_fields,
+                conditions=conditions,
             )
 
         if self.skip_load_default_mappings:
