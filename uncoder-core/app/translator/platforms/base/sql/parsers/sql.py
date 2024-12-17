@@ -18,7 +18,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
 import re
 
-from app.translator.core.models.functions.base import ParsedFunctions
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.parser import PlatformQueryParser
 from app.translator.platforms.base.sql.tokenizer import SqlTokenizer
@@ -37,7 +36,7 @@ class SqlQueryParser(PlatformQueryParser):
             table_search = re.search(self.table_pattern, query)
             table = table_search.group("table")
             log_source["table"] = [table]
-            return re.split(self.query_delimiter_pattern, query, flags=re.IGNORECASE)[1], log_source, None
+            return re.split(self.query_delimiter_pattern, query, flags=re.IGNORECASE)[1], log_source
 
         return query, log_source
 

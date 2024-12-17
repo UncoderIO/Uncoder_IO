@@ -106,7 +106,7 @@ class AQLQueryParser(PlatformQueryParser):
         return log_sources, query
 
     def _parse_query(self, text: str) -> tuple[str, dict[str, Union[list[str], list[int]]], ParsedFunctions]:
-        query = self.__clean_query(query)
+        query = self.__clean_query(text)
         self.__check_table(query)
         query, functions = self.platform_functions.parse(query)
         log_sources, query = self.__parse_log_sources(query)
