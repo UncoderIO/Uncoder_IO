@@ -1,0 +1,15 @@
+platform: Anomali
+source: windows_wmi_event
+
+
+log_source:
+  product: [windows]
+  category: [wmi_event]
+
+default_log_source:
+  product: windows
+  category: wmi_event
+
+field_mapping:
+#  Destination: Destination
+  EventID: event_id

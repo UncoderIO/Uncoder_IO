@@ -79,6 +79,9 @@ DEFAULT_MICROSOFT_SENTINEL_CTI_MAPPING = {
     "URL": "URL",
 }
 
+
+MICROSOFT_SENTINEL_QUERY_TYPES = {_SENTINEL_KQL_QUERY, _SENTINEL_KQL_RULE}
+
 microsoft_defender_query_details = PlatformDetails(**MICROSOFT_DEFENDER_DETAILS)
 microsoft_sentinel_query_details = PlatformDetails(**MICROSOFT_SENTINEL_QUERY_DETAILS)
 microsoft_sentinel_rule_details = PlatformDetails(**MICROSOFT_SENTINEL_RULE_DETAILS)
