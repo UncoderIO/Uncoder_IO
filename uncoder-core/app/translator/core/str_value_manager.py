@@ -130,6 +130,14 @@ class StrValue(str):
         return any(isinstance(el, BaseSpecSymbol) for el in self.split_value)
 
 
+RE_STR_ALPHA_NUM_SYMBOLS_MAP = {
+    "b": ReWordBoundarySymbol,
+    "w": ReWordSymbol,
+    "d": ReDigitalSymbol,
+    "s": ReWhiteSpaceSymbol,
+}
+
+
 RE_STR_SPEC_SYMBOLS_MAP = {
     "?": ReZeroOrOneQuantifier,
     "*": ReZeroOrMoreQuantifier,
@@ -189,7 +197,7 @@ class StrValueManager:
     ) -> StrValue:
         return StrValue(value=value, split_value=[value])
 
-    def from_re_str_to_container(self, value: str) -> StrValue:
+    def from_re_str_to_container(self, value: str, value_type: str = ValueType.regex_value) -> StrValue:  # noqa: ARG002
         split = []
         prev_char = None
         inside_curly_brackets = False

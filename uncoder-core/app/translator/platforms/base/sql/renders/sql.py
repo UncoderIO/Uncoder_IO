@@ -25,11 +25,11 @@ from app.translator.platforms.base.sql.custom_types.values import SQLValueType
 from app.translator.platforms.base.sql.str_value_manager import sql_str_value_manager
 
 
-class SqlFieldValueRender(BaseFieldValueRender):
+class SQLFieldValueRender(BaseFieldValueRender):
     str_value_manager = sql_str_value_manager
 
     @staticmethod
-    def _wrap_str_value(value: str) -> str:
+    def _wrap_str_value(value: str, value_type: str = ValueType.value) -> str:  # noqa: ARG004
         return f"'{value}'"
 
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
@@ -82,7 +82,7 @@ class SqlFieldValueRender(BaseFieldValueRender):
         return f"regexp_like({field}, {regex_str})"
 
 
-class SqlQueryRender(PlatformQueryRender):
+class SQLQueryRender(PlatformQueryRender):
     or_token = "OR"
     and_token = "AND"
     not_token = "NOT"

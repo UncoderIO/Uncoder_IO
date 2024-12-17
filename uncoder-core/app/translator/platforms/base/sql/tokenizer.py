@@ -33,7 +33,7 @@ from app.translator.tools.utils import get_match_group
 _ESCAPE_SYMBOL_GROUP_NAME = "escape_symbol"
 
 
-class SqlTokenizer(QueryTokenizer):
+class SQLTokenizer(QueryTokenizer):
     single_value_operators_map: ClassVar[dict[str, str]] = {
         "=": OperatorType.EQ,
         "<=": OperatorType.LTE,
@@ -69,7 +69,8 @@ class SqlTokenizer(QueryTokenizer):
             return mapped_operator, num_value
 
         if (bool_value := get_match_group(match, group_name=ValueType.bool_value)) is not None:
-            return mapped_operator, bool_value
+            mapped_bool_value = bool_value == "true"
+            return mapped_operator, mapped_bool_value
 
         if (s_q_value := get_match_group(match, group_name=ValueType.single_quotes_value)) is not None:
             escape_symbol = get_match_group(match, group_name=_ESCAPE_SYMBOL_GROUP_NAME)

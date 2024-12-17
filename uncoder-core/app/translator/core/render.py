@@ -76,7 +76,7 @@ class BaseFieldValueRender(ABC):
         return value_type or ValueType.value
 
     @staticmethod
-    def _wrap_str_value(value: str) -> str:
+    def _wrap_str_value(value: str, value_type: str = ValueType.value) -> str:  # noqa: ARG004
         return value
 
     @staticmethod
@@ -98,10 +98,10 @@ class BaseFieldValueRender(ABC):
         value_type = self._get_value_type(field, value, value_type)
         if isinstance(value, StrValue):
             value = self.str_value_manager.from_container_to_str(value, value_type)
-            return self._wrap_str_value(value) if wrap_str else value
+            return self._wrap_str_value(value, value_type) if wrap_str else value
         if isinstance(value, str):
             value = self.str_value_manager.escape_manager.escape(value, value_type)
-            return self._wrap_str_value(value) if wrap_str else value
+            return self._wrap_str_value(value, value_type) if wrap_str else value
         if isinstance(value, bool):
             return self._map_bool_value(value)
         if isinstance(value, int):

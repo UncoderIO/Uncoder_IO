@@ -18,14 +18,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.managers import parser_manager
-from app.translator.platforms.base.spl.parsers.spl import SplQueryParser
+from app.translator.platforms.base.spl.parsers.spl import SPLQueryParser
 from app.translator.platforms.splunk.const import splunk_query_details
 from app.translator.platforms.splunk.functions import SplunkFunctions, splunk_functions
 from app.translator.platforms.splunk.mapping import SplunkMappings, splunk_query_mappings
 
 
 @parser_manager.register_supported_by_roota
-class SplunkQueryParser(SplQueryParser):
+class SplunkQueryParser(SPLQueryParser):
     details: PlatformDetails = splunk_query_details
     mappings: SplunkMappings = splunk_query_mappings
     platform_functions: SplunkFunctions = splunk_functions

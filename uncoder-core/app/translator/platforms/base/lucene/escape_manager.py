@@ -10,7 +10,7 @@ class LuceneEscapeManager(EscapeManager):
         ValueType.value: [
             EscapeDetails(pattern=r'([_!@#$%^&*=+()\[\]{}|;:\'",.<>?/`~\-\s\\])', escape_symbols=r"\\\1")
         ],
-        ValueType.ip: [EscapeDetails(pattern=r"([/])", escape_symbols=r"\\\1")],
+        ValueType.ip_value: [EscapeDetails(pattern=r"([/])", escape_symbols=r"\\\1")],
     }
 
 

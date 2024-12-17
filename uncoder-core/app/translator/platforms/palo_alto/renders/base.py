@@ -57,7 +57,7 @@ class CortexXQLFieldValueRender(BaseFieldValueRender):
         return ValueType.value
 
     @staticmethod
-    def _wrap_str_value(value: str) -> str:
+    def _wrap_str_value(value: str, value_type: str = ValueType.value) -> str:  # noqa: ARG004
         return f'"{value}"'
 
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:

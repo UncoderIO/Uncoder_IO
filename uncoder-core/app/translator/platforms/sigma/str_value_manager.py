@@ -20,15 +20,12 @@ from typing import Optional
 
 from app.translator.core.custom_types.values import ValueType
 from app.translator.core.str_value_manager import (
+    RE_STR_ALPHA_NUM_SYMBOLS_MAP,
     RE_STR_SPEC_SYMBOLS_MAP,
-    ReDigitalSymbol,
-    ReWhiteSpaceSymbol,
-    ReWordBoundarySymbol,
-    ReWordSymbol,
     SingleSymbolWildCard,
     StrValue,
     StrValueManager,
-    UnboundLenWildCard
+    UnboundLenWildCard,
 )
 from app.translator.platforms.sigma.escape_manager import sigma_escape_manager
 
@@ -36,12 +33,7 @@ from app.translator.platforms.sigma.escape_manager import sigma_escape_manager
 class SigmaStrValueManager(StrValueManager):
     escape_manager = sigma_escape_manager
     str_spec_symbols_map = {"?": SingleSymbolWildCard, "*": UnboundLenWildCard}
-    re_str_alpha_num_symbols_map = {
-        "b": ReWordBoundarySymbol,
-        "w": ReWordSymbol,
-        "d": ReDigitalSymbol,
-        "s": ReWhiteSpaceSymbol
-    }
+    re_str_alpha_num_symbols_map = RE_STR_ALPHA_NUM_SYMBOLS_MAP
     re_str_spec_symbols_map = RE_STR_SPEC_SYMBOLS_MAP
 
     def from_str_to_container(

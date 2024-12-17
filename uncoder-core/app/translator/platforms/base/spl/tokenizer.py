@@ -33,7 +33,7 @@ from app.translator.platforms.base.spl.str_value_manager import spl_str_value_ma
 from app.translator.tools.utils import get_match_group
 
 
-class SplTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
+class SPLTokenizer(QueryTokenizer, ANDLogicOperatorMixin):
     single_value_operators_map: ClassVar[dict[str, str]] = {
         "=": OperatorType.EQ,
         "<=": OperatorType.LTE,

@@ -17,7 +17,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 import re
-from typing import ClassVar, Optional, Union
+from typing import Any, ClassVar, Optional, Union
 
 from app.translator.core.custom_types.tokens import OperatorType
 from app.translator.core.custom_types.values import ValueType
@@ -27,7 +27,6 @@ from app.translator.core.models.query_tokens.field_value import FieldValue
 from app.translator.core.models.query_tokens.function_value import FunctionValue
 from app.translator.core.models.query_tokens.identifier import Identifier
 from app.translator.core.models.query_tokens.keyword import Keyword
-from app.translator.core.str_value_manager import StrValue
 from app.translator.core.tokenizer import QueryTokenizer
 from app.translator.platforms.base.aql.const import (
     DOUBLE_QUOTES_FIELD_NAME_PATTERN,
@@ -75,12 +74,13 @@ class AQLTokenizer(QueryTokenizer):
 
     def get_operator_and_value(
         self, match: re.Match, mapped_operator: str = OperatorType.EQ, operator: Optional[str] = None
-    ) -> tuple[str, StrValue]:
+    ) -> tuple[str, Any]:
         if (num_value := get_match_group(match, group_name=ValueType.number_value)) is not None:
-            return mapped_operator, StrValue(num_value, split_value=[num_value])
+            return mapped_operator, num_value
 
         if (bool_value := get_match_group(match, group_name=ValueType.bool_value)) is not None:
-            return mapped_operator, StrValue(bool_value, split_value=[bool_value])
+            mapped_bool_value = bool_value == "true"
+            return mapped_operator, mapped_bool_value
 
         if (s_q_value := get_match_group(match, group_name=ValueType.single_quotes_value)) is not None:
             if mapped_operator == OperatorType.REGEX:

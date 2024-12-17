@@ -34,7 +34,7 @@ class LuceneFieldValueRender(BaseFieldValueRender):
     def _get_value_type(field_name: str, value: Union[int, str, StrValue], value_type: Optional[str] = None) -> str:  # noqa: ARG004
         is_ip_field = field_name and (field_name.endswith(".ip") or field_name.endswith(".address"))
         if is_ip_field and value_type != ValueType.regex_value:
-            return ValueType.ip
+            return ValueType.ip_value
 
         return ValueType.value
 

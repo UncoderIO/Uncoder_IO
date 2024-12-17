@@ -57,7 +57,8 @@ class ChronicleQueryTokenizer(QueryTokenizer):
             return mapped_operator, num_value
 
         if (bool_value := get_match_group(match, group_name=ValueType.bool_value)) is not None:
-            return mapped_operator, bool_value
+            mapped_bool_value = bool_value == "true"
+            return mapped_operator, mapped_bool_value
 
         if (d_q_value := get_match_group(match, group_name=ValueType.double_quotes_value)) is not None:
             return mapped_operator, self.escape_manager.remove_escape(d_q_value)

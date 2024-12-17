@@ -21,19 +21,19 @@ import re
 from app.translator.core.models.functions.base import ParsedFunctions
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.parser import PlatformQueryParser
-from app.translator.platforms.base.spl.functions import SplFunctions
-from app.translator.platforms.base.spl.tokenizer import SplTokenizer
+from app.translator.platforms.base.spl.functions import SPLFunctions
+from app.translator.platforms.base.spl.tokenizer import SPLTokenizer
 
 TSTATS_FUNC = "tstats"
 
 
-class SplQueryParser(PlatformQueryParser):
+class SPLQueryParser(PlatformQueryParser):
     log_source_pattern = r"^___source_type___\s*=\s*(?:\"(?P<d_q_value>[%a-zA-Z_*:0-9\-/]+)\"|(?P<value>[%a-zA-Z_*:0-9\-/]+))(?:\s+(?:and|or)\s+|\s+)?"  # noqa: E501
     rule_name_pattern = r"`(?P<name>(?:[:a-zA-Z*0-9=+%#\-_/,;`?~‘\'.<>$&^@!\]\[()\s])*)`"  # noqa: RUF001
     log_source_key_types = ("index", "source", "sourcetype", "sourcecategory")
 
-    platform_functions: SplFunctions = None
-    tokenizer = SplTokenizer()
+    platform_functions: SPLFunctions = None
+    tokenizer = SPLTokenizer()
 
     wrapped_with_comment_pattern = r"^\s*```(?:|\n|.)*```"
 

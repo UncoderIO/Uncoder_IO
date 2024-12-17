@@ -26,11 +26,11 @@ from app.translator.core.str_value_manager import StrValue
 from app.translator.platforms.base.spl.str_value_manager import spl_str_value_manager
 
 
-class SplFieldValueRender(BaseFieldValueRender):
+class SPLFieldValueRender(BaseFieldValueRender):
     str_value_manager = spl_str_value_manager
 
     @staticmethod
-    def _wrap_str_value(value: str) -> str:
+    def _wrap_str_value(value: str, value_type: str = ValueType.value) -> str:  # noqa: ARG004
         return f'"{value}"'
 
     def _pre_process_value(
@@ -42,7 +42,7 @@ class SplFieldValueRender(BaseFieldValueRender):
         wrap_int: bool = False,  # noqa: ARG002
     ) -> Union[int, str]:
         value = super()._pre_process_value(field, value, value_type=value_type, wrap_str=wrap_str)
-        return self._wrap_str_value(str(value)) if not isinstance(value, str) else value
+        return self._wrap_str_value(str(value), value_type) if not isinstance(value, str) else value
 
     def equal_modifier(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:
         if isinstance(value, list):
@@ -87,7 +87,7 @@ class SplFieldValueRender(BaseFieldValueRender):
         return f"{self._pre_process_value(field, value, wrap_str=True)}"
 
 
-class SplQueryRender(PlatformQueryRender):
+class SPLQueryRender(PlatformQueryRender):
     or_token = "OR"
     and_token = "AND"
     not_token = "NOT"

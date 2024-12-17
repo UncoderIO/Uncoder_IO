@@ -20,11 +20,11 @@ from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.managers import parser_manager
 from app.translator.platforms.athena.const import athena_query_details
 from app.translator.platforms.athena.mapping import AthenaMappings, athena_query_mappings
-from app.translator.platforms.base.sql.parsers.sql import SqlQueryParser
+from app.translator.platforms.base.sql.parsers.sql import SQLQueryParser
 
 
 @parser_manager.register_supported_by_roota
-class AthenaQueryParser(SqlQueryParser):
+class AthenaQueryParser(SQLQueryParser):
     details: PlatformDetails = athena_query_details
     mappings: AthenaMappings = athena_query_mappings
     query_delimiter_pattern = r"\sFROM\s\S*\sWHERE\s"
