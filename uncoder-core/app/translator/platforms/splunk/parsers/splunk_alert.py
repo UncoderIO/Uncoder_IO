@@ -49,7 +49,7 @@ class SplunkAlertParser(SplunkQueryParser):
             }
             severity = level_map.get(str(severity_match.group(1)), "low")
 
-        if mitre_attack_match := re.search(r"'mitre_attack':\s*\[(.*?)\]", text):
+        if mitre_attack_match := re.search(r'"mitre_attack":\s*\["([^"]+)"\]', text):
             raw_mitre_attack = [attack.strip().strip("'") for attack in mitre_attack_match.group(1).split(",")]
             mitre_attack_container = self.mitre_config.get_mitre_info(
                 tactics=[i.lower() for i in raw_mitre_attack if not i[-1].isdigit()],
