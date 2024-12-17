@@ -1,0 +1,50 @@
+platform: ArcSight
+source: windows_sysmon
+
+
+default_log_source: {}
+
+conditions:
+  deviceVendor: Microsoft
+  deviceProduct: Sysmon
+
+field_mapping:
+  CommandLine: deviceCustomString1
+  Image: destinationProcessName
+  ParentImage: sourceProcessName
+  EventID: externalId
+  CallTrace: deviceCustomString3
+  Company: oldFileType
+  CurrentDirectory: deviceCustomString3
+  Description: oldFilePermission
+  DestinationHostname: destinationHostName
+  DestinationIp: destinationAddress
+  DestinationPort: destinationPort
+  Initiated: deviceCustomString4
+  IntegrityLevel: deviceCustomString5
+  ParentCommandLine: deviceCustomString2
+  Product: destinationServiceName
+  Protocol: transportProtocol
+  RuleName: deviceFacility
+  SourceHostname: sourceHostName
+  SourceIp: sourceAddress
+  SourcePort: sourcePort
+  TargetFilename: fileName
+  User: sourceUserName
+  OriginalFileName: oldFileName
+  Signed: deviceCustomString1
+  Signature: deviceCustomString2
+  SignatureStatus: deviceCustomString3
+  TargetObject: fileName
+  Details: deviceCustomString1
+  QueryName:
+    - requestUrl
+    - destinationHostName
+  QueryResults: deviceCustomString1
+  QueryStatus: deviceCustomNumber1
+  PipeName: fileName
+  ImageLoaded: destinationProcessName
+  SourceImage: sourceProcessName
+  StartModule: deviceCustomString3
+  TargetImage: destinationProcessName
+  EventType: deviceAction
