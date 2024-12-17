@@ -164,6 +164,10 @@ class PlatformFunctionsManager:
 
         return {}
 
+    @property
+    def supported_render_names(self) -> set[str]:
+        return set(self._renders_map)
+
 
 class PlatformFunctions:
     dir_path: str = None

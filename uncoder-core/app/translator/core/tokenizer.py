@@ -162,8 +162,7 @@ class QueryTokenizer(BaseTokenizer):
 
     def _get_field_value_match(self, query: str, operator: str, field_name: str, value_pattern: str) -> re.Match:
         field_value_pattern = self.get_field_value_pattern(operator, field_name, value_pattern)
-        field_value_regex = re.compile(field_value_pattern, re.IGNORECASE)
-        field_value_match = re.match(field_value_regex, query)
+        field_value_match = re.match(field_value_pattern, query, re.IGNORECASE)
         if field_value_match is None:
             raise TokenizerGeneralException(error=f"Value couldn't be found in query part: {query}")
 

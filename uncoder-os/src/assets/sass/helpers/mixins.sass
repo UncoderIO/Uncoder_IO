@@ -1,4 +1,6 @@
-=scrollbars($size: 6px, $foreground-color: $backgroundSilverBlue, $background-color: transparent)
+@use 'variables' as variables
+
+=scrollbars($size: 6px, $foreground-color: variables.$backgroundSilverBlue, $background-color: transparent)
   // Standard version (Firefox only for now)
   scrollbar-color: $foreground-color $background-color
   // For Chrome & Safari

@@ -16,7 +16,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
+from typing import Optional
 
+from app.translator.core.custom_types.values import ValueType
 from app.translator.core.str_value_manager import (
     RE_STR_SPEC_SYMBOLS_MAP,
     ReDigitalSymbol,
@@ -42,7 +44,12 @@ class SigmaStrValueManager(StrValueManager):
     }
     re_str_spec_symbols_map = RE_STR_SPEC_SYMBOLS_MAP
 
-    def from_str_to_container(self, value: str) -> StrValue:
+    def from_str_to_container(
+        self,
+        value: str,
+        value_type: str = ValueType.value,  # noqa: ARG002
+        escape_symbol: Optional[str] = None  # noqa: ARG002
+    ) -> StrValue:
         split = []
         prev_char = None
         for char in value:

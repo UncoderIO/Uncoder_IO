@@ -16,8 +16,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -----------------------------------------------------------------
 """
-from typing import ClassVar
+from typing import ClassVar, Optional
 
+from app.translator.core.custom_types.values import ValueType
 from app.translator.core.str_value_manager import (
     BaseSpecSymbol,
     ReDigitalSymbol,
@@ -26,8 +27,14 @@ from app.translator.core.str_value_manager import (
     SingleSymbolWildCard,
     StrValue,
     StrValueManager,
+    UnboundLenWildCard,
 )
-from app.translator.platforms.elasticsearch.escape_manager import ESQLQueryEscapeManager, esql_query_escape_manager
+from app.translator.platforms.elasticsearch.escape_manager import (
+    EQLQueryEscapeManager,
+    ESQLQueryEscapeManager,
+    eql_query_escape_manager,
+    esql_query_escape_manager,
+)
 
 
 class ESQLStrValueManager(StrValueManager):
@@ -40,9 +47,18 @@ class ESQLStrValueManager(StrValueManager):
 
 
 class EQLStrValueManager(StrValueManager):
-    str_spec_symbols_map: ClassVar[dict[str, type[BaseSpecSymbol]]] = {"*": SingleSymbolWildCard}
+    escape_manager: EQLQueryEscapeManager = eql_query_escape_manager
+    str_spec_symbols_map: ClassVar[dict[str, type[BaseSpecSymbol]]] = {
+        "?": SingleSymbolWildCard,
+        "*": UnboundLenWildCard,
+    }
 
-    def from_str_to_container(self, value: str) -> StrValue:
+    def from_str_to_container(
+        self,
+        value: str,
+        value_type: str = ValueType.value,  # noqa: ARG002
+        escape_symbol: Optional[str] = None,  # noqa: ARG002
+    ) -> StrValue:
         split = [self.str_spec_symbols_map[char]() if char in self.str_spec_symbols_map else char for char in value]
         return StrValue(value, self._concat(split))
 

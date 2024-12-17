@@ -8,6 +8,7 @@ from app.translator.core.parser import PlatformQueryParser, QueryParser
 from app.translator.core.render import QueryRender
 from app.translator.managers import ParserManager, RenderManager, parser_manager, render_manager
 from app.translator.platforms.elasticsearch.const import ELASTIC_QUERY_TYPES
+from app.translator.platforms.microsoft.const import MICROSOFT_SENTINEL_QUERY_TYPES
 from app.translator.platforms.roota.parsers.roota import RootAParser
 from app.translator.platforms.sigma.mapping import sigma_rule_mappings
 from app.translator.tools.decorators import handle_translation_exceptions
@@ -35,7 +36,7 @@ class Translator:
 
     @staticmethod
     def __is_one_vendor_translation(source: str, target: str) -> bool:
-        vendors_query_types = [ELASTIC_QUERY_TYPES]
+        vendors_query_types = [ELASTIC_QUERY_TYPES, MICROSOFT_SENTINEL_QUERY_TYPES]
         for vendor_query_types in vendors_query_types:
             if source in vendor_query_types and target in vendor_query_types:
                 return True

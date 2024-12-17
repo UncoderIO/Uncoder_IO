@@ -65,6 +65,8 @@ class MetaInfoContainer:
         date: Optional[str] = None,
         output_table_fields: Optional[list[Field]] = None,
         query_fields: Optional[list[Field]] = None,
+        function_fields: Optional[list[Field]] = None,
+        function_fields_map: Optional[dict[str, list[Field]]] = None,
         license_: Optional[str] = None,
         severity: Optional[str] = None,
         references: Optional[list[str]] = None,
@@ -86,10 +88,12 @@ class MetaInfoContainer:
         self.risk_score = risk_score
         self.type_ = type_ or ""
         self.description = description or ""
-        self.author = [v.strip() for v in author] if author else []
+        self.author = [v.strip() for v in author] if author and author != [None] else []
         self.date = date or datetime.now().date().strftime("%Y-%m-%d")
         self.output_table_fields = output_table_fields or []
         self.query_fields = query_fields or []
+        self.function_fields = function_fields or []
+        self.function_fields_map = function_fields_map or {}
         self.license = license_ or "DRL 1.1"
         self.severity = severity or SeverityType.low
         self.references = references or []
