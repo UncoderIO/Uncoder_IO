@@ -244,7 +244,10 @@ class LogRhythmAxonQueryRender(PlatformQueryRender):
         self, query_container: TokenizedQueryContainer, source_mapping: SourceMapping
     ) -> str:
         unmapped_fields = self.mappings.check_fields_mapping_existence(
-            query_container.meta_info.query_fields, source_mapping
+            query_container.meta_info.query_fields,
+            query_container.meta_info.function_fields_map,
+            self.platform_functions.manager.supported_render_names,
+            source_mapping,
         )
         prefix = self.generate_prefix(source_mapping.log_source_signature)
         if "product" in query_container.meta_info.parsed_logsources:

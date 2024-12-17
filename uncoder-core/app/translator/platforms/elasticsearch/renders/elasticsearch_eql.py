@@ -105,6 +105,7 @@ class ElasticSearchEQLFieldValue(BaseFieldValueRender):
         if isinstance(value, list):
             return f"({self.or_token.join(self.regex_modifier(field=field, value=v) for v in value)})"
         value = self._pre_process_value(field, value, value_type=ValueType.regex_value, wrap_int=True)
+
         return f'{self.apply_field(field)} regex~ "{value}.?"'
 
     def keywords(self, field: str, value: DEFAULT_VALUE_TYPE) -> str:

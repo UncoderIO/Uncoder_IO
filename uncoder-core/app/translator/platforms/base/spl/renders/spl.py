@@ -34,7 +34,12 @@ class SplFieldValueRender(BaseFieldValueRender):
         return f'"{value}"'
 
     def _pre_process_value(
-        self, field: str, value: Union[int, str, StrValue], value_type: str = ValueType.value, wrap_str: bool = False
+        self,
+        field: str,
+        value: Union[bool, int, str, StrValue],
+        value_type: str = ValueType.value,
+        wrap_str: bool = False,
+        wrap_int: bool = False,  # noqa: ARG002
     ) -> Union[int, str]:
         value = super()._pre_process_value(field, value, value_type=value_type, wrap_str=wrap_str)
         return self._wrap_str_value(str(value)) if not isinstance(value, str) else value
