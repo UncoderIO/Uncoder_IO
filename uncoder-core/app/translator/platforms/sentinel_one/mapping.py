@@ -1,4 +1,4 @@
-from app.translator.core.mapping import BasePlatformMappings, LogSourceSignature
+from app.translator.core.mapping import LogSourceSignature, BaseStrictLogSourcesPlatformMappings
 from app.translator.platforms.sentinel_one.const import sentinel_one_power_query_details
 
 
@@ -10,7 +10,7 @@ class SentinelOnePowerQueryLogSourceSignature(LogSourceSignature):
         return ""
 
 
-class SentinelOnePowerQueryMappings(BasePlatformMappings):
+class SentinelOnePowerQueryMappings(BaseStrictLogSourcesPlatformMappings):
     def prepare_log_source_signature(self, mapping: dict) -> SentinelOnePowerQueryLogSourceSignature:
         ...
 
