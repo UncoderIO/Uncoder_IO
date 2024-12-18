@@ -24,7 +24,7 @@ field_mapping:
     - ProcessName
   IntegrityLevel: IntegrityLevel
   ParentCommandLine: Parent Command
-  ParentImage:
+  ParentImage: 
     - Parent Process Path
     - ParentProcessName
   ParentUser: ParentUser
