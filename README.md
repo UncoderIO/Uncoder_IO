@@ -71,6 +71,7 @@ Uncoder IO can be run on-prem without a need for an internet connection, thus su
 - FortiSIEM Rule - `fortisiem-rule`
 - LogRhythm Axon Rule - `axon-ads-rule`
 - LogRhythm Axon Query - `axon-ads-query`
+- LogRhythm SIEM Query - `siem-json-query`
 
 
 IOC-based queries can be generated in the following formats:
