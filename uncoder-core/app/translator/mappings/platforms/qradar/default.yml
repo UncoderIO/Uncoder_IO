@@ -14,8 +14,6 @@ field_mapping:
     - DstPort
     - DestinationPort
     - remoteport
-  dst-hostname: DstHost
-  src-hostname: SrcHost
   src-port:
     - SourcePort
     - localport
@@ -41,7 +39,7 @@ field_mapping:
     - Username
     - Security ID
   CommandLine: Command
-  Protocol: 
+  Protocol:
     - IPProtocol
     - protocol
   Application:
@@ -96,7 +94,7 @@ field_mapping:
   Action: Action
   Workstation: Machine Identifier
   GroupMembership: Role Name
-  FileName:
+  FileName: 
     - Filename
     - File Name
     - Encoded Filename
