@@ -1,0 +1,63 @@
+platform: Anomali
+source: windows_sysmon
+
+
+log_source:
+  product: [windows]
+  service: [sysmon]
+
+default_log_source:
+  product: windows
+  service: sysmon
+
+field_mapping:
+  CommandLine: command_line
+  Image: image
+  ParentImage: parent_image
+  EventID: event_id
+  #CallTrace: CallTrace
+  #Company: Company
+  #CurrentDirectory: CurrentDirectory
+  #Description: Description
+  DestinationHostname: dest
+  DestinationIp: dest_ip
+  #DestinationIsIpv6: DestinationIsIpv6
+  DestinationPort: dest_port
+  #DestinationPortName: DestinationPortName
+  Hashes: file_hash
+  #Initiated: Initiated
+  #IntegrityLevel: IntegrityLevel
+  ParentCommandLine: parent_command_line
+  #Product: Product
+  #Protocol: Protocol
+  #RuleName: RuleName
+  SourceHostname: src
+  SourceIp: src_ip
+  #SourceIsIpv6: SourceIsIpv6
+  SourcePort: src_port
+  #SourcePortName: SourcePortName
+  TargetFilename: file_name
+  User: user
+  OriginalFileName: original_file_name
+  #Signed: Signed
+  #Signature: Signature
+  #SignatureStatus: SignatureStatus
+  TargetObject: reg_key
+  Details: reg_value_data
+  QueryName: query
+  QueryResults: record_type
+  #QueryStatus: QueryStatus
+  #IsExecutable: IsExecutable
+  #PipeName: PipeName
+  #ImageLoaded: ImageLoaded
+  #ImagePath: ImagePath
+  #Imphash: Imphash
+  #SourceImage: SourceImage
+  #StartModule: StartModule
+  #TargetImage: TargetImage
+  Device: dvc_name
+  ProcessID: process_id
+  #FileVersion: FileVersion
+  #StartAddress: StartAddress
+  #StartFunction: StartFunction
+  EventType: event_name

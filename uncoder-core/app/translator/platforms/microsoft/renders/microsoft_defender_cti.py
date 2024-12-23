@@ -22,8 +22,10 @@ from typing import ClassVar
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
 from app.translator.managers import render_cti_manager
-from app.translator.platforms.microsoft.const import microsoft_defender_query_details
-from app.translator.platforms.microsoft.mappings.mdatp_cti import DEFAULT_MICROSOFT_DEFENDER_MAPPING
+from app.translator.platforms.microsoft.const import (
+    DEFAULT_MICROSOFT_DEFENDER_CTI_MAPPING,
+    microsoft_defender_query_details,
+)
 
 
 @render_cti_manager.register
@@ -40,7 +42,7 @@ class MicrosoftDefenderCTI(RenderCTI):
     result_join: str = ""
     final_result_for_many: str = "union * | where ({result})\n"
     final_result_for_one: str = "union * | where {result}\n"
-    default_mapping = DEFAULT_MICROSOFT_DEFENDER_MAPPING
+    default_mapping = DEFAULT_MICROSOFT_DEFENDER_CTI_MAPPING
 
     def create_field_value(self, field: str, value: str, generic_field: str) -> str:
         if field_value_template := self.field_value_templates_map.get(generic_field):

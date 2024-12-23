@@ -20,8 +20,10 @@ limitations under the License.
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
 from app.translator.managers import render_cti_manager
-from app.translator.platforms.microsoft.const import microsoft_sentinel_query_details
-from app.translator.platforms.microsoft.mappings.microsoft_sentinel_cti import DEFAULT_MICROSOFT_SENTINEL_MAPPING
+from app.translator.platforms.microsoft.const import (
+    DEFAULT_MICROSOFT_SENTINEL_CTI_MAPPING,
+    microsoft_sentinel_query_details,
+)
 
 
 @render_cti_manager.register
@@ -35,4 +37,4 @@ class MicrosoftSentinelCTI(RenderCTI):
     result_join: str = ""
     final_result_for_many: str = "search ({result})\n"
     final_result_for_one: str = "search {result}\n"
-    default_mapping = DEFAULT_MICROSOFT_SENTINEL_MAPPING
+    default_mapping = DEFAULT_MICROSOFT_SENTINEL_CTI_MAPPING

@@ -1,4 +1,4 @@
-platform: Sigma
+platform: Anomali
 source: windows_pipe_created
 
 
@@ -11,6 +11,6 @@ default_log_source:
   category: pipe_created
 
 field_mapping:
-  EventID: EventID
-  PipeName: PipeName
-  Image: Image
+  EventID: event_id
+  #PipeName: PipeName
+  Image: image

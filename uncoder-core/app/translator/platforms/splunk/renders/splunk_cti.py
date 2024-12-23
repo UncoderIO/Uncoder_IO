@@ -20,8 +20,7 @@ limitations under the License.
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
 from app.translator.managers import render_cti_manager
-from app.translator.platforms.splunk.const import splunk_query_details
-from app.translator.platforms.splunk.mappings.splunk_cti import DEFAULT_SPLUNK_MAPPING
+from app.translator.platforms.splunk.const import DEFAULT_SPLUNK_CTI_MAPPING, splunk_query_details
 
 
 @render_cti_manager.register
@@ -35,4 +34,4 @@ class SplunkCTI(RenderCTI):
     result_join: str = ""
     final_result_for_many: str = "({result})\n"
     final_result_for_one: str = "{result}\n"
-    default_mapping = DEFAULT_SPLUNK_MAPPING
+    default_mapping = DEFAULT_SPLUNK_CTI_MAPPING

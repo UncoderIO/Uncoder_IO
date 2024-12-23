@@ -20,8 +20,7 @@ limitations under the License.
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
 from app.translator.managers import render_cti_manager
-from app.translator.platforms.logscale.const import logscale_query_details
-from app.translator.platforms.logscale.mappings.logscale_cti import DEFAULT_LOGSCALE_MAPPING
+from app.translator.platforms.logscale.const import DEFAULT_LOGSCALE_CTI_MAPPING, logscale_query_details
 
 
 @render_cti_manager.register
@@ -35,4 +34,4 @@ class LogScaleCTI(RenderCTI):
     result_join: str = ""
     final_result_for_many: str = '@stream="http" {result}\n'
     final_result_for_one: str = '@stream="http" {result}\n'
-    default_mapping = DEFAULT_LOGSCALE_MAPPING
+    default_mapping = DEFAULT_LOGSCALE_CTI_MAPPING
