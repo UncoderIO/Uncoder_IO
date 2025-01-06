@@ -1,0 +1,7 @@
+platform: Microsoft Sentinel
+source: default
+
+
+
+default_log_source:
+  table: union *

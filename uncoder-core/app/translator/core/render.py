@@ -463,7 +463,15 @@ class PlatformQueryRender(QueryRender):
     def generate_from_tokenized_query_container(self, query_container: TokenizedQueryContainer) -> str:
         queries_map = {}
         errors = []
-        source_mappings = self.mappings.get_source_mappings_by_ids(query_container.meta_info.source_mapping_ids)
+        if query_container.meta_info.target_alt_mapping:
+            source_mappings = self.mappings.get_alternative_source_mappings_by_ids(
+                source_mapping_ids=query_container.meta_info.source_mapping_ids,
+                alt_config_name=query_container.meta_info.target_alt_mapping,
+            )
+        else:
+            source_mappings = self.mappings.get_source_mappings_by_ids(
+                source_mapping_ids=query_container.meta_info.source_mapping_ids
+            )
 
         for source_mapping in source_mappings:
             try:

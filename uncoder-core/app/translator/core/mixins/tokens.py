@@ -1,5 +1,3 @@
-from typing import Union
-
 from app.translator.core.const import QUERY_TOKEN_TYPE
 from app.translator.core.custom_types.tokens import LogicalOperatorType, OperatorType
 from app.translator.core.mapping import SourceMapping

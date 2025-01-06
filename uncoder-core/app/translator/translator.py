@@ -68,12 +68,19 @@ class Translator:
 
     @handle_translation_exceptions
     def __parse_incoming_data(
-        self, text: str, source: str, target: Optional[str] = None
+        self,
+        text: str,
+        source: str,
+        target: Optional[str] = None,
+        source_alt_mapping: Optional[str] = None,
+        target_alt_mapping: Optional[str] = None,
     ) -> tuple[RawQueryContainer, Optional[TokenizedQueryContainer]]:
         parser, raw_query_container = self.parse_raw_query(text=text, source=source)
+        raw_query_container.meta_info.source_alt_mapping = source_alt_mapping
         tokenized_query_container = None
         if not (target and self.__is_one_vendor_translation(raw_query_container.language, target)):
             tokenized_query_container = parser.parse(raw_query_container)
+            tokenized_query_container.meta_info.target_alt_mapping = target_alt_mapping
 
         return raw_query_container, tokenized_query_container
 
@@ -89,8 +96,17 @@ class Translator:
             raw_query_container=raw_query_container, tokenized_query_container=tokenized_query_container
         )
 
-    def __translate_one(self, text: str, source: str, target: str) -> (bool, str):
-        status, parsed_data = self.__parse_incoming_data(text=text, source=source, target=target)
+    def __translate_one(
+        self,
+        text: str,
+        source: str,
+        target: str,
+        source_alt_mapping: Optional[str] = None,
+        target_alt_mapping: Optional[str] = None,
+    ) -> (bool, str):
+        status, parsed_data = self.__parse_incoming_data(
+            text=text, source=source, target=target, source_alt_mapping=source_alt_mapping, target_alt_mapping=target_alt_mapping
+        )
         if not status:
             return status, parsed_data
 
@@ -124,10 +140,19 @@ class Translator:
 
         return result
 
-    def translate_one(self, text: str, source: str, target: str) -> (bool, str):
+    def translate_one(
+        self,
+        text: str,
+        source: str,
+        target: str,
+        source_alt_mapping: Optional[str] = None,
+        target_alt_mapping: Optional[str] = None,
+    ) -> (bool, str):
         if source == target:
             return True, text
-        return self.__translate_one(text=text, source=source, target=target)
+        return self.__translate_one(
+            text=text, source=source, target=target, source_alt_mapping=source_alt_mapping, target_alt_mapping=target_alt_mapping
+        )
 
     def translate_all(self, text: str, source: str) -> list[dict]:
         return self.__translate_all(text=text, source=source)

@@ -112,17 +112,23 @@ class BasePlatformMappings:
 
     def __init__(self, platform_dir: str, platform_details: PlatformDetails):
         self._loader = LoaderFileMappings()
-        self._platform_dir = platform_dir
         self.details = platform_details
-        self._source_mappings = self.prepare_mapping()
+        self._source_mappings = self.prepare_mapping(platform_dir)
+        self._alternative_mappings = self.prepare_alternative_mapping(platform_dir)
 
     def update_default_source_mapping(self, default_mapping: SourceMapping, fields_mapping: FieldsMapping) -> None:
         default_mapping.fields_mapping.update(fields_mapping)
 
-    def prepare_mapping(self) -> dict[str, SourceMapping]:
+    def prepare_alternative_mapping(self, platform_dir: str) -> dict[str, dict[str, SourceMapping]]:
+        alternative_mappings = {}
+        for name, platform_dir in self._loader.get_platform_alternative_mappings(platform_dir).items():
+            alternative_mappings[name] = self.prepare_mapping(platform_dir)
+        return alternative_mappings
+
+    def prepare_mapping(self, platform_dir: str) -> dict[str, SourceMapping]:
         source_mappings = {}
         default_mapping = SourceMapping(source_id=DEFAULT_MAPPING_NAME)
-        for mapping_dict in self._loader.load_platform_mappings(self._platform_dir):
+        for mapping_dict in self._loader.load_platform_mappings(platform_dir):
             log_source_signature = self.prepare_log_source_signature(mapping=mapping_dict)
             if (source_id := mapping_dict["source"]) == DEFAULT_MAPPING_NAME:
                 default_mapping.log_source_signature = log_source_signature
@@ -183,6 +189,9 @@ class BasePlatformMappings:
     def get_source_mapping(self, source_id: str) -> Optional[SourceMapping]:
         return self._source_mappings.get(source_id)
 
+    def get_alternative_source_mapping(self, alt_config_name: str, source_id: str) -> Optional[SourceMapping]:
+        return self._alternative_mappings.get(alt_config_name, {}).get(source_id)
+
     def get_source_mappings_by_ids(
         self, source_mapping_ids: list[str], return_default: bool = True
     ) -> list[SourceMapping]:
@@ -195,6 +204,21 @@ class BasePlatformMappings:
 
         if not source_mappings and return_default:
             source_mappings = [self.get_source_mapping(DEFAULT_MAPPING_NAME)]
+
+        return source_mappings
+
+    def get_alternative_source_mappings_by_ids(
+        self, source_mapping_ids: list[str], alt_config_name: str, return_default: bool = True
+    ) -> list[SourceMapping]:
+        source_mappings = []
+        for source_mapping_id in source_mapping_ids:
+            if source_mapping_id == DEFAULT_MAPPING_NAME:
+                continue
+            if source_mapping := self.get_alternative_source_mapping(alt_config_name, source_mapping_id):
+                source_mappings.append(source_mapping)
+
+        if not source_mappings and return_default:
+            source_mappings = [self.get_alternative_source_mapping(alt_config_name, DEFAULT_MAPPING_NAME)]
 
         return source_mappings
 
@@ -249,11 +273,11 @@ class BasePlatformMappings:
 
 
 class BaseCommonPlatformMappings(ABC, BasePlatformMappings):
-    def prepare_mapping(self) -> dict[str, SourceMapping]:
+    def prepare_mapping(self, platform_dir: str) -> dict[str, SourceMapping]:
         source_mappings = {}
-        common_field_mapping = self._loader.load_common_mapping(self._platform_dir).get("field_mapping", {})
+        common_field_mapping = self._loader.load_common_mapping(platform_dir).get("field_mapping", {})
 
-        for mapping_dict in self._loader.load_platform_mappings(self._platform_dir):
+        for mapping_dict in self._loader.load_platform_mappings(platform_dir):
             source_id = mapping_dict["source"]
             log_source_signature = self.prepare_log_source_signature(mapping=mapping_dict)
             fields_mapping = self.prepare_fields_mapping(field_mapping=common_field_mapping)

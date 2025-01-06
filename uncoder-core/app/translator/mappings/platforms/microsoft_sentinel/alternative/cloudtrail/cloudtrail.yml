@@ -1,0 +1,13 @@
+platform: Microsoft Sentinel
+source: cloudtrail
+
+
+log_source:
+  table: [AWSCloudTrail]
+
+default_log_source:
+  table: AWSCloudTrail
+
+field_mapping:
+  eventSource: EventSource
+  eventName: EventName

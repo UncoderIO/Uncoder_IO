@@ -75,6 +75,8 @@ class MetaInfoContainer:
         status: Optional[str] = None,
         false_positives: Optional[list[str]] = None,
         source_mapping_ids: Optional[list[str]] = None,
+        source_alt_mapping: Optional[str] = None,
+        target_alt_mapping: Optional[str] = None,
         parsed_logsources: Optional[dict] = None,
         timeframe: Optional[timedelta] = None,
         query_period: Optional[timedelta] = None,
@@ -107,6 +109,8 @@ class MetaInfoContainer:
         self.timeframe = timeframe
         self.query_period = query_period
         self.raw_metainfo_container = raw_metainfo_container or RawMetaInfoContainer()
+        self.source_alt_mapping = source_alt_mapping
+        self.target_alt_mapping = target_alt_mapping
 
     @property
     def author_str(self) -> str:

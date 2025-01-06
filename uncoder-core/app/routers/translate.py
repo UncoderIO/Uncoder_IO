@@ -3,23 +3,29 @@ from fastapi import APIRouter, Body
 from app.models.translation import InfoMessage, OneTranslationData, Platform, TranslatorPlatforms
 from app.translator.core.context_vars import return_only_first_query_ctx_var
 from app.translator.cti_translator import CTITranslator
-from app.translator.translator import Translator
+from app.translator.translator import app_translator
 
 st_router = APIRouter()
-
-translator = Translator()
 
 
 @st_router.post("/translate", tags=["translator"], description="Generate target translation")
 @st_router.post("/translate/", include_in_schema=False)
 def translate_one(
     source_platform_id: str = Body(..., embed=True),
+    source_alt_mapping: dict = Body(None, embed=True),
     target_platform_id: str = Body(..., embed=True),
+    target_alt_mapping: dict = Body(None, embed=True),
     text: str = Body(..., embed=True),
     return_only_first_query: bool = False,
 ) -> OneTranslationData:
     return_only_first_query_ctx_var.set(return_only_first_query)
-    status, data = translator.translate_one(text=text, source=source_platform_id, target=target_platform_id)
+    status, data = app_translator.translate_one(
+        text=text,
+        source=source_platform_id,
+        target=target_platform_id,
+        source_alt_mapping=source_alt_mapping,
+        target_alt_mapping=target_alt_mapping,
+    )
     if status:
         return OneTranslationData(status=status, translation=data, target_platform_id=target_platform_id)
 
@@ -35,7 +41,7 @@ def translate_all(
     return_only_first_query: bool = False,
 ) -> list[OneTranslationData]:
     return_only_first_query_ctx_var.set(return_only_first_query)
-    result = translator.translate_all(text=text, source=source_platform_id)
+    result = app_translator.translate_all(text=text, source=source_platform_id)
     translations = []
     for platform_result in result:
         if platform_result.get("status"):
@@ -60,14 +66,14 @@ def translate_all(
 @st_router.get("/platforms", tags=["translator"], description="Get translator platforms")
 @st_router.get("/platforms/", include_in_schema=False)
 def get_translator_platforms() -> TranslatorPlatforms:
-    renders, parsers = translator.get_all_platforms()
+    renders, parsers = app_translator.get_all_platforms()
     return TranslatorPlatforms(renders=renders, parsers=parsers)
 
 
 @st_router.get("/all_platforms", description="Get Sigma, RootA and iocs platforms")
 @st_router.get("/all_platforms/", include_in_schema=False)
 def get_all_platforms() -> list:
-    translator_renders, translator_parsers = translator.get_all_platforms()
+    translator_renders, translator_parsers = app_translator.get_all_platforms()
     return [
         Platform(
             id="roota",

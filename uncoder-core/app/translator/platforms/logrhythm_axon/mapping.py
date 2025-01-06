@@ -18,9 +18,9 @@ class LogRhythmAxonLogSourceSignature(LogSourceSignature):
 class LogRhythmAxonMappings(BasePlatformMappings):
     is_strict_mapping = True
 
-    def prepare_mapping(self) -> dict[str, SourceMapping]:
+    def prepare_mapping(self, platform_dir: str) -> dict[str, SourceMapping]:
         source_mappings = {}
-        for mapping_dict in self._loader.load_platform_mappings(self._platform_dir):
+        for mapping_dict in self._loader.load_platform_mappings(platform_dir):
             log_source_signature = self.prepare_log_source_signature(mapping=mapping_dict)
             fields_mapping = self.prepare_fields_mapping(field_mapping=mapping_dict.get("field_mapping", {}))
             source_mappings[DEFAULT_MAPPING_NAME] = SourceMapping(
