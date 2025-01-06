@@ -8,8 +8,8 @@ from app.translator.platforms.arcsight.const import arcsight_query_details, DEFA
 class ArcsightKeyword(RenderCTI):
     details: PlatformDetails = arcsight_query_details
 
+    field_value_template: str = '{key} = "{value}"'
     default_mapping = DEFAULT_ARCSIGHT_CTI_MAPPING
-    field_value_template: str = "{key} = {value}"
     or_operator: str = " OR "
     group_or_operator: str = " OR "
     or_group: str = "{or_group}"
