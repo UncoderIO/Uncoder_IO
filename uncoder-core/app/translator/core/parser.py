@@ -24,7 +24,7 @@ from app.translator.core.const import QUERY_TOKEN_TYPE
 from app.translator.core.exceptions.parser import TokenizerGeneralException
 from app.translator.core.functions import PlatformFunctions
 from app.translator.core.mapping import BasePlatformMappings, SourceMapping
-from app.translator.core.models.functions.base import Function
+from app.translator.core.models.functions.base import Function, ParsedFunctions
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.models.query_container import RawQueryContainer, TokenizedQueryContainer
 from app.translator.core.models.query_tokens.field import Field
@@ -49,6 +49,9 @@ class QueryParser(ABC):
 
     @abstractmethod
     def parse(self, raw_query_container: RawQueryContainer) -> TokenizedQueryContainer:
+        raise NotImplementedError("Abstract method")
+
+    def _parse_query(self, query: str) -> tuple[str, dict[str, Union[list[str], list[int]]], Optional[ParsedFunctions]]:
         raise NotImplementedError("Abstract method")
 
 
@@ -80,11 +83,24 @@ class PlatformQueryParser(QueryParser, ABC):
         return query_field_tokens, function_field_tokens, function_field_tokens_map
 
     def get_source_mappings(
-        self, field_tokens: list[Field], log_sources: dict[str, list[Union[int, str]]]
+        self,
+        field_tokens: list[Field],
+        log_sources: dict[str, list[Union[int, str]]],
+        alt_mapping: Optional[str] = None,
     ) -> list[SourceMapping]:
         field_names = [field.source_name for field in field_tokens]
-        source_mappings = self.mappings.get_source_mappings_by_fields_and_log_sources(
-            field_names=field_names, log_sources=log_sources
-        )
+        if alt_mapping:
+            source_mappings = self.mappings.get_alt_source_mappings_by_fields_and_log_sources(
+                field_names=field_names, log_sources=log_sources, alt_mapping=alt_mapping
+            )
+        else:
+            source_mappings = self.mappings.get_source_mappings_by_fields_and_log_sources(
+                field_names=field_names, log_sources=log_sources
+            )
         self.tokenizer.set_field_tokens_generic_names_map(field_tokens, source_mappings, self.mappings.default_mapping)
         return source_mappings
+
+    def get_source_mapping_ids_by_logsources(self, query: str) -> Optional[list[str]]:
+        _, parsed_logsources, _ = self._parse_query(query=query)
+        if parsed_logsources:
+            return self.mappings.get_source_mappings_by_log_sources(parsed_logsources)

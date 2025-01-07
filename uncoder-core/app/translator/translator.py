@@ -105,7 +105,11 @@ class Translator:
         target_alt_mapping: Optional[str] = None,
     ) -> (bool, str):
         status, parsed_data = self.__parse_incoming_data(
-            text=text, source=source, target=target, source_alt_mapping=source_alt_mapping, target_alt_mapping=target_alt_mapping
+            text=text,
+            source=source,
+            target=target,
+            source_alt_mapping=source_alt_mapping,
+            target_alt_mapping=target_alt_mapping,
         )
         if not status:
             return status, parsed_data
@@ -149,9 +153,19 @@ class Translator:
         target_alt_mapping: Optional[str] = None,
     ) -> (bool, str):
         if source == target:
+            if target_alt_mapping or source_alt_mapping:
+                message = (
+                    "Currently, Uncoder doesn't support translation between "
+                    "non-default data schemas of the same platform."
+                )
+                return False, message
             return True, text
         return self.__translate_one(
-            text=text, source=source, target=target, source_alt_mapping=source_alt_mapping, target_alt_mapping=target_alt_mapping
+            text=text,
+            source=source,
+            target=target,
+            source_alt_mapping=source_alt_mapping,
+            target_alt_mapping=target_alt_mapping,
         )
 
     def translate_all(self, text: str, source: str) -> list[dict]:
