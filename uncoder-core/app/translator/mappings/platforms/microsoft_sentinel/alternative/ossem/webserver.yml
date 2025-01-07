@@ -1,0 +1,11 @@
+platform: Microsoft Sentinel
+source: webserver
+
+default_log_source:
+  table: union *
+
+field_mapping:
+  dst_ip: dst_ip_addr
+  dst_port: dst_port
+  src_ip: src_ip_addr
+  src_port: src_port
