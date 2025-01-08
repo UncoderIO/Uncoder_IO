@@ -177,11 +177,11 @@ class BasePlatformMappings:
         self,
         field_names: list[str],
         log_sources: dict[str, list[Union[int, str]]],
-        source_mapping: dict[str, SourceMapping],
+        source_mappings: dict[str, SourceMapping],
     ) -> list[SourceMapping]:
         by_log_sources_and_fields = []
         by_fields = []
-        for source_mapping in source_mapping.values():
+        for source_mapping in source_mappings.values():
             if source_mapping.source_id == DEFAULT_MAPPING_NAME:
                 continue
 
@@ -192,7 +192,7 @@ class BasePlatformMappings:
                 if log_source_signature and log_source_signature.is_suitable(**log_sources):
                     by_log_sources_and_fields.append(source_mapping)
 
-        return by_log_sources_and_fields or by_fields or [source_mapping[DEFAULT_MAPPING_NAME]]
+        return by_log_sources_and_fields or by_fields or [source_mappings[DEFAULT_MAPPING_NAME]]
 
     def get_alt_source_mappings_by_fields_and_log_sources(
         self, field_names: list[str], log_sources: dict[str, list[Union[int, str]]], alt_mapping: str
