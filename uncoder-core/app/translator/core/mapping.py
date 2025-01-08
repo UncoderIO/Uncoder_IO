@@ -191,7 +191,7 @@ class BasePlatformMappings:
     ) -> list[SourceMapping]:
         by_log_sources_and_fields = []
         by_fields = []
-        for source_mapping in self._alternative_mappings.get(alt_mapping).values():
+        for source_mapping in self._alternative_mappings.get(alt_mapping, {}).values():
             if source_mapping.source_id == DEFAULT_MAPPING_NAME:
                 continue
 

@@ -7,7 +7,7 @@ from app.translator.const import APP_PATH
 
 COMMON_FIELD_MAPPING_FILE_NAME = "common.yml"
 DEFAULT_FIELD_MAPPING_FILE_NAME = "default.yml"
-DEFAULT_ALTERNATIVE_MAPPINGS_FOLDER_NAME = "alternative"
+ALTERNATIVE_MAPPINGS_FOLDER_NAME = "alternative"
 
 
 class LoaderFileMappings:
@@ -23,11 +23,11 @@ class LoaderFileMappings:
                 return {}
 
     def get_platform_alternative_mappings(self, platform_dir: str) -> dict[str:str]:
-        platform_path = os.path.join(self.base_mapping_filepath, platform_dir, DEFAULT_ALTERNATIVE_MAPPINGS_FOLDER_NAME)
-        for folders in os.walk(platform_path):
+        platform_path = os.path.join(self.base_mapping_filepath, platform_dir, ALTERNATIVE_MAPPINGS_FOLDER_NAME)
+        for _, dirs, _ in os.walk(platform_path):
             result = {}
-            for folder in folders[1]:
-                result[folder] = os.path.join(platform_dir, DEFAULT_ALTERNATIVE_MAPPINGS_FOLDER_NAME, folder)
+            for folder in dirs:
+                result[folder] = os.path.join(platform_dir, ALTERNATIVE_MAPPINGS_FOLDER_NAME, folder)
             return result
         return {}
 
