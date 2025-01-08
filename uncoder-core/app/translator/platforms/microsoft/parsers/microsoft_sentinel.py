@@ -50,9 +50,9 @@ class MicrosoftSentinelQueryParser(PlatformQueryParser):
             query_tokens, functions.functions
         )
         source_mappings = self.get_source_mappings(
-            field_tokens = query_field_tokens + function_field_tokens,
+            field_tokens=query_field_tokens + function_field_tokens,
             log_sources=log_sources,
-            alt_mapping=raw_query_container.meta_info.source_alt_mapping
+            alt_mapping=raw_query_container.meta_info.source_alt_mapping,
         )
         meta_info = raw_query_container.meta_info
         meta_info.query_fields = query_field_tokens

@@ -121,7 +121,7 @@ class BasePlatformMappings:
 
     def prepare_alternative_mapping(self, platform_dir: str) -> dict[str, dict[str, SourceMapping]]:
         alternative_mappings = {}
-        for name, platform_dir in self._loader.get_platform_alternative_mappings(platform_dir).items():
+        for name, platform_dir in self._loader.get_platform_alternative_mappings_dirs(platform_dir).items():
             alternative_mappings[name] = self.prepare_mapping(platform_dir)
         return alternative_mappings
 
@@ -171,9 +171,17 @@ class BasePlatformMappings:
     def get_source_mappings_by_fields_and_log_sources(
         self, field_names: list[str], log_sources: dict[str, list[Union[int, str]]]
     ) -> list[SourceMapping]:
+        return self._get_source_mappings_by_fields_and_log_sources(field_names, log_sources, self._source_mappings)
+
+    def _get_source_mappings_by_fields_and_log_sources(
+        self,
+        field_names: list[str],
+        log_sources: dict[str, list[Union[int, str]]],
+        source_mapping: dict[str, SourceMapping],
+    ) -> list[SourceMapping]:
         by_log_sources_and_fields = []
         by_fields = []
-        for source_mapping in self._source_mappings.values():
+        for source_mapping in source_mapping.values():
             if source_mapping.source_id == DEFAULT_MAPPING_NAME:
                 continue
 
@@ -184,28 +192,13 @@ class BasePlatformMappings:
                 if log_source_signature and log_source_signature.is_suitable(**log_sources):
                     by_log_sources_and_fields.append(source_mapping)
 
-        return by_log_sources_and_fields or by_fields or [self._source_mappings[DEFAULT_MAPPING_NAME]]
+        return by_log_sources_and_fields or by_fields or [source_mapping[DEFAULT_MAPPING_NAME]]
 
     def get_alt_source_mappings_by_fields_and_log_sources(
         self, field_names: list[str], log_sources: dict[str, list[Union[int, str]]], alt_mapping: str
     ) -> list[SourceMapping]:
-        by_log_sources_and_fields = []
-        by_fields = []
-        for source_mapping in self._alternative_mappings.get(alt_mapping, {}).values():
-            if source_mapping.source_id == DEFAULT_MAPPING_NAME:
-                continue
-
-            if source_mapping.fields_mapping.is_suitable(field_names):
-                by_fields.append(source_mapping)
-
-                log_source_signature: LogSourceSignature = source_mapping.log_source_signature
-                if log_source_signature and log_source_signature.is_suitable(**log_sources):
-                    by_log_sources_and_fields.append(source_mapping)
-
-        return (
-            by_log_sources_and_fields
-            or by_fields
-            or [self._alternative_mappings.get(alt_mapping)[DEFAULT_MAPPING_NAME]]
+        return self._get_source_mappings_by_fields_and_log_sources(
+            field_names, log_sources, self._alternative_mappings.get(alt_mapping, {})
         )
 
     def get_source_mapping(self, source_id: str) -> Optional[SourceMapping]:

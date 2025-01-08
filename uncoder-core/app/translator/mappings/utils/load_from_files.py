@@ -22,7 +22,7 @@ class LoaderFileMappings:
                 print(err)
                 return {}
 
-    def get_platform_alternative_mappings(self, platform_dir: str) -> dict[str:str]:
+    def get_platform_alternative_mappings_dirs(self, platform_dir: str) -> dict[str:str]:
         platform_path = os.path.join(self.base_mapping_filepath, platform_dir, ALTERNATIVE_MAPPINGS_FOLDER_NAME)
         for _, dirs, _ in os.walk(platform_path):
             result = {}
