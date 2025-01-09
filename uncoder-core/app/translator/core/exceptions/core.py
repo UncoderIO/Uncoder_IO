@@ -42,6 +42,14 @@ class UnsupportedPlatform(BasePlatformException):
         super().__init__(message)
 
 
+class UnsupportedPlatformAlternativeMapping(BasePlatformException):
+    def __init__(self, platform: str, alt_mapping: str):
+        message = (
+            f"The selected data schema '{alt_mapping}' doesn't have a field mapping for this log source in {platform}."
+        )
+        super().__init__(message)
+
+
 class UnsupportedRootAParser(BasePlatformException):
     def __init__(self, parser: str):
         message = (

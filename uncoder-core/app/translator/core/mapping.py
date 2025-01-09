@@ -3,7 +3,11 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Optional, TypeVar, Union
 
-from app.translator.core.exceptions.core import StrictPlatformException, UnsupportedMappingsException
+from app.translator.core.exceptions.core import (
+    StrictPlatformException,
+    UnsupportedMappingsException,
+    UnsupportedPlatformAlternativeMapping,
+)
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.mappings.utils.load_from_files import LoaderFileMappings
 
@@ -205,7 +209,9 @@ class BasePlatformMappings:
         return self._source_mappings.get(source_id)
 
     def get_alternative_source_mapping(self, alt_config_name: str, source_id: str) -> Optional[SourceMapping]:
-        return self._alternative_mappings.get(alt_config_name, {}).get(source_id)
+        if self._alternative_mappings.get(alt_config_name):
+            return self._alternative_mappings.get(alt_config_name).get(source_id)
+        raise UnsupportedPlatformAlternativeMapping(platform=self.details.platform_id, alt_mapping=alt_config_name)
 
     def get_source_mappings_by_ids(
         self, source_mapping_ids: list[str], return_default: bool = True
