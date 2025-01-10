@@ -99,7 +99,7 @@ class ESQLRuleRender(ESQLQueryRender):
             rule.update(
                 {
                     "rule_id": meta_info.id,
-                    "author": [meta_info.author],
+                    "author": meta_info.author if isinstance(meta_info.author, list) else [meta_info.author],
                     "severity": meta_info.severity,
                     "references": meta_info.references,
                     "license": meta_info.license,
