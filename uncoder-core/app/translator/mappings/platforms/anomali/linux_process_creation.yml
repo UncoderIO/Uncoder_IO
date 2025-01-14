@@ -1,0 +1,17 @@
+platform: Anomali
+source: linux_process_creation
+
+
+log_source:
+  product: [linux]
+  category: [process_creation]
+
+default_log_source:
+  product: linux
+  category: process_creation
+
+field_mapping:
+  CommandLine: command_line
+  Image: image
+  ParentCommandLine: parent_command_line
+  ParentImage: parent_image

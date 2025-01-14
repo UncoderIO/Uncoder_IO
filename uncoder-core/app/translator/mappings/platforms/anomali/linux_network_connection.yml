@@ -1,0 +1,20 @@
+platform: Anomali
+source: linux_network_connection
+
+
+log_source:
+  product: [linux]
+  category: [network_connection]
+
+default_log_source:
+  product: linux
+  category: network_connection
+
+field_mapping:
+  Image: image
+  DestinationHostname: dest
+  DestinationIp: dest_ip
+  DestinationPort: dest_port
+  SourceIp: src_ip
+  SourcePort: src_port
+  #Initiated: Initiated
