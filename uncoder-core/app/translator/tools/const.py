@@ -1,14 +1,14 @@
-from typing import get_args, Literal
+from typing import Literal, get_args
 
 IP_IOC_REGEXP_PATTERN = r"(?:^|[ \/\[(\"',;>|])((?:25[0-5]|2[0-4]\d|[0-1]?\d{1,2})(?:\[?\(?\{?\.\]?\)?\}?(?:25[0-5]|2[0-4]\d|[0-1]?\d{1,2})){3})(?=[\s)\]\"',;:\/?\n<|]|$)"  # noqa: E501
-DOMAIN_IOC_REGEXP_PATTERN = r"(?:^|[\s\/\[\]@(\"',;{>|])(?:(?:http[s]?|ftp):\/\/?)?([^:\\\/\s({\[\]@\"'`,]+\.[a-zA-Z]+)(?:(?:(?:[/|:]\w+)*\/)(?:[\w\-.]+[^#?\s]+)?(?:[\w/\-&?=%.#]+(?:\(\))?)?)?(?=[\s)\]\"',;<|]|$)"  # noqa: E501
-URL_IOC_REGEXP_PATTERN = r"(?:h[xX][xX]p[s]?|f[txX]p[s]?):\/\/[^\s,:;]+"  # noqa: E501
+DOMAIN_IOC_REGEXP_PATTERN = r"((?:[A-Za-z0-9|-]+\[?\{?\(?\.\)?\}?\]?)*[A-Za-z0-9|-]+(?:\[|\{|\()\.(?:\)|\}|\])[A-Za-z|-]+)|((?:[A-Za-z0-9|-]+(?:\[|\{|\()\.(?:\)|\}|\]))*[A-Za-z0-9|-]+(?:\[|\{|\()\.(?:\)|\}|\])[A-Za-z|-]+)|(?:h[xX][xX]p[s]?|f[txX]p[s]?):\/\/([^\/\s,:;]+)+"  # noqa: E501
+URL_IOC_REGEXP_PATTERN = r"(?:h[xX][xX]p[s]?|f[txX]p[s]?):\/\/[^\s,:;]+"
 
 IOCType = Literal["ip", "domain", "url", "hash"]
 HashType = Literal["md5", "sha1", "sha256", "sha512"]
 IocParsingRule = Literal["replace_dots", "remove_private_and_reserved_ips", "replace_hxxp"]
 
-DefaultIOCType = list(get_args(Literal["ip", "url", "hash"]))
+DefaultIOCType = list(get_args(IOCType))
 DefaultHashType = list(get_args(HashType))
 DefaultIocParsingRule = list(get_args(IocParsingRule))
 
