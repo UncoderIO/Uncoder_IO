@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+import os
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional, TypeVar, Union
+from typing import TYPE_CHECKING, ClassVar, Optional, TypeVar, Union
 
 from app.translator.core.exceptions.core import (
     StrictPlatformException,
@@ -16,6 +17,7 @@ if TYPE_CHECKING:
 
 
 DEFAULT_MAPPING_NAME = "default"
+GLOBAL_ALTERNATIVE_MAPPING_DIR = "global_alternative"
 
 
 class LogSourceSignature(ABC):
@@ -113,14 +115,15 @@ class BasePlatformMappings:
     is_strict_mapping: bool = False
     skip_load_default_mappings: bool = True
     extend_default_mapping_with_all_fields: bool = False
-    global_mappings: list[str] = []
+    global_alternative_mappings: ClassVar[list[str]] = []
 
     def __init__(self, platform_dir: str, platform_details: PlatformDetails):
         self._loader = LoaderFileMappings()
         self.details = platform_details
         self._source_mappings = self.prepare_mapping(platform_dir)
         self._alternative_mappings = self.prepare_alternative_mapping(platform_dir)
-        global_alternative_mappings = self.prepare_global_alternative_mapping()
+        if self.global_alternative_mappings:
+            self._alternative_mappings.update(self.prepare_global_alternative_mapping())
 
     def update_default_source_mapping(self, default_mapping: SourceMapping, fields_mapping: FieldsMapping) -> None:
         default_mapping.fields_mapping.update(fields_mapping)
@@ -132,8 +135,10 @@ class BasePlatformMappings:
         return alternative_mappings
 
     def prepare_global_alternative_mapping(self) -> dict[str, dict[str, SourceMapping]]:
-        globa_alternative_mappings = {}
-        return globa_alternative_mappings
+        global_alternative_mappings = {}
+        for name in self.global_alternative_mappings:
+            global_alternative_mappings[name] = self.prepare_mapping(os.path.join(GLOBAL_ALTERNATIVE_MAPPING_DIR, name))
+        return global_alternative_mappings
 
     def prepare_mapping(self, platform_dir: str) -> dict[str, SourceMapping]:
         source_mappings = {}

@@ -1,7 +1,6 @@
 platform: Global OCSF
 source: default
 
-default_log_source: {}
 
 fieldmappings:
   IntegrityLevel: process.integrity

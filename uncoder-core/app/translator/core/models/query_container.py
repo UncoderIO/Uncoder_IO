@@ -136,7 +136,7 @@ class RawQueryContainer:
 class RawQueryDictContainer:
     query: dict
     language: str
-    meta_info: dict
+    meta_info: MetaInfoContainer = field(default_factory=MetaInfoContainer)
 
 
 @dataclass

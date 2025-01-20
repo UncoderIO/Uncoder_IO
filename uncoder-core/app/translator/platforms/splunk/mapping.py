@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import ClassVar, Optional
 
 from app.translator.core.mapping import BasePlatformMappings, LogSourceSignature
 from app.translator.platforms.splunk.const import splunk_alert_details, splunk_query_details
@@ -39,9 +39,13 @@ class SplunkLogSourceSignature(LogSourceSignature):
 
 
 class SplunkMappings(BasePlatformMappings):
+    global_alternative_mappings: ClassVar[list[str]] = ["ocsf"]
+
     def prepare_log_source_signature(self, mapping: dict) -> SplunkLogSourceSignature:
         log_source = mapping.get("log_source", {})
-        default_log_source = mapping["default_log_source"]
+        default_log_source = (
+            mapping.get("default_log_source") if mapping.get("default_log_source") else {"source": "WinEventLog: *"}
+        )
         return SplunkLogSourceSignature(
             sources=log_source.get("source"),
             source_types=log_source.get("sourcetype"),
