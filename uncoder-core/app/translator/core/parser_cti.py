@@ -58,7 +58,7 @@ class CTIParser:
         if not include_ioc_types or "domain" in include_ioc_types:
             iocs.domain.extend(self._find_all_str_by_regex(string, DOMAIN_IOC_REGEXP_PATTERN))
         if not include_ioc_types or "url" in include_ioc_types:
-            iocs.url.extend(self._find_all_str_by_regex(string, URL_IOC_REGEXP_PATTERN))
+            iocs.url.extend([url.rstrip(".") for url in self._find_all_str_by_regex(string, URL_IOC_REGEXP_PATTERN)])
         if not include_ioc_types or "hash" in include_ioc_types:
             if not include_hash_types:
                 include_hash_types = list(hash_regexes.keys())
