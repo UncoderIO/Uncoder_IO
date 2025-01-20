@@ -6,11 +6,11 @@ URL_IOC_REGEXP_PATTERN = r"(?:h[xX][xX]p[s]?|f[txX]p[s]?):\/\/[^\s,:;]+"
 
 IOCType = Literal["ip", "domain", "url", "hash"]
 HashType = Literal["md5", "sha1", "sha256", "sha512"]
-IocParsingRule = Literal["replace_dots", "remove_private_and_reserved_ips", "replace_hxxp"]
+IocParsingRule = Literal["remove_private_and_reserved_ips"]
 
 DefaultIOCType = list(get_args(IOCType))
 DefaultHashType = list(get_args(HashType))
-DefaultIocParsingRule = list(get_args(Literal["remove_private_and_reserved_ips"]))
+DefaultIocParsingRule = list(get_args(IocParsingRule))
 
 HASH_MAP = {"md5": "HashMd5", "sha1": "HashSha1", "sha256": "HashSha256", "sha512": "HashSha512"}
 
@@ -22,10 +22,10 @@ iocs_types_map = {
 }
 
 LOGSOURCE_MAP = {
-    "hash": {"category": "process_creation"},
+    "hash": {"category": "file_event"},
     "domain": {"category": "proxy"},
     "url": {"category": "proxy"},
-    "ip": {"category": "proxy"},
+    "ip": {"category": "firewall"},
     "emails": {"category": "mail"},
     "files": {"category": "file_event"},
 }

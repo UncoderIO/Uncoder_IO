@@ -52,13 +52,20 @@ class CTIParser:
         include_source_ip: Optional[bool] = False,
     ) -> dict:
         iocs = Iocs()
-        string = self.replace_dots_hxxp(string, ioc_parsing_rules)
         if not include_ioc_types or "ip" in include_ioc_types:
             iocs.ip.extend(self._find_all_str_by_regex(string, IP_IOC_REGEXP_PATTERN))
         if not include_ioc_types or "domain" in include_ioc_types:
-            iocs.domain.extend(self._find_all_str_by_regex(string, DOMAIN_IOC_REGEXP_PATTERN))
+            for domain in self._find_all_str_by_regex(string, DOMAIN_IOC_REGEXP_PATTERN):
+                for domain_val in domain:
+                    if domain_val:
+                        iocs.domain.extend(self.replace_dots_hxxp(domain_val))
         if not include_ioc_types or "url" in include_ioc_types:
-            iocs.url.extend([url.rstrip(".") for url in self._find_all_str_by_regex(string, URL_IOC_REGEXP_PATTERN)])
+            iocs.url.extend(
+                [
+                    self.replace_dots_hxxp(url).rstrip(".")
+                    for url in self._find_all_str_by_regex(string, URL_IOC_REGEXP_PATTERN)
+                ]
+            )
         if not include_ioc_types or "hash" in include_ioc_types:
             if not include_hash_types:
                 include_hash_types = list(hash_regexes.keys())
@@ -74,7 +81,7 @@ class CTIParser:
                 raise IocsLimitExceededException(f"IOCs count {total_count} exceeds limit {limit}.")
         return iocs.return_iocs(include_source_ip)
 
-    def replace_dots_hxxp(self, string: str, ioc_parsing_rules: Optional[list[IocParsingRule]]) -> str:
+    def replace_dots_hxxp(self, string: str, ioc_parsing_rules: Optional[list[IocParsingRule]] = None) -> str:
         if ioc_parsing_rules is None or "replace_dots" in ioc_parsing_rules:
             string = self._replace_dots(string)
         if ioc_parsing_rules is None or "replace_hxxp" in ioc_parsing_rules:
