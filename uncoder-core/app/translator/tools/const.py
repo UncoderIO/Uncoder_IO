@@ -8,7 +8,7 @@ IOCType = Literal["ip", "domain", "url", "hash"]
 HashType = Literal["md5", "sha1", "sha256", "sha512"]
 IocParsingRule = Literal["replace_dots", "remove_private_and_reserved_ips", "replace_hxxp"]
 
-DefaultIOCType = list(get_args(IOCType))
+DefaultIOCType = list(get_args(Literal["ip", "url", "hash"]))
 DefaultHashType = list(get_args(HashType))
 DefaultIocParsingRule = list(get_args(IocParsingRule))
 

@@ -9,14 +9,14 @@ SIGMA_RULE_DETAILS = {
 }
 
 DEFAULT_SIGMA_CTI_MAPPING = {
-    "SourceIP": "SourceIP",
-    "DestinationIP": "DestinationIP",
-    "Domain": "Domain",
-    "URL": "URL",
-    "HashMd5": "HashMd5",
-    "HashSha1": "HashSha1",
-    "HashSha256": "HashSha256",
-    "HashSha512": "HashSha512",
+    "SourceIP": "src-ip",
+    "DestinationIP": "dst-ip",
+    "Domain": "cs-host",
+    "URL": "c-uri",
+    "HashMd5": "Hashes",
+    "HashSha1": "Hashes",
+    "HashSha256": "Hashes",
+    "HashSha512": "Hashes",
 }
 
 
