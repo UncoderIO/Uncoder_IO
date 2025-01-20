@@ -10,7 +10,7 @@ IocParsingRule = Literal["replace_dots", "remove_private_and_reserved_ips", "rep
 
 DefaultIOCType = list(get_args(IOCType))
 DefaultHashType = list(get_args(HashType))
-DefaultIocParsingRule = list(get_args(IocParsingRule))
+DefaultIocParsingRule = list(get_args(Literal["remove_private_and_reserved_ips"]))
 
 HASH_MAP = {"md5": "HashMd5", "sha1": "HashSha1", "sha256": "HashSha256", "sha512": "HashSha512"}
 
