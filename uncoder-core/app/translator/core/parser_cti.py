@@ -53,12 +53,13 @@ class CTIParser:
     ) -> dict:
         iocs = Iocs()
         if not include_ioc_types or "ip" in include_ioc_types:
-            iocs.ip.extend(self._find_all_str_by_regex(string, IP_IOC_REGEXP_PATTERN))
+            for ip in self._find_all_str_by_regex(string, IP_IOC_REGEXP_PATTERN):
+                iocs.ip.append(self.replace_dots_hxxp(ip))
         if not include_ioc_types or "domain" in include_ioc_types:
             for domain in self._find_all_str_by_regex(string, DOMAIN_IOC_REGEXP_PATTERN):
                 for domain_val in domain:
                     if domain_val:
-                        iocs.domain.extend(self.replace_dots_hxxp(domain_val))
+                        iocs.domain.append(self.replace_dots_hxxp(domain_val))
         if not include_ioc_types or "url" in include_ioc_types:
             iocs.url.extend(
                 [
