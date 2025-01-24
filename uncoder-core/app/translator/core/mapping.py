@@ -147,7 +147,7 @@ class BasePlatformMappings:
             log_source_signature = self.prepare_log_source_signature(mapping=mapping_dict)
             if (source_id := mapping_dict["source"]) == DEFAULT_MAPPING_NAME:
                 default_mapping.log_source_signature = log_source_signature
-                if self.skip_load_default_mappings:
+                if self.skip_load_default_mappings and not platform_dir.startswith(GLOBAL_ALTERNATIVE_MAPPING_DIR):
                     continue
 
             field_mappings_dict = mapping_dict.get("field_mapping", {})
@@ -164,7 +164,7 @@ class BasePlatformMappings:
                 conditions=conditions,
             )
 
-        if self.skip_load_default_mappings:
+        if self.skip_load_default_mappings and not platform_dir.startswith(GLOBAL_ALTERNATIVE_MAPPING_DIR):
             source_mappings[DEFAULT_MAPPING_NAME] = default_mapping
 
         if self.extend_default_mapping_with_all_fields:
