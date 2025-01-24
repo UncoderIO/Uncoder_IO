@@ -2,7 +2,7 @@ platform: Global OCSF
 source: default
 
 
-fieldmappings:
+field_mapping:
   IntegrityLevel: process.integrity
   ParentCommandLine:
     - process.parent_process.cmd_line
