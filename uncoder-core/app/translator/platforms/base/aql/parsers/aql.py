@@ -17,7 +17,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 """
 
 import re
-from typing import Union
+from typing import Optional, Union
 
 from app.translator.core.exceptions.parser import TokenizerGeneralException
 from app.translator.core.models.functions.base import ParsedFunctions
@@ -105,8 +105,8 @@ class AQLQueryParser(PlatformQueryParser):
 
         return log_sources, query
 
-    def _parse_query(self, text: str) -> tuple[str, dict[str, Union[list[str], list[int]]], ParsedFunctions]:
-        query = self.__clean_query(text)
+    def _parse_query(self, query: str) -> tuple[str, dict[str, Union[list[str], list[int]]], Optional[ParsedFunctions]]:
+        query = self.__clean_query(query)
         self.__check_table(query)
         query, functions = self.platform_functions.parse(query)
         log_sources, query = self.__parse_log_sources(query)
@@ -118,7 +118,11 @@ class AQLQueryParser(PlatformQueryParser):
         query_field_tokens, function_field_tokens, function_field_tokens_map = self.get_field_tokens(
             query_tokens, functions.functions
         )
-        source_mappings = self.get_source_mappings(query_field_tokens + function_field_tokens, log_sources)
+        source_mappings = self.get_source_mappings(
+            field_tokens=query_field_tokens + function_field_tokens,
+            log_sources=log_sources,
+            alt_mapping=raw_query_container.meta_info.source_alt_mapping,
+        )
         meta_info = raw_query_container.meta_info
         meta_info.query_fields = query_field_tokens
         meta_info.function_fields = function_field_tokens

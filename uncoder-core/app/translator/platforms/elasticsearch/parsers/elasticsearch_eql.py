@@ -30,7 +30,11 @@ class ElasticSearchEQLQueryParser(PlatformQueryParser):
         query, log_sources = self._parse_query(raw_query_container.query)
         query_tokens = self.get_query_tokens(query)
         query_field_tokens, _, _ = self.get_field_tokens(query_tokens)
-        source_mappings = self.get_source_mappings(query_field_tokens, log_sources)
+        source_mappings = self.get_source_mappings(
+            field_tokens=query_field_tokens,
+            log_sources=log_sources,
+            alt_mapping=raw_query_container.meta_info.source_alt_mapping,
+        )
         meta_info = raw_query_container.meta_info
         meta_info.query_fields = query_field_tokens
         meta_info.source_mapping_ids = [source_mapping.source_id for source_mapping in source_mappings]

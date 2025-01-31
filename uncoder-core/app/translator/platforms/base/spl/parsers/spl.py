@@ -75,7 +75,11 @@ class SplQueryParser(PlatformQueryParser):
         query_field_tokens, function_field_tokens, function_field_tokens_map = self.get_field_tokens(
             query_tokens, functions.functions
         )
-        source_mappings = self.get_source_mappings(query_field_tokens + function_field_tokens, log_sources)
+        source_mappings = self.get_source_mappings(
+            field_tokens=query_field_tokens + function_field_tokens,
+            log_sources=log_sources,
+            alt_mapping=raw_query_container.meta_info.source_alt_mapping,
+        )
         meta_info = raw_query_container.meta_info
         meta_info.query_fields = query_field_tokens
         meta_info.function_fields = function_field_tokens
