@@ -1,0 +1,41 @@
+platform: Anomali
+source: proxy
+
+field_mapping:
+  c-uri-query: url
+  c-useragent: user_agent
+  c-uri: url
+  cs-method: http_method
+  cs-bytes: bytes_out
+  cs-referrer: http_referrer
+  sc-status: return_code
+
+  dns-query: query
+  dns-answer: answer
+  dns-record: record_type
+
+  CommandLine: command_line
+  DestinationHostname: dest
+  DestinationIp: dest_ip
+  DestinationPort: dest_port
+  Details: reg_value_data
+  dst_ip: dest_ip
+  dst_port: dest_port
+  EventID: event_id
+  EventName: event_name
+  FileName: file_name
+  FilePath: file_path
+  Image: image
+  NewProcessName: image
+  OriginalFileName: original_file_name
+  ParentCommandLine: parent_command_line
+  ParentImage: parent_image
+  ParentProcessID: parent_process_id
+  Platform: platform
+  ProcessCommandLine: command_line
+  ProcessID: process_id
+  SourceImage: parent_image
+  SourcePort: src_port
+  TargetFilename: file_name
+  TargetObject: reg_key
+  UserAgent: user_agent

@@ -11,6 +11,6 @@ default_log_source:
   category: pipe_created
 
 field_mapping:
-  EventID: action_evtlog_event_id
+  EventID: EventID
   PipeName: PipeName
   Image: Image

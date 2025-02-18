@@ -8,4 +8,16 @@ SIGMA_RULE_DETAILS = {
     "group_id": "sigma",
 }
 
+DEFAULT_SIGMA_CTI_MAPPING = {
+    "SourceIP": "dst_ip",
+    "DestinationIP": "dst_ip",
+    "Domain": "dest_domain",
+    "URL": "url",
+    "HashMd5": "Hashes",
+    "HashSha1": "Hashes",
+    "HashSha256": "Hashes",
+    "HashSha512": "Hashes",
+}
+
+
 sigma_rule_details = PlatformDetails(**SIGMA_RULE_DETAILS)

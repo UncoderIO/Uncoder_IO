@@ -1,0 +1,7 @@
+platform: CarbonBlack
+source: windows_create_remote_thread
+
+
+field_mapping:
+  SourceImage: parent_name
+  StartModule: modload_name

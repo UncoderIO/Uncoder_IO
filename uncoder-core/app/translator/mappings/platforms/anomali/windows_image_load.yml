@@ -1,0 +1,18 @@
+platform: Anomali
+source: windows_image_load
+
+
+log_source:
+  product: [windows]
+  category: [image_load]
+
+default_log_source:
+  product: windows
+  category: image_load
+
+field_mapping:
+  Image: image
+  #ImageLoaded: ImageLoaded
+  #SignatureStatus: SignatureStatus
+  OriginalFileName: original_file_name
+  #Signed: Signed

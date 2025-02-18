@@ -86,3 +86,6 @@ class CTITranslator:
     @classmethod
     def get_renders(cls) -> list:
         return cls.render_manager.get_platforms_details
+
+
+cti_translator = CTITranslator()

@@ -20,8 +20,7 @@ limitations under the License.
 from app.translator.core.models.platform_details import PlatformDetails
 from app.translator.core.render_cti import RenderCTI
 from app.translator.managers import render_cti_manager
-from app.translator.platforms.qradar.const import qradar_query_details
-from app.translator.platforms.qradar.mappings.qradar_cti import DEFAULT_QRADAR_MAPPING
+from app.translator.platforms.qradar.const import DEFAULT_QRADAR_CTI_MAPPING, qradar_query_details
 
 
 @render_cti_manager.register
@@ -35,4 +34,4 @@ class QRadarCTI(RenderCTI):
     result_join: str = ""
     final_result_for_many: str = "SELECT UTF8(payload) from events where {result}\n"
     final_result_for_one: str = "SELECT UTF8(payload) from events where {result}\n"
-    default_mapping = DEFAULT_QRADAR_MAPPING
+    default_mapping = DEFAULT_QRADAR_CTI_MAPPING
