@@ -1,4 +1,3 @@
-import { parseInt } from 'lodash';
 import { BasicIocType } from '../../types/iocsTypes';
 
 export const useIocsStatistic = () => {
@@ -43,7 +42,7 @@ export const useIocsStatistic = () => {
   };
 
   const convertValue = (value?: string | number): string => {
-    const convertedValue: number = parseInt((value ?? 0).toString());
+    const convertedValue: number = parseInt((value ?? 0).toString(), 10);
 
     if (convertedValue >= 1000) {
       return `${Math.floor(convertedValue / 1000)}k`;

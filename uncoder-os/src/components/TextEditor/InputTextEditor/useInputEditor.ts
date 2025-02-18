@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Dispatch } from '@reduxjs/toolkit';
 import { clearText, inputEditorSelector } from '../../../reduxData/inputEditor';
 
-import ace from 'ace-builds';
+import ace from 'ace-builds/src-noconflict/ace';
 import 'ace-builds/src-noconflict/ext-language_tools';
 import { loadSuggesterData, suggesterSelector } from '../../../reduxData/suggester';
 import { useEditorSuggestion } from '../useEditorSuggestion';
