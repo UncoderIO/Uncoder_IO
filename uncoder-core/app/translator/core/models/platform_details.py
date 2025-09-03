@@ -12,3 +12,4 @@ class PlatformDetails:
     alt_platform_name: Optional[str] = "Default"
     alt_platform: Optional[str] = "regular"
     first_choice: Optional[int] = 1
+    file_extension: Optional[str] = "txt"

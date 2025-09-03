@@ -1,0 +1,53 @@
+platform: Exabeam
+source: windows_network_connection
+
+conditions:
+  event.category: 'network'
+
+log_source:
+  table: [events, network_events]
+
+default_log_source:
+  table: events
+
+field_mapping:
+  # Sigma network field names to Exabeam CIM2
+  SourceIp: src_ip
+  DestinationIp: dest_ip
+  SourcePort: src_port
+  DestinationPort: dest_port
+  SourceAddress: src_ip
+  DestinationAddress: dest_ip
+  RemoteAddress: dest_ip
+  RemotePort: dest_port
+  Protocol: protocol
+  Initiated: network_initiated
+  Image: process_path
+  User: user
+  ProcessId: process_id
+  
+  # Network connection fields
+  source.ip: src_ip
+  destination.ip: dest_ip
+  source.port: src_port
+  destination.port: dest_port
+  network.protocol: protocol
+  network.direction: direction
+  
+  # Process context
+  process.name: process_name
+  process.pid: process_id
+  process.executable: process_path
+  
+  # User context
+  user.name: user
+  user.domain: user_domain
+  
+  # Host context
+  host.name: src_host
+  destination.domain: dest_host
+  
+  # Event context
+  winlog.event_id: event_id
+  "@timestamp": timestamp
+  time: timestamp
