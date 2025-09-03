@@ -71,6 +71,9 @@ Uncoder IO can be run on-prem without a need for an internet connection, thus su
 - FortiSIEM Rule - `fortisiem-rule`
 - LogRhythm Axon Rule - `axon-ads-rule`
 - LogRhythm Axon Query - `axon-ads-query`
+- Exabeam New-Scale EQL Query - `exabeam-eql-query`
+- Exabeam New-Scale Analytics Rule - `exabeam-analytics-rule`
+- Exabeam New-Scale Correlation Rule - `exabeam-correlation-rule`
 
 
 IOC-based queries can be generated in the following formats:
@@ -95,6 +98,7 @@ IOC-based queries can be generated in the following formats:
 - Snowflake Query - `snowflake`
 - Sumo Logic Query - `sumologic`
 - VMware Carbon Black Query (Cloud) - `carbonblack`
+- Exabeam New-Scale EQL Query - `exabeam-eql-query`
 
 The following types of IOCs are supported:  
 - Hash  
@@ -113,7 +117,7 @@ TODO list of languages we will support shortly:
 - Databricks
 - Cribl
 - ~FortiSIEM~ :white_check_mark:
-- Exabeam
+- ~Exabeam~ :white_check_mark:
 - Palo Alto Cortex XSOAR
 - ~ElastAlert~ :white_check_mark: 
 - FireEye OpenIOC
