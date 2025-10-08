@@ -1,0 +1,118 @@
+platform: Exabeam
+source: default
+
+default_log_source:
+  table: events
+
+log_source:
+  table: events
+
+field_mapping:
+  # Sigma standard field names to Exabeam CIM2
+  CommandLine: process_command_line
+  Image: process_path
+  ParentImage: parent_process_path
+  ParentCommandLine: parent_process_command_line
+  ProcessId: process_id
+  ParentProcessId: parent_process_id
+  OriginalFileName: process_original_file_name
+  User: user
+  Computer: src_host
+  EventID: event_id
+  
+  # File event fields
+  TargetFilename: file_path
+  TargetFileName: file_path
+  FileName: file_name
+  FilePath: file_path
+  
+  # Registry fields  
+  TargetObject: registry_path
+  Details: registry_value_data
+  RegistryKey: registry_key
+  RegistryValue: registry_value_name
+  
+  # Network connection fields
+  DestinationIp: dest_ip
+  DestinationPort: dest_port
+  SourceIp: src_ip
+  SourcePort: src_port
+  Initiated: network_initiated
+  DestinationHostname: dest_host
+  RemoteAddress: dest_ip
+  RemotePort: dest_port
+  
+  # PowerShell fields
+  ScriptBlockText: powershell_script_content
+  
+  # Additional process fields
+  Company: process_company
+  Product: process_product
+  FileDescription: process_description
+  ProductVersion: process_product_version
+  
+  # Service fields
+  ServiceName: service_name
+  ServiceFileName: service_path
+  
+  # Authentication fields
+  SubjectUserName: user
+  TargetUserName: dest_user
+  WorkstationName: src_host
+  IpAddress: src_ip
+  
+  # Universal CIM2 fields
+  time: timestamp
+  vendor: vendor
+  product: product
+  activity_type: activity_type
+  outcome: outcome
+  subject: user
+  host: src_host
+  
+  # Process creation
+  process.name: process_name
+  process.pid: process_id
+  process.command_line: process_command_line
+  process.parent.name: parent_process_name
+  process.parent.pid: parent_process_id
+  process.parent.command_line: parent_process_command_line
+  
+  # User/Authentication  
+  user.name: user
+  user.domain: user_domain
+  source.user.name: src_user
+  target.user.name: dest_user
+  
+  # Network
+  source.ip: src_ip
+  destination.ip: dest_ip
+  source.port: src_port
+  destination.port: dest_port
+  network.protocol: protocol
+  source.domain: src_host
+  destination.domain: dest_host
+  url.original: url
+  
+  # File
+  file.name: file_name
+  file.path: file_path
+  file.directory: file_directory
+  file.hash.md5: file_hash
+  file.hash.sha1: file_hash
+  file.hash.sha256: file_hash
+  file.hash.sha512: file_hash
+  
+  # Registry (Windows)
+  registry.key: registry_key
+  registry.value: registry_value_name
+  registry.data: registry_value_data
+  
+  # Event ID mapping
+  event.code: event_id
+  event.action: activity
+  
+  # Service/System
+  service.name: service_name
+  winlog.channel: log_name
+  winlog.event_id: event_id
